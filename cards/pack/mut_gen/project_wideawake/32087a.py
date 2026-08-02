@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mut_gen.campaign import *
 
 # Night of the Sentinels A
 
@@ -22,9 +23,9 @@ def GetAbilities() -> Sequence['Ability']:
         )
 
     return [
+        *CampaignSetup(2),
         AbilityFactory.WhenCardSetup(
             "This",
             night_of_the_sentinels
         ),
     ]
-

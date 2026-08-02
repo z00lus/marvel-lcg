@@ -32745,6 +32745,49 @@
             "text": "Victory 1.\nAttached minion gets +4 hit points and gains the [[Sentinel]] trait.\n<b>When Revealed</b>: Search the encounter deck, discard pile, and set-aside area for your nemesis minion. Put it into play engaged with you and attach this card to it."
         },
         {
+            "card_id": "32171a",
+            "type": "SideScheme",
+            "name": "Frightened Police",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3",
+                "Crisis": "1",
+                "StartingThreat": "3*"
+            },
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>When Defeated</b>: Shuffle the top card of the Future Past deck into the encounter deck. Flip this card and put Metro P.D. into play."
+        },
+        {
+            "card_id": "32171b",
+            "type": "Support",
+            "name": "Metro P.D.",
+            "subtitle": "",
+            "desc": {
+                "RES": "B",
+                "Class": "Campaign;Basic",
+                "Permanent": "1"
+            },
+            "traits": [
+                "PERSONA"
+            ],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "Permanent.\nThe first player controls Metro P.D.\n<b>Action</b>: Exhaust Metro P.D. \u2192 choose to either deal 1 damage to an enemy or remove 1 threat from a scheme."
+        },
+        {
+            "card_id": "32172a",
+            "type": "SideScheme",
+            "name": "Enemy of My Enemy",
+            "subtitle": "",
+            "desc": {
+                "Acceleration": "1",
+                "StartingThreat": "3*"
+            },
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>When Defeated</b>: Shuffle the top card of the Future Past deck into the encounter deck. Flip this card and put Magneto into play under the first player's control."
+        },
+        {
             "card_id": "32172b",
             "type": "Ally",
             "name": "* Magneto",
@@ -32762,6 +32805,368 @@
             ],
             "set_name": "Mutant Genesis Campaign",
             "text": "Victory 1.\nThe first player controls Magneto. He does not count against your ally limit.\n[star] <b>Response</b>: After Magneto attacks and defeats a [[SENTINEL]] minion, heal 1 damage from Magneto."
+        },
+        {
+            "card_id": "32173a",
+            "type": "SideScheme",
+            "name": "Find the Prisoners",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3",
+                "StartingThreat": "3*"
+            },
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>When Revealed</b>: Each player searches their deck for an ally and places it facedown under here.\n<b>When Defeated</b>: Shuffle the top card of the Future Past deck into the encounter deck. Flip this card and reveal Rescue Captives. <i>(Keep facedown cards under Rescue Captives.)</i>"
+        },
+        {
+            "card_id": "32173b",
+            "type": "Environment",
+            "name": "Rescue Captives",
+            "subtitle": "",
+            "desc": {},
+            "traits": [
+                "MISSION"
+            ],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>Response</b>: After you defeat a [[SENTINEL]] minion, spend 1 resource of any type \u2192 choose a facedown ally under this card and put it into play under your control. <i>(Any player may trigger this ability.)</i>"
+        },
+        {
+            "card_id": "32174a",
+            "type": "SideScheme",
+            "name": "Surprise Attack",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3",
+                "Hazard": "1",
+                "StartingThreat": "3*"
+            },
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>When Defeated</b>: Shuffle the top card of the Future Past deck into the encounter deck. The player who defeated this scheme flips this card and puts Reactive Defense into their play area."
+        },
+        {
+            "card_id": "32174b",
+            "type": "Obligation",
+            "name": "Reactive Defense",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>Alter-Ego Action</b>: Spend [energy] [mental] [physical] resources \u2192 deal 5 damage to each enemy in play. Remove this card from the game."
+        },
+        {
+            "card_id": "32175a",
+            "type": "SideScheme",
+            "name": "Magneto's Fortress",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3",
+                "Crisis": "1",
+                "StartingThreat": "2*"
+            },
+            "traits": [],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "<b>When Defeated</b>: Shuffle the top card of the Future Past deck into the encounter deck. Flip this card."
+        },
+        {
+            "card_id": "32175b",
+            "type": "Attachment",
+            "name": "Magneto's Power",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "1",
+                "Permanent": "1"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Mutant Genesis Campaign",
+            "text": "Attach to Magneto.\nPermanent."
+        },
+        {
+            "card_id": "32176",
+            "type": "Upgrade",
+            "name": "Coup de Gr\u00e2ce",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Brawler",
+            "text": "<b>Hero Interrupt</b>: When you attack, this attack deals 3 additional damage and gains overkill. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32177",
+            "type": "Upgrade",
+            "name": "Swagger",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Brawler",
+            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When you make a basic defense, you get +3 DEF. Ready your hero. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32178",
+            "type": "Upgrade",
+            "name": "Brazen Defense",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Brawler",
+            "text": "<b>Hero Interrupt</b> <i>(attack/defense)</i>: When an enemy attacks, spend 1 resource of any type \u2192 prevent 3 damage from this attack and deal 3 damage to that enemy. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32179",
+            "type": "Upgrade",
+            "name": "Ferocious Attack",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Brawler",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Spend 3 resources of any type \u2192 deal 6 damage to an enemy and ready your hero. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32180",
+            "type": "Upgrade",
+            "name": "War Cry",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Brawler",
+            "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for an [[Attack]] or [[Defense]] event. Gain a tough status card. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32181",
+            "ability_link": "32176",
+            "type": "Upgrade",
+            "name": "Coup de Gr\u00e2ce",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Commander",
+            "text": "<b>Hero Interrupt</b>: When you attack, this attack deals 3 additional damage and gains overkill. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32182",
+            "type": "Upgrade",
+            "name": "Compassion",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Commander",
+            "text": "<b>Alter-Ego Response</b>: After you recover, heal 3 damage from among characters you control and draw 1 card. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32183",
+            "type": "Upgrade",
+            "name": "Group Assault",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL", "TACTIC"],
+            "set_name": "Commander",
+            "text": "<b>Hero Action</b>: Until the end of the phase, prevent all consequential damage each ally would take from attacking. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32184",
+            "type": "Upgrade",
+            "name": "Shock and Awe",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL", "TACTIC"],
+            "set_name": "Commander",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Spend 3 resources of any type \u2192 deal 6 damage to an enemy and ready each ally you control. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32185",
+            "type": "Upgrade",
+            "name": "Improvisation",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Commander",
+            "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for an [[Attack]] or [[Tactic]] event. Ready an ally and heal 2 damage from it. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32186",
+            "ability_link": "32177",
+            "type": "Upgrade",
+            "name": "Swagger",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Defender",
+            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When you make a basic defense, you get +3 DEF. Ready your hero. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32187",
+            "type": "Upgrade",
+            "name": "Surprise!",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Defender",
+            "text": "<b>Hero Response</b>: After you thwart, remove 3 threat from among schemes in play. Confuse an enemy. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32188",
+            "type": "Upgrade",
+            "name": "Heroic Intervention",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Defender",
+            "text": "<b>Hero Action</b> <i>(thwart)</i>: Spend 3 resources of any type \u2192 remove 5 threat from among schemes in play. You gain a tough status card. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32189",
+            "type": "Upgrade",
+            "name": "Determined Defense",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Defender",
+            "text": "<b>Hero Interrupt</b> <i>(defense/thwart)</i>: When you defend against an attack, spend 2 resources of any type \u2192 that attack removes threat from the main scheme instead of dealing damage. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32190",
+            "type": "Upgrade",
+            "name": "Bodyguard",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Defender",
+            "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for a [[Defense]] or [[Thwart]] event. Draw 1 card. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32191",
+            "ability_link": "32187",
+            "type": "Upgrade",
+            "name": "Surprise!",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Peacekeeper",
+            "text": "<b>Hero Response</b>: After you thwart, remove 3 threat from among schemes in play. Confuse an enemy. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32192",
+            "ability_link": "32182",
+            "type": "Upgrade",
+            "name": "Compassion",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Peacekeeper",
+            "text": "<b>Alter-Ego Response</b>: After you recover, heal 3 damage from among characters you control and draw 1 card. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32193",
+            "type": "Upgrade",
+            "name": "Rescue Operation",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL", "TACTIC"],
+            "set_name": "Peacekeeper",
+            "text": "<b>Hero Action</b>: Until the end of the phase, prevent all consequential damage each ally would take from thwarting. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32194",
+            "type": "Upgrade",
+            "name": "Mentorship",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL", "TACTIC"],
+            "set_name": "Peacekeeper",
+            "text": "<b>Hero Action</b> <i>(thwart)</i>: Spend 3 resources of any type \u2192 remove 5 threat from among schemes in play. Ready each ally you control. Remove this card from the game and the campaign pool."
+        },
+        {
+            "card_id": "32195",
+            "type": "Upgrade",
+            "name": "Fortitude",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": ["SKILL"],
+            "set_name": "Peacekeeper",
+            "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for a [[Tactic]] or [[Thwart]] event. Stun an enemy. Remove this card from the game and the campaign pool."
         }
     ],
     "cyclops": [

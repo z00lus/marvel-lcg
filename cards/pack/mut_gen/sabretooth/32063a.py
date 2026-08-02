@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mut_gen.campaign import *
 
 # Stalked by Sabretooth 1A
 
@@ -22,9 +23,9 @@ def GetAbilities() -> Sequence['Ability']:
             )
 
     return [
+        *CampaignSetup(1),
         AbilityFactory.WhenCardSetup(
             "This",
             stalked_by_sabretooth_1a
         ),
     ]
-

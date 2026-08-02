@@ -4,12 +4,14 @@ from . import *
 PLAYER_LIST_KEY: TypeAlias = Literal[
     "Obligations",
     "Rescued Allies",
+    "Captive Allies",
     "Aspect Advantage: Reputation Track Reward",
 ]
 
 PLAYER_STR_KEY: TypeAlias = Literal[
     "Tech Upgrade",
     "Basic Upgrade",
+    "Role",
     "S.H.I.E.L.D. Tech: Reputation Track Reward",
     "Planning Ahead: Reputation Track Reward",
 ]
@@ -25,6 +27,9 @@ LOG_LIST_KEY: TypeAlias = Literal[
     "Community Service: Victory for Scenarios #1-4",
     "Osborn Tech: Reputation Track Penalty",
     "Last Ones Standing: Victory for Scenario #4 - The Sinister Six",
+    "Future Past Cards in Encounter Deck",
+    "Future Past Cards removed from campaign",
+    "Role Upgrades removed from campaign",
 ]
 
 LOG_INT_KEY: TypeAlias = Literal[
@@ -34,7 +39,12 @@ LOG_INT_KEY: TypeAlias = Literal[
 ]
 
 LOG_STR_KEY: TypeAlias = Literal[
-    ""
+    "",
+    "Frightened Police Defeated",
+    "Enemy of My Enemy Defeated",
+    "Find the Prisoners Defeated",
+    "Surprise Attack Defeated",
+    "Jubilee",
 ]
 
 class CampaignLog:
@@ -107,4 +117,3 @@ class CampaignLog:
     @staticmethod
     def SetStr(key: str, value: str, world: 'World'):
         world.store.SetStr(key, value)
-

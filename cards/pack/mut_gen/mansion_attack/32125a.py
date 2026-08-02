@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mut_gen.campaign import *
 
 # The Brotherhood Strikes! A
 
@@ -31,6 +32,7 @@ def GetAbilities() -> Sequence['Ability']:
         villain.PutIntoPlay("FirstPlayer", effect)
 
     return [
+        *CampaignSetup(4),
         AbilityFactory.WhenCardSetup(
             "This",
             the_brotherhood_strikes_a
@@ -41,4 +43,3 @@ def GetAbilities() -> Sequence['Ability']:
         #     put_villain_into_play
         # ),
     ]
-
