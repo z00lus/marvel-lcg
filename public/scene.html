@@ -1070,6 +1070,10 @@ p:has(#timeout_text) {
                         name: "Mutant Genesis",
                         package: "32. Mutant Genesis",
                     },
+                    next_evolution: {
+                        name: "NeXt Evolution",
+                        package: "40. NeXt Evolution",
+                    },
                 }
 
                 function generateInputs(current_package) {
@@ -1190,6 +1194,29 @@ p:has(#timeout_text) {
                             { description: "Player 3 Captive Allies", type: "checkbox", options: ["32089", "32090", "32091", "32092"] },
                             { description: "Player 4 Captive Allies", type: "checkbox", options: ["32089", "32090", "32091", "32092"] },
                             { description: "Allies removed from the campaign", type: "list", tooltip: "card IDs separated by ';'" },
+                        ],
+                        next_evolution:
+                        [
+                            { description: "Player 1 Remaining hit points", type: "number" },
+                            { description: "Player 2 Remaining hit points", type: "number" },
+                            { description: "Player 3 Remaining hit points", type: "number" },
+                            { description: "Player 4 Remaining hit points", type: "number" },
+
+                            { description: "Marauders Defeated", type: "checkbox", options: ["40070a", "40071a", "40072a", "40073a", "40074a", "40075a", "40076a"] },
+                            { description: "Morlocks Saved", type: "number" },
+
+                            { description: "Scenario 1 Player Side Scheme", type: "select", options: ["40190a", "40191a", "40192a", "40193a", "40194a", "40195a"] },
+                            { description: "Scenario 2 Player Side Scheme", type: "select", options: ["40190a", "40191a", "40192a", "40193a", "40194a", "40195a"] },
+                            { description: "Scenario 3 Player Side Scheme", type: "select", options: ["40190a", "40191a", "40192a", "40193a", "40194a", "40195a"] },
+                            { description: "Scenario 4 Player Side Scheme", type: "select", options: ["40190a", "40191a", "40192a", "40193a", "40194a", "40195a"] },
+                            { description: "Scenario 5 Player Side Scheme", type: "select", options: ["40190a", "40191a", "40192a", "40193a", "40194a", "40195a"] },
+
+                            { description: "Campaign Environments Earned", type: "checkbox", options: ["40190b", "40191b", "40192b", "40193b", "40194b", "40195b"] },
+
+                            { description: "Scenario 3 Hope Summers Damage", type: "number" },
+                            { description: "Scenario 4 Hope Damage Placement", type: "select", options: ["Hope Summers", "Teleported Away"] },
+                            { description: "Scenario 4 Hope Summers Damage", type: "number" },
+                            { description: "Scenario 5 Hope Damage Placement", type: "select", options: ["Hope Summers", "Stryfe's Grasp"] },
                         ]
 
                     }

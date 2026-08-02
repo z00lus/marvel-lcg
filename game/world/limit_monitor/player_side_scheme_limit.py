@@ -29,7 +29,11 @@ class PlayerSideSchemeLimit:
                 return False
 
             player = world.GetFirstPlayer()
-            faces = [x for x in world.area_schemes_side.Get(True) if PlayerSideScheme.IsType(x)]
+            faces = [
+                x for x in world.area_schemes_side.Get(True)
+                if PlayerSideScheme.IsType(x) and
+                not x.paper.IsFromSet("Next Evolution Campaign")
+            ]
             exceed_num = len(faces) - limit_num
 
             rule = GameRule(player.GetIdentity())
@@ -48,4 +52,3 @@ class PlayerSideSchemeLimit:
             else:
                 break
         return True
-

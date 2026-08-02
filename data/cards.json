@@ -40915,6 +40915,144 @@
             "text": "Assault. <i>(Basic thwarts against this scheme use ATK instead of THW.)</i>\nEach minion gains toughness.\n<b>When Revealed</b>: Place 2 additional threat here for each [[MUTANT LIBERATION FRONT]] character in play. If no additional threat was placed this way, this card gains surge."
         },
         {
+            "card_id": "40190a",
+            "type": "PlayerSideScheme",
+            "name": "* Assemble the Team",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Team Assembled into play."
+        },
+        {
+            "card_id": "40190b",
+            "type": "Environment",
+            "name": "Team Assembled",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Enters play with 1 assembly counter on it.\n<b>Action</b>: Remove 1 assembly counter from here → each player may search their deck and discard pile for an ally with a printed cost of 3 or less and put it into play. <i>(Any player can do this.)</i>"
+        },
+        {
+            "card_id": "40191a",
+            "type": "PlayerSideScheme",
+            "name": "* Establish Safehouse",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Safehouse Established into play."
+        },
+        {
+            "card_id": "40191b",
+            "type": "Environment",
+            "name": "Safehouse Established",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Enters play with 1 safehouse counter on it.\n<b>Action</b>: Remove 1 safehouse counter from here → the first player puts the Safehouse support into play under their control."
+        },
+        {
+            "card_id": "40192a",
+            "type": "PlayerSideScheme",
+            "name": "* Gear Up",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Geared Up into play."
+        },
+        {
+            "card_id": "40192b",
+            "type": "Environment",
+            "name": "Geared Up",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Enters play with 1 pouch counter on it.\n<b>Action</b>: Remove 1 pouch counter from here → each player shuffles 1 copy of the Pouches resource card into their deck."
+        },
+        {
+            "card_id": "40193a",
+            "type": "PlayerSideScheme",
+            "name": "* Mission Prep",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Mission Prepped into play."
+        },
+        {
+            "card_id": "40193b",
+            "type": "Environment",
+            "name": "Mission Prepped",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Enters play with 1 prep counter on it.\n<b>Action</b>: Remove 1 prep counter from here → each player searches their deck and discard pile for 1 upgrade with a printed cost of 2 or less and puts it into play. <i>(Any player can do this.)</i>"
+        },
+        {
+            "card_id": "40194a",
+            "type": "PlayerSideScheme",
+            "name": "* Practice Maneuvers",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Practiced Maneuvers into play."
+        },
+        {
+            "card_id": "40194b",
+            "type": "Environment",
+            "name": "Practiced Maneuvers",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Reduce the cost to play each event with a printed cost of 3 or more by 1."
+        },
+        {
+            "card_id": "40195a",
+            "type": "PlayerSideScheme",
+            "name": "* Prepare Defenses",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "4*",
+                "Class": "Campaign"
+            },
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: Flip this card and put Prepared Defenses into play."
+        },
+        {
+            "card_id": "40195b",
+            "type": "Environment",
+            "name": "Prepared Defenses",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Next Evolution Campaign",
+            "text": "Each hero gets +1 DEF and gains retaliate 1."
+        },
+        {
             "card_id": "40196",
             "type": "Resource",
             "name": "Pouches",

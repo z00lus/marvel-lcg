@@ -27,6 +27,7 @@ class CampaignDescriptor:
             "04": "rise_of_red_skull",
             "27": "sinister_motives",
             "32": "mutant_genesis",
+            "40": "next_evolution",
         }
         for card_id in [*self.villain, *self.schemes, *self.encounters]:
             campaign_id = campaign_ids_by_prefix.get(card_id[:2])

@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.next_evol.campaign import *
 
 # Sinister Intent
 
@@ -28,11 +29,10 @@ def GetAbilities() -> Sequence['Ability']:
                 under_control=True,
             )
 
-
     return [
+        *CampaignSetup(4),
         AbilityFactory.WhenCardSetup(
             "This",
-            sinister_intent
+            sinister_intent,
         ),
     ]
-

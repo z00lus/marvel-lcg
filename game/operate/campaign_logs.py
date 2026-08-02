@@ -30,12 +30,17 @@ LOG_LIST_KEY: TypeAlias = Literal[
     "Future Past Cards in Encounter Deck",
     "Future Past Cards removed from campaign",
     "Role Upgrades removed from campaign",
+    "Marauders Defeated",
+    "Campaign Environments Earned",
 ]
 
 LOG_INT_KEY: TypeAlias = Literal[
     "Number of delay counters on main scheme",
     "Reputation Track",
     "Waking Nightmare: Victory for Scenario #3 - Mysterio",
+    "Morlocks Saved",
+    "Scenario 3 Hope Summers Damage",
+    "Scenario 4 Hope Summers Damage",
 ]
 
 LOG_STR_KEY: TypeAlias = Literal[
@@ -45,6 +50,13 @@ LOG_STR_KEY: TypeAlias = Literal[
     "Find the Prisoners Defeated",
     "Surprise Attack Defeated",
     "Jubilee",
+    "Scenario 1 Player Side Scheme",
+    "Scenario 2 Player Side Scheme",
+    "Scenario 3 Player Side Scheme",
+    "Scenario 4 Player Side Scheme",
+    "Scenario 5 Player Side Scheme",
+    "Scenario 4 Hope Damage Placement",
+    "Scenario 5 Hope Damage Placement",
 ]
 
 class CampaignLog:
