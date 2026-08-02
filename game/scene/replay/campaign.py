@@ -4,6 +4,7 @@ from game.game_run.game_challenge import GameChallenge
 @dataclass
 class CampaignDescriptor:
     version: str = field(default="")
+    campaign_id: str = field(default="")
     name: str = field(default="")
     villain: List[str] = field(default_factory=lambda: [])
     expert: bool = field(default=False)
@@ -20,6 +21,19 @@ class CampaignDescriptor:
     def UpdateVersion(self):
         pass
 
+    def InferCampaignId(self) -> str:
+        """Identify legacy campaign scenes that predate an explicit campaign id."""
+        campaign_ids_by_prefix = {
+            "04": "rise_of_red_skull",
+            "27": "sinister_motives",
+            "32": "mutant_genesis",
+        }
+        for card_id in [*self.villain, *self.schemes, *self.encounters]:
+            campaign_id = campaign_ids_by_prefix.get(card_id[:2])
+            if campaign_id:
+                self.campaign_id = campaign_id
+                break
+        return self.campaign_id
+
     def SetChallenge(self, *challenges: 'GameChallenge.CHALLENGE'):
         self.challenges = list(sorted(set(challenges)))
-

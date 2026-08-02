@@ -690,6 +690,11 @@ class Worlds:
     def IsCampaign(by_effect: 'Effect') -> bool:
         return by_effect.world.rule.mode_campaign.val
 
+    @staticmethod
+    def IsCampaignSelected(by_effect: 'Effect', campaign_id: str) -> bool:
+        return Worlds.IsCampaign(by_effect) and \
+            by_effect.world.scene.campaign.campaign_id == campaign_id
+
     ################################################################################
     #
     @staticmethod
@@ -889,4 +894,3 @@ class Worlds:
         return True
 
     Enemies = Enemies
-

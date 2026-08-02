@@ -1,8 +1,11 @@
 from . import *
 
+CAMPAIGN_ID = "sinister_motives"
+
 def ChooseCommunityService():
     return AbilityFactoryCampaign.ChooseCardAtRandomAndShuffleIntoEncounterDeck(
         ["27176", "27177", "27178", "27179", "27180"],
+        campaign_id=CAMPAIGN_ID,
     )
 
 def FollowSetupInstructionOfReputationTrack() -> 'Ability':
@@ -108,7 +111,7 @@ def FollowSetupInstructionOfReputationTrack() -> 'Ability':
                 player.DealEncounterCards(1, effect)
             Players.ForEachPlayer(effect, action)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 def CampaignSetup(level: int, *,
                 campaign: Callable[[Effect, Message.WhenCampaignSetup], None]|None=None,
@@ -119,20 +122,23 @@ def CampaignSetup(level: int, *,
         abilities.append(
             AbilityFactoryCampaign.PutCardIntoPlay(
                 "27190",
-                under_control="FirstPlayer"
+                under_control="FirstPlayer",
+                campaign_id=CAMPAIGN_ID,
             )
         )
 
     if level >= 1:
         abilities.append(
             AbilityFactoryCampaign.PutCardIntoPlay(
-                "27174a,27174b"
+                "27174a,27174b",
+                campaign_id=CAMPAIGN_ID,
             )
         )
         abilities.append(
             AbilityFactoryCampaign.ShuffleCardIntoDeck(
                 "27175",
-                "EncounterDeck"
+                "EncounterDeck",
+                campaign_id=CAMPAIGN_ID,
             )
         )
 
@@ -140,7 +146,8 @@ def CampaignSetup(level: int, *,
         abilities.append(
             AbilityFactoryCampaign.ShuffleCardIntoDeck(
                 "27181",
-                "EncounterDeck"
+                "EncounterDeck",
+                campaign_id=CAMPAIGN_ID,
             )
         )
 
@@ -157,14 +164,15 @@ def CampaignSetup(level: int, *,
     if campaign:
         abilities.append(
             AbilityFactoryCampaign.WhenCampaignSetup(
-                campaign
+                campaign,
+                campaign_id=CAMPAIGN_ID,
             ),
         )
 
     # Expert
     if level >= 2:
         abilities.append(
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(),
+            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
         )
         value = {
             2: 1,
@@ -173,15 +181,18 @@ def CampaignSetup(level: int, *,
             5: 3
         }[level]
         abilities.append(
-            AbilityFactoryCampaign.ExpertCampaignEachPlayerMayDealFacedownEncounterCardYpHealHP(value),
+            AbilityFactoryCampaign.ExpertCampaignEachPlayerMayDealFacedownEncounterCardYpHealHP(
+                value,
+                campaign_id=CAMPAIGN_ID,
+            ),
         )
 
     if campaign_expert:
         abilities.append(
             AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
-                campaign_expert
+                campaign_expert,
+                campaign_id=CAMPAIGN_ID,
             ),
         )
 
     return abilities
-

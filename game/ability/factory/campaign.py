@@ -6,6 +6,7 @@ class AbilityFactoryCampaign:
     def WhenCampaignSetup(operation: OperationType[Message.WhenCampaignSetup],
                         *,
                         conditions: ConditionsType[Message.WhenCampaignSetup]=[],
+                        campaign_id: str|None=None,
                         ) -> 'Ability':
         from game.operate.worlds import Worlds
         return Ability(
@@ -13,7 +14,10 @@ class AbilityFactoryCampaign:
             Message.WhenCampaignSetup,
             [
                 lambda effect, message:
-                    Worlds.IsCampaign(effect),
+                    Worlds.IsCampaign(effect) and (
+                        campaign_id == None or
+                        Worlds.IsCampaignSelected(effect, campaign_id)
+                    ),
                 *conditions
             ],
             operation
@@ -23,6 +27,7 @@ class AbilityFactoryCampaign:
     def WhenCampaignSetupExpertOnly(operation: OperationType[Message.WhenCampaignSetup],
                                     *,
                                     conditions: ConditionsType[Message.WhenCampaignSetup]=[],
+                                    campaign_id: str|None=None,
                                     ) -> 'Ability':
         from game.operate.worlds import Worlds
         return AbilityFactoryCampaign.WhenCampaignSetup(
@@ -32,10 +37,11 @@ class AbilityFactoryCampaign:
                     Worlds.IsExpert(effect),
                 *conditions
             ],
+            campaign_id=campaign_id,
         )
 
     @staticmethod
-    def ExpertCampaignSetPlayersHPToTheirRemainingHP() -> 'Ability':
+    def ExpertCampaignSetPlayersHPToTheirRemainingHP(*, campaign_id: str|None=None) -> 'Ability':
         from game.operate.worlds import Worlds
         from game.operate.campaign_logs import CampaignLog
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
@@ -47,28 +53,29 @@ class AbilityFactoryCampaign:
 
         return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
             action,
+            campaign_id=campaign_id,
         )
 
     @staticmethod
-    def PutCardIntoPlay(card_id: str, under_control: Literal["FirstPlayer"]|None=None) -> 'Ability':
+    def PutCardIntoPlay(card_id: str, under_control: Literal["FirstPlayer"]|None=None, *, campaign_id: str|None=None) -> 'Ability':
         from game.card.factory import CardFactory
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
             card = CardFactory.GenerateCard(card_id, None, effect.world)
             face = card.face
             face.PutIntoPlay("FirstPlayer", effect, under_control=under_control != None)
-        return AbilityFactoryCampaign.WhenCampaignSetup(action)
+        return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
 
     @staticmethod
-    def ShuffleCardIntoDeck(card_id: str, deck: Literal["EncounterDeck"]) -> 'Ability':
+    def ShuffleCardIntoDeck(card_id: str, deck: Literal["EncounterDeck"], *, campaign_id: str|None=None) -> 'Ability':
         from game.card.factory import CardFactory
         from game.operate.faces import Faces
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
             card = CardFactory.GenerateCard(card_id, None, effect.world)
             Faces.ShuffleAllTo([card.face], deck, effect)
-        return AbilityFactoryCampaign.WhenCampaignSetup(action)
+        return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
 
     @staticmethod
-    def ChooseCardAtRandomAndShuffleIntoEncounterDeck(card_ids: List[str]) -> 'Ability':
+    def ChooseCardAtRandomAndShuffleIntoEncounterDeck(card_ids: List[str], *, campaign_id: str|None=None) -> 'Ability':
         from game.card.factory import CardFactory
         from engine.lib import Random
         from game.operate.campaign_logs import CampaignLog
@@ -78,10 +85,10 @@ class AbilityFactoryCampaign:
             card_id = Random.RandomChoice([x for x in card_ids if x not in checked_ids])
             card = CardFactory.GenerateCard(card_id, None, effect.world)
             Faces.ShuffleAllTo([card.face], "EncounterDeck", effect)
-        return AbilityFactoryCampaign.WhenCampaignSetup(action)
+        return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
 
     @staticmethod
-    def ExpertCampaignEachPlayerMayDealFacedownEncounterCardYpHealHP(size: int) -> 'Ability':
+    def ExpertCampaignEachPlayerMayDealFacedownEncounterCardYpHealHP(size: int, *, campaign_id: str|None=None) -> 'Ability':
         from game.operate.worlds import Worlds
         from game.ability.factory import AbilityFactory
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
@@ -102,10 +109,11 @@ class AbilityFactoryCampaign:
 
         return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
             action,
+            campaign_id=campaign_id,
         )
 
     @staticmethod
-    def ExpertCampaignAddRandomObligationFromExpertCampaignToHealHP(obligations: Sequence[str]) -> 'Ability':
+    def ExpertCampaignAddRandomObligationFromExpertCampaignToHealHP(obligations: Sequence[str], *, campaign_id: str|None=None) -> 'Ability':
         from game.operate.worlds import Worlds
         from game.operate.campaign_logs import CampaignLog
         from game.card.factory import CardFactory
@@ -142,5 +150,5 @@ class AbilityFactoryCampaign:
 
         return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
             action,
+            campaign_id=campaign_id,
         )
-

@@ -211,6 +211,9 @@ class Scene:
         if "encounter_cards_ignore_crisis" in self.rules:
             self.rules.remove("encounter_cards_ignore_crisis")
 
+        if "mode_campaign" in self.rules and not self.campaign.campaign_id:
+            self.campaign.InferCampaignId()
+
         del self.campaign.modular_sets
         self.rules = list(sorted(set(self.rules)))
 
@@ -297,4 +300,3 @@ class Scene:
     @property
     def sign(self) -> str:
         return self.GetMetadataStr("sign")
-

@@ -1,6 +1,9 @@
 from . import *
 
 
+CAMPAIGN_ID = "mutant_genesis"
+
+
 FUTURE_PAST_CARD_IDS = ["32166", "32167", "32168", "32169", "32170"]
 
 ROLE_UPGRADE_IDS = {
@@ -50,7 +53,7 @@ def SetupFuturePastDeck() -> 'Ability':
         if future_past_ids:
             CardFactory.GenerateCards(future_past_ids, Worlds.AsideDeck(effect), effect.world)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def RevealCampaignSideScheme(level: int) -> 'Ability':
@@ -62,7 +65,7 @@ def RevealCampaignSideScheme(level: int) -> 'Ability':
         )
         card.face.Reveal(Worlds.GetFirstPlayer(effect), effect)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def EachPlayerPutRandomRoleUpgradeIntoPlay(level: int) -> 'Ability':
@@ -87,7 +90,7 @@ def EachPlayerPutRandomRoleUpgradeIntoPlay(level: int) -> 'Ability':
             card = CardFactory.GenerateCard(card_id, None, effect.world)
             card.face.PutIntoPlay(player, effect, under_control=True)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def PutJubileeIntoPlay() -> 'Ability':
@@ -98,7 +101,7 @@ def PutJubileeIntoPlay() -> 'Ability':
             card = CardFactory.GenerateCard("32088b", None, effect.world)
             card.face.PutIntoPlay(Worlds.GetFirstPlayer(effect), effect, under_control=True)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def EachPlayerShuffleCaptiveAlliesIntoTheirDeck() -> 'Ability':
@@ -116,7 +119,7 @@ def EachPlayerShuffleCaptiveAlliesIntoTheirDeck() -> 'Ability':
                 CardFactory.GenerateCards(card_ids, player.player_deck, effect.world)
                 player.player_deck.Shuffle(effect)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def RemoveCampaignAlliesFromPlayerDecks() -> 'Ability':
@@ -131,7 +134,7 @@ def RemoveCampaignAlliesFromPlayerDecks() -> 'Ability':
             faces = player.player_deck.FindCards(card_ids=card_ids)
             Faces.RemoveAllFromGame(faces, effect)
 
-    return AbilityFactoryCampaign.WhenCampaignSetup(action)
+    return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
 
 
 def ExpertCampaignEachPlayerMayHealAtAccelerationCost() -> 'Ability':
@@ -150,7 +153,7 @@ def ExpertCampaignEachPlayerMayHealAtAccelerationCost() -> 'Ability':
                 ).SetTarget([player.GetIdentity()], canbe_heal=True),
             )
 
-    return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(action)
+    return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(action, campaign_id=CAMPAIGN_ID)
 
 
 def CampaignSetup(level: int) -> List['Ability']:
@@ -169,7 +172,7 @@ def CampaignSetup(level: int) -> List['Ability']:
 
     if level >= 2:
         abilities.extend([
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(),
+            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
             ExpertCampaignEachPlayerMayHealAtAccelerationCost(),
         ])
 

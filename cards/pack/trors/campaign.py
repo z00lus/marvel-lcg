@@ -1,5 +1,7 @@
 from . import *
 
+CAMPAIGN_ID = "rise_of_red_skull"
+
 def ShuffleEachExperimentalAttachmentIntoTheEncounterDeck() -> 'Ability':
     from game.operate.worlds import Worlds
     from game.operate.campaign_logs import CampaignLog
@@ -12,6 +14,7 @@ def ShuffleEachExperimentalAttachmentIntoTheEncounterDeck() -> 'Ability':
 
     return AbilityFactoryCampaign.WhenCampaignSetup(
         action,
+        campaign_id=CAMPAIGN_ID,
     )
 
 def EachPlayerSearchTheirDeckForSetupKeyword() -> 'Ability':
@@ -35,6 +38,7 @@ def EachPlayerSearchTheirDeckForSetupKeyword() -> 'Ability':
 
     return AbilityFactoryCampaign.WhenCampaignSetup(
         action,
+        campaign_id=CAMPAIGN_ID,
     )
 
 def EachPlayerAddRescuedAlliesToTheirDeck() -> 'Ability':
@@ -51,11 +55,13 @@ def EachPlayerAddRescuedAlliesToTheirDeck() -> 'Ability':
 
     return AbilityFactoryCampaign.WhenCampaignSetup(
         action,
+        campaign_id=CAMPAIGN_ID,
     )
 
 def EachPlayerMayAddRandomObligationToHealHP() -> 'Ability':
     return AbilityFactoryCampaign.ExpertCampaignAddRandomObligationFromExpertCampaignToHealHP(
-        ["04163", "04164", "04165", "04166"]
+        ["04163", "04164", "04165", "04166"],
+        campaign_id=CAMPAIGN_ID,
     )
 
 
@@ -80,12 +86,12 @@ def CampaignSetup(level: int, *,
 
     for campaign in campaigns:
         abilities.append(
-            AbilityFactoryCampaign.WhenCampaignSetup(campaign),
+            AbilityFactoryCampaign.WhenCampaignSetup(campaign, campaign_id=CAMPAIGN_ID),
         )
 
     if level >= 2:
         abilities.append(
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(),
+            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
         )
         abilities.append(
             EachPlayerMayAddRandomObligationToHealHP()
@@ -93,8 +99,7 @@ def CampaignSetup(level: int, *,
 
     for campaign in campaigns_expert:
         abilities.append(
-            AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(campaign),
+            AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(campaign, campaign_id=CAMPAIGN_ID),
         )
 
     return abilities
-

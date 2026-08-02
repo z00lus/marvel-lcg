@@ -830,9 +830,10 @@ p:has(#timeout_text) {
             </label>
 
             <label id="mode_campaign_container" class="hide">
-                <input type="checkbox" id="mode_campaign"> Campaign (Experimental)
-                <!-- <span class="tooltip">Only for "The Rise of Red Skull"</span> -->
-                <!-- <span class="tooltip">(Experimental) This feature is still under development and may not function correctly. It is not recommended to enable it at this time. Please refrain from reporting any bugs if you choose to enable it.</span> -->
+                Campaign (Experimental):
+                <select id="campaign_selector">
+                    <option value="">None (standard game)</option>
+                </select>
             </label>
 
             <style>
@@ -842,13 +843,14 @@ p:has(#timeout_text) {
             </style>
 
             <script>
-                document.querySelector("#mode_campaign_container").onclick = (e) => {
+                document.querySelector("#campaign_selector").onchange = () => {
                     const campaign_log = document.querySelector("#campaign_log")
-                    if( e.target.checked ) {
+                    if( document.querySelector("#campaign_selector").value ) {
                         campaign_log.classList.remove('hide')
                         generateInputs("")
                     } else {
                         campaign_log.classList.add('hide')
+                        document.querySelector("#campaign_log_container").replaceChildren()
                     }
                 }
             </script>
@@ -1055,14 +1057,52 @@ p:has(#timeout_text) {
             </table>
 
             <script>
+                const campaignDefinitions = {
+                    rise_of_red_skull: {
+                        name: "The Rise of Red Skull",
+                        package: "4. The Rise of Red Skull",
+                    },
+                    sinister_motives: {
+                        name: "Sinister Motives",
+                        package: "27. Sinister Motives",
+                    },
+                    mutant_genesis: {
+                        name: "Mutant Genesis",
+                        package: "32. Mutant Genesis",
+                    },
+                }
+
                 function generateInputs(current_package) {
                     if( current_package ) {
                         last_current_package = current_package
                     } else {
                         current_package = last_current_package
                     }
+
+                    const campaign_selector = document.querySelector('#campaign_selector')
+                    if( arguments[0] ) {
+                        const previous_campaign_id = campaign_selector.value
+                        const available_campaigns = Object.entries(campaignDefinitions).filter(
+                            ([campaign_id, definition]) => definition.package == current_package
+                        )
+                        campaign_selector.replaceChildren(new Option("None (standard game)", ""))
+                        for( const [campaign_id, definition] of available_campaigns ) {
+                            campaign_selector.appendChild(new Option(definition.name, campaign_id))
+                        }
+                        if( available_campaigns.some(([campaign_id]) => campaign_id == previous_campaign_id) ) {
+                            campaign_selector.value = previous_campaign_id
+                        }
+
+                        if( available_campaigns.length ) {
+                            document.querySelector('#mode_campaign_container').classList.remove('hide')
+                        } else {
+                            document.querySelector('#mode_campaign_container').classList.add('hide')
+                        }
+                    }
+
+                    const campaign_id = campaign_selector.value
                     const playerStrings = {
-                        '4. The Rise of Red Skull':
+                        rise_of_red_skull:
                         [
                             { description: "Player 1 Remaining hit points", type: "number" },
                             { description: "Player 2 Remaining hit points", type: "number" },
@@ -1098,7 +1138,7 @@ p:has(#timeout_text) {
                             //     type: "checkbox"
                             // }
                         ],
-                        '27. Sinister Motives':
+                        sinister_motives:
                         [
                             { description: "Reputation Track", type: "number" },
                             { description: "Player 1 Remaining hit points", type: "number" },
@@ -1123,7 +1163,7 @@ p:has(#timeout_text) {
                             { description: "Planning Ahead: Reputation Track Reward P4", type: "card" },
                             { description: "Osborn Tech: Reputation Track Penalty", type: "checkbox", options: ["27147", "27148", "27149", "27150", "27151", "27152"] },
                         ],
-                        '32. Mutant Genesis':
+                        mutant_genesis:
                         [
                             { description: "Player 1 Role", type: "select", options: ["Brawler", "Commander", "Defender", "Peacekeeper"] },
                             { description: "Player 2 Role", type: "select", options: ["Brawler", "Commander", "Defender", "Peacekeeper"] },
@@ -1154,14 +1194,13 @@ p:has(#timeout_text) {
 
                     }
 
-                    if( Object.prototype.hasOwnProperty.call(playerStrings, current_package) ) {
-                        document.querySelector('#mode_campaign_container').classList.remove('hide')
-                    } else {
-                        document.querySelector('#mode_campaign_container').classList.add('hide')
-                        document.querySelector('#mode_campaign').checked = false
+                    if( !Object.prototype.hasOwnProperty.call(playerStrings, campaign_id) ) {
                         document.querySelector("#campaign_log").classList.add('hide')
+                        document.querySelector('#campaign_log_container').replaceChildren()
                         return
                     }
+
+                    document.querySelector("#campaign_log").classList.remove('hide')
 
                     const container = document.getElementById('campaign_log_container');
                     container.replaceChildren()
@@ -1173,7 +1212,7 @@ p:has(#timeout_text) {
                         }
                     }
 
-                    playerStrings[current_package].forEach(item => {
+                    playerStrings[campaign_id].forEach(item => {
                         const row = document.createElement('tr');
 
                         if( length_of_heroes < 2 && (item.description.startsWith("Player 2") || item.description.endsWith("P2")) ) {
@@ -1669,12 +1708,14 @@ p:has(#timeout_text) {
             }
 
             new_game = new NewGame()
+            const selected_campaign_id = document.querySelector('#campaign_selector').value
+            scenario.campaign_id = selected_campaign_id
             new_game.campaign_json = JSON.stringify(scenario)
             new_game.encounter_set_names = encounter_sets_names
             new_game.hero_json = []
 
             function read_campaign_log() {
-                if( !document.querySelector('#mode_campaign').checked ) {
+                if( !selected_campaign_id ) {
                     return {}
                 }
                 const jsonData = {};
@@ -1746,7 +1787,7 @@ p:has(#timeout_text) {
             if( document.querySelector('#mode_skirmish').checked ) {
                 new_game.rules.push("mode_skirmish")
             }
-            if( document.querySelector('#mode_campaign').checked ) {
+            if( selected_campaign_id ) {
                 new_game.rules.push("mode_campaign")
             }
             const mode_heroic = parseInt(document.querySelector('#mode_heroic_slider').value)
