@@ -324,6 +324,20 @@
         color: red
     }
 
+    #campaign_log .campaign-card-tooltip {
+        position: fixed;
+        left: clamp(320px, 58vw, calc(100vw - 300px));
+        top: 10vh;
+    }
+
+    #campaign_log .campaign-card-tooltip img {
+        display: block;
+        width: clamp(180px, 18vw, 280px);
+        height: auto;
+        max-height: 55vh;
+        object-fit: contain;
+    }
+
     label:hover .tooltip {
         display: block;
     }
@@ -1155,9 +1169,9 @@ p:has(#timeout_text) {
                             item.options.forEach(option => {
                                 let option0 = option.split(",")[0]
                                 if( option.length >= 5 && option.length <= 6 ) {
-                                    tooltip = `<span class="tooltip"><img src="${option}"></img></span>`
+                                    tooltip = `<span class="tooltip campaign-card-tooltip"><img src="${option}"></img></span>`
                                 } if( option0.length >= 5 && option0.length <= 6 ) {
-                                    tooltip = `<span class="tooltip"><img src="${option0}"></img></span>`
+                                    tooltip = `<span class="tooltip campaign-card-tooltip"><img src="${option0}"></img></span>`
                                 } else {
                                     tooltip = ""
                                 }
@@ -1172,7 +1186,7 @@ p:has(#timeout_text) {
                             let html = `<input type="hidden" data-key="${item.description}">`;
                             item.options.forEach(option => {
                                 if( option.length >= 5 && option.length <= 6 ) {
-                                    tooltip = `<span class="tooltip"><img src="${option}"></img></span>`
+                                    tooltip = `<span class="tooltip campaign-card-tooltip"><img src="${option}"></img></span>`
                                 } else {
                                     tooltip = ""
                                 }
