@@ -24,10 +24,20 @@ class Obligation(Asset2, CanHinder, HasHazard, HasAccelerationIcon, HasUses, Enc
     @override
     def __init__(self, paper: 'Paper') -> None:
         self.printed_give_to: str|None = None
+        self.printed_cannot_choose_discard = False
 
         super().__init__(paper)
 
         self.RegisterAttribute("GiveTo", "printed_give_to", str)
+        self.RegisterAttribute(
+            "CannotChooseDiscard",
+            "printed_cannot_choose_discard",
+            bool,
+        )
+
+    @property
+    def cannot_choose_discard(self) -> bool:
+        return self.printed_cannot_choose_discard
 
     @override
     def GetAbilities(self) -> List['Ability']:
@@ -128,4 +138,3 @@ class Obligation(Asset2, CanHinder, HasHazard, HasAccelerationIcon, HasUses, Enc
         from game.card.face.card_type import AlterEgo
         face = super().GetBindFace()
         return face.CastTo(Hero|AlterEgo)
-

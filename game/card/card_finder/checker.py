@@ -169,6 +169,8 @@ def Check(self: 'CardFinder', face: 'CardFace', effect: 'Effect|None'=None) -> b
     if self.canbe_discard != None:
         if (HasPermanent.IsType(face) and face.permanent) or Identity.IsType(face):
             return False
+        if self.canbe_discard and getattr(face, "cannot_choose_discard", False):
+            return False
     ################################################################################
     # Game Area
     if self.game_area != None:
@@ -495,4 +497,3 @@ def Checks(self: 'CardFinder', faces: Sequence['CardFace'], effect: 'Effect|None
 def Checks2(self: 'CardFinder', faces: Sequence['CardFace'], card_type: Type[TF]) -> List['TF']:
     faces = self.Checks(faces)
     return [x for x in faces if card_type.IsType(x)]
-

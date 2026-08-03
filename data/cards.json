@@ -21105,6 +21105,242 @@
             "text": "Attach to your identity.\nYou cannot make basic attacks or play [[Attack]] events.\n<b>Alter-Ego Action</b>: Spend [energy] [mental] resources \u2192 discard this card."
         },
         {
+            "card_id": "21180a",
+            "type": "SideScheme",
+            "name": "Secure the Landing Pad",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "1*"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 1[per_hero]\n<b>When Defeated:</b> Flip this card and put Cosmo into play under the first player's control."
+        },
+        {
+            "card_id": "21180b",
+            "type": "Ally",
+            "name": "* Cosmo",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "2*",
+                "RES": "B",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [
+                "GUARDIAN"
+            ],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "The first player controls Cosmo. Cosmo does not count against the ally limit.\n<b>Forced Interrupt:</b> When Cosmo leaves play, remove him from the game."
+        },
+        {
+            "card_id": "21181",
+            "type": "SideScheme",
+            "name": "Security Breach",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2",
+                "StartingThreat": "2",
+                "Hinder": "2*",
+                "Amplify": "1",
+                "Victory": "2"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 2[per_hero]\n<b>When Revealed:</b> Each player places 1 random card from their hand facedown here.\n<b>When Defeated:</b> Return each facedown card here to its owner's hand."
+        },
+        {
+            "card_id": "21182a",
+            "type": "SideScheme",
+            "name": "Save the Shawarma Place",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "1*"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 1[per_hero]\n<b>When Defeated:</b> Each player shuffles 1 copy of Shawarma into their deck. Flip this card."
+        },
+        {
+            "card_id": "21182b",
+            "type": "Minion",
+            "name": "* Black Swan",
+            "subtitle": "",
+            "desc": {
+                "HP": "4*",
+                "ATK": "2",
+                "SCH": "2",
+                "Toughness": "1",
+                "Victory": "2"
+            },
+            "traits": [
+                "BLACK ORDER",
+                "ELITE"
+            ],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Black Swan engages the first player.\n<b>Forced Response:</b> After Black Swan engages you, discard 1 card at random from your hand."
+        },
+        {
+            "card_id": "21183",
+            "type": "Resource",
+            "name": "Shawarma",
+            "subtitle": "",
+            "desc": {
+                "RES": "YRB",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": ""
+        },
+        {
+            "card_id": "21184a",
+            "type": "SideScheme",
+            "name": "Hack Sanctuary's Computer",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "1*",
+                "Crisis": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 1[per_hero]\n<b>When Defeated:</b> Each player searches their deck and discard pile for 1 card and adds it to their hand. Each player shuffles their deck. Flip this card."
+        },
+        {
+            "card_id": "21184b",
+            "type": "SideScheme",
+            "name": "Defensive Protocols",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "2*",
+                "Victory": "2"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 2[per_hero]\n<b>Forced Interrupt:</b> When the player phase ends, place 1 crash counter here. If there are 2 crash counters here, each player adds 1 copy of System Shock to their hand and removes this card from the game."
+        },
+        {
+            "card_id": "21185",
+            "type": "Obligation",
+            "name": "System Shock",
+            "subtitle": "",
+            "desc": {
+                "GiveTo": "",
+                "CannotChooseDiscard": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "You cannot choose to discard this card from your hand.\nWhile this card is in your hand, it gains: \"<b>Alter-Ego Action:</b> Spend a resource \u2192 remove this card from the game.\""
+        },
+        {
+            "card_id": "21186a",
+            "type": "SideScheme",
+            "name": "Find the Norn Stones",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "Acceleration": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Threat cannot be removed from this scheme while Hela has the MYSTIC trait.\n<b>When Defeated:</b> Each player puts 1 copy of Norn Stone into play, Setup side faceup. Flip this card."
+        },
+        {
+            "card_id": "21186b",
+            "type": "SideScheme",
+            "name": "Retrieve Odin's Armor",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "2*",
+                "Victory": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Hinder 2[per_hero]\nThreat cannot be removed from this scheme unless the first player controls Odin.\n<b>When Defeated:</b> Heal all damage from Odin and flip him to his KING side."
+        },
+        {
+            "card_id": "21187a",
+            "type": "Upgrade",
+            "name": "Norn Stone",
+            "subtitle": "Setup",
+            "desc": {
+                "Cost": "0",
+                "Permanent": "1",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [
+                "ASGARD",
+                "ARTIFACT"
+            ],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Permanent. Setup.\nYour hero gets +1 THW, +1 ATK, and +1 DEF.\n<b>Hero Action:</b> Ready your hero \u2192 flip this card."
+        },
+        {
+            "card_id": "21187b",
+            "type": "Upgrade",
+            "name": "Norn Stone",
+            "subtitle": "Recovery",
+            "desc": {
+                "Cost": "0",
+                "Permanent": "1",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [
+                "ASGARD",
+                "ARTIFACT"
+            ],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Permanent.\n<b>Alter-Ego Action:</b> Exhaust Norn Stone \u2192 heal 1 damage from your identity."
+        },
+        {
+            "card_id": "21188",
+            "type": "Treachery",
+            "name": "Summoned Back",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3",
+                "Peril": "1",
+                "Surge": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Peril. Surge.\n<b>When Revealed:</b> Search the encounter deck, discard pile, and set-aside area for your nemesis minion and put it into play engaged with you. Shuffle the encounter deck."
+        },
+        {
+            "card_id": "21189a",
+            "type": "SideScheme",
+            "name": "Open the Dungeons",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "Amplify": "1"
+            },
+            "traits": [],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "<b>When Defeated:</b> Each player chooses 1 captive ally from the campaign set and puts it into play under their control. Flip this card."
+        },
+        {
+            "card_id": "21189b",
+            "type": "Attachment",
+            "name": "* Jormungand",
+            "subtitle": "",
+            "desc": {
+                "Acceleration": "1"
+            },
+            "traits": [
+                "DRAGON"
+            ],
+            "set_name": "The Mad Titan's Shadow Campaign",
+            "text": "Attach to Loki. Loki gets +4 hit points per player.\n<b>Forced Interrupt:</b> When Loki is defeated, remove this card from the game."
+        },
+        {
             "card_id": "21190",
             "type": "Ally",
             "name": "* Lady Sif",

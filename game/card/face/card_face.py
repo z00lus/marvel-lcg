@@ -51,7 +51,7 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         "Setup", "Peril", "Stage",
         "Linked", "Form", "CorrespondingCard",
         "Temporary", "Teamwork", "Vulnerable",
-        "Subtype", 
+        "Subtype", "CannotChooseDiscard",
     ]
 
     IGNORE_KEY = Literal[
@@ -125,7 +125,7 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         'staff', 'mission', 'leap', 'lock', 'parley', 'bystander', 'doubt', 'target', 
         'secret', 'bird', 'recon', 'emergency', 'alert', 'notoriety', 'dart', 
 
-        'charm', 
+        'charm', 'crash',
         'fuel', 'stronghold', 'skill',
 
         'rebirth', 
@@ -981,4 +981,3 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
             if buff:
                 texts[buff.name] = buff.GetText()
         return texts
-

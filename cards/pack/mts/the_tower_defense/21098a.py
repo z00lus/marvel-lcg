@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mts.campaign import CampaignSetup
 
 # Under Siege
 
@@ -27,7 +28,6 @@ def GetAbilities() -> Sequence['Ability']:
         assert scheme
         scheme.Reveal(first_player, effect)
 
-
     return [
         AbilityFactory.WhenGameBeginSetup(
             under_siege_game_start
@@ -36,5 +36,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             under_siege
         ),
+        *CampaignSetup(2),
     ]
-

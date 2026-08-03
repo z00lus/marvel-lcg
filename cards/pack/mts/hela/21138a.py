@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mts.campaign import CampaignSetup
 
 # Odin's Torment
 
@@ -28,9 +29,9 @@ def GetAbilities() -> Sequence['Ability']:
         # Set Gjallerbru, Skurge, Hall of Nastrond, and Nidhogg aside, out of play
 
     return [
+        *CampaignSetup(4),
         AbilityFactory.WhenCardSetup(
             "This",
             odins_torment
         ),
     ]
-

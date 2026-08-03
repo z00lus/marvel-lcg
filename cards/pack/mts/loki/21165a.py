@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.mts.campaign import CampaignSetup
 
 # All Hail King Loki
 
@@ -25,6 +26,7 @@ def GetAbilities() -> Sequence['Ability']:
             face.Reveal(None, effect)
 
     return [
+        *CampaignSetup(5),
         AbilityFactory.WhenCardSetupBeforePutSetupCards(
             all_hail_king_loki_before
         ),
@@ -33,4 +35,3 @@ def GetAbilities() -> Sequence['Ability']:
             all_hail_king_loki
         ),
     ]
-
