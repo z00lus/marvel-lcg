@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import ExpertCampaignAddHandCardToTheCollectionAfterSetup
 
 # The Grand Collection
 
@@ -44,6 +45,6 @@ def GetAbilities() -> Sequence['Ability']:
                     GetTheCollection(effect).deck.GetSize() >= 5 * Worlds.GetPlayerNumIcon(effect),
             ]
         ),
-        AbilityFactory.IfThisSchemeStageIsCompletedPlayersLoseTheGame()
+        AbilityFactory.IfThisSchemeStageIsCompletedPlayersLoseTheGame(),
+        ExpertCampaignAddHandCardToTheCollectionAfterSetup(),
     ]
-

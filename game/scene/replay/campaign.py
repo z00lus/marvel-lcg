@@ -25,6 +25,7 @@ class CampaignDescriptor:
         """Identify legacy campaign scenes that predate an explicit campaign id."""
         campaign_ids_by_prefix = {
             "04": "rise_of_red_skull",
+            "16": "galaxys_most_wanted",
             "27": "sinister_motives",
             "32": "mutant_genesis",
             "40": "next_evolution",

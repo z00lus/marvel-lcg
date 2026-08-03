@@ -6,6 +6,8 @@ PLAYER_LIST_KEY: TypeAlias = Literal[
     "Rescued Allies",
     "Captive Allies",
     "Aspect Advantage: Reputation Track Reward",
+    "Market Cards",
+    "Cards in The Collection",
 ]
 
 PLAYER_STR_KEY: TypeAlias = Literal[
@@ -21,6 +23,7 @@ PLAYER_STR_KEY: TypeAlias = Literal[
 
 PLAYER_INT_KEY: TypeAlias = Literal[
     "Remaining hit points",
+    "Unspent Units",
 ]
 
 LOG_LIST_KEY: TypeAlias = Literal[
@@ -41,6 +44,8 @@ LOG_LIST_KEY: TypeAlias = Literal[
     "Evidence Earned",
     "Scenario 3 Adaptoid environments",
     "Scenario 4 Surviving Thunderbolts",
+    "Headhunter Defeated",
+    "Galactic Artifacts Side Schemes in the Victory Display",
 ]
 
 LOG_INT_KEY: TypeAlias = Literal[
@@ -53,6 +58,7 @@ LOG_INT_KEY: TypeAlias = Literal[
     "Evidence Seed",
     "Scenario 1 Minions and side schemes in play",
     "Scenario 2 Rescued Captives",
+    "Evasion Counters",
 ]
 
 LOG_STR_KEY: TypeAlias = Literal[
@@ -70,6 +76,8 @@ LOG_STR_KEY: TypeAlias = Literal[
     "Scenario 4 Hope Damage Placement",
     "Scenario 5 Hope Damage Placement",
     "Age of Apocalypse Scenario",
+    "Power Stone Control",
+    "Reveal Kree Supremacy",
     "Scenario 1 Mission Side Scheme",
     "Scenario 2 Mission Side Scheme",
     "Scenario 3 Mission Side Scheme",

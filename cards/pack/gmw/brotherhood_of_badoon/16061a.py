@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import CampaignSetup
 
 # Terrestrial Invasion
 
@@ -19,5 +20,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             terrestrial_invasion
         ),
+        *CampaignSetup(1),
     ]
-

@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import CampaignSetup
 
 # The Missing Milano
 
@@ -29,5 +30,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             the_missing_milano
         ),
+        *CampaignSetup(3),
     ]
-

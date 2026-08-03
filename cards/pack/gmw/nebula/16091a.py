@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import CampaignSetup
 
 # The Art of Evasion
 
@@ -35,5 +36,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             the_art_of_evasion
         ),
+        *CampaignSetup(4),
     ]
-

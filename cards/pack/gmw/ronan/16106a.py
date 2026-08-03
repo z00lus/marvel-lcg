@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import CampaignSetup
 
 # Interception Imminent
 
@@ -34,5 +35,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             interception_imminent,
         ),
+        *CampaignSetup(5),
     ]
-

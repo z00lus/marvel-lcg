@@ -1062,6 +1062,10 @@ p:has(#timeout_text) {
                         name: "The Rise of Red Skull",
                         package: "4. The Rise of Red Skull",
                     },
+                    galaxys_most_wanted: {
+                        name: "Galaxy's Most Wanted",
+                        package: "16. Galaxy's Most Wanted",
+                    },
                     sinister_motives: {
                         name: "Sinister Motives",
                         package: "27. Sinister Motives",
@@ -1113,6 +1117,10 @@ p:has(#timeout_text) {
                     }
 
                     const campaign_id = campaign_selector.value
+                    const galaxysMostWantedMarketCards = Array.from(
+                        { length: 28 },
+                        (_, index) => String(16150 + index)
+                    )
                     const playerStrings = {
                         rise_of_red_skull:
                         [
@@ -1149,6 +1157,34 @@ p:has(#timeout_text) {
                             //     description: "01003",
                             //     type: "checkbox"
                             // }
+                        ],
+                        galaxys_most_wanted:
+                        [
+                            { description: "Player 1 Remaining hit points", type: "number" },
+                            { description: "Player 2 Remaining hit points", type: "number" },
+                            { description: "Player 3 Remaining hit points", type: "number" },
+                            { description: "Player 4 Remaining hit points", type: "number" },
+
+                            { description: "Player 1 Unspent Units", type: "number" },
+                            { description: "Player 2 Unspent Units", type: "number" },
+                            { description: "Player 3 Unspent Units", type: "number" },
+                            { description: "Player 4 Unspent Units", type: "number" },
+
+                            { description: "Player 1 Market Cards", type: "checkbox", options: galaxysMostWantedMarketCards },
+                            { description: "Player 2 Market Cards", type: "checkbox", options: galaxysMostWantedMarketCards },
+                            { description: "Player 3 Market Cards", type: "checkbox", options: galaxysMostWantedMarketCards },
+                            { description: "Player 4 Market Cards", type: "checkbox", options: galaxysMostWantedMarketCards },
+
+                            { description: "Player 1 Cards in The Collection", type: "list", tooltip: "card IDs separated by ';'" },
+                            { description: "Player 2 Cards in The Collection", type: "list", tooltip: "card IDs separated by ';'" },
+                            { description: "Player 3 Cards in The Collection", type: "list", tooltip: "card IDs separated by ';'" },
+                            { description: "Player 4 Cards in The Collection", type: "list", tooltip: "card IDs separated by ';'" },
+
+                            { description: "Headhunter Defeated", type: "checkbox", options: ["Scenario 1", "Scenario 2", "Scenario 3", "Scenario 4"] },
+                            { description: "Galactic Artifacts Side Schemes in the Victory Display", type: "checkbox", options: ["16127", "16128", "16129", "16130"] },
+                            { description: "Power Stone Control", type: "select", options: ["Player 1", "Player 2", "Player 3", "Player 4"] },
+                            { description: "Evasion Counters", type: "number" },
+                            { description: "Reveal Kree Supremacy", type: "select", options: ["Yes"] },
                         ],
                         sinister_motives:
                         [

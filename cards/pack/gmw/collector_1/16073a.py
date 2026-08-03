@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.gmw.campaign import CampaignSetup
 
 # The Grand Collection
 
@@ -21,6 +22,6 @@ def GetAbilities() -> Sequence['Ability']:
         AbilityFactory.WhenCardSetup(
             "This",
             the_grand_collection
-        )
+        ),
+        *CampaignSetup(2),
     ]
-
