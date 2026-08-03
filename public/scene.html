@@ -1078,6 +1078,10 @@ p:has(#timeout_text) {
                         name: "Age of Apocalypse",
                         package: "45. Age of Apocalypse",
                     },
+                    agents_of_shield: {
+                        name: "Agents of S.H.I.E.L.D.",
+                        package: "50. Agents of S.H.I.E.L.D.",
+                    },
                 }
 
                 function generateInputs(current_package) {
@@ -1257,6 +1261,34 @@ p:has(#timeout_text) {
                             { description: "Player 2 Campaign Aspect Support", type: "card" },
                             { description: "Player 3 Campaign Aspect Support", type: "card" },
                             { description: "Player 4 Campaign Aspect Support", type: "card" },
+                        ],
+                        agents_of_shield:
+                        [
+                            { description: "Evidence Seed", type: "number", default: Math.floor(Math.random() * 1000000000) },
+                            { description: "Evidence Earned", type: "checkbox", options: ["50185", "50186", "50187", "50188", "50189", "50190", "50191", "50192", "50193"] },
+
+                            { description: "Player 1 Remaining hit points", type: "number" },
+                            { description: "Player 2 Remaining hit points", type: "number" },
+                            { description: "Player 3 Remaining hit points", type: "number" },
+                            { description: "Player 4 Remaining hit points", type: "number" },
+
+                            { description: "Scenario 1 Chief Medical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 1 Chief Surveillance Officer Secret Counters", type: "number" },
+                            { description: "Scenario 1 Chief Tactical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 2 Chief Medical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 2 Chief Surveillance Officer Secret Counters", type: "number" },
+                            { description: "Scenario 2 Chief Tactical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 3 Chief Medical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 3 Chief Surveillance Officer Secret Counters", type: "number" },
+                            { description: "Scenario 3 Chief Tactical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 4 Chief Medical Officer Secret Counters", type: "number" },
+                            { description: "Scenario 4 Chief Surveillance Officer Secret Counters", type: "number" },
+                            { description: "Scenario 4 Chief Tactical Officer Secret Counters", type: "number" },
+
+                            { description: "Scenario 1 Minions and side schemes in play", type: "number" },
+                            { description: "Scenario 2 Rescued Captives", type: "number" },
+                            { description: "Scenario 3 Adaptoid environments", type: "checkbox", options: ["50109", "50110", "50111", "50112"] },
+                            { description: "Scenario 4 Surviving Thunderbolts", type: "checkbox", options: ["50139", "50143", "50148", "50152", "50156", "50161"] },
                         ]
 
                     }
@@ -1314,7 +1346,7 @@ p:has(#timeout_text) {
 
                             row.innerHTML += `<td>${html}</td>`
                         } else if (item.type === "number") {
-                            row.innerHTML += `<td><input type="number" data-key="${item.description}" step="1" min="0"></td>`;
+                            row.innerHTML += `<td><input type="number" data-key="${item.description}" step="1" min="0" value="${item.default ?? ""}"></td>`;
                         } else if (item.type === "checkbox") {
 
                             let html = `<input type="hidden" data-key="${item.description}">`;

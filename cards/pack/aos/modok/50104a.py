@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aos.campaign import CampaignSetup
 
 # Upgrading Adaptoids
 
@@ -49,5 +50,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             upgrading_adaptoids
         ),
+        *CampaignSetup(3),
     ]
-

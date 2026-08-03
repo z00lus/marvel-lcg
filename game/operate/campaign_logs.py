@@ -38,6 +38,9 @@ LOG_LIST_KEY: TypeAlias = Literal[
     "Mission Side Schemes Removed from campaign",
     "Mission Side Schemes Defeated",
     "Overseers Defeated",
+    "Evidence Earned",
+    "Scenario 3 Adaptoid environments",
+    "Scenario 4 Surviving Thunderbolts",
 ]
 
 LOG_INT_KEY: TypeAlias = Literal[
@@ -47,6 +50,9 @@ LOG_INT_KEY: TypeAlias = Literal[
     "Morlocks Saved",
     "Scenario 3 Hope Summers Damage",
     "Scenario 4 Hope Summers Damage",
+    "Evidence Seed",
+    "Scenario 1 Minions and side schemes in play",
+    "Scenario 2 Rescued Captives",
 ]
 
 LOG_STR_KEY: TypeAlias = Literal[

@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aos.campaign import CampaignSetup
 
 # Apprehending Rogue Agents
 
@@ -46,5 +47,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             apprehending_rogue_agents
         ),
+        *CampaignSetup(4),
     ]
-

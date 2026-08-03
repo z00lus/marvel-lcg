@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aos.campaign import CampaignSetup
 
 # Infiltrate A.I.M. Island Embassy
 
@@ -30,5 +31,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             infiltrate_aim_island_embassy
         ),
+        *CampaignSetup(2),
     ]
-

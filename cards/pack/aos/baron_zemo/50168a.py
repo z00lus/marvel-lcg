@@ -10,9 +10,20 @@ def GetAbilities() -> Sequence['Ability']:
 
         player = Worlds.GetFirstPlayer(effect)
 
-        means = player.AskChoosePaper(["50185", "50186", "50187"])
-        motive = player.AskChoosePaper(["50188", "50189", "50190"])
-        opportunity = player.AskChoosePaper(["50191", "50192", "50193"])
+        earned = set(CampaignLog.GetListInternal("Evidence Earned", effect)) \
+            if Worlds.IsCampaignSelected(effect, "agents_of_shield") else set()
+        means = player.AskChoosePaper([
+            card_id for card_id in ["50185", "50186", "50187"]
+            if card_id not in earned
+        ])
+        motive = player.AskChoosePaper([
+            card_id for card_id in ["50188", "50189", "50190"]
+            if card_id not in earned
+        ])
+        opportunity = player.AskChoosePaper([
+            card_id for card_id in ["50191", "50192", "50193"]
+            if card_id not in earned
+        ])
         units = Worlds.FindCardsOnField(effect, names=["Chief Medical Officer", "Chief Surveillance Officer", "Chief Tactical Officer"])
         accused = player.AskChooseFace(units, effect)
         assert accused
@@ -29,4 +40,3 @@ def GetAbilities() -> Sequence['Ability']:
             the_accusation_revealed
         ),
     ]
-
