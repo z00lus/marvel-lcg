@@ -29,6 +29,7 @@ class WorldDescriptor:
     area_environment: List[CardDescriptor] = field(default_factory=lambda: [])
     area_evidence: List[CardDescriptor] = field(default_factory=lambda: [])
     area_rule: List[CardDescriptor] = field(default_factory=lambda: [])
+    area_mission: List[CardDescriptor] = field(default_factory=lambda: [])
     area_processing: List[CardDescriptor] = field(default_factory=lambda: [])
     area_revealing: List[CardDescriptor] = field(default_factory=lambda: [])
     area_resources: List[CardDescriptor] = field(default_factory=lambda: [])
@@ -62,4 +63,3 @@ class WorldDescriptor:
     # player_id: int = field(default=0)
     # Other
     active_card_ids: List[int] = field(default_factory=lambda: [])
-

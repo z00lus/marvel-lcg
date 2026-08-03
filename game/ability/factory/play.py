@@ -142,17 +142,57 @@ class AbilityFactoryPlay:
         from game.card.face.card_type import Ally
         from game.ability.factory import AbilityFactory
         def put_into_play(effect: 'Effect', message: 'Message.WhenPlayerInTurn') -> None:
+            from cards.pack.aoa.campaign import (
+                HasActiveMission,
+                MustPlayNextAllyToMission,
+                PlayAllyToMission,
+            )
+
             this = effect.this.CastTo(Ally)
             target = effect.targets[0]
-            this.PutIntoPlay(target.GetControlByPlayer(), effect)
+            player = target.GetControlByPlayer()
+
+            if HasActiveMission(effect):
+                if MustPlayNextAllyToMission(player, effect):
+                    PlayAllyToMission(this, player, effect)
+                    return
+
+                player.ChooseAbilities(
+                    effect,
+                    AbilityFactory.ForChoiceAbility(
+                        "Play this ally under your control",
+                        lambda targets:
+                            this.PutIntoPlay(player, effect),
+                    ),
+                    AbilityFactory.ForChoiceAbility(
+                        "Play this ally to the mission",
+                        lambda targets:
+                            PlayAllyToMission(this, player, effect),
+                    ),
+                )
+                return
+
+            this.PutIntoPlay(player, effect)
             # this.card.MoveToArea(target.GetControlByPlayer().allies, effect)
+
+        def professor_x_cannot_enter_play(effect: 'Effect', message: 'Message.WhenPlayerInTurn') -> bool:
+            from game.operate.store import Stores
+            from game.operate.worlds import Worlds
+
+            return not (
+                Worlds.IsCampaignSelected(effect, "age_of_apocalypse") and
+                Stores.HasKey("Age of Apocalypse Scenario", effect) and
+                Stores.GetStr("Age of Apocalypse Scenario", effect) == "5" and
+                effect.this.IsName("* Professor X")
+            )
 
         return AbilityFactory.WhenInYourPlayTurn(
             AbilityType.PlayTurnOption,
             put_into_play,
             conditions=[
                 lambda effect, message:
-                    Condition.FieldHasNotThisUniqueType(effect.this, effect)
+                    Condition.FieldHasNotThisUniqueType(effect.this, effect),
+                professor_x_cannot_enter_play,
             ],
         ).SetPlay().SetTarget("YourIdentity")
 
@@ -452,4 +492,3 @@ class AbilityFactoryPlay:
                 message.SetIgnore(),
             is_local=which_unit == "This"
         )
-

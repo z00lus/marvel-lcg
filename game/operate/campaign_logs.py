@@ -14,6 +14,9 @@ PLAYER_STR_KEY: TypeAlias = Literal[
     "Role",
     "S.H.I.E.L.D. Tech: Reputation Track Reward",
     "Planning Ahead: Reputation Track Reward",
+    "Campaign Ally",
+    "Campaign Aspect Upgrade",
+    "Campaign Aspect Support",
 ]
 
 PLAYER_INT_KEY: TypeAlias = Literal[
@@ -32,6 +35,9 @@ LOG_LIST_KEY: TypeAlias = Literal[
     "Role Upgrades removed from campaign",
     "Marauders Defeated",
     "Campaign Environments Earned",
+    "Mission Side Schemes Removed from campaign",
+    "Mission Side Schemes Defeated",
+    "Overseers Defeated",
 ]
 
 LOG_INT_KEY: TypeAlias = Literal[
@@ -57,6 +63,16 @@ LOG_STR_KEY: TypeAlias = Literal[
     "Scenario 5 Player Side Scheme",
     "Scenario 4 Hope Damage Placement",
     "Scenario 5 Hope Damage Placement",
+    "Age of Apocalypse Scenario",
+    "Scenario 1 Mission Side Scheme",
+    "Scenario 2 Mission Side Scheme",
+    "Scenario 3 Mission Side Scheme",
+    "Scenario 4 Mission Side Scheme",
+    "Scenario 1 Overseer",
+    "Scenario 2 Overseer",
+    "Scenario 3 Overseer",
+    "Scenario 4 Overseer",
+    "Scenario 5 Overseer",
 ]
 
 class CampaignLog:

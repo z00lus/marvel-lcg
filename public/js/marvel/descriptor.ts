@@ -460,6 +460,7 @@ export class WorldDescriptor {
     area_environment            : CardDescriptor[];
     area_evidence               : CardDescriptor[];
     area_rule                   : CardDescriptor[];
+    area_mission                : CardDescriptor[];
     area_processing             : CardDescriptor[];
     area_revealing              : CardDescriptor[];
     area_resources              : CardDescriptor[];
@@ -494,6 +495,7 @@ export class WorldDescriptor {
         this.area_environment           = toCardCardDescriptorList(obj['area_environment'], "area-villain", {is_in_play: true});
         this.area_evidence              = toCardCardDescriptorList(obj['area_evidence'], "area-removed", {is_in_play: true});
         this.area_rule                  = toCardCardDescriptorList(obj['area_rule'], "area-villain", {is_in_play: true});
+        this.area_mission               = toCardCardDescriptorList(obj['area_mission'], "area-villain", {is_in_play: true});
         this.area_processing            = toCardCardDescriptorList(obj['area_processing'], "area-play");
         this.area_revealing             = toCardCardDescriptorList(obj['area_revealing'], "area-play");
         this.area_resources             = toCardCardDescriptorList(obj['area_resources'], "area-play");

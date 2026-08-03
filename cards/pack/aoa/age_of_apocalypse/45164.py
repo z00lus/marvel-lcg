@@ -30,6 +30,17 @@ def GetAbilities() -> Sequence['Ability']:
         this = effect.this.CastTo(Minion)
         Unused(this)
 
+        allies = Worlds.ScenarioArea(effect, "MissionArea").FindCards(card_type=Ally)
+        if allies:
+            player = message.GetToPlayer()
+            ally = player.AskChooseFace(
+                allies,
+                effect,
+                prompt="Choose an ally at the mission to take 1 damage",
+            )
+            if ally:
+                ally.TakeDamage(this, 1, effect)
+
         message.GiveActivatingEnemyAdditionalBoostCard(1, effect)
 
     return [
@@ -42,4 +53,3 @@ def GetAbilities() -> Sequence['Ability']:
             agent_of_apocalypse_boost
         ),
     ]
-

@@ -154,6 +154,10 @@ class DeckTypeFlags:
         is_in_play = True
         is_face_up = True
 
+    class MissionArea(Base):
+        is_in_play = True
+        is_face_up = True
+
     class ProcessingArea(Base):
         is_out_of_play = True
         is_processing = True
@@ -220,6 +224,7 @@ class DeckType(Enum):
     VictoryDisplay          = 52
     StatusArea              = 53
     RuleArea                = 54
+    MissionArea             = 55
 
     @property
     def flags(self):
@@ -251,6 +256,7 @@ class DeckType(Enum):
                 DeckType.EnvironmentArea:           DeckTypeFlags.EnvironmentArea,
                 DeckType.EvidenceArea:              DeckTypeFlags.EvidenceArea,
                 DeckType.RuleArea:                  DeckTypeFlags.RuleArea,
+                DeckType.MissionArea:               DeckTypeFlags.MissionArea,
                 DeckType.ProcessingArea:            DeckTypeFlags.ProcessingArea,
                 DeckType.RevealingArea:             DeckTypeFlags.RevealingArea,
                 DeckType.RemovedArea:               DeckTypeFlags.RemovedArea,
@@ -328,4 +334,3 @@ class DeckType(Enum):
     # @property
     # def is_set_aside(self) -> bool:
     #     return self in [DeckType.AsideDeck, DeckType.AdditionalDeck, DeckType.AdditionalDiscardPile]
-

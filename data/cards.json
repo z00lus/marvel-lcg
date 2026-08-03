@@ -46636,6 +46636,126 @@
             "text": "<b>When Revealed</b>: Choose: Either place 3 threat on the [[Mission]] side scheme, or take 1 damage and this card gains surge.\n<hr />\n[star] <b>Boost</b>: Place 1 threat on the [[Mission]] side scheme. Give the activating enemy an additional boost card."
         },
         {
+            "card_id": "45166a",
+            "type": "SideScheme",
+            "name": "Liberate the Seattle Core",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
+        },
+        {
+            "card_id": "45166b",
+            "type": "SideScheme",
+            "name": "Liberate the Seattle Core",
+            "subtitle": "",
+            "desc": {},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, place 2 threat on the main scheme. If the mission was defeated, each player adds 1 copy of the Desperate Measures upgrade to their hand."
+        },
+        {
+            "card_id": "45167a",
+            "type": "SideScheme",
+            "name": "Evacuate Survivors",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
+        },
+        {
+            "card_id": "45167b",
+            "type": "SideScheme",
+            "name": "Evacuate Survivors",
+            "subtitle": "",
+            "desc": {},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, deal each player a facedown encounter card. If the mission was defeated, each player searches their deck and discard pile for 1 card and adds it to their hand."
+        },
+        {
+            "card_id": "45168a",
+            "type": "SideScheme",
+            "name": "Sabotage the Sea Wall",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
+        },
+        {
+            "card_id": "45168b",
+            "type": "SideScheme",
+            "name": "Sabotage the Sea Wall",
+            "subtitle": "",
+            "desc": {},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, find North American Sea Wall and reveal it. If the mission was defeated, find North American Sea Wall, remove it from the game, and each player deals 3 damage to an enemy."
+        },
+        {
+            "card_id": "45169a",
+            "type": "SideScheme",
+            "name": "Find Lost Mutants",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
+        },
+        {
+            "card_id": "45169b",
+            "type": "SideScheme",
+            "name": "Find Lost Mutants",
+            "subtitle": "",
+            "desc": {},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, each player discards 1 card from their hand. If the mission was defeated, each player adds one set-aside campaign ally to their hand."
+        },
+        {
+            "card_id": "45170a",
+            "type": "SideScheme",
+            "name": "Protect the Professor",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
+        },
+        {
+            "card_id": "45170b",
+            "type": "SideScheme",
+            "name": "Protect the Professor",
+            "subtitle": "",
+            "desc": {},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, the players lose the game. If the mission was defeated, each player searches their deck and discard pile for an ally and adds it to their hand."
+        },
+        {
+            "card_id": "45171a",
+            "type": "Support",
+            "name": "Mission Team",
+            "subtitle": "",
+            "desc": {"RES": "G", "Class": "Campaign;Basic"},
+            "traits": ["MISSION"],
+            "set_name": "Campaign",
+            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team → choose: Reduce the cost of the next ally played to the mission this phase by 2, or make a mission attempt."
+        },
+        {
+            "card_id": "45171b",
+            "type": "Support",
+            "name": "Mission Team",
+            "subtitle": "",
+            "desc": {"RES": "G", "Class": "Campaign;Basic"},
+            "traits": ["FINISHED"],
+            "set_name": "Campaign",
+            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team → choose a player to draw 1 card."
+        },
+        {
             "card_id": "45172",
             "type": "Ally",
             "name": "* Destiny",
@@ -46756,6 +46876,16 @@
             "text": "<b>Forced Response</b>: After this card enters your hand, reveal it. Then, draw 1 card.\n<b>Alter-Ego Action</b>: Exhaust your identity \u2192 remove this card from the game."
         },
         {
+            "card_id": "45179a",
+            "type": "Minion",
+            "name": "* Mister Sinister",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
+            "traits": ["ELITE", "OVERSEER"],
+            "set_name": "Prelates",
+            "text": "Victory 5. Cannot take damage while another minion is at the mission. Players cannot assign cards with the same resource icon to more than one ally each mission attempt."
+        },
+        {
             "card_id": "45179b",
             "type": "Minion",
             "name": "* Mister Sinister",
@@ -46778,6 +46908,16 @@
             "text": "Retaliate 1. Toughness. Villainous. Victory 3.\nMister Sinister engages the first player."
         },
         {
+            "card_id": "45180a",
+            "type": "Minion",
+            "name": "* The Shadow King",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
+            "traits": ["ELITE", "OVERSEER"],
+            "set_name": "Prelates",
+            "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, place 2 threat on the Mission side scheme for each mental resource discarded."
+        },
+        {
             "card_id": "45180b",
             "type": "Minion",
             "name": "* The Shadow King",
@@ -46796,6 +46936,16 @@
             ],
             "set_name": "Prelates",
             "text": "Toughness. Victory 3.\nShadow King engages the first player.\n[star] <b>Forced Response</b>: After The Shadow King attacks you, choose an ally you control with the highest THW. Either discard that ally, or place threat on the main scheme equal to its THW."
+        },
+        {
+            "card_id": "45181a",
+            "type": "Minion",
+            "name": "* Abyss",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
+            "traits": ["ELITE", "OVERSEER"],
+            "set_name": "Prelates",
+            "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, attach each card with a wild resource discarded to Abyss facedown. They cannot be used for the mission attempt."
         },
         {
             "card_id": "45181b",
@@ -46818,6 +46968,16 @@
             "text": "Toughness. Victory 3.\nAbyss gets +2 hit points for each facedown card attached to him and engages the first player.\n[star] <b>Forced Response</b>: After Abyss activates against you, attach the top card of your deck to him, facedown."
         },
         {
+            "card_id": "45182a",
+            "type": "Minion",
+            "name": "* Sugar Man",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
+            "traits": ["ELITE", "OVERSEER"],
+            "set_name": "Prelates",
+            "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, heal 3 damage from Sugar Man for each physical resource discarded."
+        },
+        {
             "card_id": "45182b",
             "type": "Minion",
             "name": "* Sugar Man",
@@ -46836,6 +46996,16 @@
             ],
             "set_name": "Prelates",
             "text": "Toughness. Victory 3.\nSugar Man engages the first player.\n[star] <b>Forced Interrupt</b>: When Sugar Man attacks, this attack gains piercing. If this attack defeats a character, heal 5 damage from Sugar Man."
+        },
+        {
+            "card_id": "45183a",
+            "type": "Minion",
+            "name": "* Mikhail Rasputin",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
+            "traits": ["ELITE", "OVERSEER"],
+            "set_name": "Prelates",
+            "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, deal 1 damage to an ally at the mission for each energy resource discarded."
         },
         {
             "card_id": "45183b",

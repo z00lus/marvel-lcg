@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aoa.campaign_setup import *
 
 # The Horsemen of Apocalypse
 
@@ -33,5 +34,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             the_horsemen_of_apocalypse
         ),
+        *CampaignSetup(2),
     ]
-

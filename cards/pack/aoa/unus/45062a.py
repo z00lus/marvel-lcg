@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aoa.campaign_setup import *
 
 # Hunting Gene Traitors
 
@@ -21,5 +22,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             hunting_gene_traitors
         ),
+        *CampaignSetup(1),
     ]
-

@@ -728,7 +728,9 @@ class Worlds:
 
     @staticmethod
     def ScenarioArea(by_effect: 'Effect', deck_name: 'SCENARIO_AREA_NAME') -> 'Deck':
-        raise NotImplemented
+        if deck_name == "MissionArea":
+            return by_effect.world.area_mission
+        raise NotImplementedError(deck_name)
 
     @staticmethod
     def GetScenario(by_effect: 'Effect') -> 'Scenario':

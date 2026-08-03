@@ -72,6 +72,7 @@ class World(WorldAction, WorldFind):
         self.area_environment   = Deck2(scenario, DeckType.EnvironmentArea, Environment)
         self.area_evidence      = Deck2(scenario, DeckType.EvidenceArea, Evidence)
         self.area_rule          = Deck2(scenario, DeckType.RuleArea, CardFace)
+        self.area_mission       = Deck2(scenario, DeckType.MissionArea, CardFace)
         self.area_processing    = Deck2(scenario, DeckType.ProcessingArea, CardFace)
         self.area_revealing     = Deck2(scenario, DeckType.RevealingArea, CardFace)
 

@@ -28,6 +28,7 @@ class CampaignDescriptor:
             "27": "sinister_motives",
             "32": "mutant_genesis",
             "40": "next_evolution",
+            "45": "age_of_apocalypse",
         }
         for card_id in [*self.villain, *self.schemes, *self.encounters]:
             campaign_id = campaign_ids_by_prefix.get(card_id[:2])

@@ -72,6 +72,7 @@ class ToDescriptor:
         world_descriptor.area_environment       = deck_to_descriptors(world.area_environment)
         world_descriptor.area_evidence          = deck_to_descriptors(world.area_evidence)
         world_descriptor.area_rule              = deck_to_descriptors(world.area_rule)
+        world_descriptor.area_mission           = deck_to_descriptors(world.area_mission)
 
         world_descriptor.area_processing = []
         for player in world.const_seat_order_players:
@@ -113,4 +114,3 @@ class ToDescriptor:
         for face in card.components.boostable.GetDeck().GetAll():
             card_descriptor += ToDescriptor.Card(face.card)
         return card_descriptor
-

@@ -528,6 +528,7 @@ class CardRender {
         const sorted_area_environment = customSort(Game.world_descriptor.area_environment)
         CardRender.print_cards_objs['area-villain'].push    (...sorted_area_environment)
         CardRender.print_cards_objs['area-villain'].push    (...Game.world_descriptor.area_rule)
+        CardRender.print_cards_objs['area-villain'].push    (...Game.world_descriptor.area_mission)
 
         CardRender.print_cards_objs[`encounter-deck-0`] = Game.world_descriptor.encounter_deck
         CardRender.print_cards_objs[`encounter-discard-pile-0`] = Game.world_descriptor.encounter_discard_pile
@@ -1386,4 +1387,3 @@ export class Cards {
 }
 
 (window as any).Cards = Cards;
-

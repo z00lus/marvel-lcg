@@ -1,4 +1,5 @@
 from . import *
+from cards.pack.aoa.campaign_setup import *
 
 # Dark Beast's Bogus Journey
 
@@ -27,5 +28,5 @@ def GetAbilities() -> Sequence['Ability']:
             "This",
             dark_beasts_bogus_journey
         ),
+        *CampaignSetup(4),
     ]
-
