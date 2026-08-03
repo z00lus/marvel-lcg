@@ -9,6 +9,7 @@ from engine.lib import MimeType, Json, Ver
 from engine.log import Log
 from engine.file import FileManager
 import hashlib
+import asyncio
 
 CATEGORY_NAME = "WEB"
 
@@ -139,12 +140,12 @@ class WebServer:
         if file_path.startswith("/"):
             file_path = "." + file_path
 
-        def find_path(file_path: str) -> str:
+        def find_path(file_path: str) -> str|None:
             for path in ["./"] + find_paths:
                 check_path = FileManager.JoinPath(path, file_path)
                 if FileManager.Exists(check_path):
                     return check_path
-            assert False, f"{file_path=}"
+            return None
 
         def read_file(path: str, bin: bool):
             try:
@@ -159,6 +160,9 @@ class WebServer:
 
         try:
             found_path = find_path(file_path)
+            if found_path is None:
+                Log.Debug(CATEGORY_NAME, f"File not found: {file_path}")
+                return web.Response(status=404, headers=self.HeaderCache)
             data = read_file(found_path, True)
             mime_type = MimeType.GetMimeType(file_path)
             if Build.release:
@@ -185,10 +189,15 @@ class WebServer:
 
         self.ip = ip
         self.port = port
-        TaskManager.AddTask(start_server, name="WebServer", run_forever=True)
+        self.server_task = TaskManager.AddTask(start_server, name="WebServer", run_forever=True)
 
     def Shutdown(self) -> None:
-        pass
+        if hasattr(self, 'server_task') and self.server_task.loop.is_running():
+            cleanup = asyncio.run_coroutine_threadsafe(self.runner.cleanup(), self.server_task.loop)
+            try:
+                cleanup.result(timeout=5)
+            except Exception as exc:
+                Log.FailedTrace(CATEGORY_NAME, exc, no_take_as_error=True)
 
     ################################################################################
     #
@@ -289,4 +298,3 @@ class WebServer:
 
         self.AddAwaitGetSecurity(r'/{path:.+\.svg}', handle_svg)
         self.AddAwaitGetSecurity(r'/{path:.+\.gif}', handle_gif)
-

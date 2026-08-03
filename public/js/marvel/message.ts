@@ -9,6 +9,7 @@ export class Message {
     private static game_over_div: HTMLElement
     private static end_messageElement: HTMLElement
     private static end_messageElementText: HTMLElement
+    private static retryButton: HTMLButtonElement
 
     static init() {
         Message.overlay = document.getElementById('message-overlay')!;
@@ -34,6 +35,28 @@ export class Message {
             Command.uploadSave("Share")
         });
 
+        Message.retryButton = document.createElement('button');
+        Message.retryButton.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i> Try again';
+        Message.retryButton.classList.add('try-again');
+        Message.retryButton.hidden = true;
+        Message.retryButton.addEventListener('click', async function() {
+            Message.retryButton.disabled = true;
+            Message.retryButton.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Starting...';
+
+            try {
+                const response = await fetch('retry', { method: 'POST' });
+                if( !response.ok ) {
+                    throw new Error(`Retry failed: ${response.status}`);
+                }
+                Game.setGameOver(false);
+            } catch( error ) {
+                console.error(error);
+                Message.retryButton.disabled = false;
+                Message.retryButton.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i> Try again';
+            }
+        });
+
+        game_over_buttons.appendChild(Message.retryButton);
         game_over_buttons.appendChild(buttonShare);
         game_over_buttons.appendChild(buttonSave);
     }
@@ -50,6 +73,9 @@ export class Message {
         } else {
             Message.end_messageElement.textContent = "DEFEAT";
         }
+        Message.retryButton.hidden = Game.players_won;
+        Message.retryButton.disabled = false;
+        Message.retryButton.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i> Try again';
         Message.end_messageElementText.textContent = text
     }
 

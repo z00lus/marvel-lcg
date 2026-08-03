@@ -131,6 +131,10 @@
     background-color: darkgreen;
 }
 
+#game-over-buttons button.try-again {
+    background-color: #2563eb;
+}
+
 #game-over-buttons button:hover {
     color: black;
     /* background-color: gray; */
@@ -205,4 +209,3 @@
 #session-statistics th:hover {
     background-color: #e0e0e0;
 }
-

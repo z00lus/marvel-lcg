@@ -1,4 +1,5 @@
 /.vscode/**
+/.venv/
 **/*.pyc
 /public/js/**/*.js
 /public/js/**/*.js.map

@@ -158,7 +158,9 @@ class Engine:
     @staticmethod
     def SaveCrash():
         if not Engine.has_crashed:
-            Engine.game.session.SaveScene(f'./crash.json', delete_old=False)
+            game = getattr(Engine, 'game', None)
+            if game and game.session.scene:
+                game.session.SaveScene(f'./crash.json', delete_old=False)
             Engine.has_crashed = True
         if Engine.in_unit_test:
             exit(-1)
@@ -166,4 +168,3 @@ class Engine:
 import builtins
 setattr(builtins, "DebugBreak", lambda: Debug.DebugBreak(True))
 # You can call `DebugBreak()` any where without import
-

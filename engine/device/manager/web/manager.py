@@ -41,7 +41,11 @@ class WebDeviceManager(DeviceManager):
                 continue
 
             ip, port = ip_port
-            assert NetLib.IsPortAvailable(ip, port), f"{ip=}, {port=}"
+            if not NetLib.IsPortAvailable(ip, port):
+                raise RuntimeError(
+                    f"Cannot start Marvel LCG: {ip}:{port} is already in use. "
+                    "Stop the previous instance and try again."
+                )
 
             self.httpds.append(GameServer(self))
             self.httpds[-1].Run(ip, port, "Server")
@@ -62,6 +66,7 @@ class WebDeviceManager(DeviceManager):
 
     @override
     def OnShutdown(self):
+        super().OnShutdown()
         for httpd in self.httpds:
             httpd.Shutdown()
 
@@ -147,4 +152,3 @@ class WebDeviceManager(DeviceManager):
         self.stat_sent_size[category] += byte_size
         size_mb = self.stat_sent_size[category] / (1024 * 1024)
         Log.DebugSilent(CATEGORY_NAME, f"Size: [{category}] {size_mb:.2f} MB ({byte_size})")
-

@@ -19,6 +19,23 @@ class GameServerNewGame(GameServerBase):
         self.game.NewGame(new_game)
         return web.json_response({'result': "New game created"})
 
+    async def retry_game(self, request: web.Request) -> web.Response:
+        world = self.game.world
+        if not world or not world.is_game_over:
+            return web.json_response({'error': "The current game is not over"}, status=409)
+        if getattr(world.game_over, 'players_won', None) is not False:
+            return web.json_response({'error': "Try again is available only after a defeat"}, status=409)
+
+        import random
+        previous_seed = self.game.scene.seed
+        random_source = random.SystemRandom()
+        new_seed = previous_seed
+        while new_seed == previous_seed:
+            new_seed = random_source.randrange(1, 2**31 - 1)
+
+        self.game.Restart(new_seed)
+        return web.json_response({'result': "Game restarted", 'seed': new_seed})
+
     async def load_replay(self, request: web.Request) -> web.Response:
         self.game.LoadReplay(request.rel_url.query_string)
         return web.json_response({'result': "New game created"})
@@ -153,6 +170,7 @@ class GameServerNewGame(GameServerBase):
     def __init__(self) -> None:
         super().__init__()
         self.AddAwaitGetSecurity('/new', self.new_game)
+        self.AddPostSecurity('/retry', self.retry_game)
         self.AddAwaitGetSecurity('/new_debug', self.new_debug)
         self.AddAwaitGetSecurity('/load_replay', self.load_replay)
         self.AddPostSecurity('/load_replay_data', self.load_replay_data)
@@ -162,4 +180,3 @@ class GameServerNewGame(GameServerBase):
         self.AddAwaitGetSecurity('/new_puzzle', self.new_puzzle)
         self.AddAwaitGetSecurity('/new_game_online', self.new_game_online)
         self.AddAwaitGetSecurity('/new_game_lan', self.new_game_lan)
-

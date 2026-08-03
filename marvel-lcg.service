@@ -1,0 +1,25 @@
+[Unit]
+Description=Marvel LCG game server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=marvel-lcg
+Group=marvel-lcg
+WorkingDirectory=/opt/marvel-lcg
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/marvel-lcg/.venv/bin/python -u /opt/marvel-lcg/main.py
+Restart=on-failure
+RestartSec=5s
+KillSignal=SIGINT
+TimeoutStopSec=30s
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/opt/marvel-lcg
+
+[Install]
+WantedBy=multi-user.target

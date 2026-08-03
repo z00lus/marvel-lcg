@@ -8,7 +8,8 @@ class System:
 
     @staticmethod
     def SetTitle(title: str):
-        System.Run(f'title {title}')
+        if os.name == 'nt':
+            System.Run(f'title {title}')
 
     @staticmethod
     def Pause():
@@ -18,4 +19,3 @@ class System:
     def Sleep(secs: float):
         from time import sleep
         return sleep(secs)
-

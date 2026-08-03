@@ -252,7 +252,7 @@ export class UI {
     private static hand_card_margin_div         = document.getElementById("hand-card-margin") as HTMLTextAreaElement;
     private static hand_card_total_deg          = document.getElementById("hand-card-total-deg") as HTMLTextAreaElement;
     private static hand_card_margin_bottom_div  = document.getElementById("hand-card-margin-bottom") as HTMLTextAreaElement;
-    private static anime_time_div               = document.getElementById("anime-time") as HTMLTextAreaElement;
+    private static anime_time_div               = document.getElementById("anime-time") as HTMLInputElement;
     private static phase_div                    = document.querySelector('#phase') as HTMLElement
     private static current_div = document.querySelector("#current-round") as HTMLInputElement
 
@@ -348,7 +348,17 @@ export class UI {
         UI.delay_time = Number(UI.slider_div.value)
         UI.slider_div.oninput = UI.resetDelayTime
 
-        UI.anime_time_div.oninput = UI.updateAnimeTime
+        const animationTimeStorageKey = 'marvel_lcg_animation_time';
+        const savedAnimationTime = Number(localStorage.getItem(animationTimeStorageKey));
+        if( savedAnimationTime >= Number(UI.anime_time_div.min) &&
+            savedAnimationTime <= Number(UI.anime_time_div.max) ) {
+            UI.anime_time_div.value = savedAnimationTime.toString();
+        }
+
+        UI.anime_time_div.oninput = () => {
+            UI.updateAnimeTime();
+            localStorage.setItem(animationTimeStorageKey, UI.anime_time_div.value);
+        }
 
         UI.updateAnimeTime()
 
