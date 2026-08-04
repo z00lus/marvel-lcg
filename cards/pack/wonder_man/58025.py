@@ -11,10 +11,12 @@ def GetAbilities() -> Sequence['Ability']:
         ),
         AbilityFactory.PlayerActionToDiscardThis(
             AbilityType.AlterEgoAction,
-        ).SetCostFunc(CostFunc.Exhaust("YourIdentity")),
+        ).SetName("Exhaust Simon Williams")
+        .SetCostFunc(CostFunc.Exhaust("YourIdentity")),
         AbilityFactory.PlayerActionToDiscardThis(
             AbilityType.AlterEgoAction,
-        ).SetCostFunc(CostFunc.Discard(
+        ).SetName("Discard 3 cards tucked under Ionic Physiology")
+        .SetCostFunc(CostFunc.Discard(
             Select.From(lambda effect: GetIonicCards(effect), range=(3, 3))
         )),
     ]

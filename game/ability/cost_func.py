@@ -440,6 +440,8 @@ class CostFunc:
                     target: 'TARGET_TYPE|None'=None,
                     *,
                     minimum: int=0) -> None:
+            from game.card.face.base import Unit2
+
             self.return_damage: int = 0
 
             def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None') -> bool:

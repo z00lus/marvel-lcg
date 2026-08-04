@@ -19,6 +19,13 @@ The main layers are:
 
 The process entry point is `main.py`: `Engine.Initialize()` -> `Engine.EngineRun()` -> `Engine.Shutdown()`.
 
+### Fork priorities
+
+- The primary supported use case for this fork is solo play with one hero, with the Python server running on Linux and the browser connecting over the local network.
+- Prioritize solo rules correctness, easy starter-deck selection, reliable saves/replays, and modest resource use on low-power servers.
+- PvP and broad four-player improvements are out of scope unless the user explicitly requests them. Do not start an engine rewrite solely to address upstream multiplayer limitations.
+- Preserve existing multiplayer behavior when making shared engine changes where practical, but do not let speculative multiplayer work expand a solo-focused task.
+
 Read these documents before making broad changes:
 
 - `docs/engine_architecture.md`
@@ -86,6 +93,10 @@ Replay tests require local replay data and, in the current test harness, a `laun
 
 Do not claim the replay suite passed when its external fixtures are unavailable. Do not substitute `python -m unittest` without a specific test target because of the maintenance tasks in `unit_test/test_task.py`.
 
+For new or changed card scripts, explicitly import each affected module and exercise `GetAbilities()` or create its `CardFace` in an isolated smoke check. `CardsDB` tries several module paths and silently ignores import exceptions, so a successful database initialization or server start does not prove that a card script loaded. When diagnosing these failures, temporarily use `Build.release = False` only inside the isolated validation process so assertions and exceptions remain visible; do not commit that setting.
+
+Treat structural and rules validation as separate stages. Compilation, checksum validation, module import, and card creation prove that the integration is structurally loadable. They do not prove timing, targeting, setup, resource, or discard behavior. Validate semantic card changes with a focused game/replay and compare the observed sequence with the card text and the local rules reference when available.
+
 When changing only documentation or configuration, a full game run is usually unnecessary; validate syntax and the exact affected path instead.
 
 ## Python conventions and architecture
@@ -95,6 +106,7 @@ When changing only documentation or configuration, a full game run is usually un
 - Preserve lifecycle cleanup. New managers, aiohttp runners, jobs, and tasks must participate in shutdown so Ctrl+C and systemd `SIGINT` do not leave pending tasks.
 - Game behavior is event/message driven. Prefer existing `AbilityFactory`, `Message`, `Faces`, `Effects`, `Worlds`, `Players`, `Search`, and selector operations over direct state mutation; these helpers preserve trigger windows, logging, replay, and rendering behavior.
 - Preserve replay determinism. Use the project's seeded random abstractions for gameplay decisions; do not introduce unseeded Python randomness into game resolution.
+- Replay and undo reconstruct state by deterministically re-executing recorded choices and operations rather than restoring arbitrary Python snapshots. Keep gameplay state inside the modeled world/messages, avoid dependence on wall-clock time or external mutable state, and do not hide required replay state only inside transient closures.
 - Rendering is a Python/TypeScript contract. When changing a descriptor in `game/render/descriptor/` or `game/render/to_descriptor.py`, update the corresponding TypeScript descriptor and all consumers in the same change.
 - Web routes live in the mixins under `engine/device/web/server/`. Use the appropriate authenticated route registration helper. Keep specific routes registered before the final catch-all static/image route.
 - Treat values received through HTTP, replay files, and custom card scripts as untrusted input. Preserve authentication and version checks unless a route has a documented reason to bypass them.
@@ -105,6 +117,9 @@ When changing only documentation or configuration, a full game run is usually un
 - Pack-level `__init__.py` files normally contain `from cards.pack import *`; card scripts normally import from their package with `from . import *`.
 - A scripted card generally exposes `GetAbilities() -> Sequence['Ability']`. Follow nearby cards of the same type and the patterns in `docs/card_scripting_guide.md`.
 - Card metadata and executable behavior are separate. Adding a card may require both a `data/cards.json` entry and a matching Python script, plus set/scenario/deck data where appropriate.
+- Starter decks under `deck/starter/` separate the identity-specific `hero_deck` from the aspect/basic `player_deck`. A legal constructed player deck has 40-50 cards total and normally includes the hero's 15-card identity set. Keep obligations and nemesis cards outside that count.
+- The player setup path currently does not consume a starter deck's `set_aside` list: `SelectIdentity()` generates the identity, obligations, nemesis set, `hero_deck`, and `player_deck`, while its generic set-aside generation is disabled. Cards that must start set aside or enter play during setup therefore need explicit supported setup behavior, such as an existing setup ability/operation; do not assume the JSON field alone is sufficient.
+- For an exact reprint, `full_link` can reuse an earlier card's metadata, scripted abilities, and cached image link. The referenced card must already have been loaded. Do not add a duplicate script or image unless the reprint actually differs.
 - `data/cards.json` and `data/sets_info.json` contain checksums. Preserve their checksum semantics; prefer the existing editor/`Json.Save(..., ignore_check_sum=False)` path when regenerating these files. Do not silently leave a stale checksum.
 - Reuse existing operations and selectors so status, steady/stalwart, forced timing, ownership, visibility, and multiplayer behavior remain consistent.
 - Test card-rule changes with a focused replay or a minimal reproducible game state when fixtures are available. A successful import or server start does not validate card timing rules.
