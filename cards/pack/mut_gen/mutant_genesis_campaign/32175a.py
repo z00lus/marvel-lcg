@@ -9,6 +9,11 @@ def GetAbilities() -> Sequence['Ability']:
         ShuffleRandomFuturePastCardIntoEncounterDeck(effect)
         this.card.Flip(effect)
 
+        magneto = Worlds.FindVillain(effect, name="Magneto")
+        magnetos_power = this.card.face
+        if magneto and Attachment.IsType(magnetos_power):
+            magnetos_power.AttachTo2(magneto, effect)
+
     return [
         AbilityFactory.WhenSchemeBeDefeated(
             AbilityType.WhenDefeated,
