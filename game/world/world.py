@@ -3,6 +3,7 @@ from core import *
 
 from game.card.face import *
 from game.ability import *
+from game.ability.factory import AbilityFactory
 from game.player import *
 from game.deck import *
 from game.scene import *
@@ -310,6 +311,24 @@ class World(WorldAction, WorldFind):
         # [x] 13. Campaign Setup
         campaign_message = Message.WhenCampaignSetup(self)
         campaign_message.Send()
+
+        # Starting keyword: these cards may be added to hand before the
+        # starting hand is drawn. Keeping this here also means the card counts
+        # toward the identity's hand size in the following DrawUp("Max").
+        for player in self.const_players:
+            starting_cards = [
+                face for face in player.player_deck.GetAll()
+                if face.paper.text.startswith("Starting.")
+            ]
+            for face in starting_cards:
+                player.MayChooseOneAbility(
+                    game_start_effect,
+                    AbilityFactory.ForChoiceAbility(
+                        f"Add {face.name} to your hand (Starting)",
+                        lambda targets, face=face, player=player:
+                            Faces.AddToHand([face], player, game_start_effect),
+                    ),
+                )
 
         # [x] 14. Draw Cards
         Message.TextRender("\n--- Draw Cards ---", self)
@@ -650,4 +669,3 @@ class World(WorldAction, WorldFind):
             return f"Player {self.const_seat_order_players.index(self.current_player)+1} Turn"
         else:
             return self.phase.state
-

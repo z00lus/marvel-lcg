@@ -100,7 +100,7 @@ class CardFactory:
                             pass
                         elif face.paper.card_id in ["30004", "26008", "18015", "42003", "42004", "27003", "13003", "13006", "46009"]:
                             assert play_count == 2, f"{face.paper.card_id=}"
-                        elif face.paper.card_id in ["09032", "09033", "09034", "09035", "09036"]:
+                        elif face.paper.card_id in ["09032", "09033", "09034", "09035", "09036", "60040a", "60040b", "60040c"]:
                             assert play_count == 0, f"{face.paper.card_id=}"
                         else:
                             assert False, f"{face.paper.card_id=}"
@@ -159,4 +159,3 @@ class CardFactory:
             return Json.LoadAs(file_path, EncounterSetDescriptor).encounters
         else:
             return []
-

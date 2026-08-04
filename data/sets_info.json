@@ -391,6 +391,13 @@
         "encounters": ["mighty_avengers", "the_initiative", "maria_hill", "dangerous_recruits", "cape_killer", "martial_law", "heroes_for_hire", "paladin", "new_avengers", "secret_avengers", "namor", "atlanteans", "spider_man", "defenders", "hells_kitchen", "cloak_dagger"],
         "max_id": "56214"
     },
+    "60. Fear No Evil (Echo)": {
+        "name": "fne",
+        "scenarios": [],
+        "heroes": ["echo"],
+        "encounters": [],
+        "max_id": "60064"
+    },
     "90. Ronan Modular Set": {
         "name": "ron",
         "scenarios": [],
@@ -430,5 +437,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "0460f7beba029ced19aa8125c07e58161e805c67a33060eb57e2c24d3249fd23"
+    "checksum": "1ee9376d789b1eac1055e3e7b3e74f36e6002b4eba2b77a52905acc5de190b9e"
 }

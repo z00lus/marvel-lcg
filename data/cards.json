@@ -58799,5 +58799,442 @@
             "text": "Play only if your identity has the [[Avenger]] trait.\nAttach to an ally. Max 1 per ally.\n<b>Interrupt</b>: When attached ally is defeated, draw 2 cards."
         }
     ],
-    "checksum": "e898a69d8d91ea98ecc8d2b55e241f55e0e790016a6c6ed9c9169611f5c11fe5"
+    "fne": [
+        {
+            "card_id": "60037a",
+            "type": "Hero",
+            "name": "* Echo",
+            "subtitle": "",
+            "desc": {
+                "HP": "9",
+                "ATK": "2",
+                "THW": "2",
+                "DEF": "2",
+                "HS": "5"
+            },
+            "traits": [
+                "DEFENDER",
+                "MARTIAL ARTIST"
+            ],
+            "set_name": "Echo",
+            "text": "<i>Watch and Learn</i> — <b>Response</b>: After a player plays an aspect or basic event, tuck that event under here from that player's discard pile. Then, if there are more than 3 tucked cards here, discard all but 3 of those cards."
+        },
+        {
+            "card_id": "60037b",
+            "type": "AlterEgo",
+            "name": "* Maya Lopez",
+            "subtitle": "",
+            "desc": {
+                "HP": "9",
+                "REC": "3",
+                "HS": "6"
+            },
+            "traits": [
+                "CIVILIAN"
+            ],
+            "set_name": "Echo",
+            "text": "<i>Practice Makes Perfect</i> — <b>Interrupt</b>: When you change to hero form, search your deck for an aspect or basic event and add it to your hand. <i>(Shuffle.)</i>"
+        },
+        {
+            "card_id": "60038",
+            "type": "Upgrade",
+            "name": "Innate Reflexes",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "Class": "Protection"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "",
+            "text": "Starting. <i>(You may add this card to your hand before drawing your starting hand.)</i>\nYour hero gets +1 DEF."
+        },
+        {
+            "card_id": "60039",
+            "type": "Ally",
+            "name": "* Daredevil",
+            "subtitle": "Matt Murdock",
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "2*",
+                "RES": "G",
+                "Class": "Hero"
+            },
+            "traits": [
+                "DEFENDER",
+                "MARTIAL ARTIST"
+            ],
+            "set_name": "Echo",
+            "text": "[star] <b>Response</b>: After Daredevil uses a basic power, reduce the cost of the next event you play this round by 1."
+        },
+        {
+            "card_id": "60040a",
+            "type": "Event",
+            "name": "Photographic Reflexes",
+            "subtitle": "",
+            "desc": {
+                "Cost": "-1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Echo",
+            "text": "[star] If you are in hero form, you can discard Photographic Reflexes from your hand to play an event tucked under Echo as if it were in your hand. Reduce the cost to play that event by 2. You cannot trigger Echo's <i>\"Watch and Learn\"</i> ability for that event."
+        },
+        {
+            "card_id": "60040b",
+            "type": "Event",
+            "name": "Photographic Reflexes",
+            "subtitle": "",
+            "desc": {
+                "Cost": "-1",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Echo",
+            "text": "[star] If you are in hero form, you can discard Photographic Reflexes from your hand to play an event tucked under Echo as if it were in your hand. Reduce the cost to play that event by 2. You cannot trigger Echo's <i>\"Watch and Learn\"</i> ability for that event.",
+            "ability_link": "60040a"
+        },
+        {
+            "card_id": "60040c",
+            "type": "Event",
+            "name": "Photographic Reflexes",
+            "subtitle": "",
+            "desc": {
+                "Cost": "-1",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Echo",
+            "text": "[star] If you are in hero form, you can discard Photographic Reflexes from your hand to play an event tucked under Echo as if it were in your hand. Reduce the cost to play that event by 2. You cannot trigger Echo's <i>\"Watch and Learn\"</i> ability for that event.",
+            "ability_link": "60040a"
+        },
+        {
+            "card_id": "60041",
+            "type": "Event",
+            "name": "Study the Tape",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "TACTIC"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Action</b>: Search any player's discard pile for 1 aspect event, 1 basic event, or 1 copy of Photographic Reflexes and add that card to your hand."
+        },
+        {
+            "card_id": "60042",
+            "type": "Support",
+            "name": "* The Rez",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "LOCATION"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Alter-Ego Action</b>: Exhaust The Rez → heal X damage from Maya Lopez, where X is the highest cost among cards tucked under her."
+        },
+        {
+            "card_id": "60043",
+            "type": "Upgrade",
+            "name": "American Sign Language",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SKILL"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Hero Resource</b>: Exhaust this card → generate a [wild] resource for an event being played by any player."
+        },
+        {
+            "card_id": "60044",
+            "type": "Upgrade",
+            "name": "Choreography",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SKILL"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Action</b>: Exhaust this card → shuffle 1 aspect or basic event from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
+        },
+        {
+            "card_id": "60045",
+            "type": "Upgrade",
+            "name": "* Echo's Katana",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "Restricted": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "WEAPON"
+            ],
+            "set_name": "Echo",
+            "text": "Restricted.\n<b>Hero Response</b> <i>(attack)</i>: After you play an event, exhaust Echo's Katana → deal damage to an enemy equal to that event's printed cost. This attack gains piercing."
+        },
+        {
+            "card_id": "60046",
+            "type": "Upgrade",
+            "name": "Improvisation",
+            "subtitle": "",
+            "desc": {
+                "Cost": "3",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SKILL"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Hero Response</b>: After you play an event, if it has the following traits:\n• [[Attack]] — heal 1 damage from Echo.\n• [[Defense]] — remove 1 threat from a scheme.\n• [[Thwart]] — deal 1 damage to an enemy."
+        },
+        {
+            "card_id": "60047",
+            "type": "Upgrade",
+            "name": "Muscle Memory",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SKILL"
+            ],
+            "set_name": "Echo",
+            "text": "<b>Hero Action</b>: Exhaust this card → add an event tucked under Echo to your hand."
+        },
+        {
+            "card_id": "60048",
+            "type": "Event",
+            "name": "Army of One",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Protection"
+            },
+            "traits": [],
+            "set_name": "",
+            "text": "[star] Increase the cost to play this card by 1 for each ally you control.\n<b>Hero Action</b>: Ready your hero."
+        },
+        {
+            "card_id": "60049",
+            "type": "Event",
+            "name": "Get Their Attention",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "Class": "Protection"
+            },
+            "traits": [
+                "DEFENSE",
+                "THWART"
+            ],
+            "set_name": "",
+            "text": "<b>Hero Interrupt</b> <i>(defense/thwart)</i>: When an enemy initiates an attack, remove 3 threat from a scheme."
+        },
+        {
+            "card_id": "60050",
+            "type": "Event",
+            "name": "In Harm's Way",
+            "subtitle": "",
+            "desc": {
+                "Cost": "3",
+                "RES": "R",
+                "Class": "Protection"
+            },
+            "traits": [
+                "ATTACK",
+                "THWART"
+            ],
+            "set_name": "",
+            "text": "[star] Increase the cost to play this card by 1 for each ally you control.\n<b>Hero Action</b> <i>(attack/thwart)</i>: Deal X damage to an enemy and remove X threat from a scheme, where X is your DEF."
+        },
+        {
+            "card_id": "60051",
+            "full_link": "32014"
+        },
+        {
+            "card_id": "60052",
+            "type": "Upgrade",
+            "name": "The Best Offense...",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Temporary": "1",
+                "Class": "Protection"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "",
+            "text": "Temporary.\nYour hero gets +1 DEF.\nUse your DEF in place of your THW and ATK. <i>(Ignore any modifiers to your THW and ATK.)</i>"
+        },
+        {
+            "card_id": "60053",
+            "type": "Upgrade",
+            "name": "* Ronin",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Protection"
+            },
+            "traits": [
+                "TITLE"
+            ],
+            "set_name": "",
+            "text": "While you do not control any allies, your hero gets +1 DEF and gains retaliate 1."
+        },
+        {
+            "card_id": "60054",
+            "type": "Upgrade",
+            "name": "Stand Alone",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Protection"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "",
+            "text": "Max 1 per player.\n<b>Hero Interrupt</b>: When an enemy attacks you <i>(before any defender is declared)</i>, if you do not control any allies, exhaust Stand Alone → ready your hero."
+        },
+        {
+            "card_id": "60055",
+            "type": "Event",
+            "name": "See No Evil, Hear No Evil",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "G",
+                "TeamUp": "Daredevil;Echo",
+                "Class": "Basic"
+            },
+            "traits": [
+                "ATTACK",
+                "THWART"
+            ],
+            "set_name": "",
+            "text": "Team-Up (Daredevil and Echo). Max 1 per deck.\n<b>Hero Action</b> <i>(attack/thwart)</i>: Choose 2 of the following (you may choose the same option twice):\n• Deal 3 damage to an enemy.\n• Remove 3 threat from a scheme."
+        },
+        {
+            "card_id": "60056",
+            "full_link": "40059"
+        },
+        {
+            "card_id": "60057",
+            "full_link": "01088"
+        },
+        {
+            "card_id": "60058",
+            "full_link": "01089"
+        },
+        {
+            "card_id": "60059",
+            "full_link": "01090"
+        },
+        {
+            "card_id": "60060",
+            "type": "Obligation",
+            "name": "Raised by the Kingpin",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2",
+                "GiveTo": "Maya Lopez"
+            },
+            "traits": [],
+            "set_name": "Echo",
+            "text": "<b><i>Give to the Maya Lopez player.</i></b>\nYou cannot deal damage to Kingpin.\n<b>When Revealed</b>: Find Kingpin and put him into play engaged with you.\n<b>Response</b>: After you thwart, place that threat here. If there is 4 or more threat here, remove this card from the game."
+        },
+        {
+            "card_id": "60061",
+            "type": "Minion",
+            "name": "* Kingpin",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "2*",
+                "SCH": "3",
+                "Boost": "3",
+                "Nemesis": "Echo"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Echo Nemesis",
+            "text": "[star] <b>Forced Interrupt</b>: When Kingpin would attack the Maya Lopez player, he schemes instead.\n<i>(Echo's nemesis minion.)</i>"
+        },
+        {
+            "card_id": "60062",
+            "type": "SideScheme",
+            "name": "Master Manipulator",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2"
+            },
+            "traits": [],
+            "set_name": "Echo Nemesis",
+            "text": "Kingpin cannot take damage.\n<b>When Revealed</b>: Find Kingpin and put him into play engaged with you.\n<hr />\n[star] <b>Boost</b>: If Kingpin is in play, reveal this scheme."
+        },
+        {
+            "card_id": "60063",
+            "type": "Minion",
+            "name": "Kingpin's Henchman",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "2",
+                "SCH": "1",
+                "Boost": "1",
+                "Guard": "1"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Echo Nemesis",
+            "text": "Guard.\nKingpin cannot take damage."
+        },
+        {
+            "card_id": "60064",
+            "type": "Treachery",
+            "name": "Pawn of the Kingpin",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Echo Nemesis",
+            "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
+        }
+    ],
+    "checksum": "25517227b0e382b2ba2e53433f6cac8677019dc34dbbdb2ac2ec01dc22479c4c"
 }
