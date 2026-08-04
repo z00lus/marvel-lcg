@@ -18,7 +18,8 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityFactory.ForChoiceAbility(
                 "Discard 1 random card from your hand",
                 lambda targets:
-                    player.DiscardRandomHandCards(1, effect)
+                    player.DiscardRandomHandCards(1, effect),
+                condition=player.hand_cards.GetSize() > 0,
             )
         )
 
@@ -31,4 +32,3 @@ def GetAbilities() -> Sequence['Ability']:
             back_alley_burglary,
         ),
     ]
-

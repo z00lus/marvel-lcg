@@ -4,9 +4,13 @@ def BoardMember():
 
     def chief_medical_officer(effect: 'Effect', message: 'Message.AfterCardPlacedCounter') -> None:
         this = effect.this.CastTo(Environment)
-        Unused(this)
-
         this.card.Flip(effect)
+        aid = this.card.face
+        villain = Worlds.FindVillain(effect)
+        if villain and Attachment.IsType(aid):
+            aid.AttachTo2(villain, effect)
+        if Worlds.FindCardSizeOnField(effect, CardFinder2("BOARD MEMBER", Attachment)) >= 3:
+            Worlds.SetGameOver(False, effect)
 
     return AbilityFactory.IfThereAreAtLeastCounterHere(
         lambda effect: 3 if Worlds.IsExpert(effect) else 4,
@@ -24,4 +28,3 @@ def IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame():
         AbilityType.NonKeyword,
         action
     )
-

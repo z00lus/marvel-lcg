@@ -26,6 +26,5 @@ def GetAbilities() -> Sequence['Ability']:
             "You",
             improved_recovery_upgrade,
             powers=["REC"],
-        ),
+        ).SetCostFunc(CostFunc.Exhaust("This")),
     ]
-

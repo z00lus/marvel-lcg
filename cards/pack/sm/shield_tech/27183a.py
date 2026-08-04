@@ -22,7 +22,7 @@ def GetAbilities() -> Sequence['Ability']:
 
     return [
         *AbilityFactory.GiveKeywordToAttached(
-            Hero,
+            "You",
             health=2
         ),
         AbilityFactory.WhenPhaseBegin(
@@ -31,4 +31,3 @@ def GetAbilities() -> Sequence['Ability']:
             impact_dampening_suit
         ).SetCost(Cost("1")),
     ]
-

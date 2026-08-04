@@ -15882,7 +15882,7 @@
                 "ATTACK"
             ],
             "set_name": "The Market",
-            "text": "Unit Cost 3.\n<b>Hero Action</b> <i>(attack)</i>: Deal 5 damage to an enemy and discard the top card of the encounter deck? Take 1 damage for each boost icon <i>(</i>[boost]<i>)</i> discarded this way."
+            "text": "Unit Cost 3.\n<b>Hero Action</b> <i>(attack)</i>: Deal 5 damage to an enemy and discard the top card of the encounter deck. Take 1 damage for each boost icon <i>(</i>[boost]<i>)</i> discarded this way."
         },
         {
             "card_id": "16160",
@@ -16010,6 +16010,7 @@
             "subtitle": "",
             "desc": {
                 "Cost": "0",
+                "UnitCost": "5",
                 "RES": "G",
                 "Class": "Campaign"
             },
@@ -21273,6 +21274,7 @@
             "desc": {
                 "Cost": "0",
                 "Permanent": "1",
+                "Setup": "1",
                 "Class": "Campaign;Basic"
             },
             "traits": [
@@ -53045,7 +53047,8 @@
             "name": "A.I.M. Interference ([mental])",
             "subtitle": "",
             "desc": {
-                "Boost": "1"
+                "Boost": "1",
+                "Incite": "1"
             },
             "traits": [],
             "set_name": "S.H.I.E.L.D. Executive Board",
@@ -53058,7 +53061,8 @@
             "name": "A.I.M. Interference ([physical])",
             "subtitle": "",
             "desc": {
-                "Boost": "1"
+                "Boost": "1",
+                "Incite": "1"
             },
             "traits": [],
             "set_name": "S.H.I.E.L.D. Executive Board",
@@ -53171,7 +53175,7 @@
             },
             "traits": [],
             "set_name": "Executive Board Evidence",
-            "text": "<b>Setup</b>: Each player may add 1 secret counter to a [[Board Member]] environment to search their collection for a different Aggresion support and shuffle it into their deck. Each player may add 1 threat to the main scheme to search their deck for an Aggresion support and add it to their hand. <i>(Shuffle.)</i>"
+            "text": "<b>Setup</b>: Each player may add 1 secret counter to a [[Board Member]] environment to search their collection for a different Aggression support and shuffle it into their deck. Each player may add 1 threat to the main scheme to search their deck for an Aggression support and add it to their hand. <i>(Shuffle.)</i>"
         },
         {
             "card_id": "reluctant_foe_elite_minion",

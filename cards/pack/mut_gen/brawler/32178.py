@@ -11,7 +11,7 @@ def GetAbilities() -> Sequence['Ability']:
     return [
         AbilityFactory.WhenUnitWouldTakeDamage(
             AbilityType.HeroInterrupt,
-            "You",
+            Friend,
             brazen_defense,
             is_from_attack=True,
             who_deal_damage=Enemy,

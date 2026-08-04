@@ -19,10 +19,9 @@ def GetAbilities() -> Sequence['Ability']:
 
     return [
         AbilityFactory.WhenBoostCardTurnedFaceUp(
-            AbilityType.Interrupt,
+            AbilityType.HeroInterrupt,
             None,
             close_call
         ).SetPlay().SetLabel()
         .SetHasNoTargetEffect(),
     ]
-

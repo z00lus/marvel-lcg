@@ -15,7 +15,7 @@ def GetAbilities() -> Sequence['Ability']:
         AbilityFactory.UnitIgnoreKeywordIcons(
             "YourHero",
             crisis=True,
-            patrol=True
+            patrol=True,
+            while_use_basic_thw=True,
         ),
     ]
-

@@ -81,14 +81,15 @@ def ClearMissionAllyFlags(effect: 'Effect') -> None:
         Stores.SetStr(MissionAllyFlag(player), "0", effect)
 
 
-def _matching_resource(
+def _matching_resources(
     ally: 'Ally',
     card: 'CardFace',
     used_resources: Set[str],
     sinister_is_present: bool,
-) -> str:
+) -> List[str]:
     ally_res = ally.printed_resource_internal
     card_res = card.printed_resource_internal
+    matches: List[str] = []
 
     for resource in Resources.RBYG_LIST:
         ally_matches = ally_res.HasColorPrinted(resource) or ally_res.g > 0
@@ -96,8 +97,8 @@ def _matching_resource(
         if ally_matches and card_matches and (
             not sinister_is_present or resource not in used_resources
         ):
-            return resource
-    return ""
+            matches.append(resource)
+    return matches
 
 
 def _resolve_overseer_discard_effect(
@@ -118,7 +119,7 @@ def _resolve_overseer_discard_effect(
     overseer = overseers[0]
     resources = card.printed_resource_internal
 
-    if overseer.IsName("Shadow King") and resources.b:
+    if overseer.IsName("The Shadow King") and resources.b:
         mission.PlaceThreatOnSchemes([mission], 2 * resources.b, effect)
 
     if overseer.IsName("Sugar Man") and resources.r:
@@ -183,13 +184,14 @@ def MakeMissionAttempt(player: 'Player', effect: 'Effect') -> None:
             mission,
             effect,
         )
-        resource = _matching_resource(
+        matching_resources = _matching_resources(
             ally,
             card,
             used_resources,
             sinister_is_present,
         )
-        if can_participate and resource:
+        if can_participate and matching_resources:
+            resource = player.AskChooseOneText(matching_resources)
             participating.append(ally)
             used_resources.add(resource)
 

@@ -12,7 +12,7 @@ def GetAbilities() -> Sequence['Ability']:
         initiator.DrawUp(1, effect)
 
         def action(targets: Sequence['CardFace']):
-            Faces.RemoveAllFromGame(targets, effect)
+            Faces.DiscardAll(targets, effect)
             for target in targets:
                 if not StatusCard.IsType(target):
                     continue
@@ -54,4 +54,3 @@ def GetAbilities() -> Sequence['Ability']:
         ).SetPlay().SetLabel()
         .SetTarget2(StatusCard),
     ]
-

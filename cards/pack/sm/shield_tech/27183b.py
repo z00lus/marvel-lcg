@@ -13,7 +13,7 @@ def GetAbilities() -> Sequence['Ability']:
 
     return [
         *AbilityFactory.GiveKeywordToAttached(
-            Hero,
+            "You",
             health=3
         ),
         AbilityFactory.WhenUnitWouldTakeDamage(
@@ -24,5 +24,4 @@ def GetAbilities() -> Sequence['Ability']:
             who_deal_damage=Enemy,
         ).SetCostFunc(CostFunc.DiscardDeckTopCards("YourDeck", 1)),
     ]
-
 

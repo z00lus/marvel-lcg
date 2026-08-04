@@ -15,10 +15,6 @@ def GetAbilities() -> Sequence['Ability']:
 
 
     return [
-        *AbilityFactory.GiveKeywordToAttached(
-            Hero,
-            attack=1,
-        ),
         AbilityFactory.AfterUnitMakeBasicAttack(
             AbilityType.HeroResponse,
             "YourHero",
@@ -26,4 +22,3 @@ def GetAbilities() -> Sequence['Ability']:
             against_who=Enemy
         ).SetTarget("Attacked", canbe_stunned=True),
     ]
-

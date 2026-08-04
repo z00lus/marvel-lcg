@@ -21,7 +21,8 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityFactory.ForChoiceAbility(
                 "Discard 1 card at random from your hand",
                 lambda targets:
-                    player.DiscardRandomHandCards(1, effect)
+                    player.DiscardRandomHandCards(1, effect),
+                condition=player.hand_cards.GetSize() > 0,
             )
         )
 
@@ -42,4 +43,3 @@ def GetAbilities() -> Sequence['Ability']:
             on_the_hunt_boost
         ),
     ]
-
