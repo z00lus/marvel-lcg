@@ -1,8 +1,13 @@
 from core import *
+import os
 from engine.network import WebServer
 from aiohttp import web
 from engine.device.manager.web.manager import WebDeviceManager
 from engine.controller import *
+from engine.config import ConfigVariables
+from engine.file import FileManager
+
+REPLAY_FOLDERS = ConfigVariables.Folders('replay_folders', ["./replays/"])
 
 class GameServerBase(WebServer):
 
@@ -34,6 +39,17 @@ class GameServerBase(WebServer):
         player_id = player_ids[0]
         return self.device_manager.controllers[player_id]
 
+    def FindReplayFile(self, requested_file: str) -> str|None:
+        requested_file = os.path.normpath(requested_file)
+        requested_name = FileManager.GetBaseName(requested_file)
+
+        for replay_file in FileManager.ListFiles(*REPLAY_FOLDERS.value, ext=".json"):
+            normalized_replay = os.path.normpath(replay_file)
+            if normalized_replay == requested_file or \
+                (requested_file == requested_name and FileManager.GetBaseName(normalized_replay) == requested_name):
+                return replay_file
+        return None
+
     @property
     def controller_manager(self):
         controller = self.device_manager.controllers[0]
@@ -43,4 +59,3 @@ class GameServerBase(WebServer):
     def game(self):
         controller = self.device_manager.controllers[0]
         return controller.game
-

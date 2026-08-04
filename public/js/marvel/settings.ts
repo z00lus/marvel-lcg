@@ -23,6 +23,7 @@ export class Setting {
     static ver: number = 1
     static scene_3d: boolean = search_params.has('3d_scene') || search_params.has('3d')
     static is_remote: boolean = search_params.has('remote')
+    static replay_mode: boolean = search_params.has('replay')
     static {
         if( window.location.pathname == '/marvel2.html') {
             Setting.ver = 2
@@ -94,7 +95,7 @@ export class ButtonSetting {
     static auto_target = 1;
     static auto_target_forced = 0;
     static show_image_text = 0
-    static is_replay = Number(search_params.has('replay'))
+    static is_replay = 0
     static music_on = 1
 
     static show_all_players = 1
@@ -112,4 +113,3 @@ export class ButtonSetting {
 
 (window as any).Setting = Setting;
 (window as any).ButtonSetting = ButtonSetting;
-

@@ -1,7 +1,9 @@
 from core import *
+import os
 from aiohttp import web
 from engine.device.web.server.server_base import GameServerBase
 
+from engine.file import FileManager
 from engine.lib import Json
 # from engine.log import Log
 from game.puzzle.puzzle_data import PuzzleData
@@ -37,7 +39,11 @@ class GameServerNewGame(GameServerBase):
         return web.json_response({'result': "Game restarted", 'seed': new_seed})
 
     async def load_replay(self, request: web.Request) -> web.Response:
-        self.game.LoadReplay(request.rel_url.query_string)
+        replay_file = self.FindReplayFile(Unquote(request.rel_url.query_string))
+        if replay_file is None:
+            return web.json_response({'error': "Replay not found"}, status=404)
+
+        self.game.LoadReplay(replay_file)
         return web.json_response({'result': "New game created"})
 
     async def load_replay_data(self, request: web.Request) -> web.Response:
@@ -67,10 +73,25 @@ class GameServerNewGame(GameServerBase):
         return web.json_response({'result': "New game created"})
 
     async def save_replay_data(self, request: web.Request) -> web.Response:
-        data = Json.SaveString(self.game.scene, ignore_check_sum=False)
+        data = self.game.session.DumpSave()
         compressed_data = Json.DumpGZip(data)
         self.device_manager.AddSize("Save", len(compressed_data))
         return web.Response(body=compressed_data, content_type='application/json', headers={'Content-Encoding': 'gzip'})
+
+    async def save_local(self, request: web.Request) -> web.Response:
+        if self.game.session.scene is None:
+            return web.json_response({'error': "There is no game to save"}, status=409)
+
+        replay_file = self.game.session.SaveScene(delete_old=False)
+        if replay_file is None:
+            return web.json_response({'error': "Replay could not be saved"}, status=500)
+
+        return web.json_response({
+            'result': "Replay saved",
+            'file': FileManager.GetBaseName(replay_file),
+            'path': os.path.abspath(replay_file),
+            'steps': len(self.game.scene.inputs),
+        })
 
     def play_puzzle(self, puzzle: 'PuzzleData'):
         from game.scene.scene import Scene
@@ -175,6 +196,9 @@ class GameServerNewGame(GameServerBase):
         self.AddAwaitGetSecurity('/load_replay', self.load_replay)
         self.AddPostSecurity('/load_replay_data', self.load_replay_data)
         self.AddAwaitGetSecurity('/save_replay_data', self.save_replay_data)
+        # Compatibility with cached clients that used GET before save_local became a POST route.
+        self.AddAwaitGetSecurity('/save_local', self.save_local)
+        self.AddPostSecurity('/save_local', self.save_local)
         self.AddAwaitGetSecurity('/load_puzzle', self.load_puzzle)
         self.AddAwaitGetSecurity('/new_puzzle_replay', self.new_puzzle_replay)
         self.AddAwaitGetSecurity('/new_puzzle', self.new_puzzle)

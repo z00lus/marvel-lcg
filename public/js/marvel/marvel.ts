@@ -63,6 +63,7 @@ import { Scene } from './scene.js';
 import { AutoActivate } from './auto_activate.js';
 import { ErrorDialog } from './error_dialog.js';
 import { Message } from './message.js';
+import { Replay } from './replay.js';
 Scene.init()
 
 UI.init()
@@ -70,6 +71,8 @@ ErrorDialog.init()
 Message.init()
 UI.update()
 Button.initializeButtons()
+Replay.initialize()
+Replay.setPlaying(false)
 Button.doShow()
 
 // Usage

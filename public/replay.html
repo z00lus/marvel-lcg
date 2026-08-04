@@ -170,6 +170,13 @@
         .replay-item button:hover {
             filter: drop-shadow(2px 4px 6px black);
         }
+        .replay-item .replay-actions {
+            align-items: center;
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+            padding-right: 0.5rem;
+        }
         #replay-items,
         #puzzle-items {
             display: none;
@@ -336,7 +343,29 @@ async function create_item(file_name, is_replay) {
     // Append the image div and button to the main div
     replayItemDiv.appendChild(imagesDiv);
     replayItemDiv.appendChild(commentDiv);
-    // replayItemDiv.appendChild(buttonElement);
+
+    if( is_replay ) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'replay-actions';
+
+        const playButton = document.createElement('button');
+        playButton.textContent = 'Play';
+        playButton.onclick = (event) => {
+            event.stopPropagation();
+            doReplay(file_name, true);
+        };
+
+        const downloadButton = document.createElement('button');
+        downloadButton.textContent = 'Download';
+        downloadButton.onclick = (event) => {
+            event.stopPropagation();
+            window.location.href = `download_replay?file=${encodeURIComponent(file_name)}`;
+        };
+
+        actionsDiv.appendChild(playButton);
+        actionsDiv.appendChild(downloadButton);
+        replayItemDiv.appendChild(actionsDiv);
+    }
 
     return replayItemDiv;
 }
@@ -386,27 +415,31 @@ if( is_puzzle_page ) {
     }
 })()
 
-function doReplay(file_name, is_replay) {
-    // let file_name = document.querySelector(`#replay_files`).selectedOptions[0].text
-    var ajax = new XMLHttpRequest();
+async function doReplay(file_name, is_replay) {
+    const gameWindow = window.open('', '_blank');
     let cmd = ""
     if( is_puzzle_page ) {
         cmd = `load_puzzle?${file_name}`
     } else {
         cmd = `load_replay?${file_name}`
     }
-    ajax.open("GET", cmd, true);
-    ajax.onreadystatechange = function () {
-        if( this.readyState == 4 ) {
-            console.log('ok')
-            cmd = ".?hot_seat&3d_scene"
-            if( is_replay ) {
-                cmd = `${cmd}&replay`
-            }
-            window.open(cmd)
-        }
+
+    const response = await fetch(cmd);
+    if( !response.ok ) {
+        gameWindow?.close();
+        alert(`Could not load replay: ${response.status}`);
+        return;
     }
-    ajax.send();
+
+    cmd = ".?hot_seat&3d_scene"
+    if( is_replay ) {
+        cmd = `${cmd}&replay`
+    }
+    if( gameWindow ) {
+        gameWindow.location.href = cmd;
+    } else {
+        window.location.href = cmd;
+    }
 }
 </script>
 

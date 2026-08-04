@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="/public/css/marvel/animation-shock.css">
     <link rel="stylesheet" href="/public/css/marvel/animation-do-damage.css">
     <link rel="stylesheet" href="/public/css/marvel/overlay.css">
+    <link rel="stylesheet" href="/public/css/marvel/replay-controls.css?v=2">
     <link rel="stylesheet" href="/public/css/marvel/notification.css">
     <link rel="stylesheet" href="/public/css/marvel/change-value.css">
     <link rel="stylesheet" href="/public/css/marvel/error-occurred.css">
@@ -208,6 +209,18 @@
         <div id='pause-icon'><i class="fa fa-pause" aria-hidden="true"></i></div>
     </div>
 
+    <section id="replay-controls" aria-label="Replay controls">
+        <div class="replay-control-buttons">
+            <button id="replay-first" type="button" title="First step" aria-label="First step"><i class="fa fa-fast-backward" aria-hidden="true"></i></button>
+            <button id="replay-previous" type="button" title="Previous step" aria-label="Previous step"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+            <button id="replay-play-pause" type="button" title="Pause replay" aria-label="Pause replay"><i class="fa fa-pause" aria-hidden="true"></i></button>
+            <button id="replay-next" type="button" title="Next step" aria-label="Next step"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+            <button id="replay-last" type="button" title="Last step" aria-label="Last step"><i class="fa fa-fast-forward" aria-hidden="true"></i></button>
+            <output id="replay-step-counter" aria-live="polite">0 / 0</output>
+        </div>
+        <input id="replay-progress" type="range" min="0" max="0" value="0" step="1" aria-label="Replay position">
+    </section>
+
     <div id="lost-connect" class="lost-connect hide">
         <p id="wait-connect">Reconnect in <span id="retry-timer">1</span> seconds. <a id="reconnect-link">Reconnect Now</a></p>
         <p id="connecting">Connecting...</p>
@@ -222,7 +235,7 @@
 
     <script src="/public/js/lib/vanilla-tilt.js"></script>
     <script src="/public/js/lib/click-effect.js"></script>
-    <script src="/public/js/marvel/marvel.js" type="module"></script>
+    <script src="/public/js/marvel/marvel.js?replay-ui=2" type="module"></script>
 
     <audio id="play-bgm" src="" preload="auto" controls="none" style="display: none;" loop></audio>
 

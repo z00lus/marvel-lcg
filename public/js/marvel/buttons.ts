@@ -765,25 +765,12 @@ export class Button{
         // Fix replay mode, we need to create `#pause-btn` first
         Button.createButtonBase(parent_div3, {
             text: "Replay",
+            id: 'replay-btn',
             property: 'is_replay',
             onClick: () => {
-                if( ButtonSetting.is_replay ) {
-                    Button.disablePause()
-                    HistoryLog.close()
-
-                    document.body.classList.add('replaying')
-                    // document.querySelector('#replay-icon')?.classList.remove('hide')
-                    if( Game.asking_players.length > 0 ) {
-                        Replay.doReplay()
-                    }
-                    document.getElementById('replay-btn')?.classList.add('clicked')
-                } else {
-                    document.body.classList.remove('replaying')
-                    // document.querySelector('#replay-icon')?.classList.add('hide')
-                    document.getElementById('replay-btn')?.classList.remove('clicked')
-                    Replay.prepared_replay = false
-                    Replay.preparing_replay = false
-                }
+                Button.disablePause()
+                HistoryLog.close()
+                Replay.setPlaying(Boolean(ButtonSetting.is_replay))
             },
             callWhenInit: true
         })

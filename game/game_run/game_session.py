@@ -28,6 +28,7 @@ class GameSession:
         self.version: Ver
         self.world: 'World|None' = None
         self.game = game
+        self.preserve_replay_inputs_on_restart = False
         # self.condition = Condition("State")
 
     def Restart(self, seed: int|None) -> None:
@@ -203,6 +204,27 @@ class GameSession:
         self.start_time = Time.GetTime()
         # game.controller_manager.replay.SetIsSkipping()
 
+    def ReplayGoto(self, target_step: int):
+        replay = self.game.controller_manager.replay
+        target_step = max(0, min(target_step, replay.GetReplayOperationLen()))
+
+        if target_step >= replay.current_step_id:
+            if target_step > replay.current_step_id:
+                self.SkipTo(target_step)
+            return
+
+        if self.world:
+            self.world.game_over.SetUndo()
+        self.ExitWait()
+
+        assert self.scene
+        self.scene.inputs = replay.replay_inputs[:]
+        self.preserve_replay_inputs_on_restart = True
+        self.game.controller_manager.skip.SetSkipTo(target_step)
+        replay.Clear()
+        self.game.state.SetStartState('Undo')
+        self.start_time = Time.GetTime()
+
     def Load(self, json_path: str, skip_to: int|None, state: Literal["Replay", "Load"]):
 
         if json_path == "":
@@ -264,4 +286,3 @@ class GameSession:
     #         return self.game.state.start_state == ''
 
     #     self.condition.Wait(check)
-

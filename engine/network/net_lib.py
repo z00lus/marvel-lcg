@@ -61,9 +61,12 @@ class NetLib:
 
         s = socket.socket(family, socket.SOCK_STREAM)
         try:
+            # Allow an immediately restarted server to bind while old connections
+            # are still in TIME_WAIT. An active listener still keeps the port busy.
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((address, port))
-        except:
+        except OSError:
             port_available = False
-        s.close()
+        finally:
+            s.close()
         return port_available
-

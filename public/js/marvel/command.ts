@@ -23,12 +23,18 @@ export class Command {
         }
     }
 
-    static async saveLocal() {
-        const response_block_thread = await fetch("save_local?");
-        const text = await response_block_thread.text();
-        // const text = "A"
-        // prompt(`Your save file has been saved in:`, text)
-        Notify.showCommand(`Your save file has been saved in: ${text}`)
+    static async saveLocal(): Promise<string> {
+        const response = await fetch("save_local", { method: "POST" });
+        const data = await response.json();
+        if( !response.ok ) {
+            const error = data.error || `Replay save failed: ${response.status}`
+            Notify.showCommand(error)
+            throw new Error(error)
+        }
+
+        const path = data.path || data.file
+        Notify.showCommand(`Replay saved: ${path}`)
+        return path
     }
 
     static async uploadSave(save_type: "Bug"|"Crash"|"Share", comment: string="") {

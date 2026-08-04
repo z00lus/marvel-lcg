@@ -35,7 +35,7 @@ if ! "$virtualenv_python" -c \
 fi
 
 if ! "$virtualenv_python" -c \
-    'import socket; sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM); sock.bind(("127.0.0.1", 2345)); sock.close()' \
+    'import socket; sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM); sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1); sock.bind(("127.0.0.1", 2345)); sock.close()' \
     >/dev/null 2>&1; then
     fail "Port 2345 is already in use. Stop the previous Marvel LCG instance with Ctrl+C, then try again."
 fi

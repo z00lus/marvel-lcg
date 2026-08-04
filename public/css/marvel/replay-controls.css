@@ -1,0 +1,110 @@
+#replay-controls {
+    align-items: center;
+    backdrop-filter: blur(8px);
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    box-sizing: border-box;
+    contain: layout paint style;
+    display: flex;
+    flex: none !important;
+    flex-direction: column;
+    float: none !important;
+    gap: 8px;
+    left: auto !important;
+    margin: 0 !important;
+    max-height: none;
+    max-width: calc(100vw - 16px) !important;
+    padding: 10px 12px;
+    position: fixed !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    top: auto !important;
+    transform: none;
+    width: min(520px, calc(100vw - 16px)) !important;
+    z-index: var(--z-index-right-side-bar);
+}
+
+body:not(.replay-mode) #replay-controls {
+    display: none;
+}
+
+.replay-control-buttons {
+    align-items: center;
+    display: flex;
+    flex: none;
+    gap: 6px;
+    justify-content: center;
+    width: 100%;
+}
+
+#replay-controls button {
+    align-items: center;
+    background: #263241;
+    border: 1px solid #526174;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    flex: none;
+    font-size: 16px;
+    height: 40px;
+    justify-content: center;
+    min-width: 44px;
+}
+
+#replay-controls button:hover:not(:disabled),
+#replay-controls button:focus-visible {
+    background: #3b82f6;
+}
+
+#replay-controls button:disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+
+#replay-play-pause {
+    background: #1d4ed8 !important;
+}
+
+#replay-step-counter {
+    box-sizing: border-box;
+    color: white;
+    flex: none;
+    font-family: monospace;
+    font-size: 16px;
+    height: 40px;
+    line-height: 40px;
+    min-width: 88px;
+    text-align: center;
+}
+
+#replay-progress {
+    accent-color: #3b82f6;
+    cursor: pointer;
+    flex: none;
+    margin: 0;
+    width: 100%;
+}
+
+#replay-controls.seeking {
+    opacity: 0.75;
+}
+
+@media (max-width: 480px) {
+    #replay-controls {
+        padding: 8px;
+    }
+
+    #replay-controls button {
+        height: 36px;
+        min-width: 38px;
+    }
+
+    #replay-step-counter {
+        height: 36px;
+        line-height: 36px;
+        min-width: 72px;
+    }
+}

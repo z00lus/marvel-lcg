@@ -186,6 +186,11 @@ export class Client {
             // is_skipping      : original_data['is_skipping'],
         };
 
+        Replay.updateControls(
+            data.current_step_id,
+            Math.max(data.max_replay_step_id, data.current_step_id)
+        )
+
         // if( Setting.is_hot_seat && data.ask_players.length > 0 ) {
         //     UI.updateCurrentPlayer(data.ask_players[0])
         // }
@@ -620,4 +625,3 @@ export class Client {
         }
     }
 }
-

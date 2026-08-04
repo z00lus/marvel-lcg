@@ -40,9 +40,9 @@ class GameServerGet(GameServerBase):
 
     async def list_replay_files(self, request: web.Request) -> web.Response:
         if READ_ONLY_FIRST_REPLAY_FOLDER.value:
-            return self.ListFile(REPLAY_FOLDERS.value[0])
+            return self.ListFile(REPLAY_FOLDERS.value[0], ext=".json")
         else:
-            return self.ListFile(*REPLAY_FOLDERS.value)
+            return self.ListFile(*REPLAY_FOLDERS.value, ext=".json")
 
     async def list_puzzle_files(self, request: web.Request) -> web.Response:
         return self.ListFile(PUZZLE_FOLDER.value)
@@ -153,10 +153,27 @@ class GameServerGet(GameServerBase):
         return self.ReadPuzzleFile(file)
 
     async def get_replay_json(self, request: web.Request) -> web.Response:
-        path = request.rel_url.query_string
-        file = FileManager.FindJsonPath("Replay", path)
-        assert file
+        file = self.FindReplayFile(Unquote(request.rel_url.query_string))
+        if file is None:
+            return web.json_response({'error': "Replay not found"}, status=404)
         return self.ReadReplayFile(file)
+
+    async def download_replay(self, request: web.Request) -> web.Response:
+        requested_file = request.query.get('file', '')
+        file = self.FindReplayFile(requested_file)
+        if file is None:
+            return web.json_response({'error': "Replay not found"}, status=404)
+
+        from urllib.parse import quote
+        with FileManager.OpenFile(file, read=True, bin=True) as replay:
+            data = replay.Read()
+
+        file_name = FileManager.GetBaseName(file)
+        headers = {
+            'Content-Disposition': f"attachment; filename*=UTF-8''{quote(file_name)}",
+            'Cache-Control': 'no-store',
+        }
+        return web.Response(body=data, content_type='application/json', headers=headers)
 
     async def get_gamers(self, request: web.Request) -> web.Response:
         if self.controller_manager.game.state.is_running:
@@ -193,6 +210,6 @@ class GameServerGet(GameServerBase):
         self.AddAwaitGetSecurity('/get_max_timeout', self.get_max_timeout)
         self.AddAwaitGetSecurity('/get_puzzle_json', self.get_puzzle_json)
         self.AddAwaitGetSecurity('/get_replay_json', self.get_replay_json)
+        self.AddAwaitGetSecurity('/download_replay', self.download_replay)
 
         self.AddAwaitGetSecurity('/get_gamers', self.get_gamers)
-

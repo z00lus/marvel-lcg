@@ -114,7 +114,10 @@ class Game:
 
     def GameRestartInternal(self):
         Log.Print("\n\n=== Game Restart ===")
-        self.ApplyHistoryInput()
+        if self.session.preserve_replay_inputs_on_restart:
+            self.session.preserve_replay_inputs_on_restart = False
+        else:
+            self.ApplyHistoryInput()
 
     def Restart(self, seed: int|None=-1) -> None:
         assert self.world
@@ -186,4 +189,3 @@ class Game:
             self.OnExitGameInternal()
 
         return True
-

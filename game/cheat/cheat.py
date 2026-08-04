@@ -188,6 +188,10 @@ class Cheat:
                 step = int(args)
                 try_skip_to(step)
 
+        def do_replay_goto(args: str):
+            target_step = int(args)
+            game.session.ReplayGoto(target_step)
+
         def do_step(args: str):
             step = int(args)
             if game.controller_manager.skip.skip_to >= game.controller_manager.replay.current_step_id:
@@ -257,6 +261,7 @@ class Cheat:
             "/cs":              do_comment_by,
             "/undo":            do_undo,
             '/goto':            do_goto,
+            '/replay_goto':     do_replay_goto,
             '/step':            do_step, # 't'
             '/skip':            do_skip, # 's'
             '/replay':          do_update_replay,
@@ -288,4 +293,3 @@ class Cheat:
             return True
 
         return False
-

@@ -64,7 +64,11 @@ export class WindowLoad {
         }
 
         if( event.key == "Pause" ) {
-            Button.togglePause()
+            if( Setting.replay_mode ) {
+                Replay.togglePlaying()
+            } else {
+                Button.togglePause()
+            }
             event.preventDefault();
         }
         else
@@ -228,7 +232,31 @@ export class WindowLoad {
             }
             else
             if (event.key === " " ) {
-                Button.togglePause()
+                if( Setting.replay_mode ) {
+                    Replay.togglePlaying()
+                } else {
+                    Button.togglePause()
+                }
+                event.preventDefault();
+            }
+            else
+            if( Setting.replay_mode && event.key === "ArrowLeft" ) {
+                Replay.stepBackward()
+                event.preventDefault();
+            }
+            else
+            if( Setting.replay_mode && event.key === "ArrowRight" ) {
+                Replay.stepForward()
+                event.preventDefault();
+            }
+            else
+            if( Setting.replay_mode && event.key === "Home" ) {
+                Replay.goToStep(0)
+                event.preventDefault();
+            }
+            else
+            if( Setting.replay_mode && event.key === "End" ) {
+                Replay.goToStep(Number.MAX_SAFE_INTEGER)
                 event.preventDefault();
             }
             else

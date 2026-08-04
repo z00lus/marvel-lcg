@@ -135,6 +135,11 @@
     background-color: #2563eb;
 }
 
+#game-over-buttons button:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
+
 #game-over-buttons button:hover {
     color: black;
     /* background-color: gray; */

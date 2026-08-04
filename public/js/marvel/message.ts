@@ -10,6 +10,7 @@ export class Message {
     private static end_messageElement: HTMLElement
     private static end_messageElementText: HTMLElement
     private static retryButton: HTMLButtonElement
+    private static saveReplayButton: HTMLButtonElement
 
     static init() {
         Message.overlay = document.getElementById('message-overlay')!;
@@ -21,11 +22,21 @@ export class Message {
         Message.end_messageElementText = document.getElementById('game-over-text-2')!;
         const game_over_buttons = document.getElementById('game-over-buttons')!;
 
-        const buttonSave = document.createElement('button');
-        buttonSave.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
-        buttonSave.classList.add('save-replay')
-        buttonSave.addEventListener('click', function() {
-            Command.saveLocal()
+        Message.saveReplayButton = document.createElement('button');
+        Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
+        Message.saveReplayButton.classList.add('save-replay')
+        Message.saveReplayButton.addEventListener('click', async function() {
+            Message.saveReplayButton.disabled = true
+            Message.saveReplayButton.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Saving...'
+
+            try {
+                await Command.saveLocal()
+                Message.saveReplayButton.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Saved'
+            } catch( error ) {
+                console.error(error)
+                Message.saveReplayButton.disabled = false
+                Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay'
+            }
         });
 
         const buttonShare = document.createElement('button');
@@ -58,7 +69,7 @@ export class Message {
 
         game_over_buttons.appendChild(Message.retryButton);
         game_over_buttons.appendChild(buttonShare);
-        game_over_buttons.appendChild(buttonSave);
+        game_over_buttons.appendChild(Message.saveReplayButton);
     }
 
     static cleanGameOverMessage() {
@@ -76,6 +87,8 @@ export class Message {
         Message.retryButton.hidden = Game.players_won;
         Message.retryButton.disabled = false;
         Message.retryButton.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i> Try again';
+        Message.saveReplayButton.disabled = false;
+        Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
         Message.end_messageElementText.textContent = text
     }
 
