@@ -17,9 +17,12 @@ def GetAbilities() -> Sequence['Ability']:
     return [
         AbilityFactory.WhenUnitWouldTakeDamage(
             AbilityType.HeroInterrupt,
-            "AnotherFriend",
-            stronger_together
+            Unit2,
+            stronger_together,
+            conditions=[
+                lambda effect, message:
+                    message.trigger != effect.GetInitiator().GetHero()
+            ],
         ).SetPlay().SetLabel()
         .SetTarget("Trigger", share_trait_with_your_hero=True),
     ]
-

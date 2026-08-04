@@ -58464,62 +58464,158 @@
     ],
     "wonder_man": [
         {
+            "card_id": "58001a",
+            "type": "Hero",
+            "name": "* Wonder Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "12",
+                "ATK": "1*",
+                "THW": "2",
+                "DEF": "2",
+                "HS": "5"
+            },
+            "traits": ["AERIAL", "AVENGER"],
+            "set_name": "Wonder Man",
+            "text": "<i>Power Recycling</i> — Wonder Man gets +1 ATK for each card tucked under Ionic Physiology.\n[star] <b>Forced Response</b>: After Wonder Man makes a basic attack, discard each card tucked under Ionic Physiology."
+        },
+        {
+            "card_id": "58001b",
+            "type": "AlterEgo",
+            "name": "* Simon Williams",
+            "subtitle": "",
+            "desc": {"HP": "12", "REC": "3", "HS": "6"},
+            "traits": ["CIVILIAN"],
+            "set_name": "Wonder Man",
+            "text": "<i>Ionic Energy Being</i> — You may include events with a printed [energy] resource icon from any aspect in your deck.\n<b>Setup</b>: Put Ionic Physiology into play."
+        },
+        {
+            "card_id": "58002",
+            "type": "Upgrade",
+            "name": "Ionic Physiology",
+            "subtitle": "",
+            "desc": {"RES": "Y", "Class": "Hero", "Permanent": "1", "MaxPerDeck": "1"},
+            "traits": ["SUPERPOWER"],
+            "set_name": "Wonder Man",
+            "text": "Permanent. Max 3 cards tucked here.\n<b>Response</b>: After you play an event with a printed [energy] resource, tuck that event from your discard pile under this card → heal 1 damage from your identity."
+        },
+        {
+            "card_id": "58003",
+            "type": "Event",
+            "name": "Active Altruism",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "Y", "Class": "Hero"},
+            "traits": ["THWART"],
+            "set_name": "Wonder Man",
+            "text": "<b>Hero Action</b> <i>(thwart)</i>: Remove 1 threat from a scheme. Remove 2 additional threat from that scheme for each [energy] resource you overpaid for this card (to a maximum of [energy] [energy])."
+        },
+        {
+            "card_id": "58004",
+            "type": "Event",
+            "name": "Ionic Blast",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
+            "traits": ["ATTACK", "SUPERPOWER"],
+            "set_name": "Wonder Man",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 3 damage to an enemy. Deal 2 additional damage to that enemy for each [energy] resource you overpaid for this card (to a maximum of [energy] [energy] [energy])."
+        },
+        {
+            "card_id": "58005",
+            "type": "Event",
+            "name": "Starstruck",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
+            "traits": ["ATTACK", "SUPERPOWER"],
+            "set_name": "Wonder Man",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal damage to an enemy equal to your ATK. If you overpaid for this card with a [energy] resource, stun that enemy."
+        },
+        {
+            "card_id": "58006",
+            "type": "Resource",
+            "name": "Energy Siphon",
+            "subtitle": "",
+            "desc": {"RES": "Y", "Class": "Hero"},
+            "traits": [],
+            "set_name": "Wonder Man",
+            "text": "<b>Hero Interrupt</b>: When you spend this card, take up to 3 damage → this card generates 1 additional [energy] resource for each damage taken this way."
+        },
+        {
+            "card_id": "58007",
+            "type": "Support",
+            "name": "Wonder Fans",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "G", "Class": "Hero"},
+            "traits": ["CIVILIAN"],
+            "set_name": "Wonder Man",
+            "text": "<b>Alter-Ego Action</b>: Exhaust Wonder Fans → choose:\n• Tuck 1 event with a printed [energy] resource from your discard pile under Ionic Physiology.\n• Draw 1 card."
+        },
+        {
+            "card_id": "58008",
+            "type": "Upgrade",
+            "name": "Jet Belt",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "B", "Class": "Hero"},
+            "traits": ["ITEM", "TECH"],
+            "set_name": "Wonder Man",
+            "text": "<b>Hero Resource</b>: Exhaust Jet Belt → generate a [energy] resource for an event.\n<b>Hero Resource</b>: Exhaust Jet Belt and discard a card tucked under Ionic Physiology → generate a [energy] resource."
+        },
+        {
+            "card_id": "58009",
+            "type": "Upgrade",
+            "name": "Mr. Hollywood",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "G", "Class": "Hero"},
+            "traits": ["TITLE"],
+            "set_name": "Wonder Man",
+            "text": "<b>Resource</b>: Generate a [energy] resource to overpay for a card. (Limit once per card.)"
+        },
+        {
+            "card_id": "58010",
+            "type": "Upgrade",
+            "name": "Signature Sunglasses",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
+            "traits": ["ITEM"],
+            "set_name": "Wonder Man",
+            "text": "<b>Response</b>: After you change form, choose:\n• Tuck an event or resource card with a printed [energy] resource from your discard pile under Ionic Physiology.\n• Add a card tucked under Ionic Physiology to your hand."
+        },
+        {
+            "card_id": "58011",
+            "type": "Upgrade",
+            "name": "\"What Are You?\"",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "Y", "Class": "Hero"},
+            "traits": ["SUPERPOWER"],
+            "set_name": "Wonder Man",
+            "text": "<b>Forced Interrupt</b>: When Wonder Man would be defeated, instead set his hit point dial to 4 and change him to alter-ego form. You may tuck events with a printed [energy] resource from your discard pile under Ionic Physiology until there are 3 cards tucked there. Remove this card from the game."
+        },
+        {
             "card_id": "58012",
             "type": "Ally",
             "name": "* Firebird",
             "subtitle": "Bonita Juarez",
-            "desc": {
-                "Cost": "2",
-                "HP": "2",
-                "ATK": "2**",
-                "THW": "2*",
-                "RES": "Y",
-                "Class": "Justice"
-            },
-            "traits": [
-                "AERIAL",
-                "AVENGER"
-            ],
+            "desc": {"Cost": "2", "HP": "2", "ATK": "2**", "THW": "2*", "RES": "Y", "Class": "Justice"},
+            "traits": ["AERIAL", "AVENGER"],
             "set_name": "",
-            "text": "If you overpaid for Firebird, put 1 rebirth counter on her.\n<b>Interrupt</b>: When Firebird would be defeated by consequential damage, remove 1 rebirth counter from her \u2192 heal all damage from her instead."
+            "text": "If you overpaid for Firebird, put 1 rebirth counter on her.\n<b>Interrupt</b>: When Firebird would be defeated by consequential damage, remove 1 rebirth counter from her → heal all damage from her instead."
         },
         {
             "card_id": "58013",
             "type": "Ally",
             "name": "* Hawkeye",
             "subtitle": "Clint Barton",
-            "desc": {
-                "Cost": "3",
-                "HP": "3",
-                "ATK": "1*",
-                "THW": "1*",
-                "RES": "Y",
-                "Class": "Justice"
-            },
-            "traits": [
-                "AVENGER",
-                "S.H.I.E.L.D"
-            ],
+            "desc": {"Cost": "3", "HP": "3", "ATK": "1*", "THW": "1*", "RES": "Y", "Class": "Justice"},
+            "traits": ["AVENGER", "S.H.I.E.L.D"],
             "set_name": "",
-            "text": "Hawkeye enters play with 4 arrow counters on him.\n<b>Response</b>: After an ally makes a basic thwart, remove 1 arrow counter from Hawkeye \u2192 deal 2 damage to a minion."
+            "text": "Hawkeye enters play with 4 arrow counters on him.\n<b>Response</b>: After an ally makes a basic thwart, remove 1 arrow counter from Hawkeye → deal 2 damage to a minion."
         },
         {
             "card_id": "58014",
             "type": "Ally",
             "name": "* Scarlet Witch",
             "subtitle": "Wanda Maximoff",
-            "desc": {
-                "Cost": "2",
-                "HP": "3",
-                "ATK": "2*",
-                "THW": "2*",
-                "RES": "B",
-                "Class": "Justice"
-            },
-            "traits": [
-                "AVENGER",
-                "MYSTIC"
-            ],
+            "desc": {"Cost": "2", "HP": "3", "ATK": "2*", "THW": "2*", "RES": "B", "Class": "Justice"},
+            "traits": ["AVENGER", "MYSTIC"],
             "set_name": "",
             "text": "<b>Forced Response</b>: After you play Scarlet Witch, discard the top card of the encounter deck. If it is a treachery card, resolve its <b>\"When Revealed\"</b> ability."
         },
@@ -58528,18 +58624,8 @@
             "type": "Ally",
             "name": "* Sentry",
             "subtitle": "Robert Reynolds",
-            "desc": {
-                "Cost": "3",
-                "HP": "5",
-                "ATK": "3*",
-                "THW": "2*",
-                "RES": "Y",
-                "Class": "Justice"
-            },
-            "traits": [
-                "AERIAL",
-                "AVENGER"
-            ],
+            "desc": {"Cost": "3", "HP": "5", "ATK": "3*", "THW": "2*", "RES": "Y", "Class": "Justice"},
+            "traits": ["AERIAL", "AVENGER"],
             "set_name": "",
             "text": "<b>Forced Response</b>: After Sentry enters play, search the encounter deck for a side scheme and reveal it. <i>(Shuffle.)</i> If no side scheme was revealed this way, place 6 threat on the main scheme."
         },
@@ -58548,48 +58634,28 @@
             "type": "Event",
             "name": "Battlefield Benevolence",
             "subtitle": "",
-            "desc": {
-                "Cost": "1",
-                "RES": "R",
-                "Class": "Justice"
-            },
-            "traits": [
-                "TACTIC"
-            ],
+            "desc": {"Cost": "1", "RES": "R", "Class": "Justice"},
+            "traits": ["TACTIC"],
             "set_name": "",
-            "text": "<b>Hero Action</b>: Heal 2 damage from an enemy \u2192 confuse that enemy."
+            "text": "<b>Hero Action</b>: Heal 2 damage from an enemy → confuse that enemy."
         },
         {
             "card_id": "58017",
             "type": "Event",
             "name": "Bombs Away",
             "subtitle": "",
-            "desc": {
-                "Cost": "2",
-                "RES": "Y",
-                "Class": "Aggression"
-            },
-            "traits": [
-                "AERIAL",
-                "TACTIC"
-            ],
+            "desc": {"Cost": "2", "RES": "Y", "Class": "Aggression"},
+            "traits": ["AERIAL", "TACTIC"],
             "set_name": "",
-            "text": "<b>Hero Action</b>: Exhaust an [[AERIAL]] character you control and choose a player \u2192 deal 3 damage to the villain and each minion engaged with that player."
+            "text": "<b>Hero Action</b>: Exhaust an [[AERIAL]] character you control and choose a player → deal 3 damage to the villain and each minion engaged with that player."
         },
         {
             "card_id": "58018",
             "type": "Event",
             "name": "Everywhere All at Once",
             "subtitle": "",
-            "desc": {
-                "Cost": "-1",
-                "RES": "Y",
-                "Class": "Justice"
-            },
-            "traits": [
-                "AERIAL",
-                "THWART"
-            ],
+            "desc": {"Cost": "X", "RES": "Y", "Class": "Justice"},
+            "traits": ["AERIAL", "THWART"],
             "set_name": "",
             "text": "Play only if your identity has the [[Aerial]] trait.\n<b>Hero Action</b> <i>(thwart)</i>: Choose X schemes. Remove 2 threat from each chosen scheme (3 threat instead if you overpaid for this card)."
         },
@@ -58598,11 +58664,7 @@
             "type": "Event",
             "name": "Stronger Together",
             "subtitle": "",
-            "desc": {
-                "Cost": "0",
-                "RES": "Y",
-                "Class": "Protection"
-            },
+            "desc": {"Cost": "0", "RES": "Y", "Class": "Protection"},
             "traits": [],
             "set_name": "",
             "text": "<b>Hero Interrupt</b>: When a character other than your hero would take any amount of damage, if that character shares a [[Trait]] with your hero, reduce that damage by your DEF."
@@ -58612,47 +58674,102 @@
             "type": "Event",
             "name": "Unified Strike",
             "subtitle": "",
-            "desc": {
-                "Cost": "0",
-                "RES": "Y",
-                "Class": "Leadership"
-            },
-            "traits": [
-                "TACTIC"
-            ],
+            "desc": {"Cost": "0", "RES": "Y", "Class": "Leadership"},
+            "traits": ["TACTIC"],
             "set_name": "",
-            "text": "<b>Hero Interrupt</b>: When an ally uses a basic power, exhaust your hero \u2192 add your hero's matching power to that ally's power for this use. That ally does not take consequential damage for this use."
+            "text": "<b>Hero Interrupt</b>: When an ally uses a basic power, exhaust your hero → add your hero's matching power to that ally's power for this use. That ally does not take consequential damage for this use."
         },
         {
             "card_id": "58021",
             "type": "Upgrade",
             "name": "Heroic Conditioning",
             "subtitle": "",
-            "desc": {
-                "Cost": "3",
-                "RES": "R",
-                "Class": "Justice"
-            },
-            "traits": [
-                "CONDITION"
-            ],
+            "desc": {"Cost": "3", "RES": "R", "MaxPerUnit": "1", "Class": "Justice"},
+            "traits": ["CONDITION"],
             "set_name": "",
             "text": "Play under any player's control. Max 1 per player.\nYou get +3 hit points and your hero gets +1 THW."
+        },
+        {
+            "card_id": "58022",
+            "type": "Ally",
+            "name": "* Swordsman",
+            "subtitle": "Jacques Duquesne",
+            "desc": {"Cost": "4", "HP": "4", "ATK": "2*", "THW": "2**", "RES": "R", "Class": "Basic"},
+            "traits": ["AVENGER"],
+            "set_name": "",
+            "text": "[star] Swordsman's basic attacks gain piercing.\n<b>Hero Response</b>: After a boost card is turned faceup during an undefended attack, declare Swordsman as the defender without exhausting him."
+        },
+        {
+            "card_id": "58023",
+            "full_link": "01088"
+        },
+        {
+            "card_id": "58024",
+            "type": "Support",
+            "name": "* Jarvis",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "Y", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["AVENGER", "PERSONA"],
+            "set_name": "",
+            "text": "<b>Response</b>: After an [[Avenger]] hero changes into alter-ego form, exhaust Jarvis → choose:\n• That identity gets +2 REC until the end of the phase.\n• Discard a status card from that identity."
+        },
+        {
+            "card_id": "58025",
+            "type": "Obligation",
+            "name": "Pacifism",
+            "subtitle": "",
+            "desc": {"Boost": "2", "GiveTo": "Simon Williams"},
+            "traits": [],
+            "set_name": "Wonder Man",
+            "text": "<b><i>Give to the Simon Williams player.</i></b>\nWonder Man cannot attack.\n<b>Alter-Ego Action</b>: Exhaust Simon Williams or discard 3 cards tucked under Ionic Physiology → discard this card."
+        },
+        {
+            "card_id": "58026",
+            "type": "Minion",
+            "name": "* Grim Reaper",
+            "subtitle": "",
+            "desc": {"HP": "3", "ATK": "2", "SCH": "2", "Boost": "2", "Quickstrike": "1", "Nemesis": "Wonder Man"},
+            "traits": ["CYBORG"],
+            "set_name": "Wonder Man Nemesis",
+            "text": "Quickstrike.\n[star] <b>Forced Response</b>: After Grim Reaper attacks and defeats an ally, deal that ally's controller a facedown encounter card."
+        },
+        {
+            "card_id": "58027",
+            "type": "SideScheme",
+            "name": "Brother vs. Brother",
+            "subtitle": "",
+            "desc": {"StartingThreat": "2", "Boost": "3"},
+            "traits": [],
+            "set_name": "Wonder Man Nemesis",
+            "text": "As an additional cost to attack Grim Reaper, you must discard 1 card from your hand."
+        },
+        {
+            "card_id": "58028",
+            "type": "Treachery",
+            "name": "Scythe Strike",
+            "subtitle": "",
+            "desc": {"Boost": "2"},
+            "traits": [],
+            "set_name": "Wonder Man Nemesis",
+            "text": "<b>When Revealed</b>: If Grim Reaper is in play, he activates against you. Otherwise, take 2 indirect damage."
+        },
+        {
+            "card_id": "58029",
+            "type": "Treachery",
+            "name": "Death Cannot Die",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Wonder Man Nemesis",
+            "text": "<b>When Revealed</b>: Grim Reaper activates against you. If Grim Reaper is not in play, find him and reveal him.\n<hr />\n[star] <b>Boost</b>: If Grim Reaper is in play, he activates against you <i>(after this activation)</i>."
         },
         {
             "card_id": "58030",
             "type": "Upgrade",
             "name": "Caught in the Crossfire",
             "subtitle": "",
-            "desc": {
-                "Cost": "0",
-                "RES": "Y",
-                "MaxPerUnit": "1",
-                "Class": "Aggression"
-            },
-            "traits": [
-                "TACTIC"
-            ],
+            "desc": {"Cost": "0", "RES": "Y", "MaxPerUnit": "1", "Class": "Aggression"},
+            "traits": ["TACTIC"],
             "set_name": "",
             "text": "Attach to a non-[[Elite]] minion. Max 1 per minion.\n<b>Interrupt</b>: When a friendly character attacks, deal 1 damage to attached minion."
         },
@@ -58661,30 +58778,40 @@
             "type": "Support",
             "name": "Cameo",
             "subtitle": "",
-            "desc": {
-                "MaxPerDeck": "1",
-                "Class": "Leadership",
-                "Setup": "1"
-            },
+            "desc": {"MaxPerDeck": "1", "Class": "Leadership", "Setup": "1"},
             "traits": [],
             "set_name": "",
             "text": "Setup. Max 1 per deck.\n<b>Setup</b>: Search your collection for an identity-specific ally for an identity not in this game. Shuffle that ally into your deck. Discard 2 cards from your hand and remove this card from the game."
+        },
+        {
+            "card_id": "58032",
+            "type": "Upgrade",
+            "name": "Coordinated Effort",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "G", "MaxPerUnit": "1", "Class": "Leadership"},
+            "traits": ["TACTIC"],
+            "set_name": "",
+            "text": "Attach to an encounter card in play. Max 1 per encounter card.\nWhile paying costs on attached card, any player may help pay those costs."
         },
         {
             "card_id": "58033",
             "type": "Event",
             "name": "Disarming Defense",
             "subtitle": "",
-            "desc": {
-                "Cost": "1",
-                "RES": "Y",
-                "Class": "Protection"
-            },
-            "traits": [
-                "DEFENSE"
-            ],
+            "desc": {"Cost": "1", "RES": "Y", "Class": "Protection"},
+            "traits": ["DEFENSE"],
             "set_name": "",
             "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When your hero defends against an attack, it gets +2 DEF for that attack. If you take no damage from that attack, discard an attachment on the attacking enemy with the text \"<b>Hero Action</b>\" or \"<b>Hero Response</b>\"."
+        },
+        {
+            "card_id": "58034",
+            "type": "Support",
+            "name": "Avengers Compound",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "B", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["AVENGER", "LOCATION"],
+            "set_name": "",
+            "text": "Play only if your identity has the [[Avenger]] trait. Max 1 per deck.\n<b>Action</b>: Exhaust Avengers Compound → choose: tuck 1 ally from your hand here if there is no ally tucked here, or play the ally tucked here as if it were in your hand."
         }
     ],
     "hercules": [
@@ -59236,5 +59363,5 @@
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
         }
     ],
-    "checksum": "25517227b0e382b2ba2e53433f6cac8677019dc34dbbdb2ac2ec01dc22479c4c"
+    "checksum": "53eb2aeb8830521e6ccab61a71699d4cad6ecbbbf5bc7882af9f05786ab1d950"
 }

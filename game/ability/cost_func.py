@@ -435,6 +435,41 @@ class CostFunc:
             selector.selector_filter.AddParameter(has_non_health=False)
             super().__init__(selector, on_call)
 
+    class TakeDamageUpTo(Base):
+        def __init__(self, maximum: int,
+                    target: 'TARGET_TYPE|None'=None,
+                    *,
+                    minimum: int=0) -> None:
+            self.return_damage: int = 0
+
+            def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None') -> bool:
+                if not player:
+                    return False
+                if not targets:
+                    return minimum == 0
+
+                unit = targets[0].CastTo(Unit2)
+                # Damage paid as a cost cannot defeat the identity.
+                legal_maximum = min(maximum, max(0, unit.health - 1))
+                if legal_maximum < minimum:
+                    return False
+
+                damage = player.DeclareNumber(minimum, legal_maximum)
+                if damage == 0:
+                    self.return_damage = 0
+                    return True
+                if TakeDamageOnCall(targets, damage, effect):
+                    self.return_damage = damage
+                    return True
+                return False
+
+            if isinstance(target, Selector):
+                selector = target
+            else:
+                selector = Select.From(target)
+            selector.selector_filter.AddParameter(has_non_health=False)
+            super().__init__(selector, on_call)
+
     class TakeIndirectDamage(Base):
         def __init__(self, value: int|Callable[['Effect'], int]) -> None:
 
@@ -1141,4 +1176,3 @@ class CostFunc:
             else:
                 target = Select.From(target)
             super().__init__(target, on_call)
-

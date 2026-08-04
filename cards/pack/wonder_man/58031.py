@@ -9,12 +9,17 @@ def GetAbilities() -> Sequence['Ability']:
         Unused(this)
 
         initiator = effect.GetInitiator()
+        identity_sets = {
+            player.GetIdentity().paper.set_name
+            for player in Worlds.GetPlayers(effect)
+        }
 
         ally = Search.Collection(
             effect,
             initiator,
             card_type=Ally,
             card_class="IdentitySpecific",
+            check_fn=lambda paper: paper.set_name not in identity_sets,
         )
 
         if ally:
@@ -30,4 +35,3 @@ def GetAbilities() -> Sequence['Ability']:
             cameo
         ),
     ]
-

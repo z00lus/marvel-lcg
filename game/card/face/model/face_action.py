@@ -440,6 +440,7 @@ class ModelAction(ModelBase):
                           defense: int|None=None,
                           scheme: int|None=None,
                           thwart: int|None=None,
+                          recover: int|None=None,
                           retaliate: int|None=None,
                           ignore_flip: bool=True) -> None:
         return self.TemporaryGain(
@@ -452,6 +453,7 @@ class ModelAction(ModelBase):
             defense=defense,
             scheme=scheme,
             thwart=thwart,
+            recover=recover,
             retaliate=retaliate,
             ignore_flip=ignore_flip,
             render_ui=True
@@ -497,4 +499,3 @@ class ModelAction(ModelBase):
             unregister_after_exec=False,
             until_next_turn_end=True
         )
-

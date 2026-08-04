@@ -44,6 +44,8 @@ class AbilityFactoryResources:
             if Event.IsType(message.paying_for_effect.this):
                 if message.paying_for_effect.this.alliance:
                     return True
+            if any(x.IsName("Coordinated Effort") for x in message.paying_for_effect.this.GetAttachedUpgrades()):
+                return True
             if effect.ability.CheckAnyPlayerCanTriggerThis(effect):
                 return True
             # HACK, TODO: clean this
@@ -237,6 +239,8 @@ class AbilityFactoryResources:
             if Event.IsType(message.paying_for_effect.this):
                 if message.paying_for_effect.this.alliance:
                     return True
+            if any(x.IsName("Coordinated Effort") for x in message.paying_for_effect.this.GetAttachedUpgrades()):
+                return True
             # Hack
             player = message.GetToPlayer()
             effect.context.initiator = player
@@ -694,4 +698,3 @@ class AbilityFactoryResources:
             ],
             operation
         )
-

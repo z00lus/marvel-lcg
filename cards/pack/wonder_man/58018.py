@@ -8,13 +8,11 @@ def GetAbilities() -> Sequence['Ability']:
         this = effect.this.CastTo(Event)
         Unused(this)
 
-        paid = effect.GetPaidResources().GetResourceIconTypes()
-        if paid > len(effect.targets):
+        if effect.GetCostX() > 0:
             value = 3
         else:
             value = 2
-        targets = effect.targets[0:paid]
-        this.RemoveThreatFromSchemes(targets, value, effect)
+        this.RemoveThreatFromSchemes(effect.targets, value, effect)
 
 
     return [
@@ -23,5 +21,5 @@ def GetAbilities() -> Sequence['Ability']:
             everywhere_all_at_once
         ).SetPlay(only_if_your_identity_has_trait="AERIAL").SetLabel('thwart')
         .SetTarget(Scheme2, range=(1, "All"))
+        .SetCost(lambda effect, targets: Cost(str(len(targets))))
     ]
-

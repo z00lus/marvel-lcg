@@ -391,6 +391,13 @@
         "encounters": ["mighty_avengers", "the_initiative", "maria_hill", "dangerous_recruits", "cape_killer", "martial_law", "heroes_for_hire", "paladin", "new_avengers", "secret_avengers", "namor", "atlanteans", "spider_man", "defenders", "hells_kitchen", "cloak_dagger"],
         "max_id": "56214"
     },
+    "58. Wonder Man": {
+        "name": "wonder_man",
+        "scenarios": [],
+        "heroes": ["wonder_man"],
+        "encounters": [],
+        "max_id": "58034"
+    },
     "60. Fear No Evil (Echo)": {
         "name": "fne",
         "scenarios": [],
@@ -437,5 +444,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "1ee9376d789b1eac1055e3e7b3e74f36e6002b4eba2b77a52905acc5de190b9e"
+    "checksum": "f0eec168a7f5c46853539d3b0d3a43af5be7ad3091e855f96c57784ffe7925fb"
 }
