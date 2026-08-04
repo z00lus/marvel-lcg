@@ -29,6 +29,7 @@ def GetAbilities() -> Sequence['Ability']:
         Faces.DiscardAll(faces, effect)
 
         this.card.Flip(effect)
+        this.card.face.PutIntoPlay(player, effect, under_control=True)
 
 
     return [
@@ -38,4 +39,3 @@ def GetAbilities() -> Sequence['Ability']:
             mutants_at_the_mall,
         ),
     ]
-

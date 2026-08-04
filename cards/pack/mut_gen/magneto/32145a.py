@@ -9,8 +9,10 @@ def GetAbilities() -> Sequence['Ability']:
         Unused(this)
 
         this.card.Flip(effect)
-
-        # RevealCards(CardFinder(name="Physical Strain"), effect)
+        magneto = Worlds.FindVillain(effect, name="Magneto")
+        physical_strain = this.card.face
+        if magneto and Attachment.IsType(physical_strain):
+            physical_strain.AttachTo2(magneto, effect)
 
     return [
         AbilityFactory.UnitCannotHaveMoreThanSustainedDamage(
@@ -23,4 +25,3 @@ def GetAbilities() -> Sequence['Ability']:
             orbital_decay,
         ),
     ]
-

@@ -118,13 +118,13 @@ def _resolve_overseer_discard_effect(
     overseer = overseers[0]
     resources = card.printed_resource_internal
 
-    if overseer.IsName("* Shadow King") and resources.b:
+    if overseer.IsName("Shadow King") and resources.b:
         mission.PlaceThreatOnSchemes([mission], 2 * resources.b, effect)
 
-    if overseer.IsName("* Sugar Man") and resources.r:
+    if overseer.IsName("Sugar Man") and resources.r:
         overseer.HealthUnits([overseer], 3 * resources.r, effect)
 
-    if overseer.IsName("* Mikhail Rasputin"):
+    if overseer.IsName("Mikhail Rasputin"):
         for _ in range(resources.y):
             allies = GetMissionAllies(effect)
             if not allies:
@@ -137,7 +137,7 @@ def _resolve_overseer_discard_effect(
             if target:
                 target.TakeDamage(overseer, 1, effect)
 
-    if overseer.IsName("* Abyss") and resources.g:
+    if overseer.IsName("Abyss") and resources.g:
         Faces.MoveAllTo([card], overseer.GetInventoryDeck(), effect)
         Faces.FlipAllTo([card], False, effect)
         return False
@@ -169,7 +169,7 @@ def MakeMissionAttempt(player: 'Player', effect: 'Effect') -> None:
             assignments.append((ally, assigned))
 
     sinister_is_present = any(
-        overseer.IsName("* Mister Sinister")
+        overseer.IsName("Mister Sinister")
         for overseer in GetMissionMinions(effect)
         if overseer.HasTrait("OVERSEER")
     )
@@ -387,7 +387,7 @@ def GetMissionFrontAbilities(*, protect_professor: bool=False) -> Sequence['Abil
         abilities.append(
             AbilityFactory.WhenCardWouldEnterPlay(
                 AbilityType.NonKeyword,
-                CardFinder(name="* Professor X", card_type=Ally),
+                CardFinder(name="Professor X", card_type=Ally),
                 lambda effect, message:
                     message.SetCannot(effect),
             )

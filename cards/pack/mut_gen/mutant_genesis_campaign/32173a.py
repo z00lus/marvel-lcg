@@ -23,6 +23,7 @@ def GetAbilities() -> Sequence['Ability']:
         this = effect.this.CastTo(EncounterSideScheme)
         ShuffleRandomFuturePastCardIntoEncounterDeck(effect)
         this.card.Flip(effect)
+        this.card.face.PutIntoPlay(Worlds.GetFirstPlayer(effect), effect)
 
     return [
         AbilityFactory.WhenThisRevealed(

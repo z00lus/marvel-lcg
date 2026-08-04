@@ -6,7 +6,13 @@ def GetAbilities() -> Sequence['Ability']:
         effect: 'Effect',
         message: 'Message.WhenSchemeBeDefeated',
     ) -> None:
-        effect.this.CastTo(EncounterSideScheme).card.Flip(effect)
+        this = effect.this.CastTo(EncounterSideScheme)
+        this.card.Flip(effect)
+        this.card.face.PutIntoPlay(
+            Worlds.GetFirstPlayer(effect),
+            effect,
+            under_control=True,
+        )
 
     return [
         AbilityFactory.WhenSchemeBeDefeated(
