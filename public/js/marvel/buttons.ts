@@ -32,7 +32,7 @@ export class Button{
     }
 
     static doBtnCancel() {
-        if( Game.is_lost_connect ) {
+        if( Game.is_lost_connect || BtnOk.btn_end_div.disabled ) {
             return
         }
         Button.disablePause()
@@ -40,7 +40,7 @@ export class Button{
     }
 
     static doBtnOk() {
-        if( Game.is_lost_connect ) {
+        if( Game.is_lost_connect || BtnOk.btn_ok_div.disabled || SelectStep.isCard() ) {
             return
         }
         Button.disablePause()
@@ -105,7 +105,7 @@ export class Button{
         //     Game.setGameOver(false)
         // }
         if( SelectStep.isCard() ) {
-            Lib.alert('BUG!')
+            return
         }
         else if( SelectStep.isTargets() ) {
             let need_resource = false
@@ -865,4 +865,3 @@ export class Button{
 
 // Attach the Button class to the global window object
 (window as any).Button = Button;
-

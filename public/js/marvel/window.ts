@@ -182,7 +182,9 @@ export class WindowLoad {
             }
             else
             if (event.key === "Enter") {
-                Button.doPost(true)
+                if( !SelectStep.isCard() ) {
+                    Button.doBtnOk()
+                }
                 event.preventDefault();
             }
             else
@@ -200,6 +202,7 @@ export class WindowLoad {
                 // }
                 else
                 if( Effect.isExEffect() && (SelectStep.isTargets() || SelectStep.isCost()) && Effect.select_effect_obj.selected_targets.length > 0 ) {
+                    Button.disablePause()
                     Effect.onCancel()
                 }
                 else
@@ -214,7 +217,7 @@ export class WindowLoad {
                     // Replay.doReplay(true)
                 }
                 else {
-                    Button.doCancel()
+                    Button.doBtnCancel()
                 }
                 event.preventDefault();
             }
