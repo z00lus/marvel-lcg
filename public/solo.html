@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нова одиночна гра</title>
+    <link rel="stylesheet" href="/public/css/solo.css">
+</head>
+<body>
+    <main class="solo-setup">
+        <header class="page-header">
+            <a class="back-link" href="/main">← Головне меню</a>
+            <h1>Нова одиночна гра</h1>
+            <p>Вибери сценарій і готову стартову колоду.</p>
+        </header>
+
+        <section class="selection-section" aria-labelledby="scenario-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">1</span>
+                    <h2 id="scenario-heading">Сценарій</h2>
+                </div>
+                <span id="scenario-selection" class="current-selection">Не вибрано</span>
+            </div>
+            <p id="scenario-status" class="load-status">Завантаження сценаріїв…</p>
+            <div id="scenario-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="selection-section" aria-labelledby="hero-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">2</span>
+                    <h2 id="hero-heading">Стартова колода</h2>
+                </div>
+                <span id="hero-selection" class="current-selection">Не вибрано</span>
+            </div>
+            <p id="hero-status" class="load-status">Завантаження колод…</p>
+            <div id="hero-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <footer class="play-panel">
+            <p id="error-message" class="error-message" role="alert"></p>
+            <button id="play-button" class="play-button" type="button" disabled>Грати</button>
+            <a class="advanced-link" href="/scene">Розширене налаштування</a>
+        </footer>
+    </main>
+
+    <script type="module" src="/public/js/solo.js"></script>
+</body>
+</html>

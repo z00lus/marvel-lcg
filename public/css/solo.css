@@ -1,0 +1,247 @@
+:root {
+    color-scheme: dark;
+    font-family: Arial, sans-serif;
+    background: #17191d;
+    color: #e4e7eb;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(circle at top, rgba(24, 105, 170, 0.18), transparent 36rem),
+        #17191d;
+}
+
+button,
+a {
+    font: inherit;
+}
+
+.solo-setup {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 1.25rem;
+}
+
+.page-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.page-header h1 {
+    margin: 1rem 0 0.35rem;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+}
+
+.page-header p {
+    margin: 0;
+    color: #aeb7c2;
+}
+
+.back-link,
+.advanced-link {
+    color: #69bfff;
+    text-decoration: none;
+}
+
+.back-link {
+    display: inline-block;
+}
+
+.back-link:hover,
+.advanced-link:hover {
+    text-decoration: underline;
+}
+
+.selection-section {
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    border: 1px solid #3d4652;
+    border-radius: 0.75rem;
+    background: rgba(31, 35, 41, 0.94);
+    box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.section-heading > div {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.step-number {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 50%;
+    background: #087ec5;
+    color: white;
+    font-weight: bold;
+}
+
+.current-selection {
+    color: #77d5ff;
+    font-weight: bold;
+    text-align: right;
+}
+
+.load-status {
+    margin: 0.5rem 0;
+    color: #aeb7c2;
+}
+
+.load-status:empty {
+    display: none;
+}
+
+.choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 0.7rem;
+}
+
+.choice-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+    padding: 0.45rem;
+    border: 2px solid transparent;
+    border-radius: 0.65rem;
+    background: #101216;
+    color: #eef2f6;
+    cursor: pointer;
+    transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+
+.choice-card:hover {
+    border-color: #687686;
+    transform: translateY(-2px);
+}
+
+.choice-card:focus-visible {
+    outline: 3px solid #f1c94c;
+    outline-offset: 2px;
+}
+
+.choice-card.selected {
+    border-color: #20b9ff;
+    background: #102b3a;
+    box-shadow: 0 0 0.9rem rgba(32, 185, 255, 0.3);
+}
+
+.choice-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    display: grid;
+    width: 1.65rem;
+    height: 1.65rem;
+    place-items: center;
+    border-radius: 50%;
+    background: #1197d4;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.55);
+}
+
+.choice-card img {
+    width: 100%;
+    aspect-ratio: 0.714;
+    object-fit: fill;
+    border-radius: 0.4rem;
+    background: #87939f;
+}
+
+.choice-name {
+    min-height: 2.3em;
+    display: grid;
+    place-items: center;
+    overflow-wrap: anywhere;
+    line-height: 1.15;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.play-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 0 2rem;
+}
+
+.play-button {
+    min-width: min(20rem, 100%);
+    padding: 0.9rem 2rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: linear-gradient(180deg, #16a6e8, #0874bc);
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0.45rem 1rem rgba(0, 95, 160, 0.35);
+}
+
+.play-button:disabled {
+    background: #4a5058;
+    color: #9ca4ad;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.error-message {
+    min-height: 1.2em;
+    margin: 0;
+    color: #ff8b86;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .solo-setup {
+        padding: 0.75rem;
+    }
+
+    .selection-section {
+        padding: 0.75rem;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .current-selection {
+        padding-left: 2.65rem;
+        text-align: left;
+    }
+
+    .choice-grid {
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 0.5rem;
+    }
+}

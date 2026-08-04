@@ -12,6 +12,7 @@ class GameServerHTML(GameServerBase):
         self.AddHtmlSecurity('/main', './public/main.html')
         self.AddHtmlSecurity('/deck', './public/deck.html')
         self.AddHtmlSecurity('/cards', './public/cards.html')
+        self.AddHtmlSecurity('/solo', './public/solo.html')
         self.AddHtmlSecurity('/scene', './public/scene.html')
         self.AddHtmlSecurity('/replay', './public/replay.html')
         self.AddHtmlSecurity('/puzzle', './public/replay.html')
@@ -19,4 +20,3 @@ class GameServerHTML(GameServerBase):
         self.AddHtmlSecurity('/puzzle_editor', './public/puzzle_editor.html')
         self.AddHtmlSecurity('/puzzle_test', './public/replay.html')
         self.AddHtmlSecurity('/report', './public/report.html')
-
