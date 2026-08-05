@@ -93,6 +93,9 @@ class Player(User, PlayerAsk, PlayerCards, PlayerGet, PlayerAction, ):
         self.additional_discard_pile = Deck2(self, DeckType.AdditionalDiscardPile, CardFace)
         self.additional_deck.BindDiscardPile(self.additional_discard_pile, lambda deck, effect: None)
         self.set_aside_deck = self.additional_discard_pile
+        # Hero-specific decks that must remain separate from the normal player
+        # deck, such as Hercules's Labor and Gift decks.
+        self.special_decks: Dict[str, Deck] = {}
 
         self.limit_ally = AllyLimit(self, 3)
         self.limit_restricted = RestrictedLimit(self, 2)
@@ -272,4 +275,3 @@ class Player(User, PlayerAsk, PlayerCards, PlayerGet, PlayerAction, ):
         if self.is_eliminated:
             return False
         return self == self.world.GetFirstPlayer()
-

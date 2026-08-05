@@ -398,6 +398,13 @@
         "encounters": [],
         "max_id": "58034"
     },
+    "59. Hercules": {
+        "name": "hercules",
+        "scenarios": [],
+        "heroes": ["hercules"],
+        "encounters": [],
+        "max_id": "59034"
+    },
     "60. Fear No Evil (Echo)": {
         "name": "fne",
         "scenarios": [],
@@ -444,5 +451,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "f0eec168a7f5c46853539d3b0d3a43af5be7ad3091e855f96c57784ffe7925fb"
+    "checksum": "425a8ec84f5f9e00fb073ac35d9177281a7e5a03c7c188abbf8df1570c8d03b1"
 }

@@ -59770,6 +59770,196 @@
     ],
     "hercules": [
         {
+            "card_id": "59001a",
+            "type": "Hero",
+            "name": "* Hercules",
+            "subtitle": "",
+            "desc": {
+                "HP": "14",
+                "ATK": "3",
+                "THW": "1",
+                "DEF": "2",
+                "HS": "4"
+            },
+            "traits": ["AVENGER", "OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "<i>Atonement</i> — <b>Response</b>: After a [[LABOR]] card is added to the victory display, put the top card of the [[GIFT]] deck into play. Ready Hercules. You may flip to alter-ego form. (Limit once per phase.)"
+        },
+        {
+            "card_id": "59001b",
+            "type": "AlterEgo",
+            "name": "* Hercules",
+            "subtitle": "",
+            "desc": {
+                "HP": "14",
+                "REC": "4",
+                "HS": "6"
+            },
+            "traits": ["OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "Hercules begins the game with a [[LABOR]] deck and a [[GIFT]] deck. <i>New Labors of Hercules</i> — <b>Action</b>: If there is no [[LABOR]] card in play, reveal the top card of the [[LABOR]] deck."
+        },
+        {
+            "card_id": "59002",
+            "type": "Attachment",
+            "name": "Defeat the Hydra",
+            "subtitle": "",
+            "desc": {"Victory": "0"},
+            "traits": ["LABOR"],
+            "set_name": "Hercules",
+            "text": "Victory 0.\nAttached minion gets +6 hit points and gains the [[ELITE]] trait. Attached minion cannot take damage except from Hercules's attacks.\n<b>When Revealed</b>: Find a non-[[ELITE]] minion with at least 6 printed hit points. Reveal it, heal all damage from it, and attach this card to it."
+        },
+        {
+            "card_id": "59003",
+            "type": "Attachment",
+            "name": "Embody Pathos",
+            "subtitle": "",
+            "desc": {"Victory": "0"},
+            "traits": ["LABOR"],
+            "set_name": "Hercules",
+            "text": "Victory 0.\nAttached side scheme gains assault. Threat cannot be removed from attached scheme except by Hercules's thwarts.\n<b>When Revealed</b>: Find an encounter side scheme that is not in play and reveal it, treating each [per_hero] on it as 1, and attach this card to it. Place 6 additional threat on it."
+        },
+        {
+            "card_id": "59004",
+            "type": "Obligation",
+            "name": "Protect Humanity",
+            "subtitle": "",
+            "desc": {"Uses": "3,labor", "Victory": "0", "GiveTo": ""},
+            "traits": ["LABOR"],
+            "set_name": "Hercules",
+            "text": "Uses (3 labor counters). Victory 0.\n<b>When Revealed</b>: Find Amadeus Cho and put him into play.\n<b>Forced Interrupt</b>: When the villain would attack Hercules, choose 1 of your allies. The villain attacks that ally instead. After that attack resolves, if Hercules defended, remove 1 labor counter from here."
+        },
+        {
+            "card_id": "59005",
+            "type": "Upgrade",
+            "name": "* Nemean Lion Skin",
+            "subtitle": "",
+            "desc": {"Permanent": "1", "Class": "Hero"},
+            "traits": ["ARTIFACT", "GIFT"],
+            "set_name": "Hercules",
+            "text": "Permanent.\nHercules gets +2 hit points and gains steady.\n<b>Response</b>: After this card enters play, draw 4 cards."
+        },
+        {
+            "card_id": "59006",
+            "type": "Upgrade",
+            "name": "* Shield of Perseus",
+            "subtitle": "",
+            "desc": {"Permanent": "1", "Class": "Hero"},
+            "traits": ["ARTIFACT", "GIFT"],
+            "set_name": "Hercules",
+            "text": "Permanent.\nHercules gets +1 hit point and gains retaliate 1.\n<b>Response</b>: After this card enters play, draw 4 cards."
+        },
+        {
+            "card_id": "59007",
+            "type": "Upgrade",
+            "name": "* Sword of Peleus",
+            "subtitle": "",
+            "desc": {"Permanent": "1", "Restricted": "1", "Class": "Hero"},
+            "traits": ["ARTIFACT", "GIFT", "WEAPON"],
+            "set_name": "Hercules",
+            "text": "Permanent. Restricted.\nHercules gets +1 hit point and his basic attacks gain piercing.\n<b>Response</b>: After this card enters play, draw 4 cards."
+        },
+        {
+            "card_id": "59008",
+            "type": "Ally",
+            "name": "* Amadeus Cho",
+            "subtitle": "",
+            "desc": {"Cost": "2", "HP": "2", "ATK": "1*", "THW": "1*", "RES": "G", "Class": "Hero"},
+            "traits": ["GENIUS"],
+            "set_name": "Hercules",
+            "text": "<b>Forced Interrupt</b>: When a minion would attack you, it attacks Amadeus Cho instead.\n<b>Action</b>: Exhaust Amadeus Cho → draw 1 card."
+        },
+        {
+            "card_id": "59009",
+            "type": "Event",
+            "name": "The Gift of Battle",
+            "subtitle": "",
+            "desc": {"Cost": "3", "RES": "R", "Class": "Hero"},
+            "traits": ["ATTACK"],
+            "set_name": "Hercules",
+            "text": "Reduce the cost to play this card by 1 for each [[GIFT]] card you control.\n<b>Hero Action</b> <i>(attack)</i>: Deal 5 damage to an enemy."
+        },
+        {
+            "card_id": "59010",
+            "type": "Event",
+            "name": "Son of Zeus",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "Y", "Class": "Hero"},
+            "traits": ["OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "<b>Hero Action</b>: Ready Hercules. If you control at least: 1 [[GIFT]] card, ready an identity-specific upgrade you control; 2 [[GIFT]] cards, gain a tough status card; 3 [[GIFT]] cards, draw 1 card."
+        },
+        {
+            "card_id": "59011",
+            "type": "Event",
+            "name": "Wisdom of Athena",
+            "subtitle": "",
+            "desc": {"Cost": "3", "RES": "B", "Class": "Hero"},
+            "traits": ["THWART"],
+            "set_name": "Hercules",
+            "text": "Reduce the cost to play this card by 1 for each [[GIFT]] card you control.\n<b>Hero Action</b> <i>(thwart)</i>: Remove 4 threat from a scheme."
+        },
+        {
+            "card_id": "59012",
+            "type": "Support",
+            "name": "* Olympus",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "Y", "Class": "Hero"},
+            "traits": ["LOCATION", "OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "<b>Resource</b>: Exhaust Olympus → generate a [wild] resource for each [[GIFT]] card you control."
+        },
+        {
+            "card_id": "59013",
+            "type": "Upgrade",
+            "name": "* Gauntlets of Hercules",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "R", "Class": "Hero"},
+            "traits": ["ARMOR", "OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "<b>Hero Interrupt</b>: When Hercules defends against an attack, exhaust Gauntlets of Hercules → Hercules gains retaliate 1 for that attack for each [[GIFT]] card you control."
+        },
+        {
+            "card_id": "59014",
+            "type": "Upgrade",
+            "name": "* Golden Mace",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "Restricted": "1", "Class": "Hero"},
+            "traits": ["OLYMPUS", "WEAPON"],
+            "set_name": "Hercules",
+            "text": "Restricted.\n<b>Hero Interrupt</b>: When Hercules makes a basic attack, exhaust Golden Mace → Hercules gets +1 ATK for this attack for each [[GIFT]] card you control. This attack gains overkill."
+        },
+        {
+            "card_id": "59015",
+            "type": "Upgrade",
+            "name": "* Herc's Helm",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "R", "Class": "Hero"},
+            "traits": ["ARMOR", "OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When the villain attacks, exhaust Herc's Helm → reduce the amount of damage this attack deals by 1."
+        },
+        {
+            "card_id": "59016",
+            "type": "Upgrade",
+            "name": "Lion of Olympus",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "R", "Temporary": "1", "Class": "Hero"},
+            "traits": ["OLYMPUS"],
+            "set_name": "Hercules",
+            "text": "Temporary. <i>(Discard this card at the end of the round.)</i>\nYour hero gets +1 THW, +1 ATK, and +1 DEF."
+        },
+        {
+            "card_id": "59017",
+            "type": "Upgrade",
+            "name": "* Prince of Power",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
+            "traits": ["OLYMPUS", "TITLE"],
+            "set_name": "Hercules",
+            "text": "<b>Hero Response</b>: After Hercules attacks and defeats an enemy, exhaust Prince of Power → heal 1 damage from Hercules for each point of excess damage dealt to that enemy by that attack."
+        },
+        {
             "card_id": "59018",
             "type": "Ally",
             "name": "* Deathcry",
@@ -59878,7 +60068,44 @@
             ],
             "set_name": "",
             "text": "Play only if your identity has the [[Avenger]] trait.\nAttach to an ally. Max 1 per ally.\n<b>Interrupt</b>: When attached ally is defeated, draw 2 cards."
-        }
+        },
+        {
+            "card_id": "59025",
+            "type": "Ally",
+            "name": "* Gilgamesh",
+            "subtitle": "",
+            "desc": {"Cost": "3", "HP": "6", "ATK": "3**", "THW": "2**", "RES": "R", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["ETERNAL"],
+            "set_name": "",
+            "text": "As an additional cost to play this card, if you do not have the [[ETERNAL]] trait, confuse your identity."
+        },
+        {
+            "card_id": "59026",
+            "type": "Event",
+            "name": "Ancient Rivalry",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "G", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["ASGARD", "OLYMPUS"],
+            "set_name": "",
+            "text": "Team-Up (Hercules and Thor). Max 1 per deck.\n<b>Hero Action</b>: Search your discard pile for an identity-specific upgrade and add it to your hand. Ready Hercules and Thor."
+        },
+        {"card_id": "59027", "full_link": "31023"},
+        {
+            "card_id": "59028",
+            "type": "PlayerSideScheme",
+            "name": "* Evaluate Threat",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "StartingThreat": "2*", "Victory": "0", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": [],
+            "set_name": "",
+            "text": "Victory 0.\nPlay only if your identity has the [[AVENGER]] or [[S.H.I.E.L.D.]] trait.\n<b>When Defeated</b>: Each player may search their deck and discard pile for an [[AVENGER]] or [[S.H.I.E.L.D.]] card and add it to their hand. <i>(Shuffle.)</i> Reduce the cost to play each of those cards by 2 until the end of the phase."
+        },
+        {"card_id": "59029", "full_link": "01088"},
+        {"card_id": "59030", "full_link": "01089"},
+        {"card_id": "59031", "full_link": "01090"},
+        {"card_id": "59032", "full_link": "58034"},
+        {"card_id": "59033", "full_link": "01092"},
+        {"card_id": "59034", "full_link": "08023"}
     ],
     "fne": [
         {
@@ -60317,5 +60544,5 @@
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
         }
     ],
-    "checksum": "53eb2aeb8830521e6ccab61a71699d4cad6ecbbbf5bc7882af9f05786ab1d950"
+    "checksum": "4312613ab37112c052f41192b43714c93712d9403168bb27c620eca2608e3d94"
 }
