@@ -135,6 +135,29 @@ class GameServerGet(GameServerBase):
     async def get_session_statistics(self, request: web.Request) -> web.Response:
         return web.json_response(self.game.session.statistics.dic)
 
+    async def get_active_campaign(self, request: web.Request) -> web.Response:
+        world = self.game.world
+        if not world or not world.rule.mode_campaign.val or not world.scene.campaign.campaign_id:
+            return web.json_response({"active": False})
+
+        from game.operate.campaign_logs import CampaignLog
+
+        is_game_over = world.is_game_over
+        players_won = getattr(world.game_over, "players_won", None) if is_game_over else None
+        campaign_log = CampaignLog.Export(
+            world,
+            include_remaining_hit_points=players_won is True,
+        )
+        return web.json_response({
+            "active": True,
+            "campaign_id": world.scene.campaign.campaign_id,
+            "scenario_name": world.scene.campaign.name,
+            "campaign_log": campaign_log,
+            "game_over": is_game_over,
+            "players_won": players_won,
+            "is_replay": self.game.controller_manager.replay.is_replay,
+        })
+
     async def get_play_scene_name(self, request: web.Request) -> web.Response:
         controller = self.get_first_controller(request)
         if controller.world:
@@ -206,6 +229,7 @@ class GameServerGet(GameServerBase):
         self.AddAwaitGetSecurity('/get_completion_rate', self.get_completion_rate)
         self.AddAwaitGetSecurity('/get_statistics', self.get_statistics)
         self.AddAwaitGetSecurity('/get_session_statistics', self.get_session_statistics)
+        self.AddAwaitGetSecurity('/get_active_campaign', self.get_active_campaign)
         self.AddAwaitGetSecurity('/get_play_scene_name', self.get_play_scene_name)
         self.AddAwaitGetSecurity('/get_max_timeout', self.get_max_timeout)
         self.AddAwaitGetSecurity('/get_puzzle_json', self.get_puzzle_json)

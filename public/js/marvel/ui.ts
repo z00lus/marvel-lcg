@@ -284,7 +284,7 @@ export class UI {
                 if( Setting.is_debug ) {
                     return true
                 }
-                const classesToCheck = ['player-deck', 'additional-deck', 'encounter-deck'];
+                const classesToCheck = ['player-deck', 'additional-deck', 'player-special-deck', 'encounter-deck'];
                 return !classesToCheck.some(className => UI.temp_sorted_deck_div!.classList.contains(className));
                 // return  !UI.temp_sorted_deck_div!.classList.contains('player-deck') &&
                 //         !UI.temp_sorted_deck_div!.classList.contains('additional-deck') &&

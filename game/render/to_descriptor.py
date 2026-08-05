@@ -30,6 +30,8 @@ class ToDescriptor:
         player_descriptor.set_aside_nemesis_sets    = deck_to_descriptors(player.set_aside_nemesis_sets)
         player_descriptor.additional_deck           = deck_to_descriptors(player.additional_deck)
         player_descriptor.additional_discard_pile   = deck_to_descriptors(player.additional_discard_pile)
+        for name, deck in player.special_decks.items():
+            player_descriptor.special_decks[name] = deck_to_descriptors(deck)
         player_descriptor.obligations_area          = deck_to_descriptors(player.obligations_area)
         player_descriptor.environment_area          = deck_to_descriptors(player.area_environment)
             

@@ -4,12 +4,14 @@ from . import *
 def GetAbilities() -> Sequence['Ability']:
 
     def protect_humanity_revealed(effect: 'Effect', message: 'Message.WhenCardRevealed') -> None:
-        Find.FindAndPutIntoPlay(
+        amadeus = Find.FindAndPutIntoPlay(
             effect,
             message.GetToPlayer(),
             name="Amadeus Cho",
             card_type=Ally,
         )
+        if not amadeus:
+            Faces.DiscardAll([effect.this], effect)
 
     def redirect_villain(effect: 'Effect', message: 'Message.WhenUnitWouldAttackUnit') -> None:
         this = effect.this.CastTo(Obligation)
@@ -26,16 +28,19 @@ def GetAbilities() -> Sequence['Ability']:
 
         RunAt.AfterEventEnd(effect, attack_message, after_attack)
 
+    def has_controlled_ally(effect: 'Effect', message: 'Message.WhenUnitWouldAttackUnit') -> bool:
+        obligation = effect.this.CastTo(Obligation)
+        player = obligation.GetGaveToPlayer()
+        return bool(player.GetControlAllies())
+
     return [
+        ReturnLaborToDeckWhenItLeavesPlay(),
         AbilityFactory.WhenThisRevealed(None, protect_humanity_revealed),
         AbilityFactory.WhenUnitWouldAttackUnit(
             AbilityType.ForcedInterrupt,
             Villain,
             CardFinder(name="Hercules", card_type=Hero),
             redirect_villain,
-            conditions=[
-                lambda effect, message:
-                    bool(effect.GetInitiator().GetControlAllies()),
-            ],
+            conditions=[has_controlled_ally],
         ).SetTarget(Ally, from_where=["YouControlCards"]),
     ]

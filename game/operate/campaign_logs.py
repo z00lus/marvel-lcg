@@ -101,6 +101,42 @@ LOG_STR_KEY: TypeAlias = Literal[
 class CampaignLog:
 
     @staticmethod
+    def GetKnownKeys() -> Set[str]:
+        keys = set(
+            Types.LiteralToList(LOG_LIST_KEY) +
+            Types.LiteralToList(LOG_INT_KEY) +
+            Types.LiteralToList(LOG_STR_KEY)
+        )
+
+        player_keys = (
+            Types.LiteralToList(PLAYER_LIST_KEY) +
+            Types.LiteralToList(PLAYER_STR_KEY) +
+            Types.LiteralToList(PLAYER_INT_KEY)
+        )
+        for player_id in range(4):
+            for key in player_keys:
+                keys.add(f"Player {player_id + 1} {key}")
+                keys.add(f"{key} P{player_id + 1}")
+
+        keys.discard("")
+        return keys
+
+    @staticmethod
+    def Export(world: 'World', *, include_remaining_hit_points: bool=False) -> Dict[str, str]:
+        campaign_log: Dict[str, str] = {}
+        for key in CampaignLog.GetKnownKeys():
+            if world.store.HasKey(key):
+                campaign_log[key] = str(world.store.dic[key])
+
+        if include_remaining_hit_points:
+            for player in world.const_players:
+                campaign_log[f"Player {player.player_id + 1} Remaining hit points"] = str(
+                    max(0, player.GetIdentity().health)
+                )
+
+        return campaign_log
+
+    @staticmethod
     def GetStrInternal(key: str, by_effect: 'Effect') -> str:
         if Stores.HasKey(key, by_effect):
             return Stores.GetStr(key, by_effect)

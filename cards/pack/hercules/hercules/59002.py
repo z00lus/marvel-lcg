@@ -18,6 +18,8 @@ def GetAbilities() -> Sequence['Ability']:
         if minion:
             this.HealthUnits([minion], "All", effect)
             this.AttachTo2(minion, effect)
+        else:
+            Faces.DiscardAll([this], effect)
 
     def prevent_non_hercules_damage(effect: 'Effect', message: 'Message.WhenUnitWouldTakeDamage') -> None:
         message.PreventDamage("All", effect)
@@ -32,6 +34,7 @@ def GetAbilities() -> Sequence['Ability']:
         Faces.AddToVictoryDisplay([effect.this], effect)
 
     return [
+        ReturnLaborToDeckWhenItLeavesPlay(),
         AbilityFactory.WhenThisRevealed(None, defeat_the_hydra_revealed),
         *AbilityFactory.GiveKeywordToAttached(
             Minion,

@@ -54,6 +54,7 @@ class WorldDescriptor:
 
         additional_deck: List[CardDescriptor] = field(default_factory=lambda: [])
         additional_discard_pile: List[CardDescriptor] = field(default_factory=lambda: [])
+        special_decks: Dict[str, List[CardDescriptor]] = field(default_factory=lambda: {})
         obligations_area: List[CardDescriptor] = field(default_factory=lambda: [])
         environment_area: List[CardDescriptor] = field(default_factory=lambda: [])
 

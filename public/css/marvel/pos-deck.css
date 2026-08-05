@@ -37,6 +37,15 @@
 .player-deck {
     --y: 970;
 }
+.player-special-deck {
+    --y: 970;
+}
+.player-special-deck.special-deck-0 {
+    --x: 320;
+}
+.player-special-deck.special-deck-1 {
+    --x: 470;
+}
 .dealt-encounter-cards {
     --y: 570;
 }
@@ -121,3 +130,18 @@
     border: var(--debug-border);
 }
 
+.deck.player-special-deck::before {
+    content: attr(data-deck-label);
+    background: none;
+    color: goldenrod;
+    height: calc(2 * var(--font-size));
+    top: calc(var(--y) * 1px - 2.2 * var(--font-size));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: calc(1.35 * var(--font-size));
+    font-weight: 900;
+    letter-spacing: calc(.12 * var(--font-size));
+    text-shadow: 0 2px 2px black;
+}

@@ -422,6 +422,7 @@ export class CardAnimation
             const card_div = Cards.getDiv(object_id)!
             if( card_div.parentElement!.id == 'area-removed' ||
                 card_div.parentElement!.id == 'area-play' ||
+                card_div.parentElement!.id.includes('-special-deck-') ||
                 card_div.parentElement!.id.endsWith('player-deck') ||
                 card_div.parentElement!.id.endsWith('discard-pile') ||
                 card_div.parentElement!.id.endsWith('additional-deck') ||
@@ -504,4 +505,3 @@ export class CardAnimation
         })
     }
 }
-

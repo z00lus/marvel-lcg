@@ -54,21 +54,29 @@ class CardRender {
         'player-0-player-discard-pile',
         'player-0-additional-deck',
         'player-0-additional-discard-pile',
+        'player-0-special-deck-0',
+        'player-0-special-deck-1',
         
         'player-1-player-deck',
         'player-1-player-discard-pile',
         'player-1-additional-deck',
         'player-1-additional-discard-pile',
+        'player-1-special-deck-0',
+        'player-1-special-deck-1',
         
         'player-2-player-deck',
         'player-2-player-discard-pile',
         'player-2-additional-deck',
         'player-2-additional-discard-pile',
+        'player-2-special-deck-0',
+        'player-2-special-deck-1',
         
         'player-3-player-deck',
         'player-3-player-discard-pile',
         'player-3-additional-deck',
         'player-3-additional-discard-pile',
+        'player-3-special-deck-0',
+        'player-3-special-deck-1',
         
         'area-rule',
         
@@ -92,6 +100,7 @@ class CardRender {
         {
             if( area_name.startsWith('encounter-deck') ||
                 area_name.startsWith('encounter-discard-pile') ||
+                area_name.includes('-special-deck-') ||
                 area_name.endsWith('deck') ||
                 area_name.endsWith('discard-pile') ) {
                     CardRender.printAreaCards(CardRender.print_cards_objs[area_name], area_name, !is_temp_sort, is_temp_sort)
@@ -148,6 +157,11 @@ class CardRender {
             if (Setting.ver === 1) parent.classList.add('hide');
         }
     }
+
+    private static getSpecialDeckLabel(name: string): string {
+        const label = name.includes('_') ? name.substring(name.lastIndexOf('_') + 1) : name;
+        return label.replaceAll('_', ' ').toUpperCase();
+    }
     
     // -- Helper methods below --
     
@@ -167,6 +181,8 @@ class CardRender {
             'discard-pile-1': 'discard_pile',
             'discard-pile-2': 'discard_pile',
             'discard-pile-3': 'discard_pile',
+            'special-deck-0': 'deck',
+            'special-deck-1': 'deck',
             'deck': 'deck',
             'encounter-deck-0': 'deck',
             'encounter-deck-1': 'deck',
@@ -534,10 +550,8 @@ class CardRender {
         CardRender.print_cards_objs[`encounter-discard-pile-0`] = Game.world_descriptor.encounter_discard_pile
         for( let j=1; j<4; j++ ) {
             let i = j-1
-            if( Game.world_descriptor.additional_decks.length > i ) {
-                CardRender.print_cards_objs[`encounter-deck-${j}`]       = Game.world_descriptor.additional_decks[i]
-                CardRender.print_cards_objs[`encounter-discard-pile-${j}`] = Game.world_descriptor.additional_discard_piles[i]
-            }
+            CardRender.print_cards_objs[`encounter-deck-${j}`] = Game.world_descriptor.additional_decks[i] ?? []
+            CardRender.print_cards_objs[`encounter-discard-pile-${j}`] = Game.world_descriptor.additional_discard_piles[i] ?? []
         }
 
         CardRender.print_cards_objs['area-play'] = []
@@ -589,6 +603,19 @@ class CardRender {
             CardRender.print_cards_objs[`player-${i}-player-discard-pile`]        = Game.world_descriptor.players[i].player_discard_pile
             CardRender.print_cards_objs[`player-${i}-additional-deck`]            = Game.world_descriptor.players[i].additional_deck
             CardRender.print_cards_objs[`player-${i}-additional-discard-pile`]    = Game.world_descriptor.players[i].additional_discard_pile
+
+            for( let slot=0; slot<2; slot++ ) {
+                const areaName = `player-${i}-special-deck-${slot}`
+                CardRender.print_cards_objs[areaName] = []
+                document.getElementById(areaName)?.removeAttribute('data-deck-label')
+            }
+            const specialDecks = Object.entries(Game.world_descriptor.players[i].special_decks)
+            for( let slot=0; slot<Math.min(2, specialDecks.length); slot++ ) {
+                const [name, cards] = specialDecks[slot]
+                const areaName = `player-${i}-special-deck-${slot}`
+                CardRender.print_cards_objs[areaName] = cards
+                document.getElementById(areaName)?.setAttribute('data-deck-label', CardRender.getSpecialDeckLabel(name))
+            }
         }
 
     }

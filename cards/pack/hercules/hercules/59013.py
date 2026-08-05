@@ -12,10 +12,14 @@ def GetAbilities() -> Sequence['Ability']:
                 retaliate=gifts,
             )
 
+    def has_gift(effect: 'Effect', message: 'Message.WhenUnitWouldDefend') -> bool:
+        return CountGifts(effect.GetInitiator()) > 0
+
     return [
         AbilityFactory.WhenUnitDefendAgainstAttack(
             AbilityType.HeroInterrupt,
             CardFinder(name="Hercules", card_type=Hero),
             gauntlets,
+            conditions=[has_gift],
         ).SetCostFunc(CostFunc.Exhaust("This")),
     ]

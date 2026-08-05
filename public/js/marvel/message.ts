@@ -1,5 +1,6 @@
 import { Command } from "./command.js";
 import { Game } from "./game.js";
+import { recordCampaignVictory } from "../campaign_state.js";
 
 export class Message {
 
@@ -81,6 +82,9 @@ export class Message {
         Message.overlay.classList.remove('active');
         if( Game.players_won ) {
             Message.end_messageElement.textContent = "VICTORY";
+            void recordCampaignVictory().catch((error) => {
+                console.error('Could not update campaign progress', error)
+            })
         } else {
             Message.end_messageElement.textContent = "DEFEAT";
         }

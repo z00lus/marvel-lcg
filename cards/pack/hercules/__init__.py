@@ -21,6 +21,24 @@ def CountGifts(player: 'Player') -> int:
     return len(player.GetControlCards(CardFinder(trait="GIFT")))
 
 
+def ReturnLaborToDeckWhenItLeavesPlay() -> 'Ability':
+    # Hercules FAQ: a Labor that leaves play outside the victory display
+    # is placed on the bottom of its owner's Labor deck.
+    def return_labor(effect: 'Effect', message: 'Message.AfterCardLeavePlay') -> None:
+        if message.into_area.flags.is_victory_display:
+            return
+
+        labor_deck = GetLaborDeck(effect.this.GetOwnerPlayer())
+        if labor_deck:
+            Faces.MoveAllToDeck([effect.this], labor_deck, "Bottom", effect)
+
+    return AbilityFactory.AfterCardLeavePlay(
+        AbilityType.ForcedResponse,
+        "This",
+        return_labor,
+    )
+
+
 def SetupHerculesSpecialDecks(effect: 'Effect', message: 'Message.WhenPlayerSelectHero') -> None:
     from game.message import Message
 
@@ -32,7 +50,6 @@ def SetupHerculesSpecialDecks(effect: 'Effect', message: 'Message.WhenPlayerSele
     gift_deck = Deck2(player, DeckType.AdditionalDeck, CardFace)
     player.special_decks[LABOR_DECK] = labor_deck
     player.special_decks[GIFT_DECK] = gift_deck
-    effect.world.additional_decks.extend([labor_deck, gift_deck])
 
     set_aside = player.set_aside_deck.Get()
     labors = CardFinder(trait="LABOR").Checks(set_aside)

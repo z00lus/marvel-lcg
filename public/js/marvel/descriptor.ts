@@ -414,6 +414,7 @@ class PlayerDescriptor {
     set_aside_deck          : CardDescriptor[];
     additional_deck         : CardDescriptor[];
     additional_discard_pile : CardDescriptor[];
+    special_decks           : Record<string, CardDescriptor[]>;
     obligations_area        : CardDescriptor[];
     environment_area        : CardDescriptor[];
     resources               : string;
@@ -432,6 +433,10 @@ class PlayerDescriptor {
         this.set_aside_deck             = toPlayerCardDescriptorList(control_player, obj['set_aside_deck'], "area-removed");
         this.additional_deck            = toPlayerCardDescriptorList(control_player, obj['additional_deck'], null);
         this.additional_discard_pile    = toPlayerCardDescriptorList(control_player, obj['additional_discard_pile'], null);
+        this.special_decks              = {};
+        for (const [name, cards] of Object.entries(obj['special_decks'] ?? {})) {
+            this.special_decks[name] = toPlayerCardDescriptorList(control_player, cards as any[], null);
+        }
         this.obligations_area           = toPlayerCardDescriptorList(control_player, obj['obligations_area'], "player-all-area-hero", {is_in_play: true, is_obligation: true});
         this.environment_area           = toPlayerCardDescriptorList(control_player, obj['environment_area'], "player-all-area-hero", {is_in_play: true, is_obligation: true});
         this.resources                  = obj['resources'];
