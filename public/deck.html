@@ -373,13 +373,10 @@ function getDeck(is_private) {
     ajax.onreadystatechange = async function () {
         if( this.readyState == 4 ) {
             if( this.status == 200 ) {
-                response = this.response
-                let json_data = JSON.parse(response)
-                // console.log(j)
+                const response = this.response
+                const json_data = JSON.parse(response)
 
-                // let hero = json_data['investigator_code']
-                // let hero_name = json_data['investigator_name']
-                // await set_hero(hero_name)
+                await set_hero(json_data['hero_name'])
 
                 hero_data['player_deck'] = []
                 for( let card_id in json_data['slots'] ) {
@@ -392,6 +389,9 @@ function getDeck(is_private) {
                     if( card_id in cardStatistics.const_card_dict && cardStatistics.const_card_dict[card_id].class == "Hero" ) {
                         continue
                     }
+
+                    // Keep every non-hero card even when MarvelCDB marks the deck
+                    // invalid. Campaign decks can intentionally break deckbuilding rules.
                     for( let x=0; x<json_data['slots'][card_id]; x++ ) {
                         hero_data['player_deck'].push(card_id)
                     }
@@ -522,7 +522,7 @@ function showDeckCards() {
 }
 
 async function set_hero(hero_name) {
-    let name = sanitizeString(hero_name)
+    const name = hero_name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
     document.querySelector(`#hero`).value = name
     hero_data = await getHeroJson(name); // Now it's correct
 }
@@ -673,4 +673,3 @@ async function importDeck() {
 
 </body>
 </html>
-
