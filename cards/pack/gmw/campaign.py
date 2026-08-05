@@ -356,7 +356,7 @@ def CampaignSetup(level: int) -> List['Ability']:
         abilities.append(ExpertCampaignPutMinionIntoPlayForEachPlayer())
     else:
         abilities.extend([
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(
+            AbilityFactoryCampaign.CampaignSetPlayersHPToTheirRemainingHP(
                 campaign_id=CAMPAIGN_ID,
             ),
             ExpertCampaignEachPlayerMaySpendUnitToHeal(),

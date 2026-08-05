@@ -41,7 +41,7 @@ class AbilityFactoryCampaign:
         )
 
     @staticmethod
-    def ExpertCampaignSetPlayersHPToTheirRemainingHP(*, campaign_id: str|None=None) -> 'Ability':
+    def CampaignSetPlayersHPToTheirRemainingHP(*, campaign_id: str|None=None) -> 'Ability':
         from game.operate.worlds import Worlds
         from game.operate.campaign_logs import CampaignLog
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
@@ -51,8 +51,16 @@ class AbilityFactoryCampaign:
                 if value:
                     player.GetIdentity().SetHealth(value, effect)
 
-        return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
+        return AbilityFactoryCampaign.WhenCampaignSetup(
             action,
+            campaign_id=campaign_id,
+        )
+
+    @staticmethod
+    def ExpertCampaignSetPlayersHPToTheirRemainingHP(*, campaign_id: str|None=None) -> 'Ability':
+        # Compatibility alias for campaign modules written before remaining hit
+        # points were supported in both standard and expert campaign games.
+        return AbilityFactoryCampaign.CampaignSetPlayersHPToTheirRemainingHP(
             campaign_id=campaign_id,
         )
 

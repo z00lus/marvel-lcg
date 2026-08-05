@@ -232,7 +232,7 @@ def CampaignSetup(level: int) -> List['Ability']:
 
     if level >= 2:
         abilities.extend([
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(
+            AbilityFactoryCampaign.CampaignSetPlayersHPToTheirRemainingHP(
                 campaign_id=CAMPAIGN_ID,
             ),
             ExpertCampaignEachPlayerMayHealAtMissionThreatCost(),

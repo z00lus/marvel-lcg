@@ -172,7 +172,7 @@ def CampaignSetup(level: int, *,
     # Expert
     if level >= 2:
         abilities.append(
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
+            AbilityFactoryCampaign.CampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
         )
         value = {
             2: 1,

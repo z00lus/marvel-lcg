@@ -91,7 +91,7 @@ def CampaignSetup(level: int, *,
 
     if level >= 2:
         abilities.append(
-            AbilityFactoryCampaign.ExpertCampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
+            AbilityFactoryCampaign.CampaignSetPlayersHPToTheirRemainingHP(campaign_id=CAMPAIGN_ID),
         )
         abilities.append(
             EachPlayerMayAddRandomObligationToHealHP()
