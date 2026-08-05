@@ -7,7 +7,7 @@ from game.player import *
 from game.element.damage_property import DamageProperty
 
 @final
-class Upgrade(Asset2, HasModify, HasForm, HasRestricted, HasUses, HasHazard, CanCrisis, HasPermanent, HasTemporary, HasSetup, HasVictory, ClassCard, FinalType):
+class Upgrade(Asset2, HasTeamUp, HasModify, HasForm, HasRestricted, HasUses, HasHazard, HasAmplify, CanCrisis, HasPermanent, HasTemporary, HasSetup, HasVictory, ClassCard, FinalType):
     @override
     def GetAbilities(self) -> List['Ability']:
         abilities: List['Ability'] = []
@@ -102,4 +102,3 @@ class Upgrade(Asset2, HasModify, HasForm, HasRestricted, HasUses, HasHazard, Can
         #     if ability.selector and ability.selector.FilterLegalTargets([ally], effect):
         #         return True
         # return False
-

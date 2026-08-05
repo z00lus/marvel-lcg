@@ -60109,6 +60109,376 @@
     ],
     "fne": [
         {
+            "card_id": "60001a",
+            "type": "Hero",
+            "name": "* Daredevil",
+            "subtitle": "",
+            "desc": {"HP": "10", "ATK": "2", "THW": "1", "DEF": "2", "HS": "5"},
+            "traits": ["DEFENDER", "MARTIAL ARTIST"],
+            "set_name": "Daredevil",
+            "text": "<i>Superhuman Senses</i> — <b>Action</b>: Play the top card of the [[Sense]] deck as if it were in your hand <i>(paying its cost)</i>."
+        },
+        {
+            "card_id": "60001b",
+            "type": "AlterEgo",
+            "name": "* Matt Murdock",
+            "subtitle": "",
+            "desc": {"HP": "10", "REC": "3", "HS": "6"},
+            "traits": ["ATTORNEY"],
+            "set_name": "Daredevil",
+            "text": "Matt Murdock begins the game with a [[Sense]] deck.\n<b>Forced Interrupt</b>: When a [[Sense]] upgrade would leave play, place it on the bottom of the [[Sense]] deck instead."
+        },
+        {
+            "card_id": "60002",
+            "type": "Upgrade",
+            "name": "Acute Tactility",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
+            "traits": ["SENSE", "SUPERPOWER"],
+            "set_name": "Daredevil",
+            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card → ready your identity."
+        },
+        {
+            "card_id": "60003",
+            "type": "Upgrade",
+            "name": "Enhanced Olfaction",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
+            "traits": ["SENSE", "SUPERPOWER"],
+            "set_name": "Daredevil",
+            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card → reduce the cost of the next card you play this phase by 2."
+        },
+        {
+            "card_id": "60004",
+            "type": "Upgrade",
+            "name": "Heightened Hearing",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "Class": "Hero"},
+            "traits": ["SENSE", "SUPERPOWER"],
+            "set_name": "Daredevil",
+            "text": "Attach to an enemy.\n<b>Hero Interrupt</b> <i>(defense)</i>: When attached enemy attacks, discard this card → that enemy gets -3 ATK for that attack. <i>(You become the target of that attack.)</i>"
+        },
+        {
+            "card_id": "60005",
+            "type": "Upgrade",
+            "name": "Radar Sense",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
+            "traits": ["SENSE", "SUPERPOWER"],
+            "set_name": "Daredevil",
+            "text": "Attach to an enemy.\n<b>Response</b> <i>(attack)</i>: After you attack attached enemy, discard this card → deal 3 damage to that enemy."
+        },
+        {
+            "card_id": "60006",
+            "type": "Upgrade",
+            "name": "Superior Taste",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "Class": "Hero"},
+            "traits": ["SENSE", "SUPERPOWER"],
+            "set_name": "Daredevil",
+            "text": "Attach to a scheme.\n<b>Response</b> <i>(thwart)</i>: After you thwart attached scheme, discard this card → remove 2 threat from that scheme."
+        },
+        {
+            "card_id": "60007",
+            "type": "Ally",
+            "name": "* Elektra",
+            "subtitle": "Elektra Natchios",
+            "desc": {"Cost": "3", "HP": "3", "ATK": "2*", "THW": "1*", "RES": "G", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["DEFENDER", "MARTIAL ARTIST"],
+            "set_name": "Daredevil",
+            "text": "[star] <b>Forced Interrupt (Hero)</b>: When Elektra would take consequential damage, Daredevil takes that damage instead."
+        },
+        {
+            "card_id": "60008",
+            "type": "Event",
+            "name": "Cross-Examination",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "MaxPerDeck": "2", "Class": "Hero"},
+            "traits": ["ATTACK"],
+            "set_name": "Daredevil",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 3 damage to an enemy. For each upgrade attached to that enemy, you may deal 1 additional damage to it."
+        },
+        {
+            "card_id": "60009",
+            "type": "Event",
+            "name": "Deposition",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "MaxPerDeck": "2", "Class": "Hero"},
+            "traits": ["THWART"],
+            "set_name": "Daredevil",
+            "text": "<b>Alter-Ego Action</b> <i>(thwart)</i>: You may choose any upgrade from the [[Sense]] deck and play it, ignoring its resource cost. <i>(Do not shuffle.)</i> Remove 2 threat from a scheme."
+        },
+        {
+            "card_id": "60010",
+            "type": "Event",
+            "name": "Living Lie Detector",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "2", "Class": "Hero"},
+            "traits": ["THWART"],
+            "set_name": "Daredevil",
+            "text": "<b>Action</b> <i>(thwart)</i>: Remove 2 threat from a scheme. For each upgrade attached to that scheme, you may remove 1 additional threat from it."
+        },
+        {
+            "card_id": "60011",
+            "type": "Event",
+            "name": "Raising Hell",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["ATTACK"],
+            "set_name": "Daredevil",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 2 damage to each enemy for each upgrade attached to that enemy (3 damage instead if Daredevil has the [[Aerial]] trait)."
+        },
+        {
+            "card_id": "60012",
+            "type": "PlayerSideScheme",
+            "name": "* Focus the Senses",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "B", "StartingThreat": "4", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": [],
+            "set_name": "Daredevil",
+            "text": "Threat cannot be removed from this scheme except by Daredevil or Matt Murdock.\n<b>When Defeated</b>: You may move any number of [[Sense]] upgrades in play to other cards they can attach to. Choose any number of upgrades from the [[Sense]] deck and put them into play. <i>(Do not shuffle.)</i>"
+        },
+        {
+            "card_id": "60013",
+            "type": "Support",
+            "name": "* Foggy Nelson",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "B", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["ATTORNEY", "PERSONA"],
+            "set_name": "Daredevil",
+            "text": "<b>Alter-Ego Action</b>: Exhaust Foggy Nelson → remove 2 threat from a scheme."
+        },
+        {
+            "card_id": "60014",
+            "type": "Support",
+            "name": "* Karen Page",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["PERSONA"],
+            "set_name": "Daredevil",
+            "text": "<b>Action</b>: Exhaust Karen Page → shuffle 1 Daredevil card from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
+        },
+        {
+            "card_id": "60015",
+            "type": "Support",
+            "name": "* Nelson and Murdock",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["LOCATION"],
+            "set_name": "Daredevil",
+            "text": "<b>Response</b>: After an [[Attorney]] character or support defeats a side scheme, confuse an enemy."
+        },
+        {
+            "card_id": "60016",
+            "type": "Support",
+            "name": "* Sister Maggie",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "B", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["PERSONA"],
+            "set_name": "Daredevil",
+            "text": "Matt Murdock gets +3 REC.\n<b>Response</b>: After you recover, discard a status card from your identity."
+        },
+        {
+            "card_id": "60017",
+            "type": "Upgrade",
+            "name": "* Daredevil's Billy Club",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "R", "Restricted": "1", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["ITEM", "WEAPON"],
+            "set_name": "Daredevil",
+            "text": "Restricted. Daredevil gets +1 ATK.\n<b>Hero Action</b>: Return this card to your hand <i>(from play)</i> → choose:\n• Deal 1 damage to an enemy.\n• Daredevil gains the [[Aerial]] trait until the end of the round."
+        },
+        {
+            "card_id": "60018",
+            "type": "Upgrade",
+            "name": "* The Man Without Fear",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Hero"},
+            "traits": ["TITLE"],
+            "set_name": "Daredevil",
+            "text": "<b>Hero Action</b>: Exhaust this card and deal 1 damage to Daredevil → choose:\n• Choose any upgrade from the [[Sense]] deck and play it, ignoring its resource cost. <i>(Do not shuffle.)</i>\n• Ready Daredevil."
+        },
+        {
+            "card_id": "60019",
+            "type": "Ally",
+            "name": "* Blindspot",
+            "subtitle": "Sam Chung",
+            "desc": {"Cost": "4", "HP": "3", "ATK": "2*", "THW": "2*", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
+            "traits": ["GENIUS", "MARTIAL ARTIST"],
+            "set_name": "",
+            "text": "[star] <b>Response</b>: After Blindspot thwarts, confuse an enemy with an upgrade attached."
+        },
+        {
+            "card_id": "60020",
+            "type": "Ally",
+            "name": "* Cloak",
+            "subtitle": "Tyrone Johnson",
+            "desc": {"Cost": "3", "HP": "2", "ATK": "1", "THW": "2", "Acceleration": "1", "RES": "B", "MaxPerDeck": "1", "Class": "Justice"},
+            "traits": ["DEFENDER"],
+            "set_name": "",
+            "text": "<b>Action</b>: Exhaust Cloak and spend [energy] [energy] resources → find Dagger and put her into play."
+        },
+        {
+            "card_id": "60021",
+            "type": "Ally",
+            "name": "* Dagger",
+            "subtitle": "Tandy Bowen",
+            "desc": {"Cost": "3", "HP": "3", "ATK": "2**", "THW": "1**", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
+            "traits": ["DEFENDER"],
+            "set_name": "",
+            "text": "Cloak loses each [acceleration] icon.\n[star] If Cloak is in play, Dagger takes -1 consequential damage after she uses a basic power."
+        },
+        {
+            "card_id": "60022",
+            "type": "Ally",
+            "name": "* Ghost Rider",
+            "subtitle": "Johnny Blaze",
+            "desc": {"Cost": "3", "HP": "3", "ATK": "2*", "THW": "1*", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
+            "traits": ["MIDNIGHT SUN"],
+            "set_name": "",
+            "text": "[star] <b>Interrupt</b>: When Ghost Rider attacks an enemy, spend a [energy] resource ([energy] [energy] resources instead if that enemy is the villain) → confuse that enemy."
+        },
+        {
+            "card_id": "60023",
+            "type": "Event",
+            "name": "Know Your Enemy",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "Class": "Justice"},
+            "traits": ["THWART"],
+            "set_name": "",
+            "text": "[star] Discount 1 ([[Martial Artist]]).\n<b>Hero Action</b> <i>(thwart)</i>: Remove 1 threat from a scheme. Remove 1 threat from a scheme."
+        },
+        {
+            "card_id": "60024",
+            "type": "PlayerSideScheme",
+            "name": "* De-escalation",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "R", "StartingThreat": "4", "Victory": "0", "MaxPerDeck": "1", "Class": "Justice"},
+            "traits": [],
+            "set_name": "",
+            "text": "Victory 0.\n<b>When Defeated</b>: Remove an acceleration token from play."
+        },
+        {
+            "card_id": "60025",
+            "type": "Upgrade",
+            "name": "Chance Encounter",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "Y", "MaxPerUnit": "1", "Class": "Justice"},
+            "traits": ["CONDITION"],
+            "set_name": "",
+            "text": "Attach to a side scheme. Max 1 per scheme.\n<b>Interrupt</b>: When attached side scheme is defeated, search your deck and discard pile for an ally and add it to your hand. Shuffle your deck."
+        },
+        {
+            "card_id": "60026",
+            "type": "Upgrade",
+            "name": "Legal Trouble",
+            "subtitle": "",
+            "desc": {"Cost": "1", "RES": "B", "MaxPerUnit": "1", "Class": "Justice"},
+            "traits": ["CONDITION"],
+            "set_name": "",
+            "text": "[star] Discount 1 ([[Attorney]] or [[Police]]).\nAttach to a minion. Max 1 per minion.\nAttached minion gets -2 SCH."
+        },
+        {
+            "card_id": "60027",
+            "type": "Upgrade",
+            "name": "Move in Shadow",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "Y", "Temporary": "1", "MaxPerUnit": "1", "Class": "Justice"},
+            "traits": ["SKILL"],
+            "set_name": "",
+            "text": "[star] Discount 1 ([[Martial Artist]] or [[Spy]]).\nTemporary. Max 1 per player.\n<b>Response</b> <i>(thwart)</i>: After you play a card <i>(including this one)</i>, remove 1 threat from a scheme."
+        },
+        {
+            "card_id": "60028",
+            "type": "Upgrade",
+            "name": "Stealth Training",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "R", "MaxPerUnit": "1", "Class": "Justice"},
+            "traits": ["SKILL"],
+            "set_name": "",
+            "text": "Play under any player's control. Max 1 per player.\n<b>Response</b>: After you thwart and exactly defeat a side scheme, exhaust Stealth Training → stun an enemy."
+        },
+        {
+            "card_id": "60029",
+            "type": "Support",
+            "name": "* Stick",
+            "subtitle": "",
+            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["MARTIAL ARTIST", "PERSONA"],
+            "set_name": "",
+            "text": "<b>Interrupt</b>: When a friendly [[Martial Artist]] character uses a basic power, choose:\n• Exhaust Stick → that character gets +1 to that basic power for this use.\n• That character gets -1 to that basic power for this use. Ready Stick."
+        },
+        {
+            "card_id": "60030",
+            "type": "Upgrade",
+            "name": "Contingency Planning",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "R", "MaxPerUnit": "1", "Class": "Basic"},
+            "traits": ["SKILL"],
+            "set_name": "",
+            "text": "Max 1 per player.\nYou may play the upgrade tucked here as if it were in your hand.\n<b>Action</b>: Choose 1 upgrade in your hand that can attach to a minion or side scheme. Tuck that upgrade under here <i>(to a maximum of 1)</i>."
+        },
+        {
+            "card_id": "60031",
+            "type": "Upgrade",
+            "name": "Dance with the Devil",
+            "subtitle": "",
+            "desc": {"Cost": "0", "RES": "G", "Amplify": "1", "TeamUp": "Daredevil;Elektra", "MaxPerDeck": "1", "Class": "Basic"},
+            "traits": ["DANCE"],
+            "set_name": "",
+            "text": "Team-Up (Daredevil and Elektra). Max 1 per deck.\nAttach to an enemy.\n<b>Hero Action</b> <i>(attack)</i>: Discard this card → deal 3 damage to attached enemy."
+        },
+        {
+            "card_id": "60032",
+            "type": "Obligation",
+            "name": "Sensory Overload",
+            "subtitle": "",
+            "desc": {"Boost": "2", "GiveTo": "Matt Murdock"},
+            "traits": [],
+            "set_name": "Daredevil",
+            "text": "<b><i>Give to the Matt Murdock player.</i></b>\n<b>Forced Response</b>: After a [[Sense]] upgrade enters play, take 1 damage.\n<b>Alter-Ego Response</b>: After you recover, discard this obligation."
+        },
+        {
+            "card_id": "60033",
+            "type": "Minion",
+            "name": "* Bullseye",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "3", "SCH": "1", "Boost": "3", "Nemesis": "Daredevil"},
+            "traits": ["ASSASSIN"],
+            "set_name": "Daredevil Nemesis",
+            "text": "<b>When Revealed</b>: Choose to either discard a [[Persona]] support you control or Bullseye attacks you <i>(even if you are in alter-ego form)</i>.\n<i>(Daredevil's nemesis minion.)</i>"
+        },
+        {
+            "card_id": "60034",
+            "type": "SideScheme",
+            "name": "Deadliest Man Alive",
+            "subtitle": "",
+            "desc": {"StartingThreat": "5", "Amplify": "1", "Boost": "2"},
+            "traits": [],
+            "set_name": "Daredevil Nemesis",
+            "text": "Amplify.\n<b>Forced Interrupt</b>: When Bullseye attacks, give him 1 facedown boost card."
+        },
+        {
+            "card_id": "60035",
+            "type": "Attachment",
+            "name": "Stolen Sai",
+            "subtitle": "",
+            "desc": {"ATK+": "1", "Boost": "1"},
+            "traits": ["WEAPON"],
+            "set_name": "Daredevil Nemesis",
+            "text": "Attach to the enemy with the highest ATK.\nAttached enemy's attacks gain piercing.\n<b>Hero Action</b>: Spend [physical] [physical] resources → attach Stolen Sai to Elektra or discard it.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains piercing."
+        },
+        {
+            "card_id": "60036",
+            "type": "Treachery",
+            "name": "Eye on the Target",
+            "subtitle": "",
+            "desc": {"Boost": "2"},
+            "traits": [],
+            "set_name": "Daredevil Nemesis",
+            "text": "<b>When Revealed</b>: Choose to either remove an ally or [[Persona]] support you control from the game, or Bullseye attacks you. If Bullseye is not in play, find and reveal him."
+        },
+        {
             "card_id": "60037a",
             "type": "Hero",
             "name": "* Echo",
@@ -60544,5 +60914,5 @@
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
         }
     ],
-    "checksum": "4312613ab37112c052f41192b43714c93712d9403168bb27c620eca2608e3d94"
+    "checksum": "a437907318e7a4ac3cbee1b8ceb1a04da6b78d19159772051f7ebc4e9c104ab4"
 }

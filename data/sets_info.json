@@ -405,10 +405,10 @@
         "encounters": [],
         "max_id": "59034"
     },
-    "60. Fear No Evil (Echo)": {
+    "60. Fear No Evil": {
         "name": "fne",
         "scenarios": [],
-        "heroes": ["echo"],
+        "heroes": ["daredevil", "echo"],
         "encounters": [],
         "max_id": "60064"
     },
@@ -451,5 +451,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "425a8ec84f5f9e00fb073ac35d9177281a7e5a03c7c188abbf8df1570c8d03b1"
+    "checksum": "ba8edd0f54a391b4ccf6745aacaaf5154bb97c2c5a3fd8ac30d68805a2f639a7"
 }

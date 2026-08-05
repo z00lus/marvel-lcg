@@ -1,8 +1,8 @@
-# Встановлення Marvel LCG як сервера
+# Installing Marvel LCG as a Server
 
-Інструкція розрахована на Debian, Ubuntu або Armbian із Python 3.10 чи новішим. Сервер встановлюється в `/opt/marvel-lcg` і працює від окремого користувача `marvel-lcg`.
+This guide is intended for Debian, Ubuntu, or Armbian with Python 3.10 or newer. The server is installed in `/opt/marvel-lcg` and runs under a dedicated `marvel-lcg` user.
 
-## 1. Встановлення системних пакетів
+## 1. Install system packages
 
 ```bash
 sudo apt update
@@ -10,9 +10,9 @@ sudo apt install -y python3 python3-venv python3-pip rsync
 python3 --version
 ```
 
-## 2. Створення користувача і копіювання гри
+## 2. Create the service user and copy the game
 
-Виконайте з каталогу з вихідним кодом гри:
+Run these commands from the directory containing the game's source code:
 
 ```bash
 sudo useradd --system --home-dir /opt/marvel-lcg --shell /usr/sbin/nologin marvel-lcg
@@ -21,9 +21,9 @@ sudo rsync -a --exclude='.git' --exclude='.venv' ./ /opt/marvel-lcg/
 sudo chown -R marvel-lcg:marvel-lcg /opt/marvel-lcg
 ```
 
-Якщо користувач `marvel-lcg` уже існує, помилку від `useradd` можна пропустити.
+If the `marvel-lcg` user already exists, you can ignore the error reported by `useradd`.
 
-## 3. Створення Python-оточення
+## 3. Create the Python virtual environment
 
 ```bash
 sudo -u marvel-lcg python3 -m venv /opt/marvel-lcg/.venv
@@ -31,9 +31,9 @@ sudo -u marvel-lcg /opt/marvel-lcg/.venv/bin/pip install --upgrade pip
 sudo -u marvel-lcg /opt/marvel-lcg/.venv/bin/pip install -r /opt/marvel-lcg/requirements.txt
 ```
 
-У `launch.json` адреса сервера має бути `0.0.0.0:2345`, щоб до нього можна було підключитися з іншого пристрою в локальній мережі.
+The server address in `launch.json` must be set to `0.0.0.0:2345` so that other devices on the local network can connect to it.
 
-## 4. Встановлення systemd unit
+## 4. Install the systemd unit
 
 ```bash
 sudo install -m 0644 /opt/marvel-lcg/marvel-lcg.service /etc/systemd/system/marvel-lcg.service
@@ -41,18 +41,18 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now marvel-lcg.service
 ```
 
-Перевірка стану і перегляд журналу:
+Check the service status and follow its log with:
 
 ```bash
 sudo systemctl status marvel-lcg.service
 sudo journalctl -u marvel-lcg.service -f
 ```
 
-Після запуску відкрийте на телефоні `http://IP_АДРЕСА_СЕРВЕРА:2345`. IP-адресу можна подивитися командою `hostname -I`. Якщо використовується firewall, дозвольте TCP-порт `2345` лише для локальної мережі.
+After starting the service, open `http://SERVER_IP_ADDRESS:2345` on your phone or another device. Run `hostname -I` on the server to find its IP address. If a firewall is enabled, allow TCP port `2345` only for the local network.
 
-## Оновлення
+## Updating
 
-Знову скопіюйте файли через `rsync`, встановіть залежності та перезапустіть службу:
+Copy the files again with `rsync`, install any updated dependencies, and restart the service:
 
 ```bash
 sudo rsync -a --exclude='.git' --exclude='.venv' ./ /opt/marvel-lcg/

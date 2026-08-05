@@ -159,6 +159,10 @@ class CardRender {
     }
 
     private static getSpecialDeckLabel(name: string): string {
+        if (name === 'daredevil_sense') {
+            return 'SENSE DECK';
+        }
+
         const label = name.includes('_') ? name.substring(name.lastIndexOf('_') + 1) : name;
         return label.replaceAll('_', ' ').toUpperCase();
     }
