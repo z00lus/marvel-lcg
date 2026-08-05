@@ -88,14 +88,14 @@ export class BtnOk
             if( !Effect.show_cancel ){
                 BtnOk.btn_end_div.classList.add("forced_action")
             }
-            text = 'End<br/>Interrupt'
+            text = 'Continue'
         }
         else
         if( Effect.is_in_event == 'asking' ) {
             if( !Effect.show_cancel ){
                 BtnOk.btn_end_div.classList.add("forced_action")
             }
-            text = 'End<br/>Interrupt'
+            text = 'Continue'
         }
         else
         if( SelectStep.isCost() ) {
@@ -128,4 +128,3 @@ export class BtnOk
         BtnOk.btn_end_div.innerHTML = text
     }
 }
-

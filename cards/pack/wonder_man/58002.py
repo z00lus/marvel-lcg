@@ -5,6 +5,12 @@ from . import *
 
 def GetAbilities() -> Sequence['Ability']:
 
+    def sync_attack_after_change_form(effect: 'Effect', message: 'Message.AfterUnitChangeForm') -> None:
+        hero = effect.GetInitiator().GetIdentity().GetHeroFace()
+        expected = effect.this.GetPlacedCardArea().GetSize()
+        current = hero.keywords.get("ATK", {}).get(effect.this, 0)
+        hero.GainAttack(expected - current, effect)
+
     def ionic_physiology(effect: 'Effect', message: 'Message.AfterPlayerPlayedCard') -> None:
         this = effect.this.CastTo(Upgrade)
         if this.TuckCardUnderHere([message.played_face], effect):
@@ -17,6 +23,11 @@ def GetAbilities() -> Sequence['Ability']:
             get_new_value=lambda effect, face: effect.this.GetPlacedCardArea().GetSize(),
             attack=1,
             change_on_event=OnEvent.PlacedCard("Here"),
+        ),
+        AbilityFactory.AfterUnitChangeForm(
+            AbilityType.NonKeyword,
+            "You",
+            sync_attack_after_change_form,
         ),
         AbilityFactory.AfterPlayerPlayedCard(
             AbilityType.Response,
