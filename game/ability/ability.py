@@ -193,7 +193,10 @@ class Ability:
             elif self.flags.IsType(AbilityType.Action):
                 check_sub_type(['thwart', 'attack'], ["Play"])
             elif self.flags.IsType(AbilityType.HeroInterrupt):
-                check_sub_type(['attack', 'defense', 'thwart'], ["Play"])
+                check_sub_type(
+                    ['attack', 'defense', 'thwart'],
+                    ["Play", "DoGenerateResources", "DiscardPay"],
+                )
             elif self.flags.IsType(AbilityType.Interrupt):
                 check_sub_type(['defense', 'thwart'], ["Play", "DoGenerateResources", "DiscardPay"])
             elif self.flags.IsType(AbilityType.Response):
