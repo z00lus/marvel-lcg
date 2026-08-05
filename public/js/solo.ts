@@ -196,7 +196,7 @@ function renderScenarios(choices: ScenarioChoice[]): void {
     if (savedChoice) {
         selectScenario(savedChoice);
     }
-    scenarioStatus.textContent = choices.length ? '' : 'Доступних сценаріїв не знайдено.';
+    scenarioStatus.textContent = choices.length ? '' : 'No scenarios are available.';
 }
 
 function renderHeroes(choices: HeroChoice[]): void {
@@ -216,7 +216,7 @@ function renderHeroes(choices: HeroChoice[]): void {
     if (savedChoice) {
         selectHero(savedChoice);
     }
-    heroStatus.textContent = choices.length ? '' : 'Стартових колод не знайдено.';
+    heroStatus.textContent = choices.length ? '' : 'No starter decks are available.';
 }
 
 async function initialize(): Promise<void> {
@@ -229,14 +229,14 @@ async function initialize(): Promise<void> {
         renderScenarios(scenarioResult.value);
     } else {
         console.error(scenarioResult.reason);
-        scenarioStatus.textContent = 'Не вдалося завантажити сценарії.';
+        scenarioStatus.textContent = 'Could not load scenarios.';
     }
 
     if (heroResult.status === 'fulfilled') {
         renderHeroes(heroResult.value);
     } else {
         console.error(heroResult.reason);
-        heroStatus.textContent = 'Не вдалося завантажити стартові колоди.';
+        heroStatus.textContent = 'Could not load starter decks.';
     }
 
     updatePlayButton();
@@ -249,7 +249,7 @@ async function startGame(): Promise<void> {
 
     isStarting = true;
     errorMessage.textContent = '';
-    playButton.textContent = 'Створення гри…';
+    playButton.textContent = 'Creating game…';
     playButton.setAttribute('aria-busy', 'true');
     updatePlayButton();
 
@@ -282,9 +282,9 @@ async function startGame(): Promise<void> {
         window.location.assign('/?p=0');
     } catch (error) {
         console.error(error);
-        errorMessage.textContent = 'Не вдалося створити гру. Перевір журнал сервера і спробуй ще раз.';
+        errorMessage.textContent = 'Could not create the game. Check the server log and try again.';
         isStarting = false;
-        playButton.textContent = 'Грати';
+        playButton.textContent = 'Play';
         playButton.removeAttribute('aria-busy');
         updatePlayButton();
     }
