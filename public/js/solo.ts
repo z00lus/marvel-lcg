@@ -5,6 +5,7 @@ type SetInfo = {
 type ScenarioData = {
     name: string;
     villain: string[];
+    expert: boolean;
     schemes: string[];
     encounter_sets: string[];
     modular_sets: string[];
@@ -21,6 +22,7 @@ type ScenarioChoice = {
     name: string;
     imageId: string;
     data: ScenarioData;
+    expertId: string | null;
 };
 
 type HeroChoice = {
@@ -52,6 +54,8 @@ const scenarioSelection = document.querySelector<HTMLElement>('#scenario-selecti
 const heroSelection = document.querySelector<HTMLElement>('#hero-selection')!;
 const playButton = document.querySelector<HTMLButtonElement>('#play-button')!;
 const errorMessage = document.querySelector<HTMLElement>('#error-message')!;
+const expertMode = document.querySelector<HTMLInputElement>('#expert-mode')!;
+const expertModeDescription = document.querySelector<HTMLElement>('#expert-mode-description')!;
 
 let selectedScenario: ScenarioChoice | null = null;
 let selectedHero: HeroChoice | null = null;
@@ -91,6 +95,15 @@ function selectScenario(choice: ScenarioChoice): void {
     scenarioSelection.textContent = choice.name;
     markSelected(scenarioList, choice.id);
     errorMessage.textContent = '';
+
+    const hasExpertMode = choice.expertId !== null;
+    expertMode.disabled = !hasExpertMode;
+    if (!hasExpertMode) {
+        expertMode.checked = false;
+    }
+    expertModeDescription.textContent = hasExpertMode
+        ? 'Villain stages II–III with the Expert encounter set.'
+        : 'Expert setup is not available for this scenario.';
     updatePlayButton();
 }
 
@@ -148,7 +161,14 @@ async function loadScenarioChoices(): Promise<ScenarioChoice[]> {
             if (!data.name || !imageId) {
                 return null;
             }
-            return { id, name: data.name, imageId, data };
+            const expertId = `${id}_expert`;
+            return {
+                id,
+                name: data.name,
+                imageId,
+                data,
+                expertId: availableIds.has(expertId) ? expertId : null,
+            };
         } catch (error) {
             console.warn(`Failed to load scenario ${id}`, error);
             return null;
@@ -247,30 +267,37 @@ async function startGame(): Promise<void> {
         return;
     }
 
+    const scenarioChoice = selectedScenario;
+    const heroChoice = selectedHero;
+
     isStarting = true;
     errorMessage.textContent = '';
     playButton.textContent = 'Creating game…';
     playButton.setAttribute('aria-busy', 'true');
     updatePlayButton();
 
-    const scenario = selectedScenario.data;
-    const encounterSetNames = Array.from(new Set([
-        ...(scenario.encounter_sets ?? []),
-        ...(scenario.modular_sets ?? []),
-    ]));
-
-    const payload: SoloGamePayload = {
-        campaign_json: JSON.stringify(scenario),
-        encounter_set_names: encounterSetNames,
-        hero_json: [JSON.stringify(selectedHero.data)],
-        seed: -1,
-        timeout: 0,
-        challenges: [],
-        rules: ['v18_all'],
-        campaign_log: {},
-    };
-
     try {
+        const scenario = expertMode.checked && scenarioChoice.expertId
+            ? await fetchJson<ScenarioData>(
+                `/get_scenario_json?${encodeURIComponent(scenarioChoice.expertId)}`,
+            )
+            : scenarioChoice.data;
+        const encounterSetNames = Array.from(new Set([
+            ...(scenario.encounter_sets ?? []),
+            ...(scenario.modular_sets ?? []),
+        ]));
+
+        const payload: SoloGamePayload = {
+            campaign_json: JSON.stringify(scenario),
+            encounter_set_names: encounterSetNames,
+            hero_json: [JSON.stringify(heroChoice.data)],
+            seed: -1,
+            timeout: 0,
+            challenges: [],
+            rules: ['v18_all'],
+            campaign_log: {},
+        };
+
         const response = await fetch(`/new?data=${encodeURIComponent(JSON.stringify(payload))}`);
         if (!response.ok) {
             throw new Error(`${response.status} ${response.statusText}`);
