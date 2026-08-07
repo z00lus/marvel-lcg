@@ -56,6 +56,7 @@ const playButton = document.querySelector<HTMLButtonElement>('#play-button')!;
 const errorMessage = document.querySelector<HTMLElement>('#error-message')!;
 const expertMode = document.querySelector<HTMLInputElement>('#expert-mode')!;
 const expertModeDescription = document.querySelector<HTMLElement>('#expert-mode-description')!;
+const difficultySelection = document.querySelector<HTMLElement>('#difficulty-selection')!;
 
 let selectedScenario: ScenarioChoice | null = null;
 let selectedHero: HeroChoice | null = null;
@@ -101,6 +102,7 @@ function selectScenario(choice: ScenarioChoice): void {
     if (!hasExpertMode) {
         expertMode.checked = false;
     }
+    difficultySelection.textContent = expertMode.checked ? 'Expert' : 'Standard';
     expertModeDescription.textContent = hasExpertMode
         ? 'Villain stages II–III with the Expert encounter set.'
         : 'Expert setup is not available for this scenario.';
@@ -314,4 +316,7 @@ async function startGame(): Promise<void> {
 }
 
 playButton.addEventListener('click', startGame);
+expertMode.addEventListener('change', () => {
+    difficultySelection.textContent = expertMode.checked ? 'Expert' : 'Standard';
+});
 void initialize();

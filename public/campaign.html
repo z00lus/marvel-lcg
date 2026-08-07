@@ -9,14 +9,17 @@
 <body>
     <main class="solo-setup">
         <header class="page-header">
-            <a class="back-link" href="/main">← Main Menu</a>
-            <nav class="mode-nav" aria-label="Game mode">
-                <a class="mode-link" href="/solo">Quick Game</a>
-                <a class="mode-link active" href="/campaign" aria-current="page">Campaign</a>
-            </nav>
-            <h1>Campaign</h1>
-            <p>Start a campaign or continue the one saved in this browser.</p>
+            <div>
+                <h1>Campaign</h1>
+                <p>Start a campaign or continue the one saved in this browser.</p>
+            </div>
+            <a class="back-link" href="/main">← Main menu</a>
         </header>
+
+        <nav class="mode-nav" aria-label="Game mode">
+            <a class="mode-link" href="/solo">Quick Game</a>
+            <a class="mode-link active" href="/campaign" aria-current="page">Campaign</a>
+        </nav>
 
         <section id="saved-campaign-section" class="selection-section saved-campaign" hidden aria-labelledby="saved-campaign-heading">
             <div class="section-heading">

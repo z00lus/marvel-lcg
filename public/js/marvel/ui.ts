@@ -8,6 +8,7 @@ import { BtnOk } from './btn_ok.js'
 import { Cards } from './cards.js'
 import { Message } from './message.js'
 import { centerDraggableDiv } from './draggable.js'
+import { UserSettings } from '../user_settings.js'
 
 class ConnectionManager {
     private reconnectAttempts: number = 0;
@@ -353,16 +354,11 @@ export class UI {
         UI.delay_time = Number(UI.slider_div.value)
         UI.slider_div.oninput = UI.resetDelayTime
 
-        const animationTimeStorageKey = 'marvel_lcg_animation_time';
-        const savedAnimationTime = Number(localStorage.getItem(animationTimeStorageKey));
-        if( savedAnimationTime >= Number(UI.anime_time_div.min) &&
-            savedAnimationTime <= Number(UI.anime_time_div.max) ) {
-            UI.anime_time_div.value = savedAnimationTime.toString();
-        }
+        UI.anime_time_div.value = UserSettings.getAnimationTime().toString()
 
         UI.anime_time_div.oninput = () => {
-            UI.updateAnimeTime();
-            localStorage.setItem(animationTimeStorageKey, UI.anime_time_div.value);
+            UI.updateAnimeTime()
+            UserSettings.setAnimationTime(Number(UI.anime_time_div.value))
         }
 
         UI.updateAnimeTime()

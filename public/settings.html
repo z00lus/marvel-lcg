@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — Marvel Champions Digital: Ronin Edition</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100svh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
+            color: #e8edf2;
+            background-color: #0d141d;
+            background-image:
+                linear-gradient(rgba(5, 10, 17, 0.58), rgba(5, 10, 17, 0.82)),
+                url('/ronin-start-background.webp');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        main {
+            width: min(46rem, 100%);
+            padding: clamp(1.25rem, 4vw, 2.5rem);
+            border: 1px solid rgba(143, 190, 224, 0.45);
+            border-radius: 1rem;
+            background: rgba(10, 18, 28, 0.88);
+            box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            margin: 0 0 0.4rem;
+            font-size: clamp(1.7rem, 5vw, 2.35rem);
+        }
+
+        .intro {
+            margin: 0 0 2rem;
+            color: #aebbc6;
+        }
+
+        .setting {
+            padding: 1.25rem 0;
+            border-top: 1px solid rgba(173, 200, 220, 0.2);
+        }
+
+        .setting:first-of-type {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .setting-title {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .setting-description,
+        #marvelcdb-status {
+            margin: 0 0 0.8rem;
+            color: #aebbc6;
+            font-size: 0.92rem;
+        }
+
+        .slider-row,
+        .username-row {
+            display: grid;
+            grid-template-columns: 4rem minmax(0, 1fr) 4rem;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .slider-row input {
+            width: 100%;
+        }
+
+        output {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .switch-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .switch-row input {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .username-row {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+
+        input[type='text'] {
+            min-width: 0;
+            padding: 0.7rem 0.8rem;
+            border: 1px solid #54758f;
+            border-radius: 0.35rem;
+            background: #111d28;
+            color: #fff;
+            font: inherit;
+        }
+
+        button,
+        .back-link {
+            min-height: 2.7rem;
+            padding: 0.65rem 1.15rem;
+            border: 1px solid #52b8ef;
+            border-radius: 0.35rem;
+            background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            filter: grayscale(1);
+            opacity: 0.6;
+        }
+
+        #marvelcdb-status {
+            min-height: 1.2em;
+            margin-top: 0.7rem;
+            margin-bottom: 0;
+        }
+
+        footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 34rem) {
+            .slider-row {
+                grid-template-columns: 3.5rem minmax(0, 1fr);
+            }
+
+            .slider-row output {
+                grid-column: 1 / -1;
+                text-align: center;
+            }
+
+            .username-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Settings</h1>
+        <p class="intro">Browser settings for this device.</p>
+
+        <section class="setting">
+            <label class="setting-title" for="animation-time">Animation speed</label>
+            <p class="setting-description">Controls the duration of card movement and visual effects.</p>
+            <div class="slider-row">
+                <span>Faster</span>
+                <input type="range" id="animation-time" min="0.1" max="1.5" value="0.2" step="0.1">
+                <span>Slower</span>
+                <output id="animation-time-value" for="animation-time">0.2 s</output>
+            </div>
+        </section>
+
+        <section class="setting">
+            <span class="setting-title">Replay autosave</span>
+            <p class="setting-description">Automatically save the replay to the server when a game ends.</p>
+            <label class="switch-row" for="autosave-replays">
+                <input type="checkbox" id="autosave-replays">
+                <span>Autosave replays after each game</span>
+            </label>
+        </section>
+
+        <section class="setting">
+            <label class="setting-title" for="marvelcdb-username">MarvelCDB username</label>
+            <p class="setting-description">Saved now for the upcoming custom-deck synchronization feature.</p>
+            <div class="username-row">
+                <input type="text" id="marvelcdb-username" autocomplete="username" placeholder="MarvelCDB username">
+                <button type="button" id="marvelcdb-sync">Sync</button>
+            </div>
+            <p id="marvelcdb-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <footer>
+            <a class="back-link" href="/main">Back to main menu</a>
+        </footer>
+    </main>
+
+    <script type="module" src="/public/js/settings_page.js"></script>
+</body>
+</html>

@@ -1,456 +1,662 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replays — Marvel Champions Digital: Ronin Edition</title>
     <link rel="stylesheet" href="/public/css/menu/style.css">
     <link rel="stylesheet" href="/public/css/font-awesome.css">
-<style>
-    * {
-        --card--width: 100px;
-        --card--height: 140px;
-    }
-
-    img:not([src]) {
-        outline: none;
-        border-radius: 0;
-    }
-
-    #is-expert {
-        color: white;
-    }
-    #is-expert.expert {
-        color: red;
-    }
-    #default-modular-sets,
-    #default-encounter-sets {
-        color: orangered;
-    }
-
-    label {
-        position: relative;
-        display: block;
-    }
-
-    ::file-selector-button,
-    ::-webkit-file-upload-button {
-        display: none;
-    }
-    input[id^='scenario-'],
-    input[id^='modular-sets-'],
-    input[id^='encounter-sets-'] {
-        display: none;
-    }
-
-    div:has(#modular-sets),
-    div:has(#encounter-sets) {
-        overflow: hidden;
-        flex: 0 0 100%;
-        width: 0px; /* hack */
-        max-width: 100%;
-        flex: 0 0 100%;
-    }
-    #set-content .detail,
-    #modular-sets,
-    #encounter-sets {
-        flex: 0 0 100%;
-        width: 100%;
-        flex-wrap: nowrap;
-        flex-direction: row;
-        gap: .2em;
-        flex-wrap: wrap;
-        display: inline-flex;
-    }
-
-    input[type="file"] {
-        /* display: none; */
-        width: var(--card--width);
-        position: absolute;
-        color: white;
-        /* text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; */
-        /* text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF; */
-        /* https://stackoverflow.com/questions/2570972/css-font-border */
-    }
-    fieldset {
-        display: flex;
-        gap: .5rem;
-    }
-
-    details input {
-        display: block;
-        cursor: pointer;
-    }
-    details summary:hover {
-        cursor: pointer;
-    }
-    details {
-        border: 1px solid #aaa;
-        border-radius: 4px;
-        padding: 0.5em 0.5em 0;
-    }
-
-    summary {
-        font-weight: bold;
-        margin: -0.5em -0.5em 0;
-        padding: 0.5em;
-    }
-
-    details button {
-        display: block;
-    }
-
-    details[open] {
-        padding: 0.5em;
-    }
-
-    details[open] summary {
-        border-bottom: 1px solid #aaa;
-        margin-bottom: 0.5em;
-    }
-
-    #modular-sets div img,
-    #encounter-sets div img {
-        padding: 0;
-        margin: 0;
-    }
-
-    #modular-sets.hide-not-click button:not(.click),
-    #encounter-sets.hide-not-click button:not(.click) {
-        display: none;
-    }
-
-    #modular-sets.expend-view {
-        flex-wrap: wrap;
-        flex-direction: row;
-        height: auto;
-    }
-
-    #modular-sets button,
-    #encounter-sets button,
-    #set-content button {
-        position: relative;
-        margin: 2px;
-        padding: 0;
-        display: inline-flex;
-        border-radius: .25em;
-    }
-
-    .debug-only-option {
-        display: none;
-    }
-</style>
-</head>
-<body style="display: flex; flex-direction: column;">
     <style>
-        .replay-item {
-            background-color: #3c3c3c;
-            width: 100%;
+        :root {
+            color-scheme: dark;
+            font-family: Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100svh;
+            margin: 0;
+            padding: 0;
+            color: #e8edf2;
+            background-color: #0d141d;
+            background-image:
+                linear-gradient(rgba(5, 10, 17, 0.64), rgba(5, 10, 17, 0.88)),
+                url('/ronin-start-background.webp');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-shell {
+            width: min(92rem, 100%);
+            margin: 0 auto;
+            padding: clamp(1rem, 3vw, 2.5rem);
+        }
+
+        .page-header {
             display: flex;
-            /* justify-content: space-between; */
-            gap: 10px;
-            padding: 5px;
-            cursor: pointer;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1.2rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.8rem, 4vw, 2.7rem);
+            text-shadow: 0 3px 12px #000;
+        }
+
+        .subtitle {
+            margin-top: 0.4rem;
+            color: #b6c2cc;
+        }
+
+        .panel {
+            padding: clamp(1rem, 2.5vw, 1.6rem);
+            border: 1px solid rgba(143, 190, 224, 0.45);
             border-radius: 1rem;
-            border: 1px black solid;
-            /* filter: drop-shadow(2px 4px 6px black); */
+            background: rgba(10, 18, 28, 0.88);
+            box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
         }
-        .replay-item .cover-images {
+
+        .panel-header {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .item-count {
+            color: #aebbc6;
+            font-size: 0.9rem;
+        }
+
+        .replay-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(34rem, 100%), 1fr));
+            gap: 0.9rem;
+        }
+
+        .replay-item {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-areas:
+                "covers details"
+                "covers actions";
+            gap: 0.8rem 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(145, 178, 204, 0.28);
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, rgba(33, 48, 62, 0.94), rgba(17, 28, 39, 0.94));
+            box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.28);
+            transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+        }
+
         .replay-item:hover {
-            background-color: #232323;
+            border-color: rgba(82, 184, 239, 0.72);
+            transform: translateY(-2px);
+            box-shadow: 0 0.9rem 1.8rem rgba(0, 0, 0, 0.38);
         }
-        .replay-item .image-div {
+
+        .cover-images {
+            grid-area: covers;
+            display: flex;
+            align-items: flex-start;
+            min-width: 8.6rem;
+            padding-top: 0.15rem;
+        }
+
+        .cover-images .image-div {
+            width: 5rem;
+            height: 7rem;
+            margin: 0;
+            filter: drop-shadow(0 0.4rem 0.45rem rgba(0, 0, 0, 0.75));
             pointer-events: none;
         }
-        .replay-item button {
-            width: fit-content;
-            height: 2rem;
+
+        .cover-images .image-div + .image-div {
+            margin-left: -1.35rem;
         }
-        .replay-item button:hover {
-            filter: drop-shadow(2px 4px 6px black);
+
+        .cover-images .image-div img {
+            width: 5rem;
+            height: 7rem;
+            border: 1px solid rgba(225, 238, 248, 0.6);
+            border-radius: 0.45rem;
+            object-fit: cover;
         }
-        .replay-item .replay-actions {
-            align-items: center;
-            display: flex;
-            gap: 0.5rem;
-            margin-left: auto;
-            padding-right: 0.5rem;
-        }
-        #replay-items,
-        #puzzle-items {
+
+        .cover-images .image-div::after {
             display: none;
         }
-        .tag {
-            border: 1px solid black;
-            border-radius: 4px;
-            background-color: white;
-            padding: 2px;
-            margin: 2px;
+
+        .replay-details {
+            grid-area: details;
+            min-width: 0;
         }
 
-        #puzzle-items .comment {
-            font-weight: bold;
-            color: orange;
+        .replay-title {
+            margin: 0 0 0.45rem;
+            color: #f5f8fb;
+            font-size: 1.08rem;
+            line-height: 1.3;
+        }
+
+        .replay-comment {
+            margin: 0 0 0.55rem;
+            color: #f4c45e;
+            line-height: 1.35;
+        }
+
+        .replay-meta,
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.8rem;
+            align-items: center;
+        }
+
+        .replay-meta {
+            color: #b7c3cc;
+            font-size: 0.88rem;
+        }
+
+        .replay-meta span {
+            white-space: nowrap;
+        }
+
+        .replay-meta i {
+            width: 1rem;
+            color: #74c9f5;
+            text-align: center;
+        }
+
+        .file-name {
+            margin-top: 0.65rem;
+            overflow: hidden;
+            color: #7f929f;
+            font-family: monospace;
+            font-size: 0.76rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tags {
+            margin-top: 0.65rem;
+        }
+
+        .tag {
+            padding: 0.2rem 0.45rem;
+            border: 1px solid rgba(131, 167, 194, 0.48);
+            border-radius: 999px;
+            background: rgba(20, 38, 52, 0.9);
+            color: #b9dff3;
+            font-size: 0.72rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .tag.expert {
+            border-color: rgba(230, 92, 92, 0.72);
+            color: #ff9c9c;
+        }
+
+        .tag.debug {
+            border-color: rgba(236, 184, 72, 0.72);
+            color: #f4c45e;
+        }
+
+        .replay-actions {
+            grid-area: actions;
+            align-self: end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        button,
+        .back-link {
+            min-height: 2.55rem;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.58rem 1rem;
+            border: 1px solid #52b8ef;
+            border-radius: 0.35rem;
+            background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            transition: filter 120ms ease, transform 120ms ease;
+        }
+
+        button:hover,
+        .back-link:hover {
+            filter: brightness(1.12);
+        }
+
+        button:active,
+        .back-link:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            border-color: #6f8798;
+            background: rgba(31, 48, 62, 0.95);
+        }
+
+        .empty-state,
+        .loading-state {
+            grid-column: 1 / -1;
+            padding: 3rem 1rem;
+            color: #aebbc6;
+            text-align: center;
+        }
+
+        .unavailable {
+            grid-template-columns: 1fr;
+            grid-template-areas: "details";
+            opacity: 0.76;
+        }
+
+        .unavailable .replay-title {
+            color: #ffaaa5;
+        }
+
+        .puzzle-tools {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer {
+            margin-bottom: 1rem;
+            color: #b7c3cc;
+            line-height: 1.45;
+        }
+
+        .disclaimer strong {
+            color: #ff9c9c;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 44rem) {
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column-reverse;
+            }
+
+            .replay-item {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "covers"
+                    "details"
+                    "actions";
+            }
+
+            .cover-images {
+                min-width: 0;
+            }
+
+            .replay-actions button {
+                flex: 1;
+            }
         }
     </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="page-header">
+            <div>
+                <h1 id="page-title">Replay Library</h1>
+                <p class="subtitle" id="page-subtitle">Return to any saved solo adventure.</p>
+            </div>
+            <a class="back-link" href="/main">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                Main menu
+            </a>
+        </header>
 
-    <fieldset style="flex-direction: column; position: relative; align-items: flex-start;" id="replay-items">
-        <legend>Game Replay</legend>
-    </fieldset>
+        <main>
+            <section class="panel" id="replay-panel">
+                <div class="panel-header">
+                    <h2>Saved games</h2>
+                    <span class="item-count" id="replay-count">Loading…</span>
+                </div>
+                <div class="replay-list" id="replay-items">
+                    <p class="loading-state"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Loading replays…</p>
+                </div>
+            </section>
 
-    <fieldset style="flex-direction: column; position: relative; align-items: flex-start;" id="puzzle-items">
-        <legend>Puzzle</legend>
-        <div style="display: flex; flex-direction: cow; gap: 5px;" id="main-puzzle">
-            <button onclick="window.location.href = '/puzzle_editor'">Editor<i class="fa fa-flask" aria-hidden="true"></i></button>
-            <button onclick="window.location.href = '/puzzle_test'">Test</button>
-        </div>
-        <style>
-            strong {
-                color: red;
+            <section class="panel" id="puzzle-panel" hidden>
+                <div class="panel-header">
+                    <h2>Puzzles</h2>
+                    <span class="item-count" id="puzzle-count">Loading…</span>
+                </div>
+                <div class="puzzle-tools" id="main-puzzle">
+                    <button type="button" id="puzzle-editor">
+                        <i class="fa fa-flask" aria-hidden="true"></i>
+                        Editor
+                    </button>
+                    <button type="button" class="secondary" id="puzzle-test">Test</button>
+                </div>
+                <p class="disclaimer">
+                    Only use content from sources you trust. <strong>Downloaded puzzles may contain executable card scripts.</strong>
+                </p>
+                <div class="replay-list" id="puzzle-items">
+                    <p class="loading-state"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Loading puzzles…</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const isPuzzlePage = document.location.pathname === '/puzzle' ||
+            document.location.pathname === '/puzzle_test'
+
+        function firstCardId(value) {
+            return String(value || '').split(',')[0]
+        }
+
+        function fileBaseName(path) {
+            return String(path || '').split(/[\\/]/).pop()
+        }
+
+        function formatPlaytime(value) {
+            const totalSeconds = Math.max(0, Math.round(Number(value) || 0))
+            if( totalSeconds === 0 ) {
+                return ''
             }
-        </style>
-        <!-- <div style="white-space: pre-wrap;">Disclaimer:
-While I strive to ensure that all puzzles provided by me are safe and free from harmful code, I cannot guarantee the safety of puzzles created or shared by other users.
-If you choose to download puzzles from external sources or other players, you do so at your own risk. <strong>I am not responsible</strong> for any damage to your computer, loss of files, or any other issues that may arise from using such puzzles.
-Please exercise caution and only download content from trusted sources.</div> -->
-    <div style="white-space: pre-wrap;">Disclaimer:
-If you download any content from other sources, <strong>We are not responsible</strong> for any damage to your computer, loss of files, or any other issues that may arise from using them.
-Please be cautious and only use trusted content.
-</div>
-    </fieldset>
-<script>
-class JsonData {
-    constructor(version, is_puzzle, time, cover, path, comment, villain, players, seed, checksum, author, step) {
-        this.version = version;
-        this.is_puzzle = is_puzzle
-        this.time = time
-        this.cover = cover
-        this.path = path
-        this.comment = comment
-        this.villain = villain
-        this.players = players
-        this.seed = seed
-        this.checksum = checksum
-        this.author = author
-        this.step = step
-    }
-}
 
-function get_name(x) {
-    return x.split(",")[0]
-}
-
-/** @param {string} file_name */
-async function create_item(file_name, is_replay) {
-    if( is_replay ) {
-        rule = "get_replay_json"
-    } else {
-        rule = "get_puzzle_json"
-    }
-    const response = await fetch(`${rule}?${file_name}`);
-    // Parse the JSON data
-    const jsonData = await response.json();
-
-    // Create an instance of JsonData
-    // Create an instance of JsonData
-    const dataInstance = new JsonData(
-        jsonData.version,
-        jsonData.is_puzzle,
-        jsonData.time,
-        jsonData.cover,
-        jsonData.path,
-        jsonData.comment,
-        jsonData.villain,
-        jsonData.players,
-        jsonData.seed,
-        jsonData.checksum,
-        jsonData.author,
-        jsonData.step,
-    );
-
-    let cover = dataInstance.cover
-    // if( cover == undefined ) {
-    //     cover = "no_image"
-    // }
-
-    // Create the main div element
-    const replayItemDiv = document.createElement('div');
-    replayItemDiv.className = 'replay-item';
-
-    const imagesDiv = document.createElement('div');
-    imagesDiv.classList.add('cover-images')
-
-    function create_image(cover) {
-        // Create the image div
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-div';
-        imageDiv.setAttribute('data-card-id', cover);
-
-        // Create the image element
-        const imgElement = document.createElement('img');
-        imgElement.src = cover; // Assuming the image source is the same as cover
-
-        // Append the image to the image div
-        imageDiv.appendChild(imgElement);
-
-        return imageDiv
-    }
-
-    if( cover ) {
-        imagesDiv.appendChild(create_image(cover))
-    }
-    else {
-        for( let player of dataInstance.players ) {
-            imagesDiv.appendChild(create_image(get_name(player)))
-        }
-        imagesDiv.appendChild(create_image(get_name(dataInstance.villain)))
-    }
-
-
-
-
-    // Create the button element
-    // const buttonElement = document.createElement('button');
-    // buttonElement.type = 'submit';
-    replayItemDiv.onclick = () => doReplay(file_name, is_replay); // Assuming doReplay is defined elsewhere
-    // buttonElement.textContent = 'Replay';
-
-    const commentDiv = document.createElement('div');
-
-    let debug_text = `<span style="color: green" class="tag">Debug</span>`
-    let expert_text = `<span style="color: red" class="tag">Expert</span>`
-    let no_shuffle_text = `<span style="color: green" class="tag">No Shuffle</span>`
-    let checksum_text = `<span style="color: deepskyblue" class="tag">Official</span>`
-    commentDiv.innerHTML = `${file_name}<br/>
-    <span class='comment'>${dataInstance.comment}</span><br/>
-    `
-
-    if( dataInstance.step == 0 && dataInstance.author && !dataInstance.checksum) {
-        commentDiv.innerHTML += `
-        Author: ${dataInstance.author}<br/><br/>
-        `
-    } else {
-        commentDiv.innerHTML += `
-        ${dataInstance.step > 0 ? "Step: " + dataInstance.step : ""}<br/><br/>
-        `
-    }
-
-    commentDiv.innerHTML += `
-    ${file_name.includes('debug') ? debug_text : ""} ${file_name.includes('expert') ? expert_text : ""} ${dataInstance.seed == 0 ? no_shuffle_text : ""} ${dataInstance.checksum && !is_replay ? checksum_text : ""}
-    `
-
-    // Append the image div and button to the main div
-    replayItemDiv.appendChild(imagesDiv);
-    replayItemDiv.appendChild(commentDiv);
-
-    if( is_replay ) {
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'replay-actions';
-
-        const playButton = document.createElement('button');
-        playButton.textContent = 'Play';
-        playButton.onclick = (event) => {
-            event.stopPropagation();
-            doReplay(file_name, true);
-        };
-
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download';
-        downloadButton.onclick = (event) => {
-            event.stopPropagation();
-            window.location.href = `download_replay?file=${encodeURIComponent(file_name)}`;
-        };
-
-        actionsDiv.appendChild(playButton);
-        actionsDiv.appendChild(downloadButton);
-        replayItemDiv.appendChild(actionsDiv);
-    }
-
-    return replayItemDiv;
-}
-</script>
-
-
-<script>
-async function get_data(is_replay) {
-    let list_files = ""
-    if( is_replay ) {
-        list_files = "list_replay_files"
-        parent = document.querySelector("#replay-items")
-    } else {
-        if( document.location.pathname == '/puzzle_test' ) {
-            list_files = "list_puzzle_test_files"
-            document.getElementById('main-puzzle').style.display = 'none'
-        } else {
-            list_files = "list_puzzle_files"
-        }
-        parent = document.querySelector("#puzzle-items")
-    }
-    parent.style.display = "flex"
-    const response = await fetch(`${list_files}?`);
-    if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.statusText);
-    }
-    const data = await response.json();
-    for( let file_name of data ) {
-        if( true || !file_name.includes('-debug') ) {
-            const div = await create_item(file_name, is_replay)
-            parent.appendChild(div)
-        }
-    }
-}
-let is_puzzle_page = (document.location.pathname == '/puzzle' || document.location.pathname == '/puzzle_test');
-if( is_puzzle_page ) {
-    document.title = "Puzzle"
-} else {
-    document.title = "Replay"
-}
-
-(async () => {
-    if( is_puzzle_page ) {
-        await get_data(false)
-    } else {
-        await get_data(true)
-    }
-})()
-
-async function doReplay(file_name, is_replay) {
-    const gameWindow = window.open('', '_blank');
-    let cmd = ""
-    if( is_puzzle_page ) {
-        cmd = `load_puzzle?${file_name}`
-    } else {
-        cmd = `load_replay?${file_name}`
-    }
-
-    const response = await fetch(cmd);
-    if( !response.ok ) {
-        gameWindow?.close();
-        let error = `Could not load replay (${response.status}).`;
-        try {
-            const data = await response.json();
-            if( data.error ) {
-                error = data.error;
+            const hours = Math.floor(totalSeconds / 3600)
+            const minutes = Math.floor((totalSeconds % 3600) / 60)
+            if( hours > 0 ) {
+                return `${hours}h ${minutes}m`
             }
-        } catch (_) {
-            // Keep the HTTP fallback for non-JSON server errors.
+            return `${minutes}m`
         }
-        alert(error);
-        return;
-    }
 
-    cmd = ".?hot_seat&3d_scene"
-    if( is_replay ) {
-        cmd = `${cmd}&replay`
-    }
-    if( gameWindow ) {
-        gameWindow.location.href = cmd;
-    } else {
-        window.location.href = cmd;
-    }
-}
-</script>
+        function formatTime(value) {
+            return String(value || '').replace(
+                /^(\d{4}-\d{2}-\d{2}) (\d{2})-(\d{2})$/,
+                '$1 · $2:$3',
+            )
+        }
 
+        function createImage(cardId, label) {
+            const imageDiv = document.createElement('div')
+            imageDiv.className = 'image-div'
+            imageDiv.dataset.cardId = cardId
+
+            const image = document.createElement('img')
+            image.src = cardId
+            image.alt = label
+            image.loading = 'lazy'
+            imageDiv.appendChild(image)
+            return imageDiv
+        }
+
+        function appendMeta(parent, icon, text) {
+            if( !text ) {
+                return
+            }
+            const item = document.createElement('span')
+            const iconElement = document.createElement('i')
+            iconElement.className = `fa ${icon}`
+            iconElement.setAttribute('aria-hidden', 'true')
+            item.appendChild(iconElement)
+            item.append(` ${text}`)
+            parent.appendChild(item)
+        }
+
+        function appendTag(parent, text, className='') {
+            const tag = document.createElement('span')
+            tag.className = `tag ${className}`.trim()
+            tag.textContent = text
+            parent.appendChild(tag)
+        }
+
+        async function createItem(fileName, isReplay) {
+            const route = isReplay ? 'get_replay_json' : 'get_puzzle_json'
+            const response = await fetch(`${route}?${fileName}`)
+            if( !response.ok ) {
+                throw new Error(`Could not read replay metadata (${response.status})`)
+            }
+            const data = await response.json()
+
+            const replayItem = document.createElement('article')
+            replayItem.className = 'replay-item'
+            replayItem.dataset.time = data.time || ''
+
+            const playerNames = Array.isArray(data.player_names) && data.player_names.length > 0
+                ? data.player_names
+                : ['Hero']
+            const scenarioName = data.scenario || 'Scenario'
+
+            const images = document.createElement('div')
+            images.className = 'cover-images'
+            if( data.cover ) {
+                images.appendChild(createImage(data.cover, `${playerNames.join(', ')} versus ${scenarioName}`))
+            } else {
+                for( const player of data.players || [] ) {
+                    images.appendChild(createImage(firstCardId(player), playerNames[images.children.length] || 'Hero'))
+                }
+                images.appendChild(createImage(firstCardId(data.villain), scenarioName))
+            }
+
+            const details = document.createElement('div')
+            details.className = 'replay-details'
+
+            const title = document.createElement('h3')
+            title.className = 'replay-title'
+            title.textContent = `${playerNames.join(', ')} vs ${scenarioName}`
+            details.appendChild(title)
+
+            if( data.comment ) {
+                const comment = document.createElement('p')
+                comment.className = 'replay-comment'
+                comment.textContent = data.comment
+                details.appendChild(comment)
+            }
+
+            const meta = document.createElement('div')
+            meta.className = 'replay-meta'
+            appendMeta(meta, 'fa-calendar-o', formatTime(data.time))
+            if( data.step > 0 ) {
+                appendMeta(meta, 'fa-list-ol', `${data.step} steps`)
+            } else if( data.author ) {
+                appendMeta(meta, 'fa-user', data.author)
+            }
+            appendMeta(meta, 'fa-clock-o', formatPlaytime(data.playtime))
+            appendMeta(meta, 'fa-code-fork', `v${data.version}`)
+            details.appendChild(meta)
+
+            const displayFileName = fileBaseName(fileName)
+            const file = document.createElement('div')
+            file.className = 'file-name'
+            file.textContent = displayFileName
+            file.title = data.path || fileName
+            details.appendChild(file)
+
+            const tags = document.createElement('div')
+            tags.className = 'tags'
+            if( data.expert || displayFileName.includes('expert') ) {
+                appendTag(tags, 'Expert', 'expert')
+            }
+            if( displayFileName.includes('debug') ) {
+                appendTag(tags, 'Debug', 'debug')
+            }
+            if( data.seed === 0 ) {
+                appendTag(tags, 'No shuffle')
+            }
+            if( data.checksum && !isReplay ) {
+                appendTag(tags, 'Official')
+            }
+            if( tags.childElementCount > 0 ) {
+                details.appendChild(tags)
+            }
+
+            const actions = document.createElement('div')
+            actions.className = 'replay-actions'
+
+            const playButton = document.createElement('button')
+            playButton.type = 'button'
+            playButton.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Play'
+            playButton.addEventListener('click', () => doReplay(fileName, isReplay))
+            actions.appendChild(playButton)
+
+            if( isReplay ) {
+                const downloadButton = document.createElement('button')
+                downloadButton.type = 'button'
+                downloadButton.className = 'secondary'
+                downloadButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Download'
+                downloadButton.addEventListener('click', () => {
+                    window.location.href = `download_replay?file=${encodeURIComponent(fileName)}`
+                })
+                actions.appendChild(downloadButton)
+            }
+
+            replayItem.appendChild(images)
+            replayItem.appendChild(details)
+            replayItem.appendChild(actions)
+            return replayItem
+        }
+
+        function createUnavailableItem(fileName, error) {
+            const item = document.createElement('article')
+            item.className = 'replay-item unavailable'
+            item.dataset.time = ''
+
+            const details = document.createElement('div')
+            details.className = 'replay-details'
+
+            const title = document.createElement('h3')
+            title.className = 'replay-title'
+            title.textContent = 'Replay metadata unavailable'
+            details.appendChild(title)
+
+            const file = document.createElement('div')
+            file.className = 'file-name'
+            file.textContent = fileBaseName(fileName)
+            file.title = error instanceof Error ? error.message : String(error)
+            details.appendChild(file)
+            item.appendChild(details)
+            return item
+        }
+
+        async function loadItems(isReplay) {
+            const listRoute = isReplay
+                ? 'list_replay_files'
+                : document.location.pathname === '/puzzle_test'
+                    ? 'list_puzzle_test_files'
+                    : 'list_puzzle_files'
+            const parent = document.getElementById(isReplay ? 'replay-items' : 'puzzle-items')
+            const count = document.getElementById(isReplay ? 'replay-count' : 'puzzle-count')
+
+            const response = await fetch(`${listRoute}?`)
+            if( !response.ok ) {
+                throw new Error(`Could not load the file list (${response.status})`)
+            }
+            const fileNames = await response.json()
+            const items = await Promise.all(fileNames.map(async (fileName) => {
+                try {
+                    return await createItem(fileName, isReplay)
+                } catch( error ) {
+                    console.error(`Could not load ${fileName}`, error)
+                    return createUnavailableItem(fileName, error)
+                }
+            }))
+
+            items.sort((left, right) => (right.dataset.time || '').localeCompare(left.dataset.time || ''))
+            parent.replaceChildren()
+            if( items.length === 0 ) {
+                const empty = document.createElement('p')
+                empty.className = 'empty-state'
+                empty.textContent = isReplay
+                    ? 'No saved replays yet. Finish a game and save it to see it here.'
+                    : 'No puzzles are available.'
+                parent.appendChild(empty)
+            } else {
+                parent.append(...items)
+            }
+            count.textContent = `${items.length} ${items.length === 1 ? 'item' : 'items'}`
+        }
+
+        async function doReplay(fileName, isReplay) {
+            const gameWindow = window.open('', '_blank')
+            const loadRoute = isPuzzlePage ? 'load_puzzle' : 'load_replay'
+            const response = await fetch(`${loadRoute}?${fileName}`)
+            if( !response.ok ) {
+                gameWindow?.close()
+                let error = `Could not load replay (${response.status}).`
+                try {
+                    const data = await response.json()
+                    error = data.error || error
+                } catch( _ ) {
+                    // Keep the HTTP fallback for non-JSON server errors.
+                }
+                alert(error)
+                return
+            }
+
+            let gameUrl = '.?hot_seat&3d_scene'
+            if( isReplay ) {
+                gameUrl += '&replay'
+            }
+            if( gameWindow ) {
+                gameWindow.location.href = gameUrl
+            } else {
+                window.location.href = gameUrl
+            }
+        }
+
+        if( isPuzzlePage ) {
+            document.title = 'Puzzles — Marvel Champions Digital: Ronin Edition'
+            document.getElementById('page-title').textContent = 'Puzzle Library'
+            document.getElementById('page-subtitle').textContent = 'Create, test, and play challenge scenarios.'
+            document.getElementById('replay-panel').hidden = true
+            document.getElementById('puzzle-panel').hidden = false
+            if( document.location.pathname === '/puzzle_test' ) {
+                document.getElementById('main-puzzle').hidden = true
+            }
+            document.getElementById('puzzle-editor').addEventListener('click', () => {
+                window.location.href = '/puzzle_editor'
+            })
+            document.getElementById('puzzle-test').addEventListener('click', () => {
+                window.location.href = '/puzzle_test'
+            })
+        }
+
+        void loadItems(!isPuzzlePage).catch((error) => {
+            console.error(error)
+            const parent = document.getElementById(isPuzzlePage ? 'puzzle-items' : 'replay-items')
+            const count = document.getElementById(isPuzzlePage ? 'puzzle-count' : 'replay-count')
+            const message = document.createElement('p')
+            message.className = 'empty-state'
+            message.textContent = 'The replay library could not be loaded. Please refresh and try again.'
+            parent.replaceChildren(message)
+            count.textContent = 'Unavailable'
+        })
+    </script>
 </body>
 </html>

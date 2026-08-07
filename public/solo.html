@@ -9,19 +9,34 @@
 <body>
     <main class="solo-setup">
         <header class="page-header">
-            <a class="back-link" href="/main">← Main Menu</a>
-            <nav class="mode-nav" aria-label="Game mode">
-                <a class="mode-link active" href="/solo" aria-current="page">Quick Game</a>
-                <a class="mode-link" href="/campaign">Campaign</a>
-            </nav>
-            <h1>Quick Game</h1>
-            <p>Choose a scenario and a ready-to-play starter deck.</p>
+            <div>
+                <h1>Quick Game</h1>
+                <p>Choose a hero, scenario, and difficulty.</p>
+            </div>
+            <a class="back-link" href="/main">← Main menu</a>
         </header>
+
+        <nav class="mode-nav" aria-label="Game mode">
+            <a class="mode-link active" href="/solo" aria-current="page">Quick Game</a>
+            <a class="mode-link" href="/campaign">Campaign</a>
+        </nav>
+
+        <section class="selection-section" aria-labelledby="hero-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">1</span>
+                    <h2 id="hero-heading">Hero</h2>
+                </div>
+                <span id="hero-selection" class="current-selection">Not selected</span>
+            </div>
+            <p id="hero-status" class="load-status">Loading starter decks…</p>
+            <div id="hero-list" class="choice-grid" aria-live="polite"></div>
+        </section>
 
         <section class="selection-section" aria-labelledby="scenario-heading">
             <div class="section-heading">
                 <div>
-                    <span class="step-number">1</span>
+                    <span class="step-number">2</span>
                     <h2 id="scenario-heading">Scenario</h2>
                 </div>
                 <span id="scenario-selection" class="current-selection">Not selected</span>
@@ -30,19 +45,14 @@
             <div id="scenario-list" class="choice-grid" aria-live="polite"></div>
         </section>
 
-        <section class="selection-section" aria-labelledby="hero-heading">
+        <section class="selection-section difficulty-section" aria-labelledby="difficulty-heading">
             <div class="section-heading">
                 <div>
-                    <span class="step-number">2</span>
-                    <h2 id="hero-heading">Starter Deck</h2>
+                    <span class="step-number">3</span>
+                    <h2 id="difficulty-heading">Difficulty</h2>
                 </div>
-                <span id="hero-selection" class="current-selection">Not selected</span>
+                <span id="difficulty-selection" class="current-selection">Standard</span>
             </div>
-            <p id="hero-status" class="load-status">Loading decks…</p>
-            <div id="hero-list" class="choice-grid" aria-live="polite"></div>
-        </section>
-
-        <footer class="play-panel">
             <label class="expert-option" for="expert-mode">
                 <input id="expert-mode" type="checkbox" role="switch" disabled>
                 <span>
@@ -50,6 +60,9 @@
                     <small id="expert-mode-description">Select a scenario to check expert availability.</small>
                 </span>
             </label>
+        </section>
+
+        <footer class="play-panel">
             <p id="error-message" class="error-message" role="alert"></p>
             <button id="play-button" class="play-button" type="button" disabled>Play</button>
             <a class="advanced-link" href="/scene">Advanced Setup</a>

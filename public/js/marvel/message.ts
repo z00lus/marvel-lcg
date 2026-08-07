@@ -1,6 +1,8 @@
 import { Command } from "./command.js";
 import { Game } from "./game.js";
 import { recordCampaignVictory } from "../campaign_state.js";
+import { UserSettings } from "../user_settings.js";
+import { Setting } from "./settings.js";
 
 export class Message {
 
@@ -12,6 +14,43 @@ export class Message {
     private static end_messageElementText: HTMLElement
     private static retryButton: HTMLButtonElement
     private static saveReplayButton: HTMLButtonElement
+    private static replaySavePromise: Promise<string>|null = null
+    private static autoSaveAttempted = false
+
+    private static async saveReplay(automatic: boolean) {
+        if( Message.replaySavePromise ) {
+            return Message.replaySavePromise
+        }
+
+        Message.saveReplayButton.disabled = true
+        Message.saveReplayButton.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Saving...'
+        Message.replaySavePromise = Command.saveLocal()
+
+        try {
+            const path = await Message.replaySavePromise
+            const label = automatic ? 'Autosaved' : 'Saved'
+            Message.saveReplayButton.innerHTML = `<i class="fa fa-check" aria-hidden="true"></i> ${label}`
+            return path
+        } catch( error ) {
+            console.error(error)
+            Message.saveReplayButton.disabled = false
+            Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay'
+            throw error
+        } finally {
+            Message.replaySavePromise = null
+        }
+    }
+
+    private static autoSaveReplay() {
+        if( Message.autoSaveAttempted || Setting.replay_mode || !UserSettings.getAutoSaveReplays() ) {
+            return
+        }
+
+        Message.autoSaveAttempted = true
+        void Message.saveReplay(true).catch(() => {
+            // Manual saving remains available after an autosave error.
+        })
+    }
 
     static init() {
         Message.overlay = document.getElementById('message-overlay')!;
@@ -27,16 +66,10 @@ export class Message {
         Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
         Message.saveReplayButton.classList.add('save-replay')
         Message.saveReplayButton.addEventListener('click', async function() {
-            Message.saveReplayButton.disabled = true
-            Message.saveReplayButton.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Saving...'
-
             try {
-                await Command.saveLocal()
-                Message.saveReplayButton.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Saved'
-            } catch( error ) {
-                console.error(error)
-                Message.saveReplayButton.disabled = false
-                Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay'
+                await Message.saveReplay(false)
+            } catch( _ ) {
+                // saveReplay already reports the error and restores the button.
             }
         });
 
@@ -75,6 +108,8 @@ export class Message {
 
     static cleanGameOverMessage() {
         Message.game_over_div.classList.remove('active');
+        Message.autoSaveAttempted = false
+        Message.replaySavePromise = null
     }
 
     static showGameOverMessage(text: string) {
@@ -91,9 +126,12 @@ export class Message {
         Message.retryButton.hidden = Game.players_won;
         Message.retryButton.disabled = false;
         Message.retryButton.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i> Try again';
-        Message.saveReplayButton.disabled = false;
-        Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
+        if( !Message.autoSaveAttempted && !Message.replaySavePromise ) {
+            Message.saveReplayButton.disabled = false;
+            Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
+        }
         Message.end_messageElementText.textContent = text
+        Message.autoSaveReplay()
     }
 
     static showMessage(text: string, original_duration: number|null = 1200) {
