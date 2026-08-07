@@ -6,18 +6,34 @@
     <title>Marvel Champions Digital: Ronin Edition</title>
     <style>
         body {
-            background-color: rgb(43, 43, 43);
+            background-color: rgb(13, 20, 29);
+            background-image:
+                linear-gradient(rgba(5, 10, 17, 0.3), rgba(5, 10, 17, 0.58)),
+                url("/ronin-start-background.webp");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             color: rgb(198, 198, 198);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100svh;
             font-family: Arial, sans-serif;
             margin: 0;
         }
 
         .menu {
             text-align: center;
+            padding: 2rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+        }
+
+        @media (max-aspect-ratio: 3 / 4) {
+            body {
+                background-position: 68% center;
+            }
         }
 
         .custom-btn {
