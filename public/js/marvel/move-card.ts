@@ -174,7 +174,7 @@ export class MoveCard {
                     if (card.bind_object_id) {
                         const statusCount = statusCountByTarget.get(card.bind_object_id) ?? 0;
                         statusCountByTarget.set(card.bind_object_id, statusCount + 1);
-                        x += MoveCard.cardWidth * (statusCount === 0 ? 0.5 : 0.15);
+                        x += MoveCard.cardWidth * (statusCount === 0 ? 0.65 : 0.15);
                     } else {
                         x += MoveCard.cardWidth * 0.5;
                     }
@@ -326,7 +326,10 @@ export class MoveCard {
 
             const targetX = Number(target.style.getPropertyValue('--x'));
             const targetY = Number(target.style.getPropertyValue('--y'));
-            const x = targetX + MoveCard.cardWidth * (0.5 + stackIndex * 0.15);
+            // A clockwise rotation moves the artwork's title edge to the
+            // right. Leave that strip visible while the rest stays under
+            // the bound character card.
+            const x = targetX + MoveCard.cardWidth * (0.65 + stackIndex * 0.15);
             const y = targetY + stackIndex * 10;
 
             element.style.setProperty('--x', x.toString());

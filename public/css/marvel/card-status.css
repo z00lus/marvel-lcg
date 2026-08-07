@@ -16,6 +16,12 @@
     animation: gain-status-card-animation .4s ease-out;
 }
 
+.area .card.type-status-card:not(.moving) .face {
+    /* Keep the landscape artwork at its natural aspect ratio, then turn the
+       physical status card clockwise before tucking it under its target. */
+    rotate: 90deg;
+}
+
 @keyframes gain-status-card-animation {
     0% {
         translate: calc(var(--card-width) * .5) 0;
