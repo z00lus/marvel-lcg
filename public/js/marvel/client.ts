@@ -406,7 +406,7 @@ export class Client {
                 }
 
                 let prompt_text = Game.world_descriptor.prompt
-                UI.event_name = Game.world_descriptor.event_name
+                UI.setEventName(Game.world_descriptor.event_name)
 
                 if( Game.world_descriptor.render_id <= 1 ) {
                     Game.forced_on_player = -1
@@ -573,8 +573,8 @@ export class Client {
 
                     // effect
                     const div_prompt_text = Effect.response_json_ask.prompt_text
+                    UI.setEventName(Effect.response_json_ask.event_name)
                     UI.prompt.setPromptText(Client.clean_render_info(div_prompt_text))
-                    UI.event_name = Effect.response_json_ask.event_name
                     UI.is_in_play_turn = UI.event_name == "WhenPlayerInTurn"
                     Effect.setOptions()
 

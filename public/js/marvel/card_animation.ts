@@ -89,17 +89,30 @@ export class CardAnimation
     private static anime_start_time = 240
 
     static reset() {
+        CardAnimation.clearAttackTarget()
         CardAnimation.animation_name = ""
         CardAnimation.has_anime = 0
         CardAnimation.active_card_object_ids = []
     }
 
     static cleanEvent() {
+        CardAnimation.clearAttackTarget()
         CardAnimation.animation_name = ""
     }
 
+    private static clearAttackTarget() {
+        document.querySelectorAll<HTMLElement>(`.card.${ClassName.attack_target}`).forEach(card_div => {
+            card_div.classList.remove(ClassName.attack_target)
+        })
+    }
+
     static setEvent(event_name: string, prompt_text: string) {
-        if (EVENT_ANIMATION[event_name]) {
+        CardAnimation.clearAttackTarget()
+
+        if( event_name == "WhenUnitBeingAttack" ) {
+            CardAnimation.animation_name = "being_attacked"
+        }
+        else if (EVENT_ANIMATION[event_name]) {
             CardAnimation.animation_name = EVENT_ANIMATION[event_name];
         }
         else
@@ -324,6 +337,13 @@ export class CardAnimation
             const object_id = active_card_object_ids[1]
             const card_div = Cards.getDiv(object_id)!
             animation_gain_status(card_div, '')
+        }
+        else if( CardAnimation.animation_name == "being_attacked" ) {
+            const target_div = Cards.getDiv(active_card_object_ids[0])!
+            target_div.classList.add(ClassName.attack_target)
+            CardAnimation.setAnimeTime('target', () => {
+                target_div.classList.remove(ClassName.attack_target)
+            })
         }
         else if( CardAnimation.animation_name == "peek" ) {
             const card_divs = []

@@ -242,6 +242,11 @@ export class UI {
     static is_in_play_turn = false
     private static slider_div      = document.getElementById("delay-range") as HTMLTextAreaElement;
     private static delay_time      = 400
+
+    static setEventName(event_name: string) {
+        UI.event_name = event_name
+        document.body.classList.toggle('being-attacked', event_name == 'WhenUnitBeingAttack')
+    }
     
     static last_game_id    = -1
     static version         = Lib.cookie.getString("app_version")
