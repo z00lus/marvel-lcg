@@ -2,6 +2,10 @@
 
 > Version 0.6.0 — “Echo”
 
+## Snapshot
+
+![](/docs/assets/image-6.png)
+
 ## Fork Goals
 
 This fork focuses on a simple and convenient **solo Marvel Champions experience**.
@@ -39,8 +43,3 @@ Do not install or run any third-party card scripts unless you trust them.
 
 这个游戏会运行用 Python 编写的卡牌脚本，这不安全。  
 除非你完全信任，否则不要安装或运行任何第三方的卡牌脚本。
-
-## Snapshot
-
-![](/docs/assets/image-5.png)
-![](/docs/assets/image-4.png)
