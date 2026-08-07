@@ -198,6 +198,63 @@ class V18DefinedTermsTimingTests(unittest.TestCase):
         for effect in registered_effects:
             effect.UnRegisterSelf.assert_called_once_with()
 
+    def test_surge_gained_during_when_revealed_is_resolved_after_card_text(self):
+        player = Mock()
+        surge_effect = object()
+        face = SimpleNamespace(
+            incite=0,
+            surge=0,
+            effect=Mock(),
+            ResolveSurge=Mock(return_value=surge_effect),
+        )
+        owner = SimpleNamespace(GetThis=lambda: face)
+        reveal_message = Mock(cancel_when_revealed=False)
+        revealed = Mock(reveal_message=reveal_message)
+        revealed.GetToPlayer.return_value = player
+
+        def gain_dynamic_surge():
+            face.surge = 1
+
+        revealed.Send.side_effect = gain_dynamic_surge
+
+        with patch(
+            'game.card.face.attribute.can_incite.CanIncite.IsType',
+            return_value=False,
+        ), patch(
+            'game.card.face.attribute.can_surge.CanSurge.IsType',
+            return_value=True,
+        ):
+            ModelOnEvent.OnWhenCardRevealed(owner, revealed)
+
+        revealed.Send.assert_called_once_with()
+        face.effect.RegisterTemp.assert_not_called()
+        face.ResolveSurge.assert_called_once_with(player)
+        reveal_message.AddResolved.assert_called_once_with(surge_effect)
+
+    def test_canceled_when_revealed_does_not_resolve_dynamic_surge(self):
+        face = SimpleNamespace(
+            incite=0,
+            surge=0,
+            effect=Mock(),
+            ResolveSurge=Mock(),
+        )
+        owner = SimpleNamespace(GetThis=lambda: face)
+        reveal_message = Mock(cancel_when_revealed=True)
+        revealed = Mock(reveal_message=reveal_message)
+
+        with patch(
+            'game.card.face.attribute.can_incite.CanIncite.IsType',
+            return_value=False,
+        ), patch(
+            'game.card.face.attribute.can_surge.CanSurge.IsType',
+            return_value=True,
+        ):
+            ModelOnEvent.OnWhenCardRevealed(owner, revealed)
+
+        revealed.Send.assert_not_called()
+        face.ResolveSurge.assert_not_called()
+        reveal_message.AddResolved.assert_not_called()
+
     def test_incite_and_surge_can_be_canceled_as_when_revealed(self):
         def can_cancel(rule_name: str, *, incite: int, surge: int) -> bool:
             rule = self.MakeRule(rule_name)

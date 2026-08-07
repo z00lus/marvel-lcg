@@ -15,8 +15,9 @@ def GetAbilities() -> Sequence['Ability']:
             CardFinder(trait="SENSE"),
             conditions=[is_top_of_sense_deck],
         ),
+        *ReturnSenseCardsToDeck(),
         *AbilityFactory.PlayWithTopCardOfDeckFaceup(
             lambda effect: [deck] if (deck := GetSenseDeck(effect.GetInitiator())) else [],
-            only_during_player_phase=True,
+            ex_operation=RevealSenseDeck,
         ),
     ]

@@ -61047,6 +61047,7 @@
         },
         {
             "card_id": "60025",
+            "pic_id": "26034",
             "type": "Upgrade",
             "name": "Chance Encounter",
             "subtitle": "",
@@ -61676,5 +61677,5 @@
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
         }
     ],
-    "checksum": "d6695b804443cac3837433cf9046830eeb50e6d268228bfd04882ca5b1e159eb"
+    "checksum": "9e9dd1ae3251f05b674dd0c8183741bf24acd65a2a5f56a851c9bffe6d5a5583"
 }

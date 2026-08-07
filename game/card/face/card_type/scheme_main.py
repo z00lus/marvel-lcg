@@ -205,6 +205,9 @@ class MainScheme(Scheme2, HasStage, EncounterCard, FinalType):
         from game.operate.worlds import Worlds
         main_scheme = Worlds.FindMainScheme(self)
         if main_scheme == self:
+            if Worlds.GetCrisisFaces(self.card.GetGameArea()):
+                if not effect.IsIgnoreKeyword('Crisis', effect):
+                    return False
             if MainScheme.GetPatrolFaces(effect) != []:
                 if not effect.IsIgnoreKeyword('Patrol', effect) and effect.IsPlayerInitiator():
                     return False
@@ -213,4 +216,3 @@ class MainScheme(Scheme2, HasStage, EncounterCard, FinalType):
     def GainTargetThreatValue(self, value: int, effect: 'Effect'):
         if self.target_threat != None:
             self.target_threat += value
-

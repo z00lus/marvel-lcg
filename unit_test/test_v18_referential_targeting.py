@@ -8,6 +8,9 @@ from engine import Engine
 
 from game.ability.condition.card_type import ConditionCardType
 from game.card.card_finder import CardFinder
+from game.card.face.base import Scheme2
+from game.card.face.card_type import MainScheme
+from game.operate.worlds import Worlds
 from game.selector.selector_filter import SelectorFilter
 
 
@@ -79,6 +82,65 @@ class V18ReferentialTargetingTests(unittest.TestCase):
 
         self.assertEqual(result, [])
         scheme.CanBeThwartBy.assert_called_once_with(effect)
+
+    def test_crisis_makes_main_scheme_an_illegal_thwart_target(self):
+        main_scheme = object.__new__(MainScheme)
+        main_scheme.card = Mock()
+        effect = Mock()
+        effect.IsIgnoreKeyword.return_value = False
+
+        with patch.object(Worlds, 'FindMainScheme', return_value=main_scheme), \
+             patch.object(Worlds, 'GetCrisisFaces', return_value=[Mock()]), \
+             patch.object(MainScheme, 'GetPatrolFaces', return_value=[]), \
+             patch.object(Scheme2, 'CanBeThwartBy', return_value=True):
+            self.assertFalse(main_scheme.CanBeThwartBy(effect))
+
+        effect.IsIgnoreKeyword.assert_called_once_with('Crisis', effect)
+
+    def test_effect_that_ignores_crisis_can_target_main_scheme(self):
+        main_scheme = object.__new__(MainScheme)
+        main_scheme.card = Mock()
+        effect = Mock()
+        effect.IsIgnoreKeyword.return_value = True
+
+        with patch.object(Worlds, 'FindMainScheme', return_value=main_scheme), \
+             patch.object(Worlds, 'GetCrisisFaces', return_value=[Mock()]), \
+             patch.object(MainScheme, 'GetPatrolFaces', return_value=[]), \
+             patch.object(Scheme2, 'CanBeThwartBy', return_value=True):
+            self.assertTrue(main_scheme.CanBeThwartBy(effect))
+
+        effect.IsIgnoreKeyword.assert_called_once_with('Crisis', effect)
+
+    def test_improvisation_does_not_offer_crisis_blocked_main_scheme(self):
+        module = import_module('cards.pack.fne.echo.60046')
+        ability = module.GetAbilities()[0]
+        improvisation = Mock()
+        improvisation.CastTo.return_value = improvisation
+        played_event = Mock()
+        played_event.HasTrait.side_effect = lambda trait: trait == 'DEFENSE'
+        main_scheme = Mock()
+        main_scheme.CanBeThwartBy.return_value = False
+        side_scheme = Mock()
+        side_scheme.CanBeThwartBy.return_value = True
+        player = Mock()
+        player.AskChooseFace.return_value = side_scheme
+        effect = Mock(this=improvisation)
+        effect.GetInitiator.return_value = player
+        message = Mock(played_face=played_event)
+
+        with patch.object(
+            module.Worlds,
+            'GetOnFieldSchemes',
+            return_value=[main_scheme, side_scheme],
+        ):
+            ability.operation(effect, message)
+
+        player.AskChooseFace.assert_called_once_with([side_scheme], effect)
+        improvisation.RemoveThreatFromSchemes.assert_called_once_with(
+            [side_scheme],
+            1,
+            effect,
+        )
 
     def test_already_confused_or_stalwart_enemy_remains_valid_for_damage(self):
         target = Mock()

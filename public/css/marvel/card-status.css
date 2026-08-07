@@ -1,35 +1,29 @@
-.area .card.type-status-card:not(.moving) .face{
-    min-width: calc(var(--card-width) * .5);
-    width: calc(var(--card-width) * .5);
-    max-width: calc(var(--card-width) * .5);
-}
+.area .card.type-status-card .face {
+    --status-card-height: calc(var(--card-width) * 0.6376);
 
-.area .card.type-status-card:not(.moving) .face {
+    min-width: var(--card-width);
+    width: var(--card-width);
+    max-width: var(--card-width);
+    min-height: var(--status-card-height);
+    height: var(--status-card-height);
+    max-height: var(--status-card-height);
+    top: calc((var(--card-height) - var(--status-card-height)) * .5);
+    bottom: auto;
     overflow: visible;
 }
 
 .area .card.type-status-card:not(.moving).gain-status .face {
-    animation: gain-status-card-animation .4s linear;
+    animation: gain-status-card-animation .4s ease-out;
 }
 
 @keyframes gain-status-card-animation {
     0% {
-        min-width: calc(var(--card-width) * 1);
-        max-width: calc(var(--card-width) * 1);
-    }
-    100% {
-        min-width: calc(var(--card-width) * .5);
-        width: calc(var(--card-width) * .5);
-        max-width: calc(var(--card-width) * .5);
+        translate: calc(var(--card-width) * .5) 0;
     }
 }
 
 .area .card.type-status-card:hover .face {
-    overflow: visible;
-    min-width: calc(var(--card-width) * 1);
-    max-width: calc(var(--card-width) * 1);
-    min-height: calc(var(--card-height) * 1);
-    max-height: calc(var(--card-height) * 1);
+    z-index: var(--z-index-card-hover-face-after) !important;
 }
 
 .area .card.type-status-card:not(.moving) {
@@ -37,3 +31,10 @@
     max-width: calc(var(--card-width) * .5);
 }
 
+.area .card.type-status-card.bind-card {
+    --z: 0;
+}
+
+.area .card.type-status-card.bind-card:hover {
+    --z: 2;
+}

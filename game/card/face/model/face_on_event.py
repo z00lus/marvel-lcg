@@ -229,6 +229,7 @@ class ModelOnEvent(ModelBase):
             if effect:
                 message.reveal_message.AddResolved(effect)
 
+        had_surge = CanSurge.IsType(this) and bool(this.surge)
         if CanIncite.IsType(this) and this.incite:
             keyword_effects += this.effect.RegisterTemp(
                 Ability(
@@ -241,7 +242,7 @@ class ModelOnEvent(ModelBase):
                 ).SetName("Incite"),
                 unregister_after_exec=True,
             )
-        if CanSurge.IsType(this) and this.surge:
+        if had_surge:
             keyword_effects += this.effect.RegisterTemp(
                 Ability(
                     AbilityType.WhenRevealed,
@@ -260,6 +261,17 @@ class ModelOnEvent(ModelBase):
             )
         if not revealed_message.reveal_message.cancel_when_revealed:
             revealed_message.Send()
+
+            # Some When Revealed abilities grant Surge conditionally (for
+            # example, Assault in alter-ego form and Hard to Keep Down when
+            # the villain cannot heal). Printed Surge is scheduled above, but
+            # a keyword gained while this message is resolving must be checked
+            # afterwards so it is not missed.
+            if CanSurge.IsType(this) and not had_surge and this.surge:
+                add_resolved(
+                    revealed_message,
+                    this.ResolveSurge(revealed_message.GetToPlayer()),
+                )
 
         # Canceled When Revealed effects never execute and therefore do not
         # reach their normal unregister-after-exec cleanup.

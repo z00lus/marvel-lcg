@@ -12,6 +12,7 @@ from build import Build
 from cards.database import CardsDB
 from engine.lib.version import Ver
 from game.card.factory import CardFactory
+from game.selector.selector_target_helper import get_TeamUp
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,25 +66,114 @@ class DaredevilScriptLoadTests(TestCase):
         self.assertEqual(len(deck["obligations"]), 1)
         self.assertEqual(len(deck["nemesis_set"]), 5)
 
+    def test_chance_encounter_reprint_reuses_the_existing_card_image(self):
+        Ver.Initialize()
+        if not CardsDB.papers:
+            CardsDB.Initialize()
+
+        self.assertEqual(CardsDB.FindCardPaper("60025").pic_id, "26034")
+
 
 class SenseDeckTests(TestCase):
 
-    def test_sense_upgrade_leaving_play_goes_to_bottom_of_sense_deck(self):
+    def test_both_identity_forms_keep_the_top_sense_card_faceup(self):
+        for card_id in ("60001a", "60001b"):
+            with self.subTest(card_id=card_id):
+                module = importlib.import_module(f"cards.pack.fne.daredevil.{card_id}")
+                abilities = module.GetAbilities()
+                faceup_abilities = [
+                    ability for ability in abilities
+                    if ability.when.__name__ in {
+                        "AfterCardsMoved",
+                        "AfterDeckShuffle",
+                        "AfterUnitChangeForm",
+                        "WhenUnitWouldChangeForm",
+                    }
+                ]
+                self.assertEqual(len(faceup_abilities), 4)
+
+    def test_revealing_sense_deck_shows_every_card_and_clears_cached_access(self):
         module = importlib.import_module("cards.pack.fne.daredevil.60001b")
-        ability = module.GetAbilities()[1]
+        faceup_ability = next(
+            ability for ability in module.GetAbilities()
+            if ability.when.__name__ == "AfterDeckShuffle"
+        )
+        top_sense = Mock()
+        other_sense = Mock()
+        for sense in (top_sense, other_sense):
+            sense.card.can_state.is_like_in_hand = False
         sense_deck = Mock()
+        sense_deck.GetTop.return_value = top_sense
+        sense_deck.GetAll.return_value = [other_sense, top_sense]
         player = Mock()
         player.special_decks = {daredevil_pack.SENSE_DECK: sense_deck}
         effect = Mock()
         effect.GetInitiator.return_value = player
-        sense = Mock()
-        message = Mock(trigger=sense, into_area=Mock())
 
-        with patch.object(module.Faces, "MoveAllToDeck") as move_to_deck:
-            ability.operation(effect, message)
+        faceup_ability.operation(effect, Mock())
 
-        message.SetBeInstead.assert_called_once_with(effect)
-        move_to_deck.assert_called_once_with([sense], sense_deck, "Bottom", effect)
+        for sense in (top_sense, other_sense):
+            self.assertIsNone(sense.card.can_state.is_like_in_hand)
+            self.assertTrue(sense.FlipTo.called)
+        top_sense.FlipTo.assert_any_call(effect, face_up=True, ui_look_at=True)
+        other_sense.FlipTo.assert_called_once_with(
+            effect,
+            face_up=True,
+            ui_look_at=False,
+        )
+
+    def test_daredevil_can_treat_only_the_top_sense_as_in_hand(self):
+        module = importlib.import_module("cards.pack.fne.daredevil.60001a")
+        like_in_hand = module.GetAbilities()[0]
+        top_sense = Mock()
+        other_sense = Mock()
+        sense_deck = Mock()
+        sense_deck.GetTop.return_value = top_sense
+        player = Mock()
+        player.special_decks = {daredevil_pack.SENSE_DECK: sense_deck}
+        effect = Mock()
+        effect.GetInitiator.return_value = player
+
+        self.assertTrue(
+            like_in_hand.conditions[-1](effect, Mock(which_face=top_sense))
+        )
+        self.assertFalse(
+            like_in_hand.conditions[-1](effect, Mock(which_face=other_sense))
+        )
+
+    def test_sense_upgrade_leaving_play_goes_to_bottom_in_both_forms(self):
+        for card_id in ("60001a", "60001b"):
+            with self.subTest(card_id=card_id):
+                module = importlib.import_module(
+                    f"cards.pack.fne.daredevil.{card_id}"
+                )
+                ability = next(
+                    ability for ability in module.GetAbilities()
+                    if ability.when.__name__ == "WhenCardWouldLeavePlay"
+                )
+                sense_deck = Mock()
+                player = Mock()
+                player.special_decks = {
+                    daredevil_pack.SENSE_DECK: sense_deck,
+                }
+                effect = Mock()
+                effect.GetInitiator.return_value = player
+                sense = Mock()
+                message = Mock(trigger=sense, into_area=Mock())
+
+                with patch.object(
+                    daredevil_pack.Faces,
+                    "MoveAllToDeck",
+                ) as move_to_deck:
+                    ability.operation(effect, message)
+
+                message.SetBeInstead.assert_called_once_with(effect)
+                move_to_deck.assert_called_once_with(
+                    [sense],
+                    sense_deck,
+                    "Bottom",
+                    effect,
+                )
 
     def test_choose_sense_plays_selected_card_without_resource_cost(self):
         sense = Mock()
@@ -108,6 +198,67 @@ class SenseDeckTests(TestCase):
 
 
 class DaredevilAbilityTests(TestCase):
+
+    def test_know_your_enemy_rechecks_crisis_before_each_threat_removal(self):
+        module = importlib.import_module("cards.pack.fne.60023")
+        ability = module.GetAbilities()[1]
+        event = Mock()
+        event.CastTo.return_value = event
+        crisis_scheme = Mock()
+        main_scheme = Mock()
+        main_scheme.CanBeThwartBy.side_effect = [False, True]
+        crisis_scheme.CanBeThwartBy.return_value = True
+        player = Mock()
+        player.AskChooseFace.side_effect = [crisis_scheme, main_scheme]
+        effect = Mock(this=event)
+        effect.GetInitiator.return_value = player
+
+        with patch.object(
+            module.Worlds,
+            "GetOnFieldSchemes",
+            side_effect=[
+                [main_scheme, crisis_scheme],
+                [main_scheme],
+            ],
+        ):
+            ability.operation(effect, Mock())
+
+        self.assertEqual(
+            player.AskChooseFace.call_args_list[0].args[0],
+            [crisis_scheme],
+        )
+        self.assertEqual(
+            player.AskChooseFace.call_args_list[1].args[0],
+            [main_scheme],
+        )
+        self.assertEqual(
+            [call.args for call in event.RemoveThreatFromSchemes.call_args_list],
+            [
+                ([crisis_scheme], 1, effect),
+                ([main_scheme], 1, effect),
+            ],
+        )
+
+    def test_dance_with_the_devil_teamup_selector_accepts_an_upgrade(self):
+        Ver.Initialize()
+        if not CardsDB.papers:
+            CardsDB.Initialize()
+
+        world = Mock()
+        world.GetPlayerNumIcon.return_value = 1
+        paper = CardsDB.FindCardPaper("60031")
+        dance_with_the_devil = CardFactory.CreateFace(paper, world)
+        team_up_units = [Mock(), Mock()]
+
+        with patch.object(
+            dance_with_the_devil,
+            "GetTeamUpUnits",
+            return_value=team_up_units,
+        ):
+            self.assertEqual(
+                get_TeamUp(Mock(this=dance_with_the_devil)),
+                team_up_units,
+            )
 
     def test_focus_the_senses_allows_both_identity_forms_to_remove_threat(self):
         module = importlib.import_module("cards.pack.fne.daredevil.60012")
