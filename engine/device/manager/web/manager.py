@@ -43,7 +43,8 @@ class WebDeviceManager(DeviceManager):
             ip, port = ip_port
             if not NetLib.IsPortAvailable(ip, port):
                 raise RuntimeError(
-                    f"Cannot start Marvel LCG: {ip}:{port} is already in use. "
+                    f"Cannot start Marvel Champions Digital: Ronin Edition: "
+                    f"{ip}:{port} is already in use. "
                     "Stop the previous instance and try again."
                 )
 

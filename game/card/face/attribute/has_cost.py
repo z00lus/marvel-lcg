@@ -6,6 +6,7 @@ class HasCost(HasAttribute):
     def __init__(self, paper: 'Paper') -> None:
         self.printed_cost = Cost("0")
         self.has_printed_cost = False
+        self.printed_cost_is_x = False
         self.requirement = Cost("0")
         
         # self.paid_resources = Resources("0")
@@ -13,7 +14,10 @@ class HasCost(HasAttribute):
 
         def parse(value: str):
             self.has_printed_cost = True
-            if "*" in value:
+            if value == "X":
+                self.printed_cost_is_x = True
+                self.printed_cost = Cost("0")
+            elif "*" in value:
                 self.printed_cost = Cost.FromText(str(self.FormatPlayerNumValue(value)))
             else:
                 self.printed_cost = Cost.FromText(value)
@@ -54,4 +58,3 @@ class HasCost(HasAttribute):
         self.card.can_state.is_like_in_hand = None
 
         return filtered_effects != []
-

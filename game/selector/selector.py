@@ -72,7 +72,13 @@ class Selector(metaclass=Tracker.Meta):
         else:
             return legal_faces
 
-    def GetTargetRange(self, effect: 'Effect', faces: Sequence['CardFace']) -> Tuple[int, int]|None:
+    def GetTargetRange(
+        self,
+        effect: 'Effect',
+        faces: Sequence['CardFace'],
+        *,
+        allow_partial: bool=False,
+    ) -> Tuple[int, int]|None:
         from game.effect.effect import EffectFailure
 
         target_range = [
@@ -80,7 +86,7 @@ class Selector(metaclass=Tracker.Meta):
             self.selector_range.GetTargetMax(effect, faces)
         ]
 
-        if len(faces) < target_range[0]:
+        if len(faces) < target_range[0] and not (allow_partial and faces):
             return None
 
         target_range[1] = min(len(faces), target_range[1])
@@ -124,4 +130,3 @@ class Selector(metaclass=Tracker.Meta):
     def IfSelectTargetFailure(self, effect: 'Effect') -> None:
         if self.selector_end:
             self.selector_end.OnSelectTargetFailure(effect, self.peeked_faces)
-

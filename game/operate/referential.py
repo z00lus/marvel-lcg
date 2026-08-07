@@ -4,6 +4,139 @@ from . import *
 @final
 class Referential:
     @staticmethod
+    def _GetPlayers(world: 'World') -> Sequence['Player']:
+        try:
+            return world.const_players
+        except (AttributeError, AssertionError):
+            return getattr(world, "players", [])
+
+    @staticmethod
+    def _GetIdentity(player: 'Player') -> 'CardFace|None':
+        try:
+            return player.GetIdentity()
+        except (AttributeError, AssertionError):
+            return None
+
+    @staticmethod
+    def _IdentitySetMatches(identity_set: str, card_set: str) -> bool:
+        if card_set.endswith(" Nemesis"):
+            card_set = card_set[:-len(" Nemesis")]
+
+        # The Miles Morales identity and nemesis set use different historical
+        # spellings in the card database.
+        aliases = {
+            "Spider-Man - Miles Morales": "Spider-Man - Morales",
+        }
+        identity_set = aliases.get(identity_set, identity_set)
+        card_set = aliases.get(card_set, card_set)
+        return identity_set == card_set
+
+    @staticmethod
+    def _GetOriginalOwner(face: 'CardFace') -> 'Player|Scenario|None':
+        try:
+            return face.card.GetOriginalOwner()
+        except AttributeError:
+            return getattr(face.card, "owner_original", None)
+
+    @staticmethod
+    def GetAssociatedIdentity(face: 'CardFace', world: 'World') -> 'Player|None':
+        """Return the player identity with which ``face`` is associated.
+
+        Rules Reference 1.7 explicitly includes the identity card,
+        identity-specific cards, obligations, nemesis cards, and cards in an
+        identity side deck. Player ownership identifies identity-specific and
+        side-deck cards; encounter-card association is derived from the
+        obligation/nemesis metadata rather than a generic encounter-set match.
+        """
+        from game.card.face.base import ClassCard
+        from game.card.face.card_type import Identity, Obligation
+
+        players = Referential._GetPlayers(world)
+
+        for player in players:
+            identity = Referential._GetIdentity(player)
+            if identity and face.card == identity.card:
+                return player
+
+            set_aside_obligations = getattr(player, "set_aside_obligations", [])
+            if face.card in set_aside_obligations:
+                return player
+
+        if Identity.IsType(face) or \
+            ClassCard.IsType(face) and face.IsClass("IdentitySpecific"):
+            owner = Referential._GetOriginalOwner(face)
+            if owner in players:
+                return owner
+
+        is_identity_encounter_card = Obligation.IsType(face) or \
+            EncounterCard.IsType(face) and face.paper.set_name.endswith(" Nemesis")
+        if not is_identity_encounter_card:
+            return None
+
+        for player in players:
+            identity = Referential._GetIdentity(player)
+            if identity and Referential._IdentitySetMatches(
+                identity.paper.set_name,
+                face.paper.set_name,
+            ):
+                return player
+        return None
+
+    @staticmethod
+    def _MatchesReferencedName(find_names: Sequence[str], face: 'CardFace') -> bool:
+        return any(face.IsName(name) or face.IsSubName(name) for name in find_names)
+
+    @staticmethod
+    def _GetFacesInGame(by_effect: 'Effect', extra_faces: Sequence['CardFace']) -> List['CardFace']:
+        cards = getattr(getattr(by_effect.world, "object_manager", None), "card_dict", {})
+        faces = [card.face for card in cards.values()]
+        for face in [by_effect.this, *extra_faces]:
+            if face not in faces:
+                faces.append(face)
+        return faces
+
+    @staticmethod
+    def _FilterV17OneName(find_name: str, legal_faces: List['CardFace'], by_effect: 'Effect') -> Sequence['CardFace']:
+        this = by_effect.this
+        faces_in_game = Referential._GetFacesInGame(by_effect, legal_faces)
+        named_faces = [
+            face for face in faces_in_game
+            if Referential._MatchesReferencedName([find_name], face)
+        ]
+
+        # 1. The card on which the referential ability is printed.
+        if any(face.card == this.card for face in named_faces):
+            return [face for face in legal_faces if face.card == this.card]
+
+        # 2. Cards associated with the same identity. This tier deliberately
+        # does not include a generic "same encounter set" relationship.
+        identity = Referential.GetAssociatedIdentity(this, by_effect.world)
+        if identity != None:
+            same_identity_faces = [
+                face for face in named_faces
+                if Referential.GetAssociatedIdentity(face, by_effect.world) == identity
+            ]
+            if same_identity_faces:
+                return [face for face in legal_faces if face in same_identity_faces]
+
+        # 3. Player cards for an ability on a player card, or encounter cards
+        # for an ability on an encounter card. Never cross that boundary.
+        if PlayerCard.IsType(this):
+            return [face for face in legal_faces if PlayerCard.IsType(face)]
+        if EncounterCard.IsType(this):
+            return [face for face in legal_faces if EncounterCard.IsType(face)]
+        return legal_faces
+
+    @staticmethod
+    def _FilterV17(find_names: Sequence[str], legal_faces: List['CardFace'], by_effect: 'Effect') -> Sequence['CardFace']:
+        allowed_faces: List[CardFace] = []
+        for find_name in find_names:
+            for face in Referential._FilterV17OneName(find_name, legal_faces, by_effect):
+                if Referential._MatchesReferencedName([find_name], face) and face not in allowed_faces:
+                    allowed_faces.append(face)
+        return allowed_faces
+
+    @staticmethod
     def BelongToSameIdentityEncounterSet(find_names: List[str], face: 'CardFace', legal_faces: List['CardFace']) -> List['CardFace']:
         face.card.IsAsOtherCard()
 
@@ -39,77 +172,25 @@ class Referential:
 
     @staticmethod
     def Filter(finder: 'CardFinder|None', legal_faces: List['CardFace'], by_effect: 'Effect') -> Sequence['CardFace']:
-        if by_effect.world.rule.v16_referential_ability:
-
-            if len(legal_faces) == 1:
-                return legal_faces
-
-            if not finder:
-                return legal_faces
-
-            check_by_name = finder.check_by_name
-
-            if not check_by_name:
-                return legal_faces
-
-            this = by_effect.this
-
-            # REFERENTIAL ABILITY
-            # 1. The card on which the referential ability is printed.
-            if this in legal_faces and finder.Check(this):
-                return [this]
-
-            # 2. Cards that belong to the same identity or encounter set.
-            check_faces = Referential.BelongToSameIdentityEncounterSet(check_by_name, this, legal_faces)
-            if check_faces:
-                return check_faces
-
-            # 3. Player cards (if the ability is on a player card) or
-            # encounter cards (if the ability is on an encounter card).
-            if PlayerCard.IsType(this):
-                return [x for x in legal_faces if PlayerCard.IsType(x)]
-            elif EncounterCard.IsType(this):
-                return [x for x in legal_faces if EncounterCard.IsType(x)]
+        if not finder:
             return legal_faces
-        else:
+
+        check_by_name = finder.check_by_name
+        if not check_by_name:
             return legal_faces
+
+        return Referential._FilterV17(check_by_name, legal_faces, by_effect)
 
     @staticmethod
     def Check(finder: 'CardFinder', face: 'CardFace', from_effect: 'Effect') -> bool:
-        from game.operate.worlds import Worlds
-
         if not finder.Check(face, from_effect):
             return False
 
         check_by_name = finder.check_by_name
         if not check_by_name:
             return True
-        if not from_effect.world.rule.v16_referential_ability:
-            return True
-
-        # 1. The card on which the referential ability is printed.
-        if from_effect.this.name == face.name and from_effect.this != face:
-            return False
-
-        # Hack for "90003"
-        if not face.IsInPlay():
-            return True
-
-        # Hack for "01140"
-        if face.card.IsAsOtherCard():
-            return True
-
-        # 2. Cards that belong to the same identity or encounter set.
-        all_faces = Worlds.GetOnFieldCards(from_effect) + [y for x in Worlds.GetPlayers(from_effect) for y in x.dealt_encounter_cards.GetAll()]
-        same_name_faces = [x for x in all_faces if x.IsFaceUp() and x.name == face.name]
-
-        # Hack for "27081", "32087b"
-        if len(same_name_faces) == 1 and \
-            face.card == same_name_faces[0].card:
-                return True
-
-        found_faces = Referential.BelongToSameIdentityEncounterSet(check_by_name, from_effect.this, same_name_faces)
-        return face in found_faces
-        # 3. All other cards.
-        # return True
-
+        return face in Referential._FilterV17(
+            check_by_name,
+            [face],
+            from_effect,
+        )

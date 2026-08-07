@@ -207,6 +207,10 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
     def GetAbilities(self) -> List['Ability']:
         return []
 
+    def GetRuleAbilities(self) -> List['Ability']:
+        """Return abilities supplied by defined game-language rules."""
+        return []
+
     @property
     def effects(self) -> Sequence['Effect']:
         return self.effect.GetAll()
@@ -274,6 +278,8 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
     @final
     def GetKeyword(self, keyword: "CardFace.KEY") -> int:
         """Vivian would treat any icons on the attachment or side scheme as blank until the end of the round."""
+        if keyword in getattr(self, "non_numerical_attributes", set()):
+            return 0
         if keyword in self.ignore_keywords:
             value = 0
             for face in self.ignore_keywords[keyword]:
@@ -423,7 +429,10 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
             if HasPermanent.IsType(self):
                 if self.permanent:
                     bind_face = self.bind_face
-                    if bind_face:
+                    owner = self.GetOwner()
+                    if isinstance(owner, Player) and owner.is_eliminated:
+                        pass
+                    elif bind_face:
                         # Fix "46002" and "51036"
                         if not Minion.IsType(bind_face):
                             controller = bind_face.GetControlBy()
@@ -783,9 +792,7 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         if PlayerSideScheme.IsType(self):
             return self.GetOwnerPlayer()
 
-        owner = None
-        if self.IsInPlay():
-            owner = self.GetControlByOrOwner()
+        owner = self.GetControlBy()
         if owner == None:
             owner = self.GetOwner()
         assert isinstance(owner, Player)

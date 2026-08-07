@@ -38,6 +38,8 @@ class Ability:
         self.type: Final = ability_type
         self.flags: Final = ability_type.flags
         self.second_type_internal: AbilityType|None = None
+        # Legacy/card-construction priority. Runtime effects take a ruleset-
+        # aware snapshot when they are created.
         self.priority: Final = self.flags.GetPriority()
         self.ignore = AbilityIgnore(self)
 
@@ -55,6 +57,7 @@ class Ability:
 
         self.cost_fn: Callable[['Effect', List['CardFace']], Cost]|None = None
         self.play_cost: Cost|None = None
+        self.play_cost_is_x = False
 
         self.default_choose = False
 
@@ -62,6 +65,10 @@ class Ability:
         self.cost_funcs: List[CostFunc.Base] = []
         self.const_condition: List[Callable[['Effect', when], bool]] = conditions
         self.conditions: List[Callable[['Effect', when], bool]] = conditions
+        # The generated hand/location check is needed while presenting playable
+        # cards in the UI, but Rules Reference 1.8 checks the actual play
+        # restrictions only after the chosen card has been placed on the table.
+        self.play_location_condition: Callable[['Effect', 'Message2'], bool]|None = None
 
         if is_local == None:
             is_local = False
@@ -151,6 +158,7 @@ class Ability:
         from game.selector import Select
         from game.card.face.base import Enemy
         from game.card.face.card_type import Event
+        from game.card.face.card_type import Resource
         from game.card.face.card_type import Ally
         from game.card.face.card_type import Hero
         from game.card.face.card_type import Upgrade
@@ -230,6 +238,7 @@ class Ability:
             def is_like_in_hand(effect: 'Effect', message: 'Message2') -> bool:
                 return effect.ability.flags.is_delay_ability or \
                     effect.this.IsLikeInHand()
+            self.play_location_condition = is_like_in_hand
             conditions.append(is_like_in_hand)
 
         conditions += Ability.GetAbilityTypeCondition(self.flags.ability_type)
@@ -269,7 +278,7 @@ class Ability:
                     # if attacker.IsDefeated():
                     #     return False
                     this = effect.this
-                    if Event.IsType(this):
+                    if Event.IsType(this) or Resource.IsType(this):
                         unit = effect.GetInitiator().GetIdentity()
                     elif Upgrade.IsType(this):
                         unit = this.GetBindFace()
@@ -330,10 +339,14 @@ class Ability:
     def GetCost(self, effect: 'Effect', targets: List['CardFace']) -> 'Cost':
         if self.flags.is_delay_ability:
             return Cost("0")
-        if self.cost_fn and self.play_cost:
-            return self.cost_fn(effect, targets) + self.play_cost
-        elif self.play_cost:
-            return self.play_cost
+        play_cost = self.play_cost
+        if self.play_cost_is_x and self.cost_fn == None and \
+            effect.context.chosen_cost_x != None:
+            play_cost = Cost(str(effect.context.chosen_cost_x))
+        if self.cost_fn and play_cost:
+            return self.cost_fn(effect, targets) + play_cost
+        elif play_cost:
+            return play_cost
         elif self.cost_fn:
             return self.cost_fn(effect, targets)
         else:
@@ -729,6 +742,7 @@ class Ability:
                 select_rule                     : 'SELECT.RULE'="",
                 repeat_rules                    : List['SELECT.REPEAT_RULE']|'SELECT.REPEAT_RULE'=[],
                 check_fn                        : Callable[['Effect', 'CardFace'], bool]|None=None,
+                affects_target_if               : Sequence[Callable[['Effect', 'CardFace'], bool]]=(),
                 by_search                       : bool=False, # will peek
                 not_move                        : bool=False,
                 not_shuffle                     : bool=False,
@@ -865,6 +879,7 @@ class Ability:
             select_target,
             faces=faces,
             finder=finder,
+            affects_target_if=affects_target_if,
             exclude=exclude,
             another=another,
             highest_cost=highest_cost,
@@ -902,6 +917,7 @@ class Ability:
         from game.card.face.base import Unit2
         from game.card.face.card_type import Ally
         from game.card.face.card_type import Event
+        from game.card.face.card_type import Resource
         from game.card.face.card_type import Hero
         from game.card.face.card_type import AlterEgo
         from game.card.face.card_type import Upgrade
@@ -924,7 +940,7 @@ class Ability:
                         return False
                     this = effect.this
                     if not Unit2.IsType(this):
-                        assert Event.IsType(this) or Upgrade.IsType(this), f"{type(this)=}"
+                        assert Event.IsType(this) or Upgrade.IsType(this) or Resource.IsType(this), f"{type(this)=}"
                     # Fix "54035"
                     if target.IsConsiderAs(card_type=Unit2):
                         return True
@@ -944,7 +960,7 @@ class Ability:
                     if isinstance(this, Ally|Hero|AlterEgo):
                         return target.CanBeThwartBy(effect)
                     else:
-                        assert Event.IsType(this) or Upgrade.IsType(this), f"{type(this)=}"
+                        assert Event.IsType(this) or Upgrade.IsType(this) or Resource.IsType(this), f"{type(this)=}"
                         return target.CanBeThwartBy(effect)
                 return True
             last_selector.selector_filter.AddParameter(check_effect_fn=can_be_thwart_schemes)
@@ -1095,6 +1111,7 @@ class Ability:
             self.SetCostFunc(cost_func)
         if effect.ability.play_cost:
             self.SetPlayCost(effect.ability.play_cost)
+            self.play_cost_is_x = effect.ability.play_cost_is_x
         if effect.ability.cost_fn:
             self.SetCost(effect.ability.cost_fn)
 
@@ -1112,4 +1129,3 @@ class Ability:
                 self.conditions.append(condition)
         self.selectors = [x for x in effect.ability.selectors]
         effect.delay_ability = self
-

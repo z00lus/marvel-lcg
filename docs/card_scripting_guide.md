@@ -2,7 +2,7 @@
 
 # Card Scripting Guide
 
-This guide teaches you how to write card ability scripts for Marvel LCG.
+This guide teaches you how to write card ability scripts for Marvel Champions Digital: Ronin Edition.
 
 ## Security Warning
 
@@ -417,6 +417,26 @@ AbilityFactory.CanGenerateResources(
 ---
 
 ## Targets & Selectors
+
+Rules Reference 1.8 allows a target for a multi-effect ability when at least
+one part of that ability can affect it. Use `affects_target_if` when several
+independent instructions affect the same selected target:
+
+```python
+.SetTarget(
+    Enemy,
+    affects_target_if=(
+        Condition.TargetCanBeConfused,
+        Condition.TargetCanTakeDamage,
+    ),
+)
+```
+
+The functions in `affects_target_if` are alternatives (OR). The normal finder,
+attack/thwart legality, Crisis, ownership, and control checks are still all
+required. Do not use this option to implement a **then** instruction: the code
+resolving a then instruction must still check that its preceding instruction
+succeeded before resolving the dependent effect.
 
 ### Target strings
 

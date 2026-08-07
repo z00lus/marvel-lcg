@@ -775,9 +775,13 @@ class CostFunc:
     # "13027"
     class Spend(Base):
         def __init__(self, cost: 'Cost') -> None:
-            self.return_res: 'Resources'
+            self.cost: Final = cost
+            self.return_res = Resources("0")
+            self.simultaneous_payment = False
 
             def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None') -> bool:
+                if self.simultaneous_payment:
+                    return True
                 # We need to do this before discard them
                 if not player:
                     return False
@@ -790,6 +794,14 @@ class CostFunc:
 
             selector = Select.From("This")
             super().__init__(selector, on_call)
+
+        def SetSimultaneousPayment(self, resources: 'Resources') -> None:
+            self.return_res = resources
+            self.simultaneous_payment = True
+
+        @override
+        def OnEffectEnd(self, targets: Sequence['CardFace'], effect: 'Effect'):
+            self.simultaneous_payment = False
 
     class Counter(Base):
         def __init__(self,

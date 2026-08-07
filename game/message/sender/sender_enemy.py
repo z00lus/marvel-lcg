@@ -24,7 +24,7 @@ class SenderEnemy:
             text = TransText("{unit} advanced", unit=unit)
             self.Present(text, "set", unit)
 
-    class WhenMinionWouldEngagePlayer(TriggerUnitMessage, HasEndEventMessage):
+    class WhenMinionWouldEngagePlayer(TriggerUnitMessage, HasEndEventMessage, CanBeInstead):
         def __init__(self, unit: 'Minion', player: 'Player', by_effect: 'Effect') -> None:
             from game.message import Message
             self.player: Final = player
@@ -293,4 +293,3 @@ class SenderEnemy:
             if len(self.would_sch_messages) == 1:
                 return self.would_sch_messages[0].against_player
             return None
-

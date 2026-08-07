@@ -1,10 +1,10 @@
 # AGENTS.md
 
-This file applies to the entire repository. It is guidance for coding agents working on this fork of Marvel LCG.
+This file applies to the entire repository. It is guidance for coding agents working on **Marvel Champions Digital: Ronin Edition**.
 
 ## Project overview
 
-Marvel LCG is a Python game engine with an aiohttp web server and a browser frontend written in HTML, CSS, and TypeScript.
+Marvel Champions Digital: Ronin Edition is a Python game engine with an aiohttp web server and a browser frontend written in HTML, CSS, and TypeScript. The current release identity is **Version 0.6.0 — “Echo”**.
 
 The main layers are:
 
@@ -25,6 +25,11 @@ The process entry point is `main.py`: `Engine.Initialize()` -> `Engine.EngineRun
 - Prioritize solo rules correctness, easy starter-deck selection, reliable saves/replays, and modest resource use on low-power servers.
 - PvP and broad four-player improvements are out of scope unless the user explicitly requests them. Do not start an engine rewrite solely to address upstream multiplayer limitations.
 - Preserve existing multiplayer behavior when making shared engine changes where practical, but do not let speculative multiplayer work expand a solo-focused task.
+- Rules Reference 1.8 is the only supported runtime rules model on the
+  `feature/rules-v18` line of development. Do not add legacy v1.6/v1.7
+  execution branches or compatibility flags. New games must record `v18_all`;
+  older replay/save files are intentionally unsupported and must fail early
+  with a clear compatibility error.
 
 Read these documents before making broad changes:
 
@@ -105,7 +110,7 @@ When changing only documentation or configuration, a full game run is usually un
 - `ConfigVariables` merges command-line arguments, `launch.json`, and defaults in that priority order. Path variable names must use the expected suffixes such as `_file`, `_files`, `_folder`, and `_folders`.
 - Preserve lifecycle cleanup. New managers, aiohttp runners, jobs, and tasks must participate in shutdown so Ctrl+C and systemd `SIGINT` do not leave pending tasks.
 - Game behavior is event/message driven. Prefer existing `AbilityFactory`, `Message`, `Faces`, `Effects`, `Worlds`, `Players`, `Search`, and selector operations over direct state mutation; these helpers preserve trigger windows, logging, replay, and rendering behavior.
-- Preserve replay determinism. Use the project's seeded random abstractions for gameplay decisions; do not introduce unseeded Python randomness into game resolution.
+- Preserve determinism for v1.8 replays. Use the project's seeded random abstractions for gameplay decisions; do not introduce unseeded Python randomness into game resolution.
 - Replay and undo reconstruct state by deterministically re-executing recorded choices and operations rather than restoring arbitrary Python snapshots. Keep gameplay state inside the modeled world/messages, avoid dependence on wall-clock time or external mutable state, and do not hide required replay state only inside transient closures.
 - Rendering is a Python/TypeScript contract. When changing a descriptor in `game/render/descriptor/` or `game/render/to_descriptor.py`, update the corresponding TypeScript descriptor and all consumers in the same change.
 - Web routes live in the mixins under `engine/device/web/server/`. Use the appropriate authenticated route registration helper. Keep specific routes registered before the final catch-all static/image route.

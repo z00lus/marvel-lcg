@@ -119,6 +119,62 @@ class Resources:
                 return True
         return False
 
+    @staticmethod
+    def FindCostAllocations(resources: 'Resources', costs: Sequence['Cost']) -> List[List['Resources']]:
+        """Return every way generated resources can pay simultaneous costs."""
+        from game.element.rbyg import ResRBYG
+
+        if not costs:
+            return [[]]
+
+        def distributions(value: int, size: int) -> List[Tuple[int, ...]]:
+            if size == 1:
+                return [(value,)]
+            result: List[Tuple[int, ...]] = []
+            for first in range(value + 1):
+                for rest in distributions(value - first, size - 1):
+                    result.append((first,) + rest)
+            return result
+
+        size = len(costs)
+        allocations: List[List[Resources]] = []
+        seen: Set[Tuple[Tuple[int, int, int, int, int], ...]] = set()
+
+        for r_values in distributions(resources.r, size):
+            for b_values in distributions(resources.b, size):
+                for y_values in distributions(resources.y, size):
+                    for g_values in distributions(resources.g, size):
+                        allocation: List[Resources] = []
+                        for index in range(size):
+                            allocation.append(Resources(
+                                ResRBYG(
+                                    r_values[index],
+                                    b_values[index],
+                                    y_values[index],
+                                    g_values[index],
+                                ),
+                                # Reductions modify the original resource
+                                # cost, not a separate Spend cost.
+                                reduce=resources.reduce if index == 0 else 0,
+                            ))
+                        if not all(
+                            allocation[index].IsMatchCost(cost)
+                            for index, cost in enumerate(costs)
+                        ):
+                            continue
+                        key = tuple(
+                            (res.r, res.b, res.y, res.g, res.reduce)
+                            for res in allocation
+                        )
+                        if key not in seen:
+                            seen.add(key)
+                            allocations.append(allocation)
+        return allocations
+
+    @staticmethod
+    def CanPayCosts(resources: 'Resources', costs: Sequence['Cost']) -> bool:
+        return bool(Resources.FindCostAllocations(resources, costs))
+
     def OnlyHasColor(self, text: "Resources.RBY") -> bool:
         return self.rbyg.OnlyHasColor(text)
 
@@ -175,4 +231,3 @@ class Resources:
     @property
     def g(self) -> int:
         return self.rbyg.g
-

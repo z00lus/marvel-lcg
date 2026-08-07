@@ -379,6 +379,13 @@ class SenderCard:
                 text = TransText("{face} would be revealed ({by_effect})", face=face, by_effect=by_effect.this)
                 self.Present(text, "", face, player.GetIdentity())
 
+        @override
+        def SetBeInstead(self, by_effect: 'Effect'):
+            from game.card.face.base import Villain
+            if Villain.IsType(self.trigger):
+                return
+            return super().SetBeInstead(by_effect)
+
     class AfterCardsMovedToRevealingArea_Text(TextMessage):
         def __init__(self, faces: List['CardFace']) -> None:
             super().__init__(world=faces[0].card.world)
@@ -453,8 +460,9 @@ class SenderCard:
 
         def CancelWhenRevealedEffect(self, by_effect: 'Effect') -> None:
             from game.message import Message
+            if self.cannot_be_cancel:
+                return
             self.cancel_when_revealed = True
-            assert not self.cannot_be_cancel
             message = Message.WhenEffectBeCancel(self.trigger, by_effect, "WhenReveal")
             message.Send()
 
@@ -479,6 +487,8 @@ class SenderCard:
             from game.message import Message
             from game.operate.faces import Faces
 
+            if self.cannot_be_cancel:
+                return
             self.cancel_all_effects = True
             message = Message.WhenEffectBeCancel(self.trigger, by_effect, "All")
             message.Send()
@@ -495,17 +505,24 @@ class SenderCard:
                 return False
             if not message.can_be_cancel:
                 return False
+            face = self.trigger
+            has_when_revealed = bool(face.effect.Find(type=AbilityType.WhenRevealed))
+            from game.card.face.attribute.can_incite import CanIncite
+            from game.card.face.attribute.can_surge import CanSurge
+            has_when_revealed = has_when_revealed or \
+                (CanIncite.IsType(face) and bool(face.incite)) or \
+                (CanSurge.IsType(face) and bool(face.surge))
             if cancel_level == 'WhenRevealed':
-                return not not self.trigger.effect.Find(type=AbilityType.WhenRevealed) and \
+                return has_when_revealed and \
                     not self.cancel_all_effects and \
                     not self.cancel_when_revealed
             if cancel_level == 'All':
-                face = self.trigger
                 return not self.cancel_all_effects and \
                     (
                         not Treachery.IsType(face) or \
-                        ( face.incite > 0) or \
-                        ( not self.cancel_when_revealed and not not face.effect.Find(type=AbilityType.WhenRevealed))
+                        (face.incite > 0) or \
+                        (face.surge > 0) or \
+                        (not self.cancel_when_revealed and has_when_revealed)
                     )
 
         def GetGaveToPlayer(self) -> 'Player':
@@ -1077,4 +1094,3 @@ class SenderCard:
         def __init__(self, face: 'CardFace', to_face: 'CardFace') -> None:
             self.to_face: Final = to_face
             super().__init__(trigger=face)
-

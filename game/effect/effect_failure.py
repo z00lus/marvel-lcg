@@ -20,6 +20,7 @@ class EffectFailure(str, Enum):
     MaxTargetsIsZero        = "max targets is 0",
     NoFilterTargets         = "no filter targets",
     TargetNum               = "targets num"
+    DuplicateTarget         = "duplicate target"
     EngagedDifferentPlayer  = "engaged different player"
     AlreadyResolvesDefense  = "already resolves defense ability"
 
@@ -78,4 +79,3 @@ class FailureReason:
     def IsNoProcess(self, player_id: int) -> bool:
         return self.reasons[player_id] == [EffectFailure.NoProcess] and \
             self.reasons[-1][-1] == ""
-

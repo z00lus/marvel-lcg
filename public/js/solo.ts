@@ -266,11 +266,7 @@ async function startGame(): Promise<void> {
         seed: -1,
         timeout: 0,
         challenges: [],
-        rules: [
-            'v16_all',
-            'no_crisis_of_infinite_deadpools',
-            'no_encounter_cards_ignore_crisis',
-        ],
+        rules: ['v18_all'],
         campaign_log: {},
     };
 

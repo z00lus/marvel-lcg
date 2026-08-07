@@ -84,12 +84,19 @@ class Faces:
                 *,
                 by_shuffle: bool=False,
                 target_game_area: 'GameArea|None'=None,
+                index: int=-1,
                 ) -> List['CardFace']:
         from game.message import Message
         moved_faces: List['CardFace'] = []
         from_areas = Faces.GetDecksInDeck(faces)
         for face in faces:
-            if face.card.MoveToArea(area, by_effect, ui_group=True, target_game_area=target_game_area):
+            if face.card.MoveToArea(
+                area,
+                by_effect,
+                ui_group=True,
+                target_game_area=target_game_area,
+                index=index,
+            ):
                 moved_faces.append(face)
         if moved_faces:
             message = Message.AfterCardsMoved(
@@ -139,6 +146,60 @@ class Faces:
         moved_faces = Faces.MoveAllTo(faces, by_effect.world.area_removed, by_effect)
         Message.AfterCardsRemove_Text(moved_faces)
         return moved_faces
+
+    @staticmethod
+    def ResolvePermanentAttachmentAfterHostLeaves(
+            face: 'CardFace',
+            former_host: 'CardFace',
+            by_effect: 'Effect') -> bool:
+        """Resolve a permanent attachment's attach-to text again.
+
+        Rules Reference 1.7 replaced individual product exceptions with this
+        generic procedure.  This is not a new enter-play event, so invoke only
+        the registered attach-to operation rather than sending a synthetic
+        ``WhenCardPutIntoPlay`` event to every card in the game.
+        """
+        from game.card.face.attribute.has_permanent import HasPermanent
+        from game.effect.rule import GameRule
+        from game.message import Message
+        from game.operate.worlds import Worlds
+
+        if not HasPermanent.IsType(face) or not face.permanent:
+            return False
+
+        owner = face.GetOwner()
+        if isinstance(owner, Player) and owner.is_eliminated:
+            Faces.DiscardAll([face], GameRule(face), into_area="Owner")
+            return False
+
+        attach_effects = face.effect.Find(func_name="AttachToWhenEnterPlay")
+        if attach_effects:
+            attach_effect = attach_effects[0]
+            player = Worlds.GetFirstPlayer(by_effect)
+            attach_message = Message.WhenCardPutIntoPlay(
+                face,
+                player,
+                face.card.area,
+                GameRule(face),
+            )
+            previous_initiator = attach_effect.context.initiator
+            try:
+                attach_effect.context.initiator = player
+                attach_effect.ability.operation(attach_effect, attach_message)
+            finally:
+                attach_effect.context.initiator = previous_initiator
+
+        bind_face = face.bind_face
+        if bind_face != None and \
+            bind_face != former_host and \
+            bind_face.card.IsOnField():
+            controller = bind_face.GetControlBy()
+            if not isinstance(controller, Player) or not controller.is_eliminated:
+                return True
+
+        # The attachment has no attach-to instruction or no valid target.
+        Faces.RemoveAllFromGame([face], GameRule(face))
+        return False
 
     @staticmethod
     def FlipAllTo(faces: Sequence['TC'], face_up: bool|None, by_effect: 'Effect') -> List['CardFace']:
@@ -221,6 +282,34 @@ class Faces:
             if message:
                 total += message.removed_counters
         return total
+
+    @staticmethod
+    def MoveCounters(source: 'CardFace', target: 'CardFace', value: int,
+                     name: 'CardFace.COUNTER|Literal["all-purpose"]',
+                     by_effect: 'Effect') -> int:
+        """Move counters while resolving their type at both locations.
+
+        An all-purpose counter has no persistent type of its own: its current
+        card defines the type.  Removing it therefore uses the source card's
+        definition, while placing it uses the destination card's definition.
+        """
+        from game.card.face import CanPlaceCounter
+
+        source_counter = source.card.CastTo(CanPlaceCounter)
+        target_counter = target.card.CastTo(CanPlaceCounter)
+        removed_message = source_counter.RemoveCountersInternal(
+            value,
+            name,
+            by_effect,
+            forced=False,
+        )
+        if removed_message == None or removed_message.removed_counters == 0:
+            return 0
+        return target_counter.PlaceCountersInternal(
+            removed_message.removed_counters,
+            name,
+            by_effect,
+        )
 
     @staticmethod
     def PlaceTokensOn(targets: Sequence['TC'], value: int|Literal["2*"], name: 'CardFace.TOKEN', by_effect: 'Effect') -> int|None:
@@ -377,6 +466,7 @@ class Faces:
                 face.card.SwapCardFace(minion, action_effect)
                 if minion.IsInPlay() and not minion.IsDefeated(): # Fix for "34009"
                     minion.PutIntoPlay(player, effect)
+                minion.card.RevertControl()
                 minion.card.SetOwner(None)
 
             effects = [
@@ -459,7 +549,7 @@ class Faces:
         return size
 
     @staticmethod
-    def SwapTwoCards(targets: Sequence['CardFace'], by_effect: 'Effect'):
+    def SwapTwoCards(targets: Sequence['CardFace'], by_effect: 'Effect') -> bool:
         """
         An instruction to “swap” two components means to exchange the location of those two components.
         • A swap cannot be completed if there is not a component in both locations.
@@ -469,28 +559,115 @@ class Faces:
             » Share a title, neither card is considered to enter or leave play. Tokens, attachments, and status cards on the previously in-play card are transferred to the other card and the other card maintains the state (ready or exhausted) of the previously in-play card.
             » Do not share a title, the in-play card is considered to leave play and the out-of-play card is considered to enter play. Tokens, attachments, and status cards on the previously in-play card are not transferred to the other card and the other card enters play ready.
         """
-        def do_move(face: 'CardFace', into_area: 'Deck', index: int, from_area: 'Deck'):
-            if into_area.flags.is_in_play:
-                face.card.MoveToArea(into_area, by_effect)
-            else:
-                if into_area != from_area:
-                    face.card.area.Remove(face.card)
-                into_area.Insert(index, face.card)
-
         from game.message import Message
+        if len(targets) != 2:
+            return False
+
         face0 = targets[0]
-        area0 = face0.card.area
-        index0 = area0.GetIndex(face0)
-
         face1 = targets[1]
-        area1 = face1.card.area
-        index1 = area1.GetIndex(face1)
+        if face0.card == face1.card:
+            return False
 
-        do_move(face1, area0, index0, area1)
-        do_move(face0, area1, index1, area0)
+        area0 = face0.card.area
+        area1 = face1.card.area
+        if area0 == None or area1 == None:
+            return False
+
+        try:
+            index0 = area0.GetIndex(face0)
+            index1 = area1.GetIndex(face1)
+        except ValueError:
+            # A swap is atomic. If either component is no longer in its
+            # expected location, do not move the other component.
+            return False
+
+        ready0 = face0.card.state.is_ready
+        ready1 = face1.card.state.is_ready
+        face_up0 = face0.card.state.is_face_up
+        face_up1 = face1.card.state.is_face_up
+
+        one_in_play = area0.flags.is_in_play != area1.flags.is_in_play
+        same_title = face0.name == face1.name
+
+        def rebind_component(component: Any, card: 'Card') -> None:
+            component.parent = card
+            deck = getattr(component, "deck", None)
+            if deck != None:
+                deck.bind_card = card
+                deck.bind_owner = card.GetOwner()
+
+        def transfer_location_components() -> None:
+            # Same-title play/out-of-play swaps preserve the complete state of
+            # the occupied play location. Swapping each component container
+            # transfers damage, counters/tokens, attachments, tucked cards,
+            # status cards, and boost cards without generating leave/enter
+            # events for either physical card.
+            component_names = (
+                "inventory",
+                "placed_card",
+                "status",
+                "counter",
+                "token",
+                "health",
+                "boostable",
+            )
+            card0 = face0.card
+            card1 = face1.card
+            for name in component_names:
+                component0 = getattr(card0.components, name)
+                component1 = getattr(card1.components, name)
+                setattr(card0.components, name, component1)
+                setattr(card1.components, name, component0)
+                rebind_component(component1, card0)
+                rebind_component(component0, card1)
+
+        def raw_swap() -> None:
+            # A raw location exchange is intentional here: a hand/deck swap is
+            # not a draw, and a same-title play-area swap is neither entering
+            # nor leaving play.
+            if area0 == area1:
+                area0.cards[index0], area0.cards[index1] = \
+                    area0.cards[index1], area0.cards[index0]
+                return
+            area0.Remove(face0.card)
+            area1.Remove(face1.card)
+            area0.Insert(index0, face1.card)
+            area1.Insert(index1, face0.card)
+
+        if same_title and one_in_play:
+            transfer_location_components()
+            raw_swap()
+        elif one_in_play:
+            # Different-title cards use the normal lifecycle. Preflight both
+            # moves before completing either so a rejected move cannot leave a
+            # half-finished swap.
+            move0 = face0.card.CheckIfCanMove(area1, by_effect)
+            move1 = face1.card.CheckIfCanMove(area0, by_effect)
+            if not move0 or not move1 or isinstance(move0, bool) or isinstance(move1, bool):
+                face0.card.state.is_leaving_play = False
+                face1.card.state.is_leaving_play = False
+                return False
+
+            if area0.flags.is_in_play:
+                face0.card.MoveToAreaInternal(move0, index=index1)
+                face1.card.MoveToAreaInternal(move1, index=index0)
+            else:
+                face1.card.MoveToAreaInternal(move1, index=index0)
+                face0.card.MoveToAreaInternal(move0, index=index1)
+        else:
+            raw_swap()
+
+        # RR 1.8 assigns the orientation of each occupied location to its
+        # incoming component. Do this after movement because deck insertion and
+        # enter/leave-play handling may otherwise normalize these flags.
+        face1.card.state.is_ready = ready0
+        face1.card.state.is_face_up = face_up0
+        face0.card.state.is_ready = ready1
+        face0.card.state.is_face_up = face_up1
 
         message = Message.AfterCardsSwapDeck_Text(face0, face1)
         message.Send()
+        return True
 
     @staticmethod
     def CountTraitNum(faces: Sequence['CardFace']) -> int:
@@ -507,4 +684,3 @@ class Faces:
             if face.ResolveAbility(player, ability_type, by_effect, ref_message):
                 ret_value += 1
         return ret_value
-

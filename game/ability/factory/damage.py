@@ -434,18 +434,18 @@ class AbilityFactoryDamage:
                                 with_piercing: bool|None=None,
                                 deal_damage_to: CardType=None,
                                 update_damage_rule: Literal["Double"]|int=0) -> 'Ability':
-        def check_with_piercing(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_with_piercing(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             if with_piercing != None:
                 return with_piercing == message.would_atk_message.property.piercing
             return True
 
-        def check_deal_damage_from(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_deal_damage_from(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             return Condition.CheckWhichCard(deal_damage_from, message.attacker, effect)
 
-        def check_deal_damage_to(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_deal_damage_to(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             return Condition.CheckWhichCard(deal_damage_to, message.target, effect)
 
-        def gain_attack_damage(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> None:
+        def gain_attack_damage(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> None:
             if update_damage_rule == "Double":
                 damage = message.will_take_damage
                 return message.IncreaseDamage(damage, effect)
@@ -455,7 +455,7 @@ class AbilityFactoryDamage:
 
         return Ability(
             AbilityType.NonKeyword,
-            Message.WhenRecalculateAttackDamage,
+            Message.WhenCalculateAttackDamage,
             [
                 check_deal_damage_from,
                 check_deal_damage_to,
@@ -692,4 +692,3 @@ class AbilityFactoryDamage:
             ],
             operation
         )
-

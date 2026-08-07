@@ -81,6 +81,60 @@ class ModelName(ModelBase):
     # If two unique allies share the same title, but each has a different subtitle, they may coexist in a player’s deck and in play.
     # If a hero and a unique ally share the same title, but the alter-ego and the subtitle are different, they may coexist in deckbuilding and in play.
     @final
+    def GetV17UniqueTitles(self) -> Set[str]:
+        from game.card.face.card_type import Identity
+        from game.card.face.card_type import Hero
+
+        this = self.GetThis()
+        if not Identity.IsType(this):
+            return {this.name}
+        return {
+            face.name
+            for face in [this] + this.card.back_faces
+            if Hero.IsType(face)
+        }
+
+    @final
+    def GetV17UniqueAliases(self) -> Set[str]:
+        from game.card.face.card_type import Identity
+        from game.card.face.card_type import AlterEgo
+
+        this = self.GetThis()
+        if not Identity.IsType(this):
+            return {this.printed_subtitle} if this.printed_subtitle else set()
+        return {
+            face.name
+            for face in [this] + this.card.back_faces
+            if AlterEgo.IsType(face)
+        }
+
+    @final
+    def MatchesV17Unique(self, that: 'CardFace') -> bool:
+        """Return whether two unique cards match under Rules Reference 1.7."""
+        this = self.GetThis()
+        if this.card == that.card:
+            return False
+        if not this.IsUnique() or not that.IsUnique():
+            return False
+
+        this_titles = this.GetV17UniqueTitles()
+        that_titles = that.GetV17UniqueTitles()
+        this_aliases = this.GetV17UniqueAliases()
+        that_aliases = that.GetV17UniqueAliases()
+
+        # Plain titles match only when neither card has a subtitle or an
+        # alter-ego title.
+        if not this_aliases and not that_aliases and this_titles & that_titles:
+            return True
+
+        # Otherwise, a subtitle/alter-ego title on either card must match any
+        # title, subtitle, or alter-ego title on the other card.
+        return bool(
+            this_aliases & (that_titles | that_aliases) or
+            that_aliases & (this_titles | this_aliases)
+        )
+
+    @final
     def CanCoexistWith(self, that: 'CardFace') -> bool:
         from game.card.face.card_type import Identity
         from game.card.face.card_type import Hero
@@ -100,32 +154,7 @@ class ModelName(ModelBase):
         if not that.card.IsApplyUniqueRule():
             return True
 
-        def get_titles(face: 'CardFace') -> Set[str]:
-            if not Identity.IsType(face):
-                return set([face.name])
-            names: Set[str] = set()
-            for check_face in [face] + face.card.back_faces:
-                if Hero.IsType(check_face):
-                    names.add(check_face.name)
-            return names
-
-        def get_subtitle(face: 'CardFace') -> str:
-            if not Identity.IsType(face):
-                return face.printed_subtitle
-            subtitle = ""
-            for check_face in [face] + face.card.back_faces:
-                if AlterEgo.IsType(check_face):
-                    subtitle = check_face.name
-            # Fix "50034b"
-            if subtitle in get_titles(face):
-                subtitle = ""
-            return subtitle
-
-        if get_titles(this) & get_titles(that) and \
-            get_subtitle(this) == get_subtitle(that):
-            return False
-
-        return True
+        return not this.MatchesV17Unique(that)
 
     ################################################################################
     #
@@ -146,4 +175,3 @@ class ModelName(ModelBase):
         if not no_hidden and not this.card.IsVisible("Any"):
             hidden = ' ?'
         return "[{}{}{}]".format(id, self.name, hidden)
-

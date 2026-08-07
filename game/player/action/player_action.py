@@ -25,12 +25,11 @@ class PlayerAction:
 
     ################################################################################
     # Encounter
-    def DealEncounterCard(self, face: 'CardFace', by_effect: 'Effect', *, by_surge: bool=False):
+    def DealEncounterCard(self, face: 'CardFace', by_effect: 'Effect'):
         from game.message import Message
         # from game.ability.rule import GameRule
         from game.operate.faces import Faces
         player = self.GetPlayer()
-        world = self.GetPlayer().world
 
         would_message = Message.WhenPlayerWouldBeDealtEncounterCard(player, by_effect, face)
         would_message.Send()
@@ -38,29 +37,27 @@ class PlayerAction:
         if would_message.is_be_instead:
             return
 
-        pos = None
-        if world.rule.v16_reveal:
-            pos = "Bottom"
-            if by_surge:
-                pos = "Top"
-            Faces.MoveAllToDeck([face], player.dealt_encounter_cards, pos, by_effect)
-        else:
-            Faces.MoveAllTo([face], player.dealt_encounter_cards, by_effect)
+        # Facedown encounter cards form a FIFO queue and are revealed in the
+        # order dealt. Dynamically dealt Surge cards therefore go after cards
+        # that were already waiting for this player.
+        Faces.MoveAllToDeck(
+            [face],
+            player.dealt_encounter_cards,
+            "Bottom",
+            by_effect,
+        )
 
         message = Message.AfterPlayerDealEncounterCard(player, would_message)
         message.Send()
 
     # facedown
-    def DealEncounterCards(self, size: int, by_effect: 'Effect', *, by_surge: bool=False) -> None:
+    def DealEncounterCards(self, size: int, by_effect: 'Effect') -> None:
         world = self.GetPlayer().world
         if world.is_game_over:
             return
 
-        faces: List['CardFace'] = []
         def process(face: 'CardFace'):
-            nonlocal faces
-            faces.append(face)
-            self.DealEncounterCard(face, by_effect, by_surge=by_surge)
+            self.DealEncounterCard(face, by_effect)
         from game.operate.worlds import Worlds
         Worlds.PopEncounterCards(size, process, True, by_effect)
 
@@ -198,6 +195,37 @@ class PlayerAction:
                     all_abilities.remove(effect.ability)
         return chose_effects
 
+    def ChooseForEach(
+        self,
+        by_effect: 'Effect',
+        count: int,
+        abilities_fn: Callable[[int], Sequence['Ability|None']],
+        *,
+        forced: bool=True,
+    ) -> List['Effect']:
+        """Resolve each chosen instance before constructing the next one.
+
+        Rebuilding and filtering the choices after every instance lets state
+        changes and response windows affect the next iteration.
+        """
+        assert count >= 0, f"{count=}"
+        if count == 0:
+            return []
+        chose_effects: List['Effect'] = []
+        for index in range(count):
+            if by_effect.world.is_game_over:
+                break
+            abilities = abilities_fn(index)
+            effect = self.ChooseAbilitiesHelper(
+                by_effect,
+                *abilities,
+                forced=forced,
+                step=(index + 1, count),
+            )
+            if effect:
+                chose_effects.append(effect)
+        return chose_effects
+
     # Only choose one
     def ChooseAbilitiesHelper(self, by_effect: 'Effect', *abilities: 'Ability|None', forced: bool=True, step: Tuple[int, int]=(1, 1), for_second_target: bool=False) -> 'Effect|None':
         priority = TimingPriority.Normal
@@ -249,13 +277,6 @@ class PlayerAction:
         while True:
             fallthrough_effect: Effect|None = None
             need_choose = True
-
-            backup_effects = filtered_effects[:]
-            for find_effect in filtered_effects[:]:
-                if find_effect.context.only_work_when_no_other_options:
-                    filtered_effects.remove(find_effect)
-            if filtered_effects == []:
-                filtered_effects = backup_effects
 
             # find fallthrough_effect
             for find_effect in filtered_effects:
@@ -394,28 +415,60 @@ class PlayerAction:
         this = effect.this
 
         is_like_from_hand = this.IsLikeInHand()
+        moved_for_play_initiation = False
+        from_index = -1
         # Fix for https://itch.io/t/4493777/interaction-between-magik-mutant-protector-defensive-energy
         if effect.ability.is_play and not effect.ability.flags.is_delay_ability:
             from_area = this.card.area
+            from_index = from_area.GetIndex(this)
+            moved_for_play_initiation = not from_area.flags.is_processing
             Faces.MoveAllToProcessingArea([this], effect)
         else:
             from_area = None
 
         player = self.GetPlayer()
 
-        if effect.checker.CheckBeforeActive(player):
+        # RR 1.8 Initiating Abilities, steps 1-3: a played card is faceup on
+        # the table (but not in play) before its restrictions, targets, form,
+        # and payable cost are checked. UI filtering remains only a preflight;
+        # this result is the one normative initiation check and is retained
+        # while costs are paid.
+        initiation_allowed = True
+        if effect.ability.is_play and not effect.ability.flags.is_delay_ability:
+            initiation_allowed = effect.checker.CheckPlayInitiation(message, player)
+
+        resolved = initiation_allowed and effect.checker.CheckBeforeActive(player)
+        if resolved:
             # assert type(message) != Send.WhenPlayerPayingResources, f"{message=}"
             if effect.ability.is_play and not effect.ability.flags.is_delay_ability:
                 assert from_area != None
                 this = effect.this.CastTo(ClassCard)
-                if this.Play(player, effect, message, effect.context.paid_this_resources, from_area, is_like_from_hand):
+                resolved = this.Play(
+                    player,
+                    effect,
+                    message,
+                    effect.context.paid_this_resources,
+                    from_area,
+                    is_like_from_hand,
+                )
+                if resolved:
                     player.stat.RecordPlayedFace(this)
                     player.world.buff_manager.OnRecordPlayedFace(this)
             else:
-                effect.ResolveSelf(message, effect)
+                resolved = effect.ResolveSelf(message, effect)
+
+        if resolved:
             return True
-        else:
-            if effect.ability.is_play:
+
+        if effect.ability.is_play:
+            # A card moved from a hand or another source only for this
+            # declaration returns there when initiation fails before its
+            # costs become final. Cards already in a processing area keep
+            # the older caller-owned discard behavior used by "play it"
+            # effects.
+            if moved_for_play_initiation and from_area != None and this.IsInProcessingArea():
+                Faces.MoveAllTo([this], from_area, effect, index=from_index)
+            elif this.IsInProcessingArea():
                 Faces.DiscardAll([this], effect)
 
         # Fix "45017"
@@ -951,4 +1004,3 @@ class PlayerAction:
                 break
             if effect.world.is_game_over:
                 break
-

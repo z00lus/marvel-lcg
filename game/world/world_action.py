@@ -66,8 +66,15 @@ class WorldAction:
 
     def IsThisUniqueInPlay(self, this: 'CardFace') -> bool:
         from game.operate.worlds import Worlds
+        from game.card.face.base import Villain
 
         if not this.IsUnique():
+            return False
+
+        # The v1.7 restriction applies to non-villain cards attempting to
+        # enter play. A scenario may use a villain matching a chosen identity,
+        # and a villain is not prevented from entering by another match.
+        if Villain.IsType(this):
             return False
 
         faces = Worlds.GetOnFieldCards(this.card.GetGameArea())
@@ -110,4 +117,3 @@ class WorldAction:
 
         faces = Worlds.FindCardsOnField(by_effect, is_temporary=True)
         Faces.DiscardAll(faces, by_effect)
-

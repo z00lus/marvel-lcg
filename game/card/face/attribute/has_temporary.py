@@ -11,6 +11,23 @@ class HasTemporary(HasAttribute):
         self.RegisterInfoDict('temporary')
 
     @override
+    def GetRuleAbilities(self) -> List['Ability']:
+        def discard_temporary(effect: 'Effect', message: 'Message.WhenRoundEnd') -> None:
+            from game.operate.faces import Faces
+            Faces.DiscardAll([effect.this], effect)
+
+        return super().GetRuleAbilities() + [AbilityFactory.WhenRoundEnd(
+            AbilityType.ForcedInterrupt,
+            None,
+            discard_temporary,
+            conditions=[
+                lambda effect, message:
+                    effect.this.IsInPlay() and
+                    effect.this.CastTo(HasTemporary).IsTemporary(),
+            ],
+        ).SetName("Temporary")]
+
+    @override
     def OnResetKeywords(self, by_effect: 'Effect'):
         self.GainTemporary(self.printed_temporary, by_effect)
         return super().OnResetKeywords(by_effect)
@@ -33,4 +50,3 @@ class HasTemporary(HasAttribute):
     #     from game.operate.faces import Faces
     #     if self.IsInPlay() and self.temporary:
     #         Faces.DiscardAll([self], by_effect)
-

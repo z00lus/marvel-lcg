@@ -39,11 +39,16 @@ class GameServerNewGame(GameServerBase):
         return web.json_response({'result': "Game restarted", 'seed': new_seed})
 
     async def load_replay(self, request: web.Request) -> web.Response:
+        from game.scene.loader import UnsupportedReplayRulesError
+
         replay_file = self.FindReplayFile(Unquote(request.rel_url.query_string))
         if replay_file is None:
             return web.json_response({'error': "Replay not found"}, status=404)
 
-        self.game.LoadReplay(replay_file)
+        try:
+            self.game.LoadReplay(replay_file)
+        except UnsupportedReplayRulesError as exc:
+            return web.json_response({'error': str(exc)}, status=409)
         return web.json_response({'result': "New game created"})
 
     async def load_replay_data(self, request: web.Request) -> web.Response:
@@ -63,7 +68,13 @@ class GameServerNewGame(GameServerBase):
         # Process the replay_data as needed
         # Log.Print("Received replay data:", replay_data)
 
+        from game.scene.loader import LoaderHelper, UnsupportedReplayRulesError
+
         scene = Json.LoadsAs(replay_data, Scene)
+        try:
+            LoaderHelper.EnsureSupportedReplay(scene)
+        except UnsupportedReplayRulesError as exc:
+            return web.json_response({'error': str(exc)}, status=409)
         if step == 0:
             state = 'Replay'
         else:

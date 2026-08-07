@@ -273,17 +273,19 @@ export class Button{
                 },
                 body: JSON.stringify({ data }) // Send the data as JSON
             })
-            .then(response => {
+            .then(async response => {
+                const responseData = await response.json();
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(responseData.error ?? 'Replay could not be loaded');
                 }
-                return response.json(); // Parse the JSON response
+                return responseData;
             })
             .then(responseData => {
                 console.log('Success:', responseData);
             })
             .catch(error => {
                 console.error('Error:', error);
+                ErrorDialog.showError(error instanceof Error ? error.message : String(error));
             });
         })
     }

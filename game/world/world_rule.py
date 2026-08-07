@@ -6,7 +6,6 @@ class VariableBool:
         self.name_true = name
         self.name_false = f"no_{name}"
 
-        self.version = name.split('_')[0] if name.startswith(('v15', 'v16')) else None
         rules.vars_bool.append(self)
 
     def __bool__(self) -> bool:
@@ -31,16 +30,6 @@ class WorldRule:
         self.disable_setup_draw_cards       = VariableBool(self, False, "disable_setup_draw_cards")
         self.create_player_deck_first       = VariableBool(self, False, "create_player_deck_first")
 
-        self.v15_all                        = VariableBool(self, False, "v15_all")
-
-        self.v16_all                        = VariableBool(self, False, "v16_all")
-        self.v16_reveal                     = VariableBool(self, False, "v16_reveal")
-        self.v16_teamwork                   = VariableBool(self, False, "v16_teamwork")
-        self.v16_player_elimination         = VariableBool(self, False, "v16_player_elimination")
-        self.v16_referential_ability        = VariableBool(self, False, "v16_referential_ability")
-        self.v16_confuse_stun               = VariableBool(self, False, "v16_confuse_stun")
-
-        self.fix_surge                      = VariableBool(self, True, "fix_surge")
         self.fix_treachery                  = VariableBool(self, True, "fix_treachery")
         self.encounter_cards_ignore_crisis  = VariableBool(self, True, "encounter_cards_ignore_crisis")
         self.crisis_of_infinite_deadpools   = VariableBool(self, True, "crisis_of_infinite_deadpools")
@@ -67,17 +56,5 @@ class WorldRule:
                 self.mode_heroic = int(rule.lstrip("mode_heroic_"))
                 break
 
-        if self.v16_all:
-            for var in self.vars_bool:
-                if var.version:
-                    var.Set(var.version == "v16")
-
-        if self.v15_all:
-            for var in self.vars_bool:
-                if var.version:
-                    var.Set(var.version == "v15")
-
-        # for var in self.vars_bool:
-        #     if var.name_false in rules:
-        #         var.Set(False)
-
+        # Rules Reference 1.8 behavior is implemented directly. The `v18_all`
+        # marker belongs to serialized scenes and is not a runtime feature flag.

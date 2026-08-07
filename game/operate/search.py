@@ -355,7 +355,15 @@ class Search:
 
         from game.operate.search_internal import SearchInternal
 
-        return SearchInternal.SearchForCardsInternal(
+        if include_removed_area:
+            # Declare the script's explicit exception before target processing
+            # so a process_choose callback may move the selected card.
+            allowed = by_effect.context.allowed_removed_cards
+            allowed.update(
+                face.card for face in faces
+                if face.card.area == by_effect.world.area_removed
+            )
+        found_faces = SearchInternal.SearchForCardsInternal(
             by_effect,
             who_perform,
             faces,
@@ -366,6 +374,7 @@ class Search:
             not_move=not_move,
             range=range,
         )
+        return found_faces
 
     @staticmethod
     def Collection(by_effect: 'Effect',
@@ -408,4 +417,3 @@ class Search:
         card = CardFactory.GenerateCard(name, player.discard_pile, by_effect.world)
 
         return card.face
-

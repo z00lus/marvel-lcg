@@ -4,7 +4,7 @@ from . import *
 
 def GetAbilities() -> Sequence['Ability']:
 
-    def shark_girl(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> int:
+    def shark_girl(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> int:
         this = effect.this.CastTo(Ally)
         Unused(this)
 
@@ -19,4 +19,3 @@ def GetAbilities() -> Sequence['Ability']:
             shark_girl
         ),
     ]
-

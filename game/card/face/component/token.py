@@ -9,9 +9,10 @@ class Token(Component):
 
     @override
     def OnParentReset(self):
-        # We disable this, you should reset all tokens by youself
-        # self.token = {}
-        self.SetTokens(0, 'threat')
+        # Tokens belong to a card only while it remains in play. Reset is used
+        # by the leave-play path, so every token type must return to the
+        # shared supply rather than preserving non-threat token state.
+        self.token = {}
         return super().OnParentReset()
 
     ################################################################################
@@ -51,4 +52,3 @@ class Token(Component):
 
     def GetTokenNames(self) -> List['CardFace.TOKEN']:
         return list(self.token.keys())
-

@@ -200,10 +200,6 @@ class Scene:
             if "crisis_of_infinite_deadpools" in self.rules:
                 self.rules.remove("crisis_of_infinite_deadpools")
 
-        if not Ver(self.version).IsFixSurge() and \
-            'fix_surge' not in self.rules:
-            self.rules.append("no_fix_surge")
-
         if not Ver(self.version).IsFixTreachery() and \
             'fix_treachery' not in self.rules:
             self.rules.append("no_fix_treachery")

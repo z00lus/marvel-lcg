@@ -17,6 +17,11 @@ FastUndoHandle = UndoModule.UndoHandle|None
 FILE_BASED_FAST_UNDO    = ConfigVariables.Bool('file_based_fast_undo', False)
 CACHE_BASED_FAST_UNDO   = ConfigVariables.Bool('cache_based_fast_undo', False)
 
+class _RevealResponseQueue:
+    def __init__(self) -> None:
+        self.messages: List['Message2'] = []
+        self.is_flushing = False
+
 class EventManager:
 
     CATEGORY: TypeAlias = Literal["Statistics", "Rule", "Paying", "Forced", "Optional"]
@@ -45,6 +50,43 @@ class EventManager:
         self.debug_log_only_global = DebugLog("Only Global")
 
         self.stack_message: List['CardStateUpdatedMessage'] = []
+        self.reveal_response_queues: List[_RevealResponseQueue] = []
+
+    def BeginRevealResponseDeferral(self) -> None:
+        """Delay response windows opened while one encounter card is revealed."""
+        self.reveal_response_queues.append(_RevealResponseQueue())
+
+    def EndRevealResponseDeferral(self) -> None:
+        """Open queued response windows after the current reveal is complete."""
+        from game.ability.ability import TimingPriority
+
+        assert self.reveal_response_queues
+        queue = self.reveal_response_queues[-1]
+        queue.is_flushing = True
+        try:
+            for message in queue.messages:
+                try:
+                    self._BroadcastMessage(
+                        message,
+                        only_priorities=(
+                            TimingPriority.ForcedResponse,
+                            TimingPriority.Response,
+                        ),
+                    )
+                except Exception as exc:
+                    info = Log.OnCrash("MESSAGE", exc, message.name, None)
+                    self.world.render.ErrorOccurred(info)
+                if self.stack_message:
+                    self.BroadcastStackMessage()
+                if self.world.is_game_over:
+                    break
+        finally:
+            popped = self.reveal_response_queues.pop()
+            assert popped is queue
+
+    def IsDeferringRevealResponses(self) -> bool:
+        return bool(self.reveal_response_queues) and \
+            not self.reveal_response_queues[-1].is_flushing
 
     def GetEffectCategory(self, effect: 'Effect', event: Type['Message2']) ->  Literal["Forced", "Rule", "Paying", "Optional", "Statistics"]:
         from game.message import Message
@@ -107,7 +149,7 @@ class EventManager:
                 self.event_size.Add(event)
                 category = self.GetEffectCategory(effect, event)
                 assert category != "Paying"
-                self.AddEffectsList(category, event, effect.ability.priority, effect)
+                self.AddEffectsList(category, event, effect.priority, effect)
 
     def UnRegisterEffect(self, effect: 'Effect'):
         effect.is_unregister = True
@@ -118,7 +160,7 @@ class EventManager:
         for event in events:
             self.registered_message_type[event] -= 1
             category = self.GetEffectCategory(effect, event)
-            effects_list = self.FindEffectsList(category, event, effect.ability.priority)
+            effects_list = self.FindEffectsList(category, event, effect.priority)
             if effect.is_local:
                 assert effect not in effects_list
             else:
@@ -312,7 +354,7 @@ class EventManager:
                         if type(message) in self.effects["Optional"] and \
                             priority in self.effects["Optional"][type(message)]:
 
-                            optional_effects = [x for x in self.effects["Optional"][type(message)][priority] if x.ability.priority == priority] + local_optional_effects
+                            optional_effects = [x for x in self.effects["Optional"][type(message)][priority] if x.priority == priority] + local_optional_effects
                             optional_effects = Types.RemoveDuplicates(optional_effects)
 
                         if is_cheating:
@@ -358,7 +400,7 @@ class EventManager:
 
             first_effect = forced_effects[0]
 
-            if first_effect.ability.priority != TimingPriority.Status and \
+            if first_effect.priority != TimingPriority.Status and \
                 not isinstance(message, Message.WhenGameBeginSetup) and \
                 not check_is_resources(first_effect) and \
                 not first_effect.ability.flags.is_delay_ability:
@@ -558,6 +600,23 @@ class EventManager:
         return effects_list
 
     @staticmethod
+    def FilterOtherwiseChoices(
+        effects: Sequence['Effect'],
+        available_effects: Sequence['Effect'],
+    ) -> List['Effect']:
+        """Pair each Otherwise option with the option immediately before it."""
+        filtered = list(available_effects)
+        effects_list = list(effects)
+        for index, effect in enumerate(effects_list):
+            if not effect.context.only_work_when_no_other_options:
+                continue
+            preceding_effect = effects_list[index - 1] if index > 0 else None
+            preceding_is_available = any(x is preceding_effect for x in filtered)
+            if preceding_effect == None or preceding_is_available:
+                filtered = [x for x in filtered if x is not effect]
+        return filtered
+
+    @staticmethod
     # Will also setup `all_legal_targets`
     def FilterAvailableEffects(message: 'Message2', effects: Sequence['Effect'], asked_player: 'Player|None', world: 'World', undo_handle: 'FastUndoHandle') -> List['Effect']:
         from game.message.sender.sender import CanBeInstead
@@ -603,6 +662,9 @@ class EventManager:
 
         effects_list = check()
 
+        if isinstance(message, Message.WhenPlayerChooseAbility):
+            effects_list = EventManager.FilterOtherwiseChoices(effects, effects_list)
+
         if CACHE_BASED_FAST_UNDO.value and undo_handle:
             controller_manager = message.world.controller_manager
             controller_manager.undo.PushFastUndo(message, effects_list)
@@ -626,6 +688,14 @@ class EventManager:
                 # process_faces.append(message.updated_face)
 
     def BroadcastMessage(self, message: 'Message2'):
+        self._BroadcastMessage(message)
+
+    def _BroadcastMessage(
+        self,
+        message: 'Message2',
+        *,
+        only_priorities: 'Sequence[TimingPriority]|None'=None,
+    ):
         from game.ability.ability import TimingPriority
         from game.message import Message
         # from game.message import Message, TriggerMessage, AttackerNoneMessage, TargetsMessage, DefenderNoneMessage
@@ -692,11 +762,6 @@ class EventManager:
                         checked = True
                         priorities = [TimingPriority.Constant]
                         catogories = ["Rule"]
-                    elif isinstance(message, (
-                        Message.WhenRecalculateAttackDamage)):
-                        checked = True
-                        priorities = [TimingPriority.Constant, TimingPriority.ForcedInterrupt]
-                        catogories = ["Rule", "Forced"]
                     # elif isinstance(message, (
                     #     Message.CheckEffectGeneratedResources)):
                     #     check_only_in_play_and_hand = True
@@ -764,7 +829,7 @@ class EventManager:
                         found_local_effects: List['Effect'] = []
 
                         for check_effect in local_effects:
-                            if check_effect.ability.priority == priority:
+                            if check_effect.priority == priority:
                                 found_local_effects.append(check_effect)
 
                         if found_local_effects:
@@ -779,7 +844,9 @@ class EventManager:
         if not local_effects and has_registered_event:
             self.debug_log_only_global.AddLog(message.name, f"{has_registered_event}")
 
-        for priority in list(TimingPriority):
+        queued_for_reveal_completion = False
+        priorities = list(only_priorities) if only_priorities != None else list(TimingPriority)
+        for priority in priorities:
 
             check_effects: Dict['EventManager.CATEGORY', List[Effect]] = {}
 
@@ -795,7 +862,7 @@ class EventManager:
                     size += len(check_effects[category])
             if local_effects:
                 for check_effect in local_effects:
-                    if check_effect.ability.priority == priority:
+                    if check_effect.priority == priority:
                         if check_effect.is_forced or is_playing_res:
                             local_effect_priority_forced.append(check_effect)
                         else:
@@ -804,6 +871,14 @@ class EventManager:
                     size += len(local_effect_priority_optional)
 
             if size == 0:
+                continue
+
+            if only_priorities == None and \
+                self.IsDeferringRevealResponses() and \
+                priority in (TimingPriority.ForcedResponse, TimingPriority.Response):
+                if not queued_for_reveal_completion:
+                    self.reveal_response_queues[-1].messages.append(message)
+                    queued_for_reveal_completion = True
                 continue
 
             if "Statistics" in check_effects and check_effects["Statistics"]:
@@ -840,4 +915,3 @@ class EventManager:
             pass
 
         return
-

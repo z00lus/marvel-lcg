@@ -31,6 +31,7 @@ class Effect(Object):
         ability.Initialize(self.this)
 
         self.ability: Final = ability
+        self.priority: Final = ability.flags.GetPriority(world.rule)
         self.delay_ability: 'Ability|None' = None
 
         self.checker = EffectChecker(self)
@@ -506,6 +507,10 @@ class Effect(Object):
         return res
 
     def GetCostX(self) -> 'int':
+        if self.ability.play_cost_is_x and \
+            self.ability.cost_fn == None and \
+            self.context.chosen_cost_x != None:
+            return self.context.chosen_cost_x
         return self.context.paid_this_resources.val - self.context.paid_this_cost.true_val
 
     ################################################################################
@@ -563,7 +568,10 @@ class Effect(Object):
         selector = self.ability.selectors[0] if self.ability.selectors else None
         if selector:
             select_rule, select_rule_param = selector.selector_rule.GetRuleAndParam()
-            target_must_include_traits = selector.selector_rule.target_must_include_traits
+            if self.context.allow_partial_resolution:
+                target_must_include_traits = []
+            else:
+                target_must_include_traits = selector.selector_rule.target_must_include_traits
         else:
             select_rule = ""
             select_rule_param = (0, 0)
@@ -593,4 +601,3 @@ class Effect(Object):
             failure_reason=failure_reason,
             is_search=is_search
         )
-

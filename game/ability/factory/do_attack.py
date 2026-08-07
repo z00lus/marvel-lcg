@@ -731,7 +731,7 @@ class AbilityFactoryDoAttack:
     def UnitGetATKWhileAttacking(ability_type: 'AbilityType',
                                 which_card: CardType|Literal["This", "AttachedCharacter", "EnemyLeader"],
                                 target: CardType,
-                                calc_fn: Callable[['Effect', 'Message.WhenRecalculateAttackDamage'], int]|int,
+                                calc_fn: Callable[['Effect', 'Message.WhenCalculateAttackDamage'], int]|int,
                                 *,
                                 is_undefended_attack: bool|None=None,
                                 ) -> List['Ability']:
@@ -778,11 +778,11 @@ class AbilityFactoryDoAttack:
     def UnitGetATKWhileAttackingInternal(ability_type: 'AbilityType',
                                         which_card: CardType|Literal["This", "AttachedCharacter", "EnemyLeader"],
                                         target: CardType,
-                                        calc_fn: Callable[['Effect', 'Message.WhenRecalculateAttackDamage'], int]|int,
+                                        calc_fn: Callable[['Effect', 'Message.WhenCalculateAttackDamage'], int]|int,
                                         *,
                                         is_undefended_attack: bool|None=None,
                                         ) -> 'Ability':
-        def gain_attack_damage(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> None:
+        def gain_attack_damage(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> None:
             if isinstance(calc_fn, int):
                 value = calc_fn
             else:
@@ -790,7 +790,7 @@ class AbilityFactoryDoAttack:
 
             message.IncreaseDamage(value, effect)
 
-        def check_this(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_this(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             return Condition.CheckWhichCard(which_card, message.trigger, effect)
             # this = effect.this
             # if which_card == "This":
@@ -799,22 +799,22 @@ class AbilityFactoryDoAttack:
             #     return Condition.ThisAttachedTo(effect, message.trigger)
             # assert False
 
-        def check_target(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_target(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             if target == None:
                 return True
             return Condition.CheckWhichCard(target, message.target, effect)
 
-        def check_is_basic_attack(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_is_basic_attack(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             return message.would_atk_message.IsBasicAttack()
 
-        def check_is_undefended_attack(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> bool:
+        def check_is_undefended_attack(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> bool:
             if is_undefended_attack == None:
                 return True
             return is_undefended_attack == (message.would_atk_message.GetDefender() == None)
 
         return Ability(
             ability_type,
-            Message.WhenRecalculateAttackDamage,
+            Message.WhenCalculateAttackDamage,
             [
                 check_is_basic_attack,
                 check_target,

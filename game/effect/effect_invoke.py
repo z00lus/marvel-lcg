@@ -41,8 +41,6 @@ class EffectInvoker:
             damage_targets: List['Unit2'] = []
             atk_messages: List['Message.AfterUnitAttackUnit|Message.AttackEndsBeforeDamageDealt'] = []
 
-            retaliated_unit: Set['CardFace'] = set()
-
             end_atk_message = effect.context.end_attack_messages[0]
             total_dealt_damage = 0
             for message in effect.context.end_attack_messages:
@@ -54,16 +52,6 @@ class EffectInvoker:
                 damage_targets += message.damaged_targets
                 total_dealt_damage += message.total_dealt_damage
                 atk_messages += message.atk_messages
-
-                for atk_message in message.atk_messages:
-                    would_atk_unit_message = atk_message.would_atk_unit_message
-                    if would_atk_unit_message:
-                        for atk_target in atk_message.attacked_targets:
-                            if atk_target not in retaliated_unit:
-                                retaliated_unit.add(atk_target)
-                                if Unit2.IsType(atk_target) and \
-                                    atk_target.IsInPlay():
-                                    atk_target.ResolveRetaliate(would_atk_unit_message)
 
                 for message in message.atk_messages:
                     message.Send()
@@ -253,4 +241,3 @@ class EffectInvoker:
             effect.context.ResetAfterOperation()
 
         return can_action
-

@@ -16,21 +16,14 @@ class HasPermanent(HasAttribute):
     def OnWhenCardLeavePlay(self, message: 'Message.WhenCardLeavePlay') -> bool:
         from game.player import Player
         if self.permanent:
-            # Hack
             by_effect = message.by_effect
-            if self.paper.set_name in ["Flight", "Super Strength", "Telepathy"]:
-                if by_effect.this.paper.card_id == "40139a":
-                    pass
-            elif self.paper.set_name == "Weather":
-                if by_effect.this.paper.set_name == "Storm":
-                    pass
-            elif self.name == "Power Stone":
-                controller = self.GetBindFace().GetControlBy()
-                if Player.IsType(controller) and controller.is_eliminated:
-                    pass
-            elif self.name == "Milano":
-                if by_effect.this.name == "The Missing Milano":
-                    pass
+            owner = self.GetOwner()
+            bind_face = self.GetBindFace()
+            bind_controller = bind_face.GetControlBy() if bind_face else None
+            if isinstance(owner, Player) and owner.is_eliminated:
+                pass
+            elif isinstance(bind_controller, Player) and bind_controller.is_eliminated:
+                pass
             elif self.paper.set_name != by_effect.this.paper.set_name:
                 return False
         return super().OnWhenCardLeavePlay(message)
@@ -48,4 +41,3 @@ class HasPermanent(HasAttribute):
     @property
     def permanent(self) -> bool:
         return self.GetKeyword('Permanent') > 0
-

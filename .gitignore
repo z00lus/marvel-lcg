@@ -10,3 +10,5 @@
 /statistics.json
 /deck/*.json
 /replays/
+/tasks/
+/rules/

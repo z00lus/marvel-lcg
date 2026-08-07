@@ -64,19 +64,28 @@ class CanStatus(HasVulnerable, HasSteady, HasToughness, HasStalwart):
     #         'Tough': 'tough',
     #     }[name])
 
-    def GainStatus(self, name: "CardFace.STATUS", by_effect: 'Effect') -> bool:
+    def GainStatus(self, name: "CardFace.STATUS", by_effect: 'Effect', *, override_cannot: bool=False) -> bool:
         from game.message import Message
-        from game.operate.faces import Faces
-        from game.effect.rule import GameRule
 
         if not self.card.IsOnField():
             #  or self.card.face.IsDefeated():
             return False
         # assert name in ['tough', 'stunned', 'confused'], f"{name=}"
-        if name == "Confused" and not self.CanbeConfused():
-            return False
-        if name == "Stunned" and not self.CanbeStunned():
-            return False
+        # This opt-in is only for card text that explicitly overrides a
+        # prohibition under the Golden Rule. Ordinary effects must leave it
+        # false so "cannot" remains absolute.
+        if name == "Confused":
+            if override_cannot:
+                if self.IsConfused():
+                    return False
+            elif not self.CanbeConfused():
+                return False
+        if name == "Stunned":
+            if override_cannot:
+                if self.IsStunned():
+                    return False
+            elif not self.CanbeStunned():
+                return False
         if name == "Tough" and self.IsTough() and self.tough >= self.tough_max:
             return False
 
@@ -89,10 +98,6 @@ class CanStatus(HasVulnerable, HasSteady, HasToughness, HasStalwart):
         placed_message = Message.AfterStatusCardPlaceOn(status_face, would_message)
         placed_message.Send()
 
-        if self.CastTo(HasVulnerable).IsVulnerable():
-            if self.IsStunned() or self.IsConfused():
-                rule = GameRule(self)
-                Faces.DiscardAll([self], rule)
         return True
 
     def LoseState(self, name: "CardFace.STATUS", by_effect: 'Effect', rule: DISCARD_RULE) -> int:

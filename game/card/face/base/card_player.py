@@ -124,7 +124,6 @@ class ClassCard(HasResourceIcon, HasCost, HasMaxPer, PlayerCard):
         assert by_effect.GetInitiator() == player, f"{self.card.face} {player=}"
 
         if not by_effect.ProcessSelfCost():
-            Faces.DiscardAll([self], by_effect)
             return False
 
         would_play_message = Message.WhenPlayerWouldPlayCard(player, by_effect, resource, from_area, is_like_from_hand)
@@ -171,4 +170,3 @@ class ClassCard(HasResourceIcon, HasCost, HasMaxPer, PlayerCard):
             if IsAspectClass(card_class):
                 return card_class
         return None
-

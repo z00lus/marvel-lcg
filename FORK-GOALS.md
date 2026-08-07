@@ -1,4 +1,8 @@
-# Fork Goals
+# Marvel Champions Digital: Ronin Edition
+
+> Version 0.6.0 — “Echo”
+
+## Fork Goals
 
 This fork focuses on a simple and convenient **solo Marvel Champions experience**.
 

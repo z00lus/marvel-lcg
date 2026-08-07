@@ -148,6 +148,15 @@ class SelectorRule:
         from game.card.face.card_type import Minion
         from game.effect.effect_failure import EffectFailure
 
+        # RR 1.8: one resolution cannot choose the same target more than
+        # once unless the instruction explicitly enables repeated targets.
+        # Compare physical cards rather than faces so a double-sided card
+        # cannot evade this rule through two face references.
+        if not self.repeat_rules and \
+            len({target.card for target in targets}) != len(targets):
+            effect.failures.Set(None, EffectFailure.DuplicateTarget)
+            return False
+
         if not self.select_rule.startswith('VillainAndMinions'):
             if not (range[0] <= len(targets) <= range[1]):
                 effect.failures.Set(None, EffectFailure.TargetNum)
@@ -187,4 +196,3 @@ class SelectorRule:
                 return False
 
         return True
-

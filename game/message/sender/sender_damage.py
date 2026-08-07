@@ -480,16 +480,39 @@ class SenderDamage:
             self.bing_atk_message.SetDefender(unit, defense_message, by_effect, on_event)
             return super().SetDefender(unit, defense_message, by_effect, on_event)
 
-    class WhenRecalculateAttackDamage(CalculateMessage, TriggerUnitMessage, AttackerMessage, DefenderNoneMessage, DamageMessage):
-        def __init__(self, attacker: 'Unit2', target: 'Unit2', attack: int, would_atk_message: 'Message.WhenUnitWouldAttack') -> None:
+    class WhenCalculateAttackDamage(TriggerUnitMessage, AttackerMessage, DefenderNoneMessage, DamageMessage):
+        """Rules Reference 1.8 enemy-attack step 4: Calculate Damage."""
+
+        def __init__(self, attacker: 'Unit2', target: 'Unit2', attack: int,
+                     defense: int,
+                     boost_faces: Sequence['CardFace'],
+                     would_atk_unit_message: 'Message.WhenUnitWouldAttackUnit') -> None:
             self.target: Final = target # who be attack
+            self.base_attack_damage: Final = attack
+            self.defense: Final = max(0, defense)
+            self.boost_faces: Final = list(boost_faces)
+            self.would_atk_unit_message: Final = would_atk_unit_message
+            would_atk_message = would_atk_unit_message.would_atk_message
             self.would_atk_message: Final = would_atk_message
-            # text = TransText("Recalculating {unit}'s attack damage vs {target}")
-            # self.Present(text, "", unit, target)
-            super().__init__(trigger=attacker, attacker=attacker, attacked=[target], defender=would_atk_message.defender, would_atk_message=would_atk_message, damage=attack)
-            # text = TransText("Recalculated damange from {attack} to {damage}")
-            # self.Present(text, "", unit)
+            super().__init__(
+                trigger=attacker,
+                attacker=attacker,
+                attacked=[target],
+                defender=would_atk_message.defender,
+                would_atk_message=would_atk_message,
+                damage=attack,
+            )
             self.AddRelatedFace(attacker, target)
+
+        @property
+        def attack_damage(self) -> int:
+            """Attack damage after ATK/boost modifiers but before DEF."""
+            return self.will_take_damage
+
+        @property
+        def calculated_damage(self) -> int:
+            """Damage carried from step 4 into the step 5 damage instance."""
+            return max(0, self.attack_damage - self.defense)
 
         def IncreaseDamage(self, damage: int, by_effect: 'Effect'):
             from game.card.face.base import Unit2
@@ -499,6 +522,17 @@ class SenderDamage:
             this = self.trigger
             # This update just for UI
             this.CastTo(Unit2).GainForThisActive(by_effect, self.would_atk_message, attack=damage)
+
+        def ReduceDamage(self, damage: int, by_effect: 'Effect'):
+            from game.card.face.base import Unit2
+            assert damage >= 0
+            reduced_damage = min(damage, self.attack_damage)
+            self.UpdateDamageInternal(-1 * reduced_damage)
+            self.trigger.CastTo(Unit2).GainForThisActive(
+                by_effect,
+                self.would_atk_message,
+                attack=-1 * reduced_damage,
+            )
 
     class AfterUnitAttackUnit(TriggerUnitMessage, AttackerMessage, DefenderNoneMessage, TriggerNonePlayerMessage, HasPreEventMessage):
         def __init__(self, attacker: 'Unit2', target: 'Unit2', attacked_you: 'Player|None', overkill_target: 'Unit2|None', took_damage_targets: List['Unit2'], calculated_damage: int, taken_damage: int, excess_damage: int, boost_faces: Sequence['CardFace'], would_atk_unit_message: 'Message.WhenUnitWouldAttackUnit', defense_messages: List['Message.AfterUnitDefenseInternal']) -> None:
@@ -963,4 +997,3 @@ class SenderDamage:
 
         def IsFromAttack(self) -> bool:
             return self.would_atk_message != None
-

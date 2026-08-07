@@ -115,10 +115,11 @@ class Minion(Enemy, CanQuickstrike, CanTeamwork, HasGuard, HasPatrol, HasVillain
         would_message = Message.WhenMinionWouldEngagePlayer(self, player, by_effect)
         would_message.Send()
 
+        if would_message.is_be_instead:
+            return
+
         engaged_message = Message.WhenMinionEngagePlayer(would_message)
         engaged_message.Send()
-
-        self.ResolveQuickstrike(player)
 
         after_message = Message.AfterMinionEngagePlayer(self, player, engaged_message)
         after_message.Send()
@@ -154,4 +155,3 @@ class Minion(Enemy, CanQuickstrike, CanTeamwork, HasGuard, HasPatrol, HasVillain
         if self.card.area.flags.is_engaged:
             return self.card.area.play_area
         return None
-

@@ -136,9 +136,6 @@ class Game:
         self.controller_manager.OnNewGame()
 
     def LoadReplay(self, file_path: 'str') -> None:
-        if self.world:
-            self.world.game_over.SetExit()
-
         self.session.Load(file_path, None, "Replay")
         self.controller_manager.OnNewGame()
 

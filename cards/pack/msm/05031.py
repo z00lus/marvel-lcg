@@ -18,6 +18,11 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityType.HeroAction,
             concussive_blow
         ).SetPlay().SetLabel('attack')
-        .SetTarget(Enemy, canbe_confused=True),
+        .SetTarget(
+            Enemy,
+            affects_target_if=(
+                Condition.TargetCanBeConfused,
+                Condition.TargetCanTakeDamage,
+            ),
+        ),
     ]
-

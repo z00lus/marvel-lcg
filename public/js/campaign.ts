@@ -385,9 +385,7 @@ async function startGame(): Promise<void> {
         challenges: [],
         rules: [
             'mode_campaign',
-            'v16_all',
-            'no_crisis_of_infinite_deadpools',
-            'no_encounter_cards_ignore_crisis',
+            'v18_all',
         ],
         campaign_log: campaignLog,
     };

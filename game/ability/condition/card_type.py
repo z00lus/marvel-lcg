@@ -6,6 +6,26 @@ from game.effect import *
 
 class ConditionCardType:
 
+    @staticmethod
+    def TargetCanBeConfused(effect: 'Effect', target: 'CardFace') -> bool:
+        from game.card.face.base import Unit2
+        return Unit2.IsType(target) and target.CanbeConfused()
+
+    @staticmethod
+    def TargetCanBeStunned(effect: 'Effect', target: 'CardFace') -> bool:
+        from game.card.face.base import Unit2
+        return Unit2.IsType(target) and target.CanbeStunned()
+
+    @staticmethod
+    def TargetCanTakeDamage(effect: 'Effect', target: 'CardFace') -> bool:
+        from game.buff import BuffCannotTakeDamage
+        from game.card.face.base import Unit2
+        return bool(
+            Unit2.IsType(target) and
+            not target.IsDefeated() and
+            not target.GetBuff(BuffCannotTakeDamage)
+        )
+
     SINGLE_CARD_TYPE = Literal[
         "This",
         "ThisFace",
@@ -123,13 +143,13 @@ class ConditionCardType:
             if check_rule == "Player":
                 return Player.IsType(face.GetControlByOrOwner())
 
-            def check_you():
+            def check_you(check_face: 'CardFace'=face):
                 if from_effect.this.card.area.flags.is_obligations_area:
-                    return face == from_effect.this.GetBindFace()
+                    return check_face == from_effect.this.GetBindFace()
                 elif from_effect.initiator.IsScenario():
-                    return Player.IsType(face.GetControlByOrOwner())
+                    return Player.IsType(check_face.GetControlByOrOwner())
                 else:
-                    return Select.GetYou(from_effect) == face.GetControlByOrOwner()
+                    return Select.GetYou(from_effect) == check_face.GetControlByOrOwner()
             def check_another():
                 # Fix "53008"
                 if Upgrade.IsType(from_effect.this) or Attachment.IsType(from_effect.this):
@@ -166,7 +186,13 @@ class ConditionCardType:
             if check_rule == "YourHero":
                 return check_you() and Hero.IsType(face)
             if check_rule == "YourIdentity":
-                return check_you() and Identity.IsType(face)
+                check_face = face
+                from game.card.face.card_type import Resource
+                if Resource.IsType(face):
+                    controller = face.GetControlByOrOwner()
+                    if Player.IsType(controller):
+                        check_face = controller.GetIdentity()
+                return check_you(check_face) and Identity.IsType(check_face)
             if check_rule == "YourAlly":
                 return check_you() and Ally.IsType(face)
             if check_rule == "YouControlAlly":
@@ -270,4 +296,3 @@ class ConditionCardType:
             if checked >= size:
                 return True
         return False
-

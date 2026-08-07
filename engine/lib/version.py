@@ -6,11 +6,15 @@ CATEGORY_NAME = "VERSION"
 class Ver:
     version: 'Ver'
     ui_version_str: str # only use for UI
+    product_name: str
+    release_label: str
 
     @staticmethod
     def Initialize():
         Ver.version = Ver(f'{Build.MAJOR}.{Build.MINOR}.{Build.PATCH}.{Build.BUILD}')
         Ver.ui_version_str = f"{Ver.version}{'r' if Build.release else 'd'}"
+        Ver.product_name = Build.PRODUCT_NAME
+        Ver.release_label = Build.RELEASE_LABEL
 
     # https://stackoverflow.com/questions/11887762/how-do-i-compare-version-numbers-in-python
     def __init__(self, ver: 'str|Ver') -> None:
@@ -67,9 +71,6 @@ class Ver:
     def IsDeadpoolsEncounter(self):
         return self >= Versions.deadpools_encounter
 
-    def IsFixSurge(self):
-        return self >= Versions.fix_surge
-
     def IsFixTreachery(self):
         return self >= Versions.fix_treachery
 
@@ -82,7 +83,5 @@ class Versions:
     metadata                = Ver(f'0.5.8.8')   # Use metadata in `Scene`
     hero_deck_first         = Ver(f'0.5.8.217') # Create hero deck first
     deadpools_encounter     = Ver(f'0.5.8.227') # Enable "1crisis_of_infinite_deadpools" by default
-    fix_surge               = Ver(f'0.5.9.142') # Enable "fix_surge" by default
     fix_treachery           = Ver(f'0.5.9.148') # Enable "fix_treachery" by default
     puzzle                  = Ver(f'0.5.8')
-

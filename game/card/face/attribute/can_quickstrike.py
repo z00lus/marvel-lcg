@@ -33,6 +33,22 @@ class HasQuickstrike(HasAttribute):
 
 class CanQuickstrike(HasQuickstrike):
 
+    @override
+    def GetRuleAbilities(self) -> List['Ability']:
+        return super().GetRuleAbilities() + [AbilityFactory.AfterMinionEngagePlayer(
+            AbilityType.ForcedResponse,
+            "This",
+            "YouHero",
+            lambda effect, message:
+                effect.this.CastTo(CanQuickstrike).ResolveQuickstrike(
+                    message.engaged_player
+                ),
+            conditions=[
+                lambda effect, message:
+                    effect.this.CastTo(CanQuickstrike).IsQuickstrike(),
+            ],
+        ).SetName("Quickstrike")]
+
     @final
     def ResolveQuickstrike(self, player: 'Player'):
         from game.effect.rule import Quickstrike
@@ -43,4 +59,3 @@ class CanQuickstrike(HasQuickstrike):
                 self.DoAttackYou(player, effect)
             elif CanAttack.IsType(self):
                 self.BasicAttack([player.GetIdentity()], effect)
-

@@ -104,6 +104,28 @@ class Player(User, PlayerAsk, PlayerCards, PlayerGet, PlayerAction, ):
         self.is_eliminated = False
         self.hero_name = ""
 
+    def _DiscardForeignCardsForV17Elimination(self, rule: 'Effect') -> None:
+        from game.card.face.attribute.has_permanent import HasPermanent
+        from game.effect.rule import GameRule
+        from game.operate.faces import Faces
+
+        foreign_faces: List[CardFace] = []
+        for face in (
+            self.allies.GetAll() +
+            self.supports.GetAll() +
+            self.obligations_area.GetAll()
+        ):
+            if face.GetOwner() != self and face not in foreign_faces:
+                foreign_faces.append(face)
+
+        for face in foreign_faces:
+            if HasPermanent.IsType(face) and face.permanent:
+                # Permanent attachments are handled when their host leaves
+                # play. A top-level permanent card has no host and is removed.
+                Faces.RemoveAllFromGame([face], GameRule(face))
+            else:
+                Faces.DiscardAll([face], rule, into_area="Owner")
+
     def Eliminate(self, by_effect: 'Effect'):
         from game.operate.faces import Faces
         from game.operate.worlds import Worlds
@@ -160,28 +182,32 @@ class Player(User, PlayerAsk, PlayerCards, PlayerGet, PlayerAction, ):
                     # that are not owned by that player, place each of those
                     # cards in its owner’s discard pile (even if that card has
                     # the permanent keyword)
+                    self._DiscardForeignCardsForV17Elimination(rule)
 
                     # 4. Place each card owned by the eliminated player in the
                     # eliminated player’s discard pile
-                    if world.rule.v16_player_elimination:
-                        finder = CardFinder(owner=self)
-                        faces: List[CardFace] = []
+                    finder = CardFinder(owner=self)
+                    faces: List[CardFace] = []
 
-                        # faces += Worlds.FindCardsOnField(rule, finder)
-                        # We must use this to discard some cards attached under other cards, such as "31032"
-                        faces += world.FindCardsOnField(
-                            finder=finder,
-                            game_area=game_area,
-                        )
-                        faces += Worlds.VictoryDisplay(rule).FindCards(finder)
-                        faces += finder.Checks(Worlds.GetEncounterDeckCards(rule))
-                        other_faces = CardFinder(non_card_type=Identity).Checks(faces)
-                        Faces.DiscardAll(other_faces, rule)
+                    # We must use this to discard some cards attached under
+                    # other cards, such as "31032".
+                    faces += world.FindCardsOnField(
+                        finder=finder,
+                        game_area=game_area,
+                    )
+                    faces += Worlds.VictoryDisplay(rule).FindCards(finder)
+                    faces += finder.Checks(Worlds.GetEncounterDeckCards(rule))
+                    other_faces = CardFinder(non_card_type=Identity).Checks(faces)
+                    Faces.DiscardAll(other_faces, rule)
 
                     # 5. Remove the eliminated player’s play area and each
                     # other game element within (hand, deck, discard pile,
                     # cards in play, hit point dial, etc.) from the game.
 
+                    # Removing the identity also invokes the generic
+                    # permanent-attachment reattachment rule for any foreign
+                    # attachment still hosted by it.
+                    Faces.RemoveAllFromGame([hero], rule)
                     Faces.DiscardAll(hero.GetInventoryDeck().Get(), rule)
                     self.dealt_encounter_cards.DiscardAll(rule)
                     self.supports.DiscardAll(rule)

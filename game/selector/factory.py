@@ -73,6 +73,7 @@ class Select:
             ################################################################################
             # Filter
             finder: 'CardFinder|None'=None,
+            affects_target_if: Sequence[Callable[['Effect', 'CardFace'], bool]]=(),
             another: bool|None=None, # Not `effect.this`
             corresponding: Literal["ActiveVillain"]|None=None,
             exclude: List['CardFace']|Literal["Trigger", "Attacker", "This", "Targets"]=[],
@@ -220,6 +221,7 @@ class Select:
 
         selector_filter = SelectorFilter(
             card_finder,
+            affects_target_if=affects_target_if,
             # bind_to=bind_to,
             another=another,
             corresponding=corresponding,
@@ -305,4 +307,3 @@ class Select:
             select_rule="MustIncludeTraits"
         )
         return selector
-

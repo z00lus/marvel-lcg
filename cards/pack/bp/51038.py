@@ -8,6 +8,8 @@ def GetAbilities() -> Sequence['Ability']:
         this = effect.this.CastTo(Support)
         Unused(this)
 
+        message.SetBeInstead(effect)
+
         this.effect.RegisterTemp(
             AbilityFactory.EnemyCannotActivate(
                 AbilityType.Temp0,
@@ -35,4 +37,3 @@ def GetAbilities() -> Sequence['Ability']:
             # ]
         ).SetCostFunc(CostFunc.Counter("This", 1, 'target')),
     ]
-

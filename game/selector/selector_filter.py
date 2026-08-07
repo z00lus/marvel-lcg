@@ -32,6 +32,7 @@ class SelectorFilter:
     def __init__(self,
                 finder: 'CardFinder',
                 *,
+                affects_target_if: Sequence[Callable[['Effect', 'CardFace'], bool]]=(),
                 exclude: List['CardFace']|Literal["Trigger", "Attacker", "This", "Targets"]=[],
                 another: bool|None=None, # Not `effect.this`
 
@@ -48,6 +49,7 @@ class SelectorFilter:
         from game.operate.filter import Filter
 
         self.finder = finder
+        self.affects_target_if = tuple(affects_target_if)
         self.check_effect_fns: List[Callable[['Effect', 'CardFace'], bool]] = []
 
         ################################################################################
@@ -103,6 +105,13 @@ class SelectorFilter:
                 if another and face == effect.this:
                     return False
                 if not self.CheckFinder(face, effect):
+                    return False
+                # RR 1.8: for an ability with multiple effects on one target,
+                # that target is valid when at least one declared effect can
+                # affect it. Structural finder rules and the independent
+                # attack/thwart/Crisis checks still have to pass.
+                if self.affects_target_if and \
+                    not any(fn(effect, face) for fn in self.affects_target_if):
                     return False
                 if (share_trait_with_your_hero or share_trait_with_your_identity) and \
                     not face.ShareTrait(identity):
@@ -187,4 +196,3 @@ class SelectorFilter:
 
         if check_effect_fn != None:
             self.check_effect_fns.append(check_effect_fn)
-

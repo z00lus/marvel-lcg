@@ -764,7 +764,7 @@
                 "AVENGER"
             ],
             "set_name": "Iron Man",
-            "text": "You get +1 hand size for each [[Tech]] upgrade you control (to a maximum hand size of 7)."
+            "text": "You get +1 hand size for each [[Tech]] upgrade you control (to a maximum of +6 hand size)."
         },
         {
             "card_id": "01029b",
@@ -6671,7 +6671,7 @@
             },
             "traits": [],
             "set_name": "Red Skull",
-            "text": "<b>Contents:<\\/b> Red Skull (I) and Red Skull (II). Red Skull and Standard encounter sets. Two modular encounter sets <i>(Hydra Assault and Hydra Patrol).<\\/i>\\n<b>Setup:<\\/b> Put the Red House into play. Shuffle every other side scheme into the side-scheme deck and set it next to the encounter deck (see insert).\\nSet The Sleeper aside, out of play."
+            "text": "<b>Contents:<\\/b> Red Skull (I) and Red Skull (II). Red Skull and Standard encounter sets. Two modular encounter sets <i>(Hydra Assault and Hydra Patrol).<\\/i>\\n<b>Setup:<\\/b> Put the Red House into play. Shuffle every other encounter side scheme into the side-scheme deck and set it next to the encounter deck (see insert).\\nSet The Sleeper aside, out of play."
         },
         {
             "card_id": "04128b",
@@ -6821,7 +6821,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Red Skull",
-            "text": "<b>When Revealed:</b> Exhaust a character you control for each side scheme in play.\r\n<hr />\r\n[star] <b>Boost</b>: Exhaust a character you control."
+            "text": "<b>When Revealed:</b> For each side scheme in play, choose and exhaust a character you control.\r\n<hr />\r\n[star] <b>Boost</b>: Exhaust a character you control."
         },
         {
             "card_id": "04137",
@@ -8986,7 +8986,7 @@
                 "SPY"
             ],
             "set_name": "Black Widow",
-            "text": "\"Widowmaker\" \u2014 <b>Response</b>: After you trigger the ability of a [[Preparation]] card you control, deal 1 damage to an enemy."
+            "text": "\"Widowmaker\" \u2014 <b>Response</b>: After you resolve the ability of a [[Preparation]] card you control, deal 1 damage to an enemy."
         },
         {
             "card_id": "08001b",
@@ -12344,7 +12344,7 @@
                 "CRIMINAL"
             ],
             "set_name": "Wasp Nemesis",
-            "text": "Guard.\n<b>Forced Interrupt</b>: When Beetle is defeated, choose to either spend a [physical] resource or shuffle Beetle into the encounter deck.\n<i>(Wasp's nemesis minion.)</i>"
+            "text": "Guard.\n<b>Forced Interrupt</b>: When Beetle is defeated, the defeating player chooses to either spend a [physical] resource or shuffle Beetle into the encounter deck.\n<i>(Wasp's nemesis minion.)</i>"
         },
         {
             "card_id": "13029",
@@ -21636,7 +21636,7 @@
                 "GUARDIAN"
             ],
             "set_name": "",
-            "text": "<b>Response:</b> After you play Eros from your hand, confuse a minion for each [mental] resource you used to pay for him."
+            "text": "<b>Response:</b> After you play Eros from your hand, for each [mental] resource you used to pay for him, choose a minion and confuse it."
         },
         {
             "card_id": "22012",
@@ -29930,7 +29930,7 @@
                 "CREATURE"
             ],
             "set_name": "SP//dr Nemesis",
-            "text": "<b>Forced Response</b>: After the engaged hero generates any number of resources, deal an equal amount of damage to that hero.\n<i>(SP//dr's nemesis minion.)</i>"
+            "text": "<b>Forced Response</b>: After the engaged player generates any number of resources, deal an equal amount of damage to that player's hero.\n<i>(SP//dr's nemesis minion.)</i>"
         },
         {
             "card_id": "31028",
@@ -30244,7 +30244,7 @@
                 "SUPERPOWER"
             ],
             "set_name": "Colossus",
-            "text": "<b>Hero Action</b>: Deal 5 damage to an enemy. You may discard a tough status card from your hero \u2192 stun and confuse that enemy."
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 5 damage to an enemy. You may discard a tough status card from your hero to stun and confuse that enemy."
         },
         {
             "card_id": "32009",
@@ -30276,7 +30276,7 @@
                 "SUPERPOWER"
             ],
             "set_name": "Colossus",
-            "text": "<b>Alter-Ego Interrupt</b>: When the villain activates, change to hero form."
+            "text": "<b>Alter-Ego Interrupt</b>: When the villain would activate, change to hero form."
         },
         {
             "card_id": "32011",
@@ -31478,7 +31478,7 @@
             },
             "traits": [],
             "set_name": "Project Wideawake",
-            "text": "<b>When Defeated</b>: The first player searches the encounter deck and discard pile for a [[Sentinel]] minion and reveals it. Flip this card and put Jubilee into play, discarding any other version of Jubilee from play."
+            "text": "<b>When Defeated</b>: The first player searches the encounter deck and discard pile for a [[Sentinel]] minion and reveals it. Flip this card and put Jubilee into play, discarding any other ally version of Jubilee from play."
         },
         {
             "card_id": "32088b",
@@ -32478,7 +32478,7 @@
             },
             "traits": [],
             "set_name": "Magneto",
-            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card, then remove 3 magnet counters from this scheme."
+            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, remove 3 of them and discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card."
         },
         {
             "card_id": "32142a",
@@ -32505,7 +32505,7 @@
             },
             "traits": [],
             "set_name": "Magneto",
-            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card, then remove 3 magnet counters from this scheme.",
+            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, remove 3 of them and discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card.",
             "ability_link": "32141b"
         },
         {
@@ -32533,7 +32533,7 @@
             },
             "traits": [],
             "set_name": "Magneto",
-            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card, then remove 3 magnet counters from this scheme.\n<b>If this stage is completed, the players lose the game.</b>",
+            "text": "<b>Forced Response</b>: After you place a magnet counter on this scheme, if there are at least 3 magnet counters here, remove 3 of them and discard cards from the encounter deck until a [[Magnetic]] card is discarded. Reveal that card.\n<b>If this stage is completed, the players lose the game.</b>",
             "ability_link": "32141b"
         },
         {
@@ -33133,7 +33133,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Brawler",
             "text": "<b>Hero Interrupt</b>: When you attack, this attack deals 3 additional damage and gains overkill. Remove this card from the game and the campaign pool."
         },
@@ -33147,7 +33149,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Brawler",
             "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When you make a basic defense, you get +3 DEF. Ready your hero. Remove this card from the game and the campaign pool."
         },
@@ -33161,7 +33165,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Brawler",
             "text": "<b>Hero Interrupt</b> <i>(attack/defense)</i>: When an enemy attacks, spend 1 resource of any type \u2192 prevent 3 damage from this attack and deal 3 damage to that enemy. Remove this card from the game and the campaign pool."
         },
@@ -33175,7 +33181,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Brawler",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Spend 3 resources of any type \u2192 deal 6 damage to an enemy and ready your hero. Remove this card from the game and the campaign pool."
         },
@@ -33189,7 +33197,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Brawler",
             "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for an [[Attack]] or [[Defense]] event. Gain a tough status card. Remove this card from the game and the campaign pool."
         },
@@ -33204,7 +33214,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Commander",
             "text": "<b>Hero Interrupt</b>: When you attack, this attack deals 3 additional damage and gains overkill. Remove this card from the game and the campaign pool."
         },
@@ -33218,7 +33230,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Commander",
             "text": "<b>Alter-Ego Response</b>: After you recover, heal 3 damage from among characters you control and draw 1 card. Remove this card from the game and the campaign pool."
         },
@@ -33232,7 +33246,10 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL", "TACTIC"],
+            "traits": [
+                "SKILL",
+                "TACTIC"
+            ],
             "set_name": "Commander",
             "text": "<b>Hero Action</b>: Until the end of the phase, prevent all consequential damage each ally would take from attacking. Remove this card from the game and the campaign pool."
         },
@@ -33246,7 +33263,10 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL", "TACTIC"],
+            "traits": [
+                "SKILL",
+                "TACTIC"
+            ],
             "set_name": "Commander",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Spend 3 resources of any type \u2192 deal 6 damage to an enemy and ready each ally you control. Remove this card from the game and the campaign pool."
         },
@@ -33260,7 +33280,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Commander",
             "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for an [[Attack]] or [[Tactic]] event. Ready an ally and heal 2 damage from it. Remove this card from the game and the campaign pool."
         },
@@ -33275,7 +33297,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Defender",
             "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When you make a basic defense, you get +3 DEF. Ready your hero. Remove this card from the game and the campaign pool."
         },
@@ -33289,7 +33313,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Defender",
             "text": "<b>Hero Response</b>: After you thwart, remove 3 threat from among schemes in play. Confuse an enemy. Remove this card from the game and the campaign pool."
         },
@@ -33303,7 +33329,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Defender",
             "text": "<b>Hero Action</b> <i>(thwart)</i>: Spend 3 resources of any type \u2192 remove 5 threat from among schemes in play. You gain a tough status card. Remove this card from the game and the campaign pool."
         },
@@ -33317,7 +33345,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Defender",
             "text": "<b>Hero Interrupt</b> <i>(defense/thwart)</i>: When you defend against an attack, spend 2 resources of any type \u2192 that attack removes threat from the main scheme instead of dealing damage. Remove this card from the game and the campaign pool."
         },
@@ -33331,7 +33361,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Defender",
             "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for a [[Defense]] or [[Thwart]] event. Draw 1 card. Remove this card from the game and the campaign pool."
         },
@@ -33346,7 +33378,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Peacekeeper",
             "text": "<b>Hero Response</b>: After you thwart, remove 3 threat from among schemes in play. Confuse an enemy. Remove this card from the game and the campaign pool."
         },
@@ -33361,7 +33395,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Peacekeeper",
             "text": "<b>Alter-Ego Response</b>: After you recover, heal 3 damage from among characters you control and draw 1 card. Remove this card from the game and the campaign pool."
         },
@@ -33375,7 +33411,10 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL", "TACTIC"],
+            "traits": [
+                "SKILL",
+                "TACTIC"
+            ],
             "set_name": "Peacekeeper",
             "text": "<b>Hero Action</b>: Until the end of the phase, prevent all consequential damage each ally would take from thwarting. Remove this card from the game and the campaign pool."
         },
@@ -33389,7 +33428,10 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL", "TACTIC"],
+            "traits": [
+                "SKILL",
+                "TACTIC"
+            ],
             "set_name": "Peacekeeper",
             "text": "<b>Hero Action</b> <i>(thwart)</i>: Spend 3 resources of any type \u2192 remove 5 threat from among schemes in play. Ready each ally you control. Remove this card from the game and the campaign pool."
         },
@@ -33403,7 +33445,9 @@
                 "RES": "G",
                 "Class": "Campaign;Basic"
             },
-            "traits": ["SKILL"],
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "Peacekeeper",
             "text": "<b>Hero Resource</b>: Generate [wild][wild] resources for a [[Tactic]] or [[Thwart]] event. Stun an enemy. Remove this card from the game and the campaign pool."
         }
@@ -36181,7 +36225,7 @@
                 "X-MEN"
             ],
             "set_name": "Rogue",
-            "text": "<i>Skin Contact</i> \u2212 <b>Action</b>: Attach Touched to another character. You gain each of the attached character's [[TRAITS]] until the end of the round. (Limit once per round.)\n<b>Forced Response</b>: After the player phase begins, find Touched and set it aside."
+            "text": "<i>Skin Contact</i> \u2212 <b>Action</b>: Find Touched and attach it to another character. You gain each of the attached character's [[TRAITS]] until the end of the round. (Limit once per round.)\n<b>Forced Response</b>: After the player phase begins, find Touched and set it aside."
         },
         {
             "card_id": "38001b",
@@ -36197,7 +36241,7 @@
                 "MUTANT"
             ],
             "set_name": "Rogue",
-            "text": "<b>Setup</b>: Set your Touched upgrade aside.\n<i>Withdrawn</i> \u2212 <b>Forced Response</b>: After you change to this form, set Touched aside."
+            "text": "<b>Setup</b>: Find your Touched upgrade and set it aside.\n<i>Withdrawn</i> \u2212 <b>Forced Response</b>: After you change to this form, find Touched and set it aside."
         },
         {
             "card_id": "38002",
@@ -36297,7 +36341,7 @@
                 "SUPERPOWER"
             ],
             "set_name": "Rogue",
-            "text": "<b>Hero Action</b>: Attach Touched to a character other than Rogue and deal 2 damage to that character \u2192 heal 2 damage from Rogue and ready her. You gain each of the attached character's [[TRAITS]] until the end of the round."
+            "text": "<b>Hero Action</b>: Find Touched and attach it to a character other than Rogue and deal 2 damage to that character \u2192 heal 2 damage from Rogue and ready her. You gain each of the attached character's [[TRAITS]] until the end of the round."
         },
         {
             "card_id": "38008",
@@ -36542,7 +36586,7 @@
             },
             "traits": [],
             "set_name": "Rogue Nemesis",
-            "text": "<b>When Defeated</b>: Search the encounter deck and discard pile for a copy of the Misled treachery and shuffle it into your deck."
+            "text": "<b>When Defeated</b>: The defeating player searches the encounter deck and discard pile for a copy of the Misled treachery and shuffles it into their deck."
         },
         {
             "card_id": "38027",
@@ -41174,7 +41218,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Next Evolution Campaign",
-            "text": "Enters play with 1 assembly counter on it.\n<b>Action</b>: Remove 1 assembly counter from here → each player may search their deck and discard pile for an ally with a printed cost of 3 or less and put it into play. <i>(Any player can do this.)</i>"
+            "text": "Enters play with 1 assembly counter on it.\n<b>Action</b>: Remove 1 assembly counter from here \u2192 each player may search their deck and discard pile for an ally with a printed cost of 3 or less and put it into play. <i>(Any player can do this.)</i>"
         },
         {
             "card_id": "40191a",
@@ -41197,7 +41241,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Next Evolution Campaign",
-            "text": "Enters play with 1 safehouse counter on it.\n<b>Action</b>: Remove 1 safehouse counter from here → the first player puts the Safehouse support into play under their control."
+            "text": "Enters play with 1 safehouse counter on it.\n<b>Action</b>: Remove 1 safehouse counter from here \u2192 the first player puts the Safehouse support into play under their control."
         },
         {
             "card_id": "40192a",
@@ -41220,7 +41264,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Next Evolution Campaign",
-            "text": "Enters play with 1 pouch counter on it.\n<b>Action</b>: Remove 1 pouch counter from here → each player shuffles 1 copy of the Pouches resource card into their deck."
+            "text": "Enters play with 1 pouch counter on it.\n<b>Action</b>: Remove 1 pouch counter from here \u2192 each player shuffles 1 copy of the Pouches resource card into their deck."
         },
         {
             "card_id": "40193a",
@@ -41243,7 +41287,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Next Evolution Campaign",
-            "text": "Enters play with 1 prep counter on it.\n<b>Action</b>: Remove 1 prep counter from here → each player searches their deck and discard pile for 1 upgrade with a printed cost of 2 or less and puts it into play. <i>(Any player can do this.)</i>"
+            "text": "Enters play with 1 prep counter on it.\n<b>Action</b>: Remove 1 prep counter from here \u2192 each player searches their deck and discard pile for 1 upgrade with a printed cost of 2 or less and puts it into play. <i>(Any player can do this.)</i>"
         },
         {
             "card_id": "40194a",
@@ -44417,7 +44461,7 @@
             },
             "traits": [],
             "set_name": "",
-            "text": "<b>Alter-Ego Action</b>: Search your deck and discard pile for an ally and an upgrade that can be attached to that ally. Add them to your hand. <i>(Shuffle.)</i>"
+            "text": "<b>Alter-Ego Action</b>: Search your deck and discard pile for an ally and an upgrade that can be attached to an ally. Add them to your hand. <i>(Shuffle.)</i>"
         },
         {
             "card_id": "45018",
@@ -46879,8 +46923,12 @@
             "type": "SideScheme",
             "name": "Liberate the Seattle Core",
             "subtitle": "",
-            "desc": {"StartingThreat": "5"},
-            "traits": ["MISSION"],
+            "desc": {
+                "StartingThreat": "5"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
         },
@@ -46890,7 +46938,9 @@
             "name": "Liberate the Seattle Core",
             "subtitle": "",
             "desc": {},
-            "traits": ["FINISHED"],
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, place 2 threat on the main scheme. If the mission was defeated, each player adds 1 copy of the Desperate Measures upgrade to their hand."
         },
@@ -46899,8 +46949,12 @@
             "type": "SideScheme",
             "name": "Evacuate Survivors",
             "subtitle": "",
-            "desc": {"StartingThreat": "5"},
-            "traits": ["MISSION"],
+            "desc": {
+                "StartingThreat": "5"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
         },
@@ -46910,7 +46964,9 @@
             "name": "Evacuate Survivors",
             "subtitle": "",
             "desc": {},
-            "traits": ["FINISHED"],
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, deal each player a facedown encounter card. If the mission was defeated, each player searches their deck and discard pile for 1 card and adds it to their hand."
         },
@@ -46919,8 +46975,12 @@
             "type": "SideScheme",
             "name": "Sabotage the Sea Wall",
             "subtitle": "",
-            "desc": {"StartingThreat": "5"},
-            "traits": ["MISSION"],
+            "desc": {
+                "StartingThreat": "5"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
         },
@@ -46930,7 +46990,9 @@
             "name": "Sabotage the Sea Wall",
             "subtitle": "",
             "desc": {},
-            "traits": ["FINISHED"],
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, find North American Sea Wall and reveal it. If the mission was defeated, find North American Sea Wall, remove it from the game, and each player deals 3 damage to an enemy."
         },
@@ -46939,8 +47001,12 @@
             "type": "SideScheme",
             "name": "Find Lost Mutants",
             "subtitle": "",
-            "desc": {"StartingThreat": "5"},
-            "traits": ["MISSION"],
+            "desc": {
+                "StartingThreat": "5"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
         },
@@ -46950,7 +47016,9 @@
             "name": "Find Lost Mutants",
             "subtitle": "",
             "desc": {},
-            "traits": ["FINISHED"],
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, each player discards 1 card from their hand. If the mission was defeated, each player adds one set-aside campaign ally to their hand."
         },
@@ -46959,8 +47027,12 @@
             "type": "SideScheme",
             "name": "Protect the Professor",
             "subtitle": "",
-            "desc": {"StartingThreat": "5"},
-            "traits": ["MISSION"],
+            "desc": {
+                "StartingThreat": "5"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you resolve a mission attempt, place 1 attempt counter here and deal 1 damage to each ally at the mission. If there are 4 attempt counters here, remove Mission Team from the game and flip this card over.\n<b>When Defeated</b>: Shuffle each player card at the mission into its owner's deck. Flip Mission Team and this card over."
         },
@@ -46970,7 +47042,9 @@
             "name": "Protect the Professor",
             "subtitle": "",
             "desc": {},
-            "traits": ["FINISHED"],
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
             "text": "<b>Forced Response</b>: After you flip to this side, remove each card in the mission area from the game and do the following: If the mission was not defeated, the players lose the game. If the mission was defeated, each player searches their deck and discard pile for an ally and adds it to their hand."
         },
@@ -46979,20 +47053,30 @@
             "type": "Support",
             "name": "Mission Team",
             "subtitle": "",
-            "desc": {"RES": "G", "Class": "Campaign;Basic"},
-            "traits": ["MISSION"],
+            "desc": {
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [
+                "MISSION"
+            ],
             "set_name": "Campaign",
-            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team → choose: Reduce the cost of the next ally played to the mission this phase by 2, or make a mission attempt."
+            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team \u2192 choose: Reduce the cost of the next ally played to the mission this phase by 2, or make a mission attempt."
         },
         {
             "card_id": "45171b",
             "type": "Support",
             "name": "Mission Team",
             "subtitle": "",
-            "desc": {"RES": "G", "Class": "Campaign;Basic"},
-            "traits": ["FINISHED"],
+            "desc": {
+                "RES": "G",
+                "Class": "Campaign;Basic"
+            },
+            "traits": [
+                "FINISHED"
+            ],
             "set_name": "Campaign",
-            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team → choose a player to draw 1 card."
+            "text": "Mission Team cannot be discarded and the first player gains control of it.\n<b>Action</b>: Exhaust Mission Team \u2192 choose a player to draw 1 card."
         },
         {
             "card_id": "45172",
@@ -47119,8 +47203,16 @@
             "type": "Minion",
             "name": "* Mister Sinister",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
-            "traits": ["ELITE", "OVERSEER"],
+            "desc": {
+                "HP": "5",
+                "ATK": "0",
+                "SCH": "0",
+                "Victory": "5"
+            },
+            "traits": [
+                "ELITE",
+                "OVERSEER"
+            ],
             "set_name": "Prelates",
             "text": "Victory 5. Cannot take damage while another minion is at the mission. Players cannot assign cards with the same resource icon to more than one ally each mission attempt."
         },
@@ -47151,8 +47243,16 @@
             "type": "Minion",
             "name": "* The Shadow King",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
-            "traits": ["ELITE", "OVERSEER"],
+            "desc": {
+                "HP": "5",
+                "ATK": "0",
+                "SCH": "0",
+                "Victory": "5"
+            },
+            "traits": [
+                "ELITE",
+                "OVERSEER"
+            ],
             "set_name": "Prelates",
             "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, place 2 threat on the Mission side scheme for each mental resource discarded."
         },
@@ -47181,8 +47281,16 @@
             "type": "Minion",
             "name": "* Abyss",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
-            "traits": ["ELITE", "OVERSEER"],
+            "desc": {
+                "HP": "5",
+                "ATK": "0",
+                "SCH": "0",
+                "Victory": "5"
+            },
+            "traits": [
+                "ELITE",
+                "OVERSEER"
+            ],
             "set_name": "Prelates",
             "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, attach each card with a wild resource discarded to Abyss facedown. They cannot be used for the mission attempt."
         },
@@ -47211,8 +47319,16 @@
             "type": "Minion",
             "name": "* Sugar Man",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
-            "traits": ["ELITE", "OVERSEER"],
+            "desc": {
+                "HP": "5",
+                "ATK": "0",
+                "SCH": "0",
+                "Victory": "5"
+            },
+            "traits": [
+                "ELITE",
+                "OVERSEER"
+            ],
             "set_name": "Prelates",
             "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, heal 3 damage from Sugar Man for each physical resource discarded."
         },
@@ -47241,8 +47357,16 @@
             "type": "Minion",
             "name": "* Mikhail Rasputin",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "0", "SCH": "0", "Victory": "5"},
-            "traits": ["ELITE", "OVERSEER"],
+            "desc": {
+                "HP": "5",
+                "ATK": "0",
+                "SCH": "0",
+                "Victory": "5"
+            },
+            "traits": [
+                "ELITE",
+                "OVERSEER"
+            ],
             "set_name": "Prelates",
             "text": "Victory 5. Cannot take damage while another minion is at the mission. <b>Mission Response</b>: After you discard cards, deal 1 damage to an ally at the mission for each energy resource discarded."
         },
@@ -48834,7 +48958,7 @@
                 "X-MEN"
             ],
             "set_name": "",
-            "text": "<b>Action</b>: Deal 1 damage to another friendly character \u2192 until the end of the round, Rogue gains each of that character's [[Traits]] and adds that character's printed THW and ATK to her matching powers. (Limit once per round.)"
+            "text": "<b>Action</b>: Deal 1 damage to another friendly character \u2192 until the end of the round, Rogue gains each of that character's [[Traits]] and adds that character's base THW and ATK to her matching powers. (Limit once per round.)"
         },
         {
             "card_id": "48013",
@@ -49369,7 +49493,7 @@
                 "SUPERPOWER"
             ],
             "set_name": "Magneto",
-            "text": "<b>Hero Action</b>: Discard a minion with Wrapped in Metal attached \u2192 deal 5 damage to an enemy and stun it."
+            "text": "<b>Hero Action</b>: Discard a minion with Wrapped in Metal attached. Then, deal 5 damage to an enemy and stun it."
         },
         {
             "card_id": "49011",
@@ -49631,7 +49755,7 @@
                 "PSIONIC"
             ],
             "set_name": "Magneto Nemesis",
-            "text": "Steady. Toughness. Villainous.\n[star] <b>Forced Response</b>: After Exodus attacks you, discard cards from the top of your deck equal to his total ATK.\n<i>(Magneto's nemesis minion.)</i>"
+            "text": "Steady. Toughness. Villainous.\n[star] <b>Forced Response</b>: After Exodus attacks you, discard cards from the top of your deck equal to his total ATK for that attack.\n<i>(Magneto's nemesis minion.)</i>"
         },
         {
             "card_id": "49029",
@@ -52513,7 +52637,7 @@
                 "THUNDERBOLT"
             ],
             "set_name": "Supersonic",
-            "text": "Villainous. Victory 1.\n[star] Each character without the [[Aerial]] trait cannot make basic defenses against MACH-IV's attacks."
+            "text": "Villainous. Victory 1.\n[star] Each character without the [[Aerial]] trait cannot defend against MACH-IV's attacks."
         },
         {
             "card_id": "50157",
@@ -54030,7 +54154,7 @@
                 "SUPERPOWER"
             ],
             "set_name": "Silk",
-            "text": "<b>Interrupt</b>: When you reveal a card from the same encounter set as a card tucked under your identity, exhaust Eidetic Memory \u2192 swap those cards. Reveal the card that had been tucked under Silk instead."
+            "text": "<b>Interrupt</b>: When you reveal a card from the same encounter set as a card tucked under your identity, exhaust Eidetic Memory \u2192 swap those cards. Reveal the card that had been tucked under your identity instead."
         },
         {
             "card_id": "52009",
@@ -55618,7 +55742,7 @@
                 "TITLE"
             ],
             "set_name": "",
-            "text": "Play only if your identity has the [[S.H.I.E.L.D.]] trait.\nAttach to a friendly character.\nAttached character gets +1 hit point and gains the [[S.H.I.E.L.D.]] trait."
+            "text": "Play only if your identity has the [[S.H.I.E.L.D.]] trait.\nAttach to a friendly character. Max 1 per character.\nAttached character gets +1 hit point and gains the [[S.H.I.E.L.D.]] trait."
         },
         {
             "card_id": "54034",
@@ -59429,37 +59553,59 @@
                 "DEF": "2",
                 "HS": "5"
             },
-            "traits": ["AERIAL", "AVENGER"],
+            "traits": [
+                "AERIAL",
+                "AVENGER"
+            ],
             "set_name": "Wonder Man",
-            "text": "<i>Power Recycling</i> — Wonder Man gets +1 ATK for each card tucked under Ionic Physiology.\n[star] <b>Forced Response</b>: After Wonder Man makes a basic attack, discard each card tucked under Ionic Physiology."
+            "text": "<i>Power Recycling</i> \u2014 Wonder Man gets +1 ATK for each card tucked under Ionic Physiology.\n[star] <b>Forced Response</b>: After Wonder Man makes a basic attack, discard each card tucked under Ionic Physiology."
         },
         {
             "card_id": "58001b",
             "type": "AlterEgo",
             "name": "* Simon Williams",
             "subtitle": "",
-            "desc": {"HP": "12", "REC": "3", "HS": "6"},
-            "traits": ["CIVILIAN"],
+            "desc": {
+                "HP": "12",
+                "REC": "3",
+                "HS": "6"
+            },
+            "traits": [
+                "CIVILIAN"
+            ],
             "set_name": "Wonder Man",
-            "text": "<i>Ionic Energy Being</i> — You may include events with a printed [energy] resource icon from any aspect in your deck.\n<b>Setup</b>: Put Ionic Physiology into play."
+            "text": "<i>Ionic Energy Being</i> \u2014 You may include events with a printed [energy] resource icon from any aspect in your deck.\n<b>Setup</b>: Put Ionic Physiology into play."
         },
         {
             "card_id": "58002",
             "type": "Upgrade",
             "name": "Ionic Physiology",
             "subtitle": "",
-            "desc": {"RES": "Y", "Class": "Hero", "Permanent": "1", "MaxPerDeck": "1"},
-            "traits": ["SUPERPOWER"],
+            "desc": {
+                "RES": "Y",
+                "Class": "Hero",
+                "Permanent": "1",
+                "MaxPerDeck": "1"
+            },
+            "traits": [
+                "SUPERPOWER"
+            ],
             "set_name": "Wonder Man",
-            "text": "Permanent. Max 3 cards tucked here.\n<b>Response</b>: After you play an event with a printed [energy] resource, tuck that event from your discard pile under this card → heal 1 damage from your identity."
+            "text": "Permanent. Max 3 cards tucked here.\n<b>Response</b>: After you play an event with a printed [energy] resource, tuck that event from your discard pile under this card. Then, heal 1 damage from your identity."
         },
         {
             "card_id": "58003",
             "type": "Event",
             "name": "Active Altruism",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "Class": "Hero"},
-            "traits": ["THWART"],
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "THWART"
+            ],
             "set_name": "Wonder Man",
             "text": "<b>Hero Action</b> <i>(thwart)</i>: Remove 1 threat from a scheme. Remove 2 additional threat from that scheme for each [energy] resource you overpaid for this card (to a maximum of [energy] [energy])."
         },
@@ -59468,8 +59614,15 @@
             "type": "Event",
             "name": "Ionic Blast",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
-            "traits": ["ATTACK", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK",
+                "SUPERPOWER"
+            ],
             "set_name": "Wonder Man",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 3 damage to an enemy. Deal 2 additional damage to that enemy for each [energy] resource you overpaid for this card (to a maximum of [energy] [energy] [energy])."
         },
@@ -59478,8 +59631,15 @@
             "type": "Event",
             "name": "Starstruck",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
-            "traits": ["ATTACK", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK",
+                "SUPERPOWER"
+            ],
             "set_name": "Wonder Man",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Deal damage to an enemy equal to your ATK. If you overpaid for this card with a [energy] resource, stun that enemy."
         },
@@ -59488,38 +59648,60 @@
             "type": "Resource",
             "name": "Energy Siphon",
             "subtitle": "",
-            "desc": {"RES": "Y", "Class": "Hero"},
+            "desc": {
+                "RES": "Y",
+                "Class": "Hero"
+            },
             "traits": [],
             "set_name": "Wonder Man",
-            "text": "<b>Hero Interrupt</b>: When you spend this card, take up to 3 damage → this card generates 1 additional [energy] resource for each damage taken this way."
+            "text": "<b>Hero Interrupt</b>: When you spend this card, take up to 3 damage \u2192 this card generates 1 additional [energy] resource for each damage taken this way."
         },
         {
             "card_id": "58007",
             "type": "Support",
             "name": "Wonder Fans",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "G", "Class": "Hero"},
-            "traits": ["CIVILIAN"],
+            "desc": {
+                "Cost": "1",
+                "RES": "G",
+                "Class": "Hero"
+            },
+            "traits": [
+                "CIVILIAN"
+            ],
             "set_name": "Wonder Man",
-            "text": "<b>Alter-Ego Action</b>: Exhaust Wonder Fans → choose:\n• Tuck 1 event with a printed [energy] resource from your discard pile under Ionic Physiology.\n• Draw 1 card."
+            "text": "<b>Alter-Ego Action</b>: Exhaust Wonder Fans \u2192 choose:\n\u2022 Tuck 1 event with a printed [energy] resource from your discard pile under Ionic Physiology.\n\u2022 Draw 1 card."
         },
         {
             "card_id": "58008",
             "type": "Upgrade",
             "name": "Jet Belt",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "B", "Class": "Hero"},
-            "traits": ["ITEM", "TECH"],
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM",
+                "TECH"
+            ],
             "set_name": "Wonder Man",
-            "text": "<b>Hero Resource</b>: Exhaust Jet Belt → generate a [energy] resource for an event.\n<b>Hero Resource</b>: Exhaust Jet Belt and discard a card tucked under Ionic Physiology → generate a [energy] resource."
+            "text": "<b>Hero Resource</b>: Exhaust Jet Belt \u2192 generate a [energy] resource for an event.\n<b>Hero Resource</b>: Exhaust Jet Belt and discard a card tucked under Ionic Physiology \u2192 generate a [energy] resource."
         },
         {
             "card_id": "58009",
             "type": "Upgrade",
             "name": "Mr. Hollywood",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "G", "Class": "Hero"},
-            "traits": ["TITLE"],
+            "desc": {
+                "Cost": "1",
+                "RES": "G",
+                "Class": "Hero"
+            },
+            "traits": [
+                "TITLE"
+            ],
             "set_name": "Wonder Man",
             "text": "<b>Resource</b>: Generate a [energy] resource to overpay for a card. (Limit once per card.)"
         },
@@ -59528,18 +59710,30 @@
             "type": "Upgrade",
             "name": "Signature Sunglasses",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
-            "traits": ["ITEM"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM"
+            ],
             "set_name": "Wonder Man",
-            "text": "<b>Response</b>: After you change form, choose:\n• Tuck an event or resource card with a printed [energy] resource from your discard pile under Ionic Physiology.\n• Add a card tucked under Ionic Physiology to your hand."
+            "text": "<b>Response</b>: After you change form, choose:\n\u2022 Tuck an event or resource card with a printed [energy] resource from your discard pile under Ionic Physiology.\n\u2022 Add a card tucked under Ionic Physiology to your hand."
         },
         {
             "card_id": "58011",
             "type": "Upgrade",
             "name": "\"What Are You?\"",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "Y", "Class": "Hero"},
-            "traits": ["SUPERPOWER"],
+            "desc": {
+                "Cost": "2",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SUPERPOWER"
+            ],
             "set_name": "Wonder Man",
             "text": "<b>Forced Interrupt</b>: When Wonder Man would be defeated, instead set his hit point dial to 4 and change him to alter-ego form. You may tuck events with a printed [energy] resource from your discard pile under Ionic Physiology until there are 3 cards tucked there. Remove this card from the game."
         },
@@ -59548,28 +59742,58 @@
             "type": "Ally",
             "name": "* Firebird",
             "subtitle": "Bonita Juarez",
-            "desc": {"Cost": "2", "HP": "2", "ATK": "2**", "THW": "2*", "RES": "Y", "Class": "Justice"},
-            "traits": ["AERIAL", "AVENGER"],
+            "desc": {
+                "Cost": "2",
+                "HP": "2",
+                "ATK": "2**",
+                "THW": "2*",
+                "RES": "Y",
+                "Class": "Justice"
+            },
+            "traits": [
+                "AERIAL",
+                "AVENGER"
+            ],
             "set_name": "",
-            "text": "If you overpaid for Firebird, put 1 rebirth counter on her.\n<b>Interrupt</b>: When Firebird would be defeated by consequential damage, remove 1 rebirth counter from her → heal all damage from her instead."
+            "text": "If you overpaid for Firebird, put 1 rebirth counter on her.\n<b>Interrupt</b>: When Firebird would be defeated by consequential damage, remove 1 rebirth counter from her \u2192 heal all damage from her instead."
         },
         {
             "card_id": "58013",
             "type": "Ally",
             "name": "* Hawkeye",
             "subtitle": "Clint Barton",
-            "desc": {"Cost": "3", "HP": "3", "ATK": "1*", "THW": "1*", "RES": "Y", "Class": "Justice"},
-            "traits": ["AVENGER", "S.H.I.E.L.D"],
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "1*",
+                "THW": "1*",
+                "RES": "Y",
+                "Class": "Justice"
+            },
+            "traits": [
+                "AVENGER",
+                "S.H.I.E.L.D"
+            ],
             "set_name": "",
-            "text": "Hawkeye enters play with 4 arrow counters on him.\n<b>Response</b>: After an ally makes a basic thwart, remove 1 arrow counter from Hawkeye → deal 2 damage to a minion."
+            "text": "Hawkeye enters play with 4 arrow counters on him.\n<b>Response</b>: After an ally makes a basic thwart, remove 1 arrow counter from Hawkeye \u2192 deal 2 damage to a minion."
         },
         {
             "card_id": "58014",
             "type": "Ally",
             "name": "* Scarlet Witch",
             "subtitle": "Wanda Maximoff",
-            "desc": {"Cost": "2", "HP": "3", "ATK": "2*", "THW": "2*", "RES": "B", "Class": "Justice"},
-            "traits": ["AVENGER", "MYSTIC"],
+            "desc": {
+                "Cost": "2",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "2*",
+                "RES": "B",
+                "Class": "Justice"
+            },
+            "traits": [
+                "AVENGER",
+                "MYSTIC"
+            ],
             "set_name": "",
             "text": "<b>Forced Response</b>: After you play Scarlet Witch, discard the top card of the encounter deck. If it is a treachery card, resolve its <b>\"When Revealed\"</b> ability."
         },
@@ -59578,8 +59802,18 @@
             "type": "Ally",
             "name": "* Sentry",
             "subtitle": "Robert Reynolds",
-            "desc": {"Cost": "3", "HP": "5", "ATK": "3*", "THW": "2*", "RES": "Y", "Class": "Justice"},
-            "traits": ["AERIAL", "AVENGER"],
+            "desc": {
+                "Cost": "3",
+                "HP": "5",
+                "ATK": "3*",
+                "THW": "2*",
+                "RES": "Y",
+                "Class": "Justice"
+            },
+            "traits": [
+                "AERIAL",
+                "AVENGER"
+            ],
             "set_name": "",
             "text": "<b>Forced Response</b>: After Sentry enters play, search the encounter deck for a side scheme and reveal it. <i>(Shuffle.)</i> If no side scheme was revealed this way, place 6 threat on the main scheme."
         },
@@ -59588,28 +59822,48 @@
             "type": "Event",
             "name": "Battlefield Benevolence",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Class": "Justice"},
-            "traits": ["TACTIC"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Class": "Justice"
+            },
+            "traits": [
+                "TACTIC"
+            ],
             "set_name": "",
-            "text": "<b>Hero Action</b>: Heal 2 damage from an enemy → confuse that enemy."
+            "text": "<b>Hero Action</b>: Heal 2 damage from an enemy \u2192 confuse that enemy."
         },
         {
             "card_id": "58017",
             "type": "Event",
             "name": "Bombs Away",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "Y", "Class": "Aggression"},
-            "traits": ["AERIAL", "TACTIC"],
+            "desc": {
+                "Cost": "2",
+                "RES": "Y",
+                "Class": "Aggression"
+            },
+            "traits": [
+                "AERIAL",
+                "TACTIC"
+            ],
             "set_name": "",
-            "text": "<b>Hero Action</b>: Exhaust an [[AERIAL]] character you control and choose a player → deal 3 damage to the villain and each minion engaged with that player."
+            "text": "<b>Hero Action</b>: Exhaust an [[AERIAL]] character you control and choose a player \u2192 deal 3 damage to the villain and each minion engaged with that player."
         },
         {
             "card_id": "58018",
             "type": "Event",
             "name": "Everywhere All at Once",
             "subtitle": "",
-            "desc": {"Cost": "X", "RES": "Y", "Class": "Justice"},
-            "traits": ["AERIAL", "THWART"],
+            "desc": {
+                "Cost": "X",
+                "RES": "Y",
+                "Class": "Justice"
+            },
+            "traits": [
+                "AERIAL",
+                "THWART"
+            ],
             "set_name": "",
             "text": "Play only if your identity has the [[Aerial]] trait.\n<b>Hero Action</b> <i>(thwart)</i>: Choose X schemes. Remove 2 threat from each chosen scheme (3 threat instead if you overpaid for this card)."
         },
@@ -59618,7 +59872,11 @@
             "type": "Event",
             "name": "Stronger Together",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "Class": "Protection"},
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "Class": "Protection"
+            },
             "traits": [],
             "set_name": "",
             "text": "<b>Hero Interrupt</b>: When a character other than your hero would take any amount of damage, if that character shares a [[Trait]] with your hero, reduce that damage by your DEF."
@@ -59628,18 +59886,31 @@
             "type": "Event",
             "name": "Unified Strike",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "Class": "Leadership"},
-            "traits": ["TACTIC"],
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "Class": "Leadership"
+            },
+            "traits": [
+                "TACTIC"
+            ],
             "set_name": "",
-            "text": "<b>Hero Interrupt</b>: When an ally uses a basic power, exhaust your hero → add your hero's matching power to that ally's power for this use. That ally does not take consequential damage for this use."
+            "text": "<b>Hero Interrupt</b>: When an ally uses a basic power, exhaust your hero \u2192 add your hero's matching power to that ally's power for this use. That ally does not take consequential damage for this use."
         },
         {
             "card_id": "58021",
             "type": "Upgrade",
             "name": "Heroic Conditioning",
             "subtitle": "",
-            "desc": {"Cost": "3", "RES": "R", "MaxPerUnit": "1", "Class": "Justice"},
-            "traits": ["CONDITION"],
+            "desc": {
+                "Cost": "3",
+                "RES": "R",
+                "MaxPerUnit": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "CONDITION"
+            ],
             "set_name": "",
             "text": "Play under any player's control. Max 1 per player.\nYou get +3 hit points and your hero gets +1 THW."
         },
@@ -59648,8 +59919,17 @@
             "type": "Ally",
             "name": "* Swordsman",
             "subtitle": "Jacques Duquesne",
-            "desc": {"Cost": "4", "HP": "4", "ATK": "2*", "THW": "2**", "RES": "R", "Class": "Basic"},
-            "traits": ["AVENGER"],
+            "desc": {
+                "Cost": "4",
+                "HP": "4",
+                "ATK": "2*",
+                "THW": "2**",
+                "RES": "R",
+                "Class": "Basic"
+            },
+            "traits": [
+                "AVENGER"
+            ],
             "set_name": "",
             "text": "[star] Swordsman's basic attacks gain piercing.\n<b>Hero Response</b>: After a boost card is turned faceup during an undefended attack, declare Swordsman as the defender without exhausting him."
         },
@@ -59662,28 +59942,48 @@
             "type": "Support",
             "name": "* Jarvis",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "Y", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["AVENGER", "PERSONA"],
+            "desc": {
+                "Cost": "2",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "AVENGER",
+                "PERSONA"
+            ],
             "set_name": "",
-            "text": "<b>Response</b>: After an [[Avenger]] hero changes into alter-ego form, exhaust Jarvis → choose:\n• That identity gets +2 REC until the end of the phase.\n• Discard a status card from that identity."
+            "text": "<b>Response</b>: After an [[Avenger]] hero changes into alter-ego form, exhaust Jarvis \u2192 choose:\n\u2022 That identity gets +2 REC until the end of the phase.\n\u2022 Discard a status card from that identity."
         },
         {
             "card_id": "58025",
             "type": "Obligation",
             "name": "Pacifism",
             "subtitle": "",
-            "desc": {"Boost": "2", "GiveTo": "Simon Williams"},
+            "desc": {
+                "Boost": "2",
+                "GiveTo": "Simon Williams"
+            },
             "traits": [],
             "set_name": "Wonder Man",
-            "text": "<b><i>Give to the Simon Williams player.</i></b>\nWonder Man cannot attack.\n<b>Alter-Ego Action</b>: Exhaust Simon Williams or discard 3 cards tucked under Ionic Physiology → discard this card."
+            "text": "<b><i>Give to the Simon Williams player.</i></b>\nWonder Man cannot attack.\n<b>Alter-Ego Action</b>: Exhaust Simon Williams or discard 3 cards tucked under Ionic Physiology \u2192 discard this card."
         },
         {
             "card_id": "58026",
             "type": "Minion",
             "name": "* Grim Reaper",
             "subtitle": "",
-            "desc": {"HP": "3", "ATK": "2", "SCH": "2", "Boost": "2", "Quickstrike": "1", "Nemesis": "Wonder Man"},
-            "traits": ["CYBORG"],
+            "desc": {
+                "HP": "3",
+                "ATK": "2",
+                "SCH": "2",
+                "Boost": "2",
+                "Quickstrike": "1",
+                "Nemesis": "Wonder Man"
+            },
+            "traits": [
+                "CYBORG"
+            ],
             "set_name": "Wonder Man Nemesis",
             "text": "Quickstrike.\n[star] <b>Forced Response</b>: After Grim Reaper attacks and defeats an ally, deal that ally's controller a facedown encounter card."
         },
@@ -59692,7 +59992,10 @@
             "type": "SideScheme",
             "name": "Brother vs. Brother",
             "subtitle": "",
-            "desc": {"StartingThreat": "2", "Boost": "3"},
+            "desc": {
+                "StartingThreat": "2",
+                "Boost": "3"
+            },
             "traits": [],
             "set_name": "Wonder Man Nemesis",
             "text": "As an additional cost to attack Grim Reaper, you must discard 1 card from your hand."
@@ -59702,7 +60005,9 @@
             "type": "Treachery",
             "name": "Scythe Strike",
             "subtitle": "",
-            "desc": {"Boost": "2"},
+            "desc": {
+                "Boost": "2"
+            },
             "traits": [],
             "set_name": "Wonder Man Nemesis",
             "text": "<b>When Revealed</b>: If Grim Reaper is in play, he activates against you. Otherwise, take 2 indirect damage."
@@ -59722,8 +60027,15 @@
             "type": "Upgrade",
             "name": "Caught in the Crossfire",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "MaxPerUnit": "1", "Class": "Aggression"},
-            "traits": ["TACTIC"],
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "MaxPerUnit": "1",
+                "Class": "Aggression"
+            },
+            "traits": [
+                "TACTIC"
+            ],
             "set_name": "",
             "text": "Attach to a non-[[Elite]] minion. Max 1 per minion.\n<b>Interrupt</b>: When a friendly character attacks, deal 1 damage to attached minion."
         },
@@ -59732,7 +60044,11 @@
             "type": "Support",
             "name": "Cameo",
             "subtitle": "",
-            "desc": {"MaxPerDeck": "1", "Class": "Leadership", "Setup": "1"},
+            "desc": {
+                "MaxPerDeck": "1",
+                "Class": "Leadership",
+                "Setup": "1"
+            },
             "traits": [],
             "set_name": "",
             "text": "Setup. Max 1 per deck.\n<b>Setup</b>: Search your collection for an identity-specific ally for an identity not in this game. Shuffle that ally into your deck. Discard 2 cards from your hand and remove this card from the game."
@@ -59742,8 +60058,15 @@
             "type": "Upgrade",
             "name": "Coordinated Effort",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "G", "MaxPerUnit": "1", "Class": "Leadership"},
-            "traits": ["TACTIC"],
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "MaxPerUnit": "1",
+                "Class": "Leadership"
+            },
+            "traits": [
+                "TACTIC"
+            ],
             "set_name": "",
             "text": "Attach to an encounter card in play. Max 1 per encounter card.\nWhile paying costs on attached card, any player may help pay those costs."
         },
@@ -59752,8 +60075,14 @@
             "type": "Event",
             "name": "Disarming Defense",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "Class": "Protection"},
-            "traits": ["DEFENSE"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Protection"
+            },
+            "traits": [
+                "DEFENSE"
+            ],
             "set_name": "",
             "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When your hero defends against an attack, it gets +2 DEF for that attack. If you take no damage from that attack, discard an attachment on the attacking enemy with the text \"<b>Hero Action</b>\" or \"<b>Hero Response</b>\"."
         },
@@ -59762,10 +60091,18 @@
             "type": "Support",
             "name": "Avengers Compound",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "B", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["AVENGER", "LOCATION"],
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "AVENGER",
+                "LOCATION"
+            ],
             "set_name": "",
-            "text": "Play only if your identity has the [[Avenger]] trait. Max 1 per deck.\n<b>Action</b>: Exhaust Avengers Compound → choose: tuck 1 ally from your hand here if there is no ally tucked here, or play the ally tucked here as if it were in your hand."
+            "text": "Play only if your identity has the [[Avenger]] trait. Max 1 per deck.\n<b>Action</b>: Exhaust Avengers Compound \u2192 choose: tuck 1 ally from your hand here if there is no ally tucked here, or play the ally tucked here as if it were in your hand."
         }
     ],
     "hercules": [
@@ -59781,9 +60118,12 @@
                 "DEF": "2",
                 "HS": "4"
             },
-            "traits": ["AVENGER", "OLYMPUS"],
+            "traits": [
+                "AVENGER",
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
-            "text": "<i>Atonement</i> — <b>Response</b>: After a [[LABOR]] card is added to the victory display, put the top card of the [[GIFT]] deck into play. Ready Hercules. You may flip to alter-ego form. (Limit once per phase.)"
+            "text": "<i>Atonement</i> \u2014 <b>Response</b>: After a [[LABOR]] card is added to the victory display, put the top card of the [[GIFT]] deck into play. Ready Hercules. You may flip to alter-ego form. (Limit once per phase.)"
         },
         {
             "card_id": "59001b",
@@ -59795,17 +60135,23 @@
                 "REC": "4",
                 "HS": "6"
             },
-            "traits": ["OLYMPUS"],
+            "traits": [
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
-            "text": "Hercules begins the game with a [[LABOR]] deck and a [[GIFT]] deck. <i>New Labors of Hercules</i> — <b>Action</b>: If there is no [[LABOR]] card in play, reveal the top card of the [[LABOR]] deck."
+            "text": "Hercules begins the game with a [[LABOR]] deck and a [[GIFT]] deck. <i>New Labors of Hercules</i> \u2014 <b>Action</b>: If there is no [[LABOR]] card in play, reveal the top card of the [[LABOR]] deck."
         },
         {
             "card_id": "59002",
             "type": "Attachment",
             "name": "Defeat the Hydra",
             "subtitle": "",
-            "desc": {"Victory": "0"},
-            "traits": ["LABOR"],
+            "desc": {
+                "Victory": "0"
+            },
+            "traits": [
+                "LABOR"
+            ],
             "set_name": "Hercules",
             "text": "Victory 0.\nAttached minion gets +6 hit points and gains the [[ELITE]] trait. Attached minion cannot take damage except from Hercules's attacks.\n<b>When Revealed</b>: Find a non-[[ELITE]] minion with at least 6 printed hit points. Reveal it, heal all damage from it, and attach this card to it."
         },
@@ -59814,8 +60160,12 @@
             "type": "Attachment",
             "name": "Embody Pathos",
             "subtitle": "",
-            "desc": {"Victory": "0"},
-            "traits": ["LABOR"],
+            "desc": {
+                "Victory": "0"
+            },
+            "traits": [
+                "LABOR"
+            ],
             "set_name": "Hercules",
             "text": "Victory 0.\nAttached side scheme gains assault. Threat cannot be removed from attached scheme except by Hercules's thwarts.\n<b>When Revealed</b>: Find an encounter side scheme that is not in play and reveal it, treating each [per_hero] on it as 1, and attach this card to it. Place 6 additional threat on it."
         },
@@ -59824,8 +60174,14 @@
             "type": "Obligation",
             "name": "Protect Humanity",
             "subtitle": "",
-            "desc": {"Uses": "3,labor", "Victory": "0", "GiveTo": ""},
-            "traits": ["LABOR"],
+            "desc": {
+                "Uses": "3,labor",
+                "Victory": "0",
+                "GiveTo": ""
+            },
+            "traits": [
+                "LABOR"
+            ],
             "set_name": "Hercules",
             "text": "Uses (3 labor counters). Victory 0.\n<b>When Revealed</b>: Find Amadeus Cho and put him into play.\n<b>Forced Interrupt</b>: When the villain would attack Hercules, choose 1 of your allies. The villain attacks that ally instead. After that attack resolves, if Hercules defended, remove 1 labor counter from here."
         },
@@ -59834,8 +60190,14 @@
             "type": "Upgrade",
             "name": "* Nemean Lion Skin",
             "subtitle": "",
-            "desc": {"Permanent": "1", "Class": "Hero"},
-            "traits": ["ARTIFACT", "GIFT"],
+            "desc": {
+                "Permanent": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ARTIFACT",
+                "GIFT"
+            ],
             "set_name": "Hercules",
             "text": "Permanent.\nHercules gets +2 hit points and gains steady.\n<b>Response</b>: After this card enters play, draw 4 cards."
         },
@@ -59844,8 +60206,14 @@
             "type": "Upgrade",
             "name": "* Shield of Perseus",
             "subtitle": "",
-            "desc": {"Permanent": "1", "Class": "Hero"},
-            "traits": ["ARTIFACT", "GIFT"],
+            "desc": {
+                "Permanent": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ARTIFACT",
+                "GIFT"
+            ],
             "set_name": "Hercules",
             "text": "Permanent.\nHercules gets +1 hit point and gains retaliate 1.\n<b>Response</b>: After this card enters play, draw 4 cards."
         },
@@ -59854,8 +60222,16 @@
             "type": "Upgrade",
             "name": "* Sword of Peleus",
             "subtitle": "",
-            "desc": {"Permanent": "1", "Restricted": "1", "Class": "Hero"},
-            "traits": ["ARTIFACT", "GIFT", "WEAPON"],
+            "desc": {
+                "Permanent": "1",
+                "Restricted": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ARTIFACT",
+                "GIFT",
+                "WEAPON"
+            ],
             "set_name": "Hercules",
             "text": "Permanent. Restricted.\nHercules gets +1 hit point and his basic attacks gain piercing.\n<b>Response</b>: After this card enters play, draw 4 cards."
         },
@@ -59864,18 +60240,33 @@
             "type": "Ally",
             "name": "* Amadeus Cho",
             "subtitle": "",
-            "desc": {"Cost": "2", "HP": "2", "ATK": "1*", "THW": "1*", "RES": "G", "Class": "Hero"},
-            "traits": ["GENIUS"],
+            "desc": {
+                "Cost": "2",
+                "HP": "2",
+                "ATK": "1*",
+                "THW": "1*",
+                "RES": "G",
+                "Class": "Hero"
+            },
+            "traits": [
+                "GENIUS"
+            ],
             "set_name": "Hercules",
-            "text": "<b>Forced Interrupt</b>: When a minion would attack you, it attacks Amadeus Cho instead.\n<b>Action</b>: Exhaust Amadeus Cho → draw 1 card."
+            "text": "<b>Forced Interrupt</b>: When a minion would attack you, it attacks Amadeus Cho instead.\n<b>Action</b>: Exhaust Amadeus Cho \u2192 draw 1 card."
         },
         {
             "card_id": "59009",
             "type": "Event",
             "name": "The Gift of Battle",
             "subtitle": "",
-            "desc": {"Cost": "3", "RES": "R", "Class": "Hero"},
-            "traits": ["ATTACK"],
+            "desc": {
+                "Cost": "3",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK"
+            ],
             "set_name": "Hercules",
             "text": "Reduce the cost to play this card by 1 for each [[GIFT]] card you control.\n<b>Hero Action</b> <i>(attack)</i>: Deal 5 damage to an enemy."
         },
@@ -59884,8 +60275,14 @@
             "type": "Event",
             "name": "Son of Zeus",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "Y", "Class": "Hero"},
-            "traits": ["OLYMPUS"],
+            "desc": {
+                "Cost": "2",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
             "text": "<b>Hero Action</b>: Ready Hercules. If you control at least: 1 [[GIFT]] card, ready an identity-specific upgrade you control; 2 [[GIFT]] cards, gain a tough status card; 3 [[GIFT]] cards, draw 1 card."
         },
@@ -59894,8 +60291,14 @@
             "type": "Event",
             "name": "Wisdom of Athena",
             "subtitle": "",
-            "desc": {"Cost": "3", "RES": "B", "Class": "Hero"},
-            "traits": ["THWART"],
+            "desc": {
+                "Cost": "3",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "THWART"
+            ],
             "set_name": "Hercules",
             "text": "Reduce the cost to play this card by 1 for each [[GIFT]] card you control.\n<b>Hero Action</b> <i>(thwart)</i>: Remove 4 threat from a scheme."
         },
@@ -59904,48 +60307,84 @@
             "type": "Support",
             "name": "* Olympus",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "Class": "Hero"},
-            "traits": ["LOCATION", "OLYMPUS"],
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "LOCATION",
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
-            "text": "<b>Resource</b>: Exhaust Olympus → generate a [wild] resource for each [[GIFT]] card you control."
+            "text": "<b>Resource</b>: Exhaust Olympus \u2192 generate a [wild] resource for each [[GIFT]] card you control."
         },
         {
             "card_id": "59013",
             "type": "Upgrade",
             "name": "* Gauntlets of Hercules",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "R", "Class": "Hero"},
-            "traits": ["ARMOR", "OLYMPUS"],
+            "desc": {
+                "Cost": "0",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ARMOR",
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
-            "text": "<b>Hero Interrupt</b>: When Hercules defends against an attack, exhaust Gauntlets of Hercules → Hercules gains retaliate 1 for that attack for each [[GIFT]] card you control."
+            "text": "<b>Hero Interrupt</b>: When Hercules defends against an attack, exhaust Gauntlets of Hercules \u2192 Hercules gains retaliate 1 for that attack for each [[GIFT]] card you control."
         },
         {
             "card_id": "59014",
             "type": "Upgrade",
             "name": "* Golden Mace",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Restricted": "1", "Class": "Hero"},
-            "traits": ["OLYMPUS", "WEAPON"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Restricted": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "OLYMPUS",
+                "WEAPON"
+            ],
             "set_name": "Hercules",
-            "text": "Restricted.\n<b>Hero Interrupt</b>: When Hercules makes a basic attack, exhaust Golden Mace → Hercules gets +1 ATK for this attack for each [[GIFT]] card you control. This attack gains overkill."
+            "text": "Restricted.\n<b>Hero Interrupt</b>: When Hercules makes a basic attack, exhaust Golden Mace \u2192 Hercules gets +1 ATK for this attack for each [[GIFT]] card you control. This attack gains overkill."
         },
         {
             "card_id": "59015",
             "type": "Upgrade",
             "name": "* Herc's Helm",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "R", "Class": "Hero"},
-            "traits": ["ARMOR", "OLYMPUS"],
+            "desc": {
+                "Cost": "0",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ARMOR",
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
-            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When the villain attacks, exhaust Herc's Helm → reduce the amount of damage this attack deals by 1."
+            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When the villain attacks, exhaust Herc's Helm \u2192 reduce the amount of damage this attack deals by 1."
         },
         {
             "card_id": "59016",
             "type": "Upgrade",
             "name": "Lion of Olympus",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "R", "Temporary": "1", "Class": "Hero"},
-            "traits": ["OLYMPUS"],
+            "desc": {
+                "Cost": "0",
+                "RES": "R",
+                "Temporary": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "OLYMPUS"
+            ],
             "set_name": "Hercules",
             "text": "Temporary. <i>(Discard this card at the end of the round.)</i>\nYour hero gets +1 THW, +1 ATK, and +1 DEF."
         },
@@ -59954,10 +60393,17 @@
             "type": "Upgrade",
             "name": "* Prince of Power",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
-            "traits": ["OLYMPUS", "TITLE"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "OLYMPUS",
+                "TITLE"
+            ],
             "set_name": "Hercules",
-            "text": "<b>Hero Response</b>: After Hercules attacks and defeats an enemy, exhaust Prince of Power → heal 1 damage from Hercules for each point of excess damage dealt to that enemy by that attack."
+            "text": "<b>Hero Response</b>: After Hercules attacks and defeats an enemy, exhaust Prince of Power \u2192 heal 1 damage from Hercules for each point of excess damage dealt to that enemy by that attack."
         },
         {
             "card_id": "59018",
@@ -60074,8 +60520,18 @@
             "type": "Ally",
             "name": "* Gilgamesh",
             "subtitle": "",
-            "desc": {"Cost": "3", "HP": "6", "ATK": "3**", "THW": "2**", "RES": "R", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["ETERNAL"],
+            "desc": {
+                "Cost": "3",
+                "HP": "6",
+                "ATK": "3**",
+                "THW": "2**",
+                "RES": "R",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "ETERNAL"
+            ],
             "set_name": "",
             "text": "As an additional cost to play this card, if you do not have the [[ETERNAL]] trait, confuse your identity."
         },
@@ -60084,28 +60540,64 @@
             "type": "Event",
             "name": "Ancient Rivalry",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "G", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["ASGARD", "OLYMPUS"],
+            "desc": {
+                "Cost": "1",
+                "RES": "G",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "ASGARD",
+                "OLYMPUS"
+            ],
             "set_name": "",
             "text": "Team-Up (Hercules and Thor). Max 1 per deck.\n<b>Hero Action</b>: Search your discard pile for an identity-specific upgrade and add it to your hand. Ready Hercules and Thor."
         },
-        {"card_id": "59027", "full_link": "31023"},
+        {
+            "card_id": "59027",
+            "full_link": "31023"
+        },
         {
             "card_id": "59028",
             "type": "PlayerSideScheme",
             "name": "* Evaluate Threat",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "StartingThreat": "2*", "Victory": "0", "MaxPerDeck": "1", "Class": "Basic"},
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "StartingThreat": "2*",
+                "Victory": "0",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
             "traits": [],
             "set_name": "",
             "text": "Victory 0.\nPlay only if your identity has the [[AVENGER]] or [[S.H.I.E.L.D.]] trait.\n<b>When Defeated</b>: Each player may search their deck and discard pile for an [[AVENGER]] or [[S.H.I.E.L.D.]] card and add it to their hand. <i>(Shuffle.)</i> Reduce the cost to play each of those cards by 2 until the end of the phase."
         },
-        {"card_id": "59029", "full_link": "01088"},
-        {"card_id": "59030", "full_link": "01089"},
-        {"card_id": "59031", "full_link": "01090"},
-        {"card_id": "59032", "full_link": "58034"},
-        {"card_id": "59033", "full_link": "01092"},
-        {"card_id": "59034", "full_link": "08023"}
+        {
+            "card_id": "59029",
+            "full_link": "01088"
+        },
+        {
+            "card_id": "59030",
+            "full_link": "01089"
+        },
+        {
+            "card_id": "59031",
+            "full_link": "01090"
+        },
+        {
+            "card_id": "59032",
+            "full_link": "58034"
+        },
+        {
+            "card_id": "59033",
+            "full_link": "01092"
+        },
+        {
+            "card_id": "59034",
+            "full_link": "08023"
+        }
     ],
     "fne": [
         {
@@ -60113,18 +60605,33 @@
             "type": "Hero",
             "name": "* Daredevil",
             "subtitle": "",
-            "desc": {"HP": "10", "ATK": "2", "THW": "1", "DEF": "2", "HS": "5"},
-            "traits": ["DEFENDER", "MARTIAL ARTIST"],
+            "desc": {
+                "HP": "10",
+                "ATK": "2",
+                "THW": "1",
+                "DEF": "2",
+                "HS": "5"
+            },
+            "traits": [
+                "DEFENDER",
+                "MARTIAL ARTIST"
+            ],
             "set_name": "Daredevil",
-            "text": "<i>Superhuman Senses</i> — <b>Action</b>: Play the top card of the [[Sense]] deck as if it were in your hand <i>(paying its cost)</i>."
+            "text": "<i>Superhuman Senses</i> \u2014 <b>Action</b>: Play the top card of the [[Sense]] deck as if it were in your hand <i>(paying its cost)</i>."
         },
         {
             "card_id": "60001b",
             "type": "AlterEgo",
             "name": "* Matt Murdock",
             "subtitle": "",
-            "desc": {"HP": "10", "REC": "3", "HS": "6"},
-            "traits": ["ATTORNEY"],
+            "desc": {
+                "HP": "10",
+                "REC": "3",
+                "HS": "6"
+            },
+            "traits": [
+                "ATTORNEY"
+            ],
             "set_name": "Daredevil",
             "text": "Matt Murdock begins the game with a [[Sense]] deck.\n<b>Forced Interrupt</b>: When a [[Sense]] upgrade would leave play, place it on the bottom of the [[Sense]] deck instead."
         },
@@ -60133,58 +60640,104 @@
             "type": "Upgrade",
             "name": "Acute Tactility",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Class": "Hero"},
-            "traits": ["SENSE", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SENSE",
+                "SUPERPOWER"
+            ],
             "set_name": "Daredevil",
-            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card → ready your identity."
+            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card \u2192 ready your identity."
         },
         {
             "card_id": "60003",
             "type": "Upgrade",
             "name": "Enhanced Olfaction",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
-            "traits": ["SENSE", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SENSE",
+                "SUPERPOWER"
+            ],
             "set_name": "Daredevil",
-            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card → reduce the cost of the next card you play this phase by 2."
+            "text": "Attach to an enemy or scheme.\n<b>Interrupt</b>: When you defeat attached enemy or remove the last threat from attached scheme, discard this card \u2192 reduce the cost of the next card you play this phase by 2."
         },
         {
             "card_id": "60004",
             "type": "Upgrade",
             "name": "Heightened Hearing",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "Class": "Hero"},
-            "traits": ["SENSE", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SENSE",
+                "SUPERPOWER"
+            ],
             "set_name": "Daredevil",
-            "text": "Attach to an enemy.\n<b>Hero Interrupt</b> <i>(defense)</i>: When attached enemy attacks, discard this card → that enemy gets -3 ATK for that attack. <i>(You become the target of that attack.)</i>"
+            "text": "Attach to an enemy.\n<b>Hero Interrupt</b> <i>(defense)</i>: When attached enemy attacks, discard this card \u2192 that enemy gets -3 ATK for that attack. <i>(You become the target of that attack.)</i>"
         },
         {
             "card_id": "60005",
             "type": "Upgrade",
             "name": "Radar Sense",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "Class": "Hero"},
-            "traits": ["SENSE", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SENSE",
+                "SUPERPOWER"
+            ],
             "set_name": "Daredevil",
-            "text": "Attach to an enemy.\n<b>Response</b> <i>(attack)</i>: After you attack attached enemy, discard this card → deal 3 damage to that enemy."
+            "text": "Attach to an enemy.\n<b>Response</b> <i>(attack)</i>: After you attack attached enemy, discard this card \u2192 deal 3 damage to that enemy."
         },
         {
             "card_id": "60006",
             "type": "Upgrade",
             "name": "Superior Taste",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "Class": "Hero"},
-            "traits": ["SENSE", "SUPERPOWER"],
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "SENSE",
+                "SUPERPOWER"
+            ],
             "set_name": "Daredevil",
-            "text": "Attach to a scheme.\n<b>Response</b> <i>(thwart)</i>: After you thwart attached scheme, discard this card → remove 2 threat from that scheme."
+            "text": "Attach to a scheme.\n<b>Response</b> <i>(thwart)</i>: After you thwart attached scheme, discard this card \u2192 remove 2 threat from that scheme."
         },
         {
             "card_id": "60007",
             "type": "Ally",
             "name": "* Elektra",
             "subtitle": "Elektra Natchios",
-            "desc": {"Cost": "3", "HP": "3", "ATK": "2*", "THW": "1*", "RES": "G", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["DEFENDER", "MARTIAL ARTIST"],
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "1*",
+                "RES": "G",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "DEFENDER",
+                "MARTIAL ARTIST"
+            ],
             "set_name": "Daredevil",
             "text": "[star] <b>Forced Interrupt (Hero)</b>: When Elektra would take consequential damage, Daredevil takes that damage instead."
         },
@@ -60193,8 +60746,15 @@
             "type": "Event",
             "name": "Cross-Examination",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "MaxPerDeck": "2", "Class": "Hero"},
-            "traits": ["ATTACK"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "MaxPerDeck": "2",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK"
+            ],
             "set_name": "Daredevil",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 3 damage to an enemy. For each upgrade attached to that enemy, you may deal 1 additional damage to it."
         },
@@ -60203,8 +60763,15 @@
             "type": "Event",
             "name": "Deposition",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "MaxPerDeck": "2", "Class": "Hero"},
-            "traits": ["THWART"],
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "MaxPerDeck": "2",
+                "Class": "Hero"
+            },
+            "traits": [
+                "THWART"
+            ],
             "set_name": "Daredevil",
             "text": "<b>Alter-Ego Action</b> <i>(thwart)</i>: You may choose any upgrade from the [[Sense]] deck and play it, ignoring its resource cost. <i>(Do not shuffle.)</i> Remove 2 threat from a scheme."
         },
@@ -60213,8 +60780,15 @@
             "type": "Event",
             "name": "Living Lie Detector",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "2", "Class": "Hero"},
-            "traits": ["THWART"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "MaxPerDeck": "2",
+                "Class": "Hero"
+            },
+            "traits": [
+                "THWART"
+            ],
             "set_name": "Daredevil",
             "text": "<b>Action</b> <i>(thwart)</i>: Remove 2 threat from a scheme. For each upgrade attached to that scheme, you may remove 1 additional threat from it."
         },
@@ -60223,8 +60797,15 @@
             "type": "Event",
             "name": "Raising Hell",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["ATTACK"],
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK"
+            ],
             "set_name": "Daredevil",
             "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 2 damage to each enemy for each upgrade attached to that enemy (3 damage instead if Daredevil has the [[Aerial]] trait)."
         },
@@ -60233,7 +60814,13 @@
             "type": "PlayerSideScheme",
             "name": "* Focus the Senses",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "B", "StartingThreat": "4", "MaxPerDeck": "1", "Class": "Hero"},
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "StartingThreat": "4",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
             "traits": [],
             "set_name": "Daredevil",
             "text": "Threat cannot be removed from this scheme except by Daredevil or Matt Murdock.\n<b>When Defeated</b>: You may move any number of [[Sense]] upgrades in play to other cards they can attach to. Choose any number of upgrades from the [[Sense]] deck and put them into play. <i>(Do not shuffle.)</i>"
@@ -60243,28 +60830,50 @@
             "type": "Support",
             "name": "* Foggy Nelson",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "B", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["ATTORNEY", "PERSONA"],
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTORNEY",
+                "PERSONA"
+            ],
             "set_name": "Daredevil",
-            "text": "<b>Alter-Ego Action</b>: Exhaust Foggy Nelson → remove 2 threat from a scheme."
+            "text": "<b>Alter-Ego Action</b>: Exhaust Foggy Nelson \u2192 remove 2 threat from a scheme."
         },
         {
             "card_id": "60014",
             "type": "Support",
             "name": "* Karen Page",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["PERSONA"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "PERSONA"
+            ],
             "set_name": "Daredevil",
-            "text": "<b>Action</b>: Exhaust Karen Page → shuffle 1 Daredevil card from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
+            "text": "<b>Action</b>: Exhaust Karen Page \u2192 shuffle 1 Daredevil card from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
         },
         {
             "card_id": "60015",
             "type": "Support",
             "name": "* Nelson and Murdock",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "Y", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["LOCATION"],
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "LOCATION"
+            ],
             "set_name": "Daredevil",
             "text": "<b>Response</b>: After an [[Attorney]] character or support defeats a side scheme, confuse an enemy."
         },
@@ -60273,8 +60882,15 @@
             "type": "Support",
             "name": "* Sister Maggie",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "B", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["PERSONA"],
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "PERSONA"
+            ],
             "set_name": "Daredevil",
             "text": "Matt Murdock gets +3 REC.\n<b>Response</b>: After you recover, discard a status card from your identity."
         },
@@ -60283,28 +60899,55 @@
             "type": "Upgrade",
             "name": "* Daredevil's Billy Club",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "R", "Restricted": "1", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["ITEM", "WEAPON"],
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Restricted": "1",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM",
+                "WEAPON"
+            ],
             "set_name": "Daredevil",
-            "text": "Restricted. Daredevil gets +1 ATK.\n<b>Hero Action</b>: Return this card to your hand <i>(from play)</i> → choose:\n• Deal 1 damage to an enemy.\n• Daredevil gains the [[Aerial]] trait until the end of the round."
+            "text": "Restricted. Daredevil gets +1 ATK.\n<b>Hero Action</b>: Return this card to your hand <i>(from play)</i> \u2192 choose:\n\u2022 Deal 1 damage to an enemy.\n\u2022 Daredevil gains the [[Aerial]] trait until the end of the round."
         },
         {
             "card_id": "60018",
             "type": "Upgrade",
             "name": "* The Man Without Fear",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Hero"},
-            "traits": ["TITLE"],
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "MaxPerDeck": "1",
+                "Class": "Hero"
+            },
+            "traits": [
+                "TITLE"
+            ],
             "set_name": "Daredevil",
-            "text": "<b>Hero Action</b>: Exhaust this card and deal 1 damage to Daredevil → choose:\n• Choose any upgrade from the [[Sense]] deck and play it, ignoring its resource cost. <i>(Do not shuffle.)</i>\n• Ready Daredevil."
+            "text": "<b>Hero Action</b>: Exhaust this card and deal 1 damage to Daredevil \u2192 choose:\n\u2022 Choose any upgrade from the [[Sense]] deck and play it, ignoring its resource cost. <i>(Do not shuffle.)</i>\n\u2022 Ready Daredevil."
         },
         {
             "card_id": "60019",
             "type": "Ally",
             "name": "* Blindspot",
             "subtitle": "Sam Chung",
-            "desc": {"Cost": "4", "HP": "3", "ATK": "2*", "THW": "2*", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
-            "traits": ["GENIUS", "MARTIAL ARTIST"],
+            "desc": {
+                "Cost": "4",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "2*",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "GENIUS",
+                "MARTIAL ARTIST"
+            ],
             "set_name": "",
             "text": "[star] <b>Response</b>: After Blindspot thwarts, confuse an enemy with an upgrade attached."
         },
@@ -60313,18 +60956,39 @@
             "type": "Ally",
             "name": "* Cloak",
             "subtitle": "Tyrone Johnson",
-            "desc": {"Cost": "3", "HP": "2", "ATK": "1", "THW": "2", "Acceleration": "1", "RES": "B", "MaxPerDeck": "1", "Class": "Justice"},
-            "traits": ["DEFENDER"],
+            "desc": {
+                "Cost": "3",
+                "HP": "2",
+                "ATK": "1",
+                "THW": "2",
+                "Acceleration": "1",
+                "RES": "B",
+                "MaxPerDeck": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "DEFENDER"
+            ],
             "set_name": "",
-            "text": "<b>Action</b>: Exhaust Cloak and spend [energy] [energy] resources → find Dagger and put her into play."
+            "text": "<b>Action</b>: Exhaust Cloak and spend [energy] [energy] resources \u2192 find Dagger and put her into play."
         },
         {
             "card_id": "60021",
             "type": "Ally",
             "name": "* Dagger",
             "subtitle": "Tandy Bowen",
-            "desc": {"Cost": "3", "HP": "3", "ATK": "2**", "THW": "1**", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
-            "traits": ["DEFENDER"],
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "2**",
+                "THW": "1**",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "DEFENDER"
+            ],
             "set_name": "",
             "text": "Cloak loses each [acceleration] icon.\n[star] If Cloak is in play, Dagger takes -1 consequential damage after she uses a basic power."
         },
@@ -60333,18 +60997,34 @@
             "type": "Ally",
             "name": "* Ghost Rider",
             "subtitle": "Johnny Blaze",
-            "desc": {"Cost": "3", "HP": "3", "ATK": "2*", "THW": "1*", "RES": "Y", "MaxPerDeck": "1", "Class": "Justice"},
-            "traits": ["MIDNIGHT SUN"],
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "2*",
+                "THW": "1*",
+                "RES": "Y",
+                "MaxPerDeck": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "MIDNIGHT SUN"
+            ],
             "set_name": "",
-            "text": "[star] <b>Interrupt</b>: When Ghost Rider attacks an enemy, spend a [energy] resource ([energy] [energy] resources instead if that enemy is the villain) → confuse that enemy."
+            "text": "[star] <b>Interrupt</b>: When Ghost Rider attacks an enemy, spend a [energy] resource ([energy] [energy] resources instead if that enemy is the villain) \u2192 confuse that enemy."
         },
         {
             "card_id": "60023",
             "type": "Event",
             "name": "Know Your Enemy",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "Class": "Justice"},
-            "traits": ["THWART"],
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Justice"
+            },
+            "traits": [
+                "THWART"
+            ],
             "set_name": "",
             "text": "[star] Discount 1 ([[Martial Artist]]).\n<b>Hero Action</b> <i>(thwart)</i>: Remove 1 threat from a scheme. Remove 1 threat from a scheme."
         },
@@ -60353,7 +61033,14 @@
             "type": "PlayerSideScheme",
             "name": "* De-escalation",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "R", "StartingThreat": "4", "Victory": "0", "MaxPerDeck": "1", "Class": "Justice"},
+            "desc": {
+                "Cost": "0",
+                "RES": "R",
+                "StartingThreat": "4",
+                "Victory": "0",
+                "MaxPerDeck": "1",
+                "Class": "Justice"
+            },
             "traits": [],
             "set_name": "",
             "text": "Victory 0.\n<b>When Defeated</b>: Remove an acceleration token from play."
@@ -60363,8 +61050,15 @@
             "type": "Upgrade",
             "name": "Chance Encounter",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "Y", "MaxPerUnit": "1", "Class": "Justice"},
-            "traits": ["CONDITION"],
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "MaxPerUnit": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "CONDITION"
+            ],
             "set_name": "",
             "text": "Attach to a side scheme. Max 1 per scheme.\n<b>Interrupt</b>: When attached side scheme is defeated, search your deck and discard pile for an ally and add it to your hand. Shuffle your deck."
         },
@@ -60373,8 +61067,15 @@
             "type": "Upgrade",
             "name": "Legal Trouble",
             "subtitle": "",
-            "desc": {"Cost": "1", "RES": "B", "MaxPerUnit": "1", "Class": "Justice"},
-            "traits": ["CONDITION"],
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "MaxPerUnit": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "CONDITION"
+            ],
             "set_name": "",
             "text": "[star] Discount 1 ([[Attorney]] or [[Police]]).\nAttach to a minion. Max 1 per minion.\nAttached minion gets -2 SCH."
         },
@@ -60383,8 +61084,16 @@
             "type": "Upgrade",
             "name": "Move in Shadow",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "Y", "Temporary": "1", "MaxPerUnit": "1", "Class": "Justice"},
-            "traits": ["SKILL"],
+            "desc": {
+                "Cost": "2",
+                "RES": "Y",
+                "Temporary": "1",
+                "MaxPerUnit": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "",
             "text": "[star] Discount 1 ([[Martial Artist]] or [[Spy]]).\nTemporary. Max 1 per player.\n<b>Response</b> <i>(thwart)</i>: After you play a card <i>(including this one)</i>, remove 1 threat from a scheme."
         },
@@ -60393,28 +61102,50 @@
             "type": "Upgrade",
             "name": "Stealth Training",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "R", "MaxPerUnit": "1", "Class": "Justice"},
-            "traits": ["SKILL"],
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "MaxPerUnit": "1",
+                "Class": "Justice"
+            },
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "",
-            "text": "Play under any player's control. Max 1 per player.\n<b>Response</b>: After you thwart and exactly defeat a side scheme, exhaust Stealth Training → stun an enemy."
+            "text": "Play under any player's control. Max 1 per player.\n<b>Response</b>: After you thwart and exactly defeat a side scheme, exhaust Stealth Training \u2192 stun an enemy."
         },
         {
             "card_id": "60029",
             "type": "Support",
             "name": "* Stick",
             "subtitle": "",
-            "desc": {"Cost": "2", "RES": "R", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["MARTIAL ARTIST", "PERSONA"],
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "MARTIAL ARTIST",
+                "PERSONA"
+            ],
             "set_name": "",
-            "text": "<b>Interrupt</b>: When a friendly [[Martial Artist]] character uses a basic power, choose:\n• Exhaust Stick → that character gets +1 to that basic power for this use.\n• That character gets -1 to that basic power for this use. Ready Stick."
+            "text": "<b>Interrupt</b>: When a friendly [[Martial Artist]] character uses a basic power, choose:\n\u2022 Exhaust Stick \u2192 that character gets +1 to that basic power for this use.\n\u2022 That character gets -1 to that basic power for this use. Ready Stick."
         },
         {
             "card_id": "60030",
             "type": "Upgrade",
             "name": "Contingency Planning",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "R", "MaxPerUnit": "1", "Class": "Basic"},
-            "traits": ["SKILL"],
+            "desc": {
+                "Cost": "0",
+                "RES": "R",
+                "MaxPerUnit": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "SKILL"
+            ],
             "set_name": "",
             "text": "Max 1 per player.\nYou may play the upgrade tucked here as if it were in your hand.\n<b>Action</b>: Choose 1 upgrade in your hand that can attach to a minion or side scheme. Tuck that upgrade under here <i>(to a maximum of 1)</i>."
         },
@@ -60423,17 +61154,29 @@
             "type": "Upgrade",
             "name": "Dance with the Devil",
             "subtitle": "",
-            "desc": {"Cost": "0", "RES": "G", "Amplify": "1", "TeamUp": "Daredevil;Elektra", "MaxPerDeck": "1", "Class": "Basic"},
-            "traits": ["DANCE"],
+            "desc": {
+                "Cost": "0",
+                "RES": "G",
+                "Amplify": "1",
+                "TeamUp": "Daredevil;Elektra",
+                "MaxPerDeck": "1",
+                "Class": "Basic"
+            },
+            "traits": [
+                "DANCE"
+            ],
             "set_name": "",
-            "text": "Team-Up (Daredevil and Elektra). Max 1 per deck.\nAttach to an enemy.\n<b>Hero Action</b> <i>(attack)</i>: Discard this card → deal 3 damage to attached enemy."
+            "text": "Team-Up (Daredevil and Elektra). Max 1 per deck.\nAttach to an enemy.\n<b>Hero Action</b> <i>(attack)</i>: Discard this card \u2192 deal 3 damage to attached enemy."
         },
         {
             "card_id": "60032",
             "type": "Obligation",
             "name": "Sensory Overload",
             "subtitle": "",
-            "desc": {"Boost": "2", "GiveTo": "Matt Murdock"},
+            "desc": {
+                "Boost": "2",
+                "GiveTo": "Matt Murdock"
+            },
             "traits": [],
             "set_name": "Daredevil",
             "text": "<b><i>Give to the Matt Murdock player.</i></b>\n<b>Forced Response</b>: After a [[Sense]] upgrade enters play, take 1 damage.\n<b>Alter-Ego Response</b>: After you recover, discard this obligation."
@@ -60443,8 +61186,16 @@
             "type": "Minion",
             "name": "* Bullseye",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "3", "SCH": "1", "Boost": "3", "Nemesis": "Daredevil"},
-            "traits": ["ASSASSIN"],
+            "desc": {
+                "HP": "5",
+                "ATK": "3",
+                "SCH": "1",
+                "Boost": "3",
+                "Nemesis": "Daredevil"
+            },
+            "traits": [
+                "ASSASSIN"
+            ],
             "set_name": "Daredevil Nemesis",
             "text": "<b>When Revealed</b>: Choose to either discard a [[Persona]] support you control or Bullseye attacks you <i>(even if you are in alter-ego form)</i>.\n<i>(Daredevil's nemesis minion.)</i>"
         },
@@ -60453,7 +61204,11 @@
             "type": "SideScheme",
             "name": "Deadliest Man Alive",
             "subtitle": "",
-            "desc": {"StartingThreat": "5", "Amplify": "1", "Boost": "2"},
+            "desc": {
+                "StartingThreat": "5",
+                "Amplify": "1",
+                "Boost": "2"
+            },
             "traits": [],
             "set_name": "Daredevil Nemesis",
             "text": "Amplify.\n<b>Forced Interrupt</b>: When Bullseye attacks, give him 1 facedown boost card."
@@ -60463,17 +61218,24 @@
             "type": "Attachment",
             "name": "Stolen Sai",
             "subtitle": "",
-            "desc": {"ATK+": "1", "Boost": "1"},
-            "traits": ["WEAPON"],
+            "desc": {
+                "ATK+": "1",
+                "Boost": "1"
+            },
+            "traits": [
+                "WEAPON"
+            ],
             "set_name": "Daredevil Nemesis",
-            "text": "Attach to the enemy with the highest ATK.\nAttached enemy's attacks gain piercing.\n<b>Hero Action</b>: Spend [physical] [physical] resources → attach Stolen Sai to Elektra or discard it.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains piercing."
+            "text": "Attach to the enemy with the highest ATK.\nAttached enemy's attacks gain piercing.\n<b>Hero Action</b>: Spend [physical] [physical] resources \u2192 attach Stolen Sai to Elektra or discard it.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains piercing."
         },
         {
             "card_id": "60036",
             "type": "Treachery",
             "name": "Eye on the Target",
             "subtitle": "",
-            "desc": {"Boost": "2"},
+            "desc": {
+                "Boost": "2"
+            },
             "traits": [],
             "set_name": "Daredevil Nemesis",
             "text": "<b>When Revealed</b>: Choose to either remove an ally or [[Persona]] support you control from the game, or Bullseye attacks you. If Bullseye is not in play, find and reveal him."
@@ -60495,7 +61257,7 @@
                 "MARTIAL ARTIST"
             ],
             "set_name": "Echo",
-            "text": "<i>Watch and Learn</i> — <b>Response</b>: After a player plays an aspect or basic event, tuck that event under here from that player's discard pile. Then, if there are more than 3 tucked cards here, discard all but 3 of those cards."
+            "text": "<i>Watch and Learn</i> \u2014 <b>Response</b>: After a player plays an aspect or basic event, tuck that event under here from that player's discard pile. Then, if there are more than 3 tucked cards here, discard all but 3 of those cards."
         },
         {
             "card_id": "60037b",
@@ -60511,7 +61273,7 @@
                 "CIVILIAN"
             ],
             "set_name": "Echo",
-            "text": "<i>Practice Makes Perfect</i> — <b>Interrupt</b>: When you change to hero form, search your deck for an aspect or basic event and add it to your hand. <i>(Shuffle.)</i>"
+            "text": "<i>Practice Makes Perfect</i> \u2014 <b>Interrupt</b>: When you change to hero form, search your deck for an aspect or basic event and add it to your hand. <i>(Shuffle.)</i>"
         },
         {
             "card_id": "60038",
@@ -60622,7 +61384,7 @@
                 "LOCATION"
             ],
             "set_name": "Echo",
-            "text": "<b>Alter-Ego Action</b>: Exhaust The Rez → heal X damage from Maya Lopez, where X is the highest cost among cards tucked under her."
+            "text": "<b>Alter-Ego Action</b>: Exhaust The Rez \u2192 heal X damage from Maya Lopez, where X is the highest cost among cards tucked under her."
         },
         {
             "card_id": "60043",
@@ -60638,7 +61400,7 @@
                 "SKILL"
             ],
             "set_name": "Echo",
-            "text": "<b>Hero Resource</b>: Exhaust this card → generate a [wild] resource for an event being played by any player."
+            "text": "<b>Hero Resource</b>: Exhaust this card \u2192 generate a [wild] resource for an event being played by any player."
         },
         {
             "card_id": "60044",
@@ -60654,7 +61416,7 @@
                 "SKILL"
             ],
             "set_name": "Echo",
-            "text": "<b>Action</b>: Exhaust this card → shuffle 1 aspect or basic event from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
+            "text": "<b>Action</b>: Exhaust this card \u2192 shuffle 1 aspect or basic event from your discard pile into your deck. If you are in alter-ego form, draw 1 card."
         },
         {
             "card_id": "60045",
@@ -60671,7 +61433,7 @@
                 "WEAPON"
             ],
             "set_name": "Echo",
-            "text": "Restricted.\n<b>Hero Response</b> <i>(attack)</i>: After you play an event, exhaust Echo's Katana → deal damage to an enemy equal to that event's printed cost. This attack gains piercing."
+            "text": "Restricted.\n<b>Hero Response</b> <i>(attack)</i>: After you play an event, exhaust Echo's Katana \u2192 deal damage to an enemy equal to that event's printed cost. This attack gains piercing."
         },
         {
             "card_id": "60046",
@@ -60687,7 +61449,7 @@
                 "SKILL"
             ],
             "set_name": "Echo",
-            "text": "<b>Hero Response</b>: After you play an event, if it has the following traits:\n• [[Attack]] — heal 1 damage from Echo.\n• [[Defense]] — remove 1 threat from a scheme.\n• [[Thwart]] — deal 1 damage to an enemy."
+            "text": "<b>Hero Response</b>: After you play an event, if it has the following traits:\n\u2022 [[Attack]] \u2014 heal 1 damage from Echo.\n\u2022 [[Defense]] \u2014 remove 1 threat from a scheme.\n\u2022 [[Thwart]] \u2014 deal 1 damage to an enemy."
         },
         {
             "card_id": "60047",
@@ -60703,7 +61465,7 @@
                 "SKILL"
             ],
             "set_name": "Echo",
-            "text": "<b>Hero Action</b>: Exhaust this card → add an event tucked under Echo to your hand."
+            "text": "<b>Hero Action</b>: Exhaust this card \u2192 add an event tucked under Echo to your hand."
         },
         {
             "card_id": "60048",
@@ -60804,7 +61566,7 @@
                 "CONDITION"
             ],
             "set_name": "",
-            "text": "Max 1 per player.\n<b>Hero Interrupt</b>: When an enemy attacks you <i>(before any defender is declared)</i>, if you do not control any allies, exhaust Stand Alone → ready your hero."
+            "text": "Max 1 per player.\n<b>Hero Interrupt</b>: When an enemy attacks you <i>(before any defender is declared)</i>, if you do not control any allies, exhaust Stand Alone \u2192 ready your hero."
         },
         {
             "card_id": "60055",
@@ -60822,7 +61584,7 @@
                 "THWART"
             ],
             "set_name": "",
-            "text": "Team-Up (Daredevil and Echo). Max 1 per deck.\n<b>Hero Action</b> <i>(attack/thwart)</i>: Choose 2 of the following (you may choose the same option twice):\n• Deal 3 damage to an enemy.\n• Remove 3 threat from a scheme."
+            "text": "Team-Up (Daredevil and Echo). Max 1 per deck.\n<b>Hero Action</b> <i>(attack/thwart)</i>: Choose 2 of the following (you may choose the same option twice):\n\u2022 Deal 3 damage to an enemy.\n\u2022 Remove 3 threat from a scheme."
         },
         {
             "card_id": "60056",
@@ -60914,5 +61676,5 @@
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
         }
     ],
-    "checksum": "a437907318e7a4ac3cbee1b8ceb1a04da6b78d19159772051f7ebc4e9c104ab4"
+    "checksum": "d6695b804443cac3837433cf9046830eeb50e6d268228bfd04882ca5b1e159eb"
 }
