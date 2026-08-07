@@ -30,6 +30,7 @@ class EffectContext:
         self.allow_partial_resolution = False
         self.play_initiation_checked = False
         self.play_initiation_allowed = False
+        self.self_costs_prepared = False
 
         self.target_range: Tuple[int, int] = (0, 0)
         self.all_legal_targets: List['CardFace'] = []
@@ -84,6 +85,7 @@ class EffectContext:
         self.paid_this_res_effects: List['Effect'] = []
         self.play_initiation_checked = False
         self.play_initiation_allowed = False
+        self.self_costs_prepared = False
         self.allowed_removed_cards.clear()
 
         self.initiator: User = self.effect.this.GetControlByOrOwner()

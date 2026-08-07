@@ -6,11 +6,16 @@ from unittest.mock import Mock, patch
 from engine import Engine
 
 from game.effect.effect_checker import EffectChecker
+from game.effect.effect import Effect
 from game.effect.effect_target_cost import TargetCost
 from game.element.cost import Cost
 from game.element.resources import Resources
+from game.ability.cost_func import CostFunc
+from game.card.card import Card
+from game.card.states import CardIsStates
 from game.card.face.base.card_player import ClassCard
 from game.player.action.player_action import PlayerAction
+from game.world.world_stat import WorldStat
 
 
 class _PlayerActionHarness(PlayerAction):
@@ -142,6 +147,22 @@ class V18PlayInitiationOrderTests(unittest.TestCase):
         discard.assert_not_called()
         player.stat.RecordPlayedFace.assert_not_called()
         player.world.buff_manager.OnRecordPlayedFace.assert_not_called()
+
+    def test_canceling_cost_choice_returns_declared_card_to_its_source(self):
+        action, _, effect, face, source, _, place, restore = self.MakePlay()
+        effect.checker.CheckBeforeActive.return_value = False
+
+        with patch('game.operate.faces.Faces.MoveAllToProcessingArea', side_effect=place), \
+             patch('game.operate.faces.Faces.MoveAllTo', side_effect=restore) as move_back, \
+             patch('game.operate.faces.Faces.DiscardAll') as discard, \
+             patch('game.test.Test.IsInTesting', return_value=False), \
+             patch('game.player.action.player_action.Log.Assert'):
+            self.assertFalse(action.ResolveEffect(effect, object()))
+
+        self.assertIs(face.card.area, source)
+        move_back.assert_called_once_with([face], source, effect, index=3)
+        discard.assert_not_called()
+        face.Play.assert_not_called()
 
     def test_normative_play_check_is_cached_for_one_initiation(self):
         context = SimpleNamespace(
@@ -296,6 +317,8 @@ class V18PlayPaymentRollbackTests(unittest.TestCase):
             targets=[],
             context=context,
             cost_func=SimpleNamespace(GetAll=lambda: []),
+            PrepareSelfCosts=Mock(return_value=True),
+            ClearPreparedSelfCosts=Mock(),
             world=SimpleNamespace(
                 rule=SimpleNamespace(v17_actions_activations_costs=True),
             ),
@@ -329,6 +352,242 @@ class V18PlayPaymentRollbackTests(unittest.TestCase):
         player.SpendResource.assert_not_called()
         player.res_pool.Reset.assert_not_called()
 
+
+class V18AbilityInitiationChecklistTests(unittest.TestCase):
+
+    def MakeConditionChecker(self, conditions, *, need_cost=True):
+        player = Mock()
+        face = Mock()
+        face.card.area = SimpleNamespace(
+            flags=SimpleNamespace(is_revealing=False),
+        )
+        ability = SimpleNamespace(
+            conditions=list(conditions),
+            play_location_condition=None,
+            is_play=False,
+            selectors=[object()],
+            flags=SimpleNamespace(
+                is_statistics=False,
+                is_nonkeyword=False,
+                is_setup=False,
+                is_when_reveal=False,
+                is_boost=False,
+                is_forced_action=False,
+            ),
+            NeedCost=lambda: need_cost,
+            is_label_defense=False,
+        )
+        effect = SimpleNamespace(
+            this=face,
+            ability=ability,
+            context=SimpleNamespace(),
+            world=SimpleNamespace(is_game_started=True),
+            cost_func=SimpleNamespace(GetAll=lambda: []),
+            is_forced=False,
+            initiator=player,
+        )
+        checker = EffectChecker.__new__(EffectChecker)
+        checker.effect = effect
+        checker.ability = ability
+        checker.failures = Mock()
+        checker.CheckNotOutOfPlay = Mock(return_value=True)
+        checker.UpdateLegalTargets = Mock(return_value=True)
+        checker.HasCostTargets = Mock(return_value=True)
+        checker.UpdatePayResources = Mock(return_value=True)
+        checker.RequiresPayableResourceCost = Mock(return_value=False)
+        message = SimpleNamespace(send_resolve_message=False)
+        return checker, player, message
+
+    def test_unavailable_ability_stops_before_targets_or_costs(self):
+        calls = []
+
+        def unavailable(effect, message):
+            calls.append((effect, message))
+            return False
+
+        checker, player, message = self.MakeConditionChecker([unavailable])
+
+        self.assertFalse(checker.CheckCondition(message, player))
+
+        self.assertEqual(calls, [(checker.effect, message)])
+        checker.UpdateLegalTargets.assert_not_called()
+        checker.HasCostTargets.assert_not_called()
+        checker.UpdatePayResources.assert_not_called()
+
+    def test_legal_targets_are_checked_before_cost_targets_and_resources(self):
+        order = []
+        checker, player, message = self.MakeConditionChecker([])
+        checker.UpdateLegalTargets.side_effect = lambda *_: order.append('targets') or True
+        checker.HasCostTargets.side_effect = lambda: order.append('cost targets') or True
+        checker.UpdatePayResources.side_effect = lambda *_: order.append('resources') or True
+
+        self.assertTrue(checker.CheckCondition(message, player))
+
+        self.assertEqual(order, ['targets', 'cost targets', 'resources'])
+
+    def test_target_confirmation_precedes_cost_preparation_and_resource_spend(self):
+        order = []
+        target = object()
+        resource_effect = object()
+        selector = Mock()
+        selector.AfterSelectTargets.side_effect = \
+            lambda *_: order.append('target confirmed') or True
+        payment = TargetCost.Payment(
+            Cost('1'),
+            [],
+            [{resource_effect: 'Y'}],
+            {resource_effect: object()},
+        )
+        target_cost = TargetCost()
+        target_cost.SetNoneTargetOnly()
+        target_cost.target_cost[None] = payment
+        context = SimpleNamespace(
+            ignore_resource_cost=False,
+            paid_this_res_effects=[resource_effect],
+            paid_this_cost=Cost('0'),
+            paid_this_resources=Resources('0'),
+            this_effect_need_cost=None,
+            targets_internal=[target],
+            target_range=(1, 1),
+        )
+        effect = SimpleNamespace(
+            targets=[target],
+            context=context,
+            cost_func=SimpleNamespace(GetAll=lambda: []),
+            PrepareSelfCosts=Mock(
+                side_effect=lambda: order.append('costs prepared') or True,
+            ),
+            ClearPreparedSelfCosts=Mock(),
+        )
+        checker = EffectChecker.__new__(EffectChecker)
+        checker.effect = effect
+        checker.ability = SimpleNamespace(selectors=[selector])
+        checker.cost_for_different_target = target_cost
+        checker.failures = Mock()
+        player = Mock()
+        player.SpendResource.side_effect = \
+            lambda *_: order.append('resources spent') or Resources('Y')
+
+        self.assertTrue(checker.CheckBeforeActive(player))
+
+        self.assertEqual(
+            order,
+            ['target confirmed', 'costs prepared', 'resources spent'],
+        )
+
+    def test_canceling_a_later_cost_does_not_commit_an_earlier_cost(self):
+        mutation = []
+        target = Mock()
+        target.IsInDeck.return_value = True
+
+        def make_cost(*, selectable):
+            selector = Mock()
+            selector.GetAllLegalTargets.return_value = [target]
+            selector.GetTargetRange.return_value = (1, 1)
+            selector.AfterSelectTargets.return_value = selectable
+            selector.selector_rule.random = False
+            return CostFunc.Base(
+                selector,
+                lambda *_: mutation.append('committed') or True,
+            )
+
+        first = make_cost(selectable=True)
+        canceled = make_cost(selectable=False)
+        effect = object.__new__(Effect)
+        effect.context = SimpleNamespace(
+            self_costs_prepared=False,
+            initiator=Mock(),
+        )
+        effect.cost_func = SimpleNamespace(GetAll=lambda: [first, canceled])
+        effect.ability = SimpleNamespace(
+            flags=SimpleNamespace(is_check_pay=False),
+        )
+        effect.world = SimpleNamespace(render=Mock())
+
+        self.assertFalse(Effect.PrepareSelfCosts(effect))
+
+        self.assertEqual(mutation, [])
+        self.assertEqual(first.cost_legal_targets, [])
+        self.assertEqual(canceled.cost_legal_targets, [])
+
+    def test_failed_cost_preparation_does_not_spend_resources(self):
+        resource_effect = object()
+        payment = TargetCost.Payment(
+            Cost('1'),
+            [],
+            [{resource_effect: 'Y'}],
+            {resource_effect: object()},
+        )
+        target_cost = TargetCost()
+        target_cost.SetNoneTargetOnly()
+        target_cost.target_cost[None] = payment
+        context = SimpleNamespace(
+            ignore_resource_cost=False,
+            paid_this_res_effects=[resource_effect],
+            paid_this_cost=Cost('0'),
+            paid_this_resources=Resources('0'),
+            this_effect_need_cost=None,
+            targets_internal=[],
+        )
+        effect = SimpleNamespace(
+            targets=[],
+            context=context,
+            cost_func=SimpleNamespace(GetAll=lambda: []),
+            PrepareSelfCosts=Mock(return_value=False),
+            ClearPreparedSelfCosts=Mock(),
+        )
+        checker = EffectChecker.__new__(EffectChecker)
+        checker.effect = effect
+        checker.ability = SimpleNamespace(selectors=[])
+        checker.cost_for_different_target = target_cost
+        checker.failures = Mock()
+        player = Mock()
+
+        self.assertFalse(checker.CheckBeforeActive(player))
+
+        player.SpendResource.assert_not_called()
+        player.res_pool.Reset.assert_not_called()
+
+    def test_exhaust_cost_cannot_exhaust_the_same_card_twice(self):
+        card = object.__new__(Card)
+        card.state = CardIsStates()
+        card.face = object()
+        effect = object()
+        after_message = Mock()
+
+        with patch(
+            'game.message.Message.AfterCardExhausted',
+            return_value=after_message,
+        ) as after:
+            self.assertTrue(Card.Exhaust(card, effect))
+            self.assertFalse(Card.Exhaust(card, effect))
+
+        self.assertFalse(card.state.is_ready)
+        after.assert_called_once()
+        after_message.Send.assert_called_once()
+
+    def test_once_per_phase_and_round_limits_reset_at_their_boundaries(self):
+        stat = WorldStat()
+        ability = object()
+        effect = SimpleNamespace(ability=ability)
+        player = object()
+
+        stat.RecordEffect(effect)
+        stat.RecordEffectWithPlayer(effect, player)
+        self.assertFalse(stat.IsOncePerPhase(ability))
+        self.assertFalse(stat.IsOncePerRound(ability))
+        self.assertFalse(stat.IsOncePerPhasePerPlayer(ability, player))
+        self.assertFalse(stat.IsOncePerRoundPerPlayer(ability, player))
+
+        stat.OnPhaseEnd()
+        self.assertTrue(stat.IsOncePerPhase(ability))
+        self.assertTrue(stat.IsOncePerPhasePerPlayer(ability, player))
+        self.assertFalse(stat.IsOncePerRound(ability))
+        self.assertFalse(stat.IsOncePerRoundPerPlayer(ability, player))
+
+        stat.OnRoundEnd()
+        self.assertTrue(stat.IsOncePerRound(ability))
+        self.assertTrue(stat.IsOncePerRoundPerPlayer(ability, player))
 
 if __name__ == '__main__':
     unittest.main()

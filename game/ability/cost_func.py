@@ -55,9 +55,11 @@ class CostFunc:
                 return True
 
         @final
-        def PayCost(self, effect: 'Effect', player: 'User') -> bool:
+        def PrepareCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Choose and validate this cost without changing game state."""
             from game.player import Player
 
+            self.ClearPreparedCost()
             can_be_zero = False
             num_range = None
             if effect.ability.flags.is_check_pay:
@@ -87,12 +89,39 @@ class CostFunc:
                 return False
 
             if num_range and not self.selector.AfterSelectTargets(effect, targets, num_range):
+                self.ClearPreparedCost()
                 return False
 
-            # We don't process the cost when checking pay
-            # we will handle the cost in `DoGenerateResources`
+            return True
+
+        @final
+        def CommitCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Apply a cost whose targets were already prepared."""
+            from game.player import Player
+
+            # We don't process the cost when checking pay; resource abilities
+            # handle it later in `DoGenerateResources`.
             if self.call_fn and not effect.ability.flags.is_check_pay:
-                return self.call_fn(targets, effect, player if isinstance(player, Player) else None)
+                return self.call_fn(
+                    self.cost_legal_targets,
+                    effect,
+                    player if isinstance(player, Player) else None,
+                )
+            return True
+
+        @final
+        def ClearPreparedCost(self) -> None:
+            self.cost_legal_targets = []
+
+        @final
+        def PayCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Prepare and immediately apply one standalone cost."""
+            if not self.PrepareCost(effect, player):
+                self.ClearPreparedCost()
+                return False
+            if not self.CommitCost(effect, player):
+                self.ClearPreparedCost()
+                return False
             return True
 
         @final

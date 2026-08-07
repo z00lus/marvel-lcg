@@ -111,6 +111,8 @@ class V17SimultaneousResourceCostTests(unittest.TestCase):
             targets=[],
             context=context,
             cost_func=SimpleNamespace(GetAll=lambda: [spend]),
+            PrepareSelfCosts=Mock(return_value=True),
+            ClearPreparedSelfCosts=Mock(),
             world=SimpleNamespace(
                 rule=SimpleNamespace(v17_actions_activations_costs=True),
             ),
@@ -177,7 +179,12 @@ class V17ActionCostEligibilityTests(unittest.TestCase):
             targets_internal=[],
         )
         checker = EffectChecker.__new__(EffectChecker)
-        checker.effect = SimpleNamespace(context=context, targets=[])
+        checker.effect = SimpleNamespace(
+            context=context,
+            targets=[],
+            PrepareSelfCosts=Mock(return_value=True),
+            ClearPreparedSelfCosts=Mock(),
+        )
         checker.ability = SimpleNamespace(selectors=[])
         checker.cost_for_different_target = TargetCost()
         player = Mock()

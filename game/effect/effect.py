@@ -133,15 +133,45 @@ class Effect(Object):
 
     ################################################################################
     #
-    def ProcessSelfCost(self) -> bool:
+    def ClearPreparedSelfCosts(self) -> None:
+        for cost_func in self.cost_func.GetAll():
+            cost_func.ClearPreparedCost()
+        self.context.self_costs_prepared = False
+
+    def PrepareSelfCosts(self) -> bool:
+        """Confirm every additional-cost choice before paying any of them."""
+        if self.context.self_costs_prepared:
+            return True
+
         for cost_func in self.cost_func.GetAll():
             try:
-                if not cost_func.PayCost(self, self.initiator):
+                if not cost_func.PrepareCost(self, self.initiator):
+                    self.ClearPreparedSelfCosts()
                     return False
             except Exception as exc:
                 info = Log.OnCrash(CATEGORY_NAME, exc, self.GetDisplayName(), cost_func.call_fn)
                 self.world.render.ErrorOccurred(info)
+                self.ClearPreparedSelfCosts()
                 return False
+
+        self.context.self_costs_prepared = True
+        return True
+
+    def ProcessSelfCost(self) -> bool:
+        if not self.PrepareSelfCosts():
+            return False
+
+        for cost_func in self.cost_func.GetAll():
+            try:
+                if not cost_func.CommitCost(self, self.initiator):
+                    self.ClearPreparedSelfCosts()
+                    return False
+            except Exception as exc:
+                info = Log.OnCrash(CATEGORY_NAME, exc, self.GetDisplayName(), cost_func.call_fn)
+                self.world.render.ErrorOccurred(info)
+                self.ClearPreparedSelfCosts()
+                return False
+        self.context.self_costs_prepared = False
         return True
 
 

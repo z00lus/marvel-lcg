@@ -303,7 +303,14 @@ class EffectChecker:
             self.failures.Set(player, EffectFailure.CheckTarget)
             return False
 
+        # All additional-cost targets and choices are confirmed before any
+        # resource card is spent or any exhaust/discard cost changes state.
+        if not effect.PrepareSelfCosts():
+            self.failures.Set(player, EffectFailure.CheckPay)
+            return False
+
         if not check_pay():
+            effect.ClearPreparedSelfCosts()
             self.failures.Set(player, EffectFailure.CheckPay)
             return False
 
