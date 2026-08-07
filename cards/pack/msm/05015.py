@@ -18,6 +18,11 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityType.HeroAction,
             tackle
         ).SetPlay().SetLabel('attack')
-        .SetTarget(Enemy, canbe_stunned=True),
+        .SetTarget(
+            Enemy,
+            affects_target_if=(
+                Condition.TargetCanBeStunned,
+                Condition.TargetCanTakeDamage,
+            ),
+        ),
     ]
-

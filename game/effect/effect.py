@@ -31,6 +31,7 @@ class Effect(Object):
         ability.Initialize(self.this)
 
         self.ability: Final = ability
+        self.priority: Final = ability.flags.GetPriority(world.rule)
         self.delay_ability: 'Ability|None' = None
 
         self.checker = EffectChecker(self)
@@ -132,15 +133,45 @@ class Effect(Object):
 
     ################################################################################
     #
-    def ProcessSelfCost(self) -> bool:
+    def ClearPreparedSelfCosts(self) -> None:
+        for cost_func in self.cost_func.GetAll():
+            cost_func.ClearPreparedCost()
+        self.context.self_costs_prepared = False
+
+    def PrepareSelfCosts(self) -> bool:
+        """Confirm every additional-cost choice before paying any of them."""
+        if self.context.self_costs_prepared:
+            return True
+
         for cost_func in self.cost_func.GetAll():
             try:
-                if not cost_func.PayCost(self, self.initiator):
+                if not cost_func.PrepareCost(self, self.initiator):
+                    self.ClearPreparedSelfCosts()
                     return False
             except Exception as exc:
                 info = Log.OnCrash(CATEGORY_NAME, exc, self.GetDisplayName(), cost_func.call_fn)
                 self.world.render.ErrorOccurred(info)
+                self.ClearPreparedSelfCosts()
                 return False
+
+        self.context.self_costs_prepared = True
+        return True
+
+    def ProcessSelfCost(self) -> bool:
+        if not self.PrepareSelfCosts():
+            return False
+
+        for cost_func in self.cost_func.GetAll():
+            try:
+                if not cost_func.CommitCost(self, self.initiator):
+                    self.ClearPreparedSelfCosts()
+                    return False
+            except Exception as exc:
+                info = Log.OnCrash(CATEGORY_NAME, exc, self.GetDisplayName(), cost_func.call_fn)
+                self.world.render.ErrorOccurred(info)
+                self.ClearPreparedSelfCosts()
+                return False
+        self.context.self_costs_prepared = False
         return True
 
 
@@ -506,6 +537,10 @@ class Effect(Object):
         return res
 
     def GetCostX(self) -> 'int':
+        if self.ability.play_cost_is_x and \
+            self.ability.cost_fn == None and \
+            self.context.chosen_cost_x != None:
+            return self.context.chosen_cost_x
         return self.context.paid_this_resources.val - self.context.paid_this_cost.true_val
 
     ################################################################################
@@ -563,7 +598,10 @@ class Effect(Object):
         selector = self.ability.selectors[0] if self.ability.selectors else None
         if selector:
             select_rule, select_rule_param = selector.selector_rule.GetRuleAndParam()
-            target_must_include_traits = selector.selector_rule.target_must_include_traits
+            if self.context.allow_partial_resolution:
+                target_must_include_traits = []
+            else:
+                target_must_include_traits = selector.selector_rule.target_must_include_traits
         else:
             select_rule = ""
             select_rule_param = (0, 0)
@@ -593,4 +631,3 @@ class Effect(Object):
             failure_reason=failure_reason,
             is_search=is_search
         )
-

@@ -180,7 +180,7 @@ class ModelOnEvent(ModelBase):
         elif player == "FirstPlayer":
             player = this.card.world.GetCurrentPlayer()
         if under_control:
-            this.card.SetOwner(player)
+            this.card.TakeControl(player)
 
         if not this.IsFaceUp():
             this.FlipTo(by_effect, face_up=True)
@@ -221,16 +221,63 @@ class ModelOnEvent(ModelBase):
 
     def OnWhenCardRevealed(self, revealed_message: 'Message.WhenCardRevealed') -> None:
         from game.card.face.attribute.can_incite import CanIncite
-        from game.card.face.card_type import Treachery
+        from game.card.face.attribute.can_surge import CanSurge
         this = self.GetThis()
-        if CanIncite.IsType(this):
-            # Hack
-            if this.card.world.rule.fix_treachery or not Treachery.IsType(this):
-                effect = this.ResolveIncite()
-                if effect:
-                    revealed_message.reveal_message.AddResolved(effect)
+
+        keyword_effects: List['Effect'] = []
+        def add_resolved(message: 'Message.WhenCardRevealed', effect: 'Effect|None') -> None:
+            if effect:
+                message.reveal_message.AddResolved(effect)
+
+        had_surge = CanSurge.IsType(this) and bool(this.surge)
+        if CanIncite.IsType(this) and this.incite:
+            keyword_effects += this.effect.RegisterTemp(
+                Ability(
+                    AbilityType.WhenRevealed,
+                    Message.WhenCardRevealed,
+                    [Condition2.ThisIsTrigger],
+                    lambda effect, message:
+                        add_resolved(message, effect.this.CastTo(CanIncite).ResolveIncite()),
+                    is_local=True,
+                ).SetName("Incite"),
+                unregister_after_exec=True,
+            )
+        if had_surge:
+            keyword_effects += this.effect.RegisterTemp(
+                Ability(
+                    AbilityType.WhenRevealed,
+                    Message.WhenCardRevealed,
+                    [Condition2.ThisIsTrigger],
+                    lambda effect, message:
+                        add_resolved(
+                            message,
+                            effect.this.CastTo(CanSurge).ResolveSurge(
+                                message.GetToPlayer()
+                            ),
+                        ),
+                    is_local=True,
+                ).SetName("Surge"),
+                unregister_after_exec=True,
+            )
         if not revealed_message.reveal_message.cancel_when_revealed:
             revealed_message.Send()
+
+            # Some When Revealed abilities grant Surge conditionally (for
+            # example, Assault in alter-ego form and Hard to Keep Down when
+            # the villain cannot heal). Printed Surge is scheduled above, but
+            # a keyword gained while this message is resolving must be checked
+            # afterwards so it is not missed.
+            if CanSurge.IsType(this) and not had_surge and this.surge:
+                add_resolved(
+                    revealed_message,
+                    this.ResolveSurge(revealed_message.GetToPlayer()),
+                )
+
+        # Canceled When Revealed effects never execute and therefore do not
+        # reach their normal unregister-after-exec cleanup.
+        for keyword_effect in keyword_effects:
+            if not keyword_effect.is_unregister:
+                keyword_effect.UnRegisterSelf()
 
     def OnAfterCardRevealedEnd(self, message: 'Message.AfterCardRevealedEnd') -> None:
         this = self.GetThis()
@@ -279,74 +326,77 @@ class ModelOnEvent(ModelBase):
                     Faces.MoveAllTo([this], world.area_revealing, by_effect)
                     Message.AfterCardsMovedToRevealingArea_Text([this])
 
+        from game.card.face.base import EncounterNonVillainCard
+        if EncounterNonVillainCard.IsType(this) and \
+            this.ResolveV17UniqueReveal(player):
+            return None
+
         assert this.card.state.is_revealing == False
 
         this.card.state.is_revealing = True
+        world.event_manager.BeginRevealResponseDeferral()
+        try:
+            reveal_message = Message.WhenPlayerRevealCard(this, would_message)
+            if not this.OnPlayerRevealCard(reveal_message):
+                return None
+            if reveal_message.is_be_instead: # "52008"
+                return None
 
-        reveal_message = Message.WhenPlayerRevealCard(this, would_message)
-        if not this.OnPlayerRevealCard(reveal_message):
-            this.card.state.is_revealing = False
-            return None
-        if reveal_message.is_be_instead: # "52008"
-            this.card.state.is_revealing = False
-            return None
+            entered = False
+            def set_enter_play():
+                nonlocal entered
+                entered = True
 
-        entered = False
-        def set_enter_play():
-            nonlocal entered
-            entered = True
-
-        check_effects = this.effect.RegisterTemp(
-            AbilityFactory.WhenCardEnterPlay(
-                AbilityType.Temp0,
-                None,
-                lambda effect, message:
-                    set_enter_play(),
-                conditions=[
+            check_effects = this.effect.RegisterTemp(
+                AbilityFactory.WhenCardEnterPlay(
+                    AbilityType.Temp0,
+                    None,
                     lambda effect, message:
-                        self == message.trigger
-                ],
-            ),
-            unregister_after_exec=False
-        )
+                        set_enter_play(),
+                    conditions=[
+                        lambda effect, message:
+                            self == message.trigger
+                    ],
+                ),
+                unregister_after_exec=False
+            )
 
-        if not reveal_message.cancel_all_effects:
-            revealed_message = Message.WhenCardRevealed(this, reveal_message)
-            this.OnWhenCardRevealed(revealed_message)
-        else:
-            revealed_message = None
-            # TODO: by_cancel_all_effects_effect
-            # When be cancelled by "01075", it should already be discarded by it
-            # Faces.DiscardAll([this], GameRule(this))
+            if not reveal_message.cancel_all_effects:
+                revealed_message = Message.WhenCardRevealed(this, reveal_message)
+                this.OnWhenCardRevealed(revealed_message)
+            else:
+                revealed_message = None
+                # TODO: by_cancel_all_effects_effect
+                # When be cancelled by "01075", it should already be discarded by it
+                # Faces.DiscardAll([this], GameRule(this))
 
-#                   |   cancel all  | cancel when reveal (keep keywords such as "Incite")
-# revealed_message  |   None        | None
-# reveal_message    |   Yes         | Yes
+#                       |   cancel all  | cancel when reveal (keep keywords such as "Incite")
+# revealed_message      |   None        | None
+# reveal_message        |   Yes         | Yes
 #
-        if not reveal_message.cancel_all_effects:
-            if CanSurge.IsType(this):
-                effect = this.ResolveSurge(player)
-                if effect:
-                    reveal_message.AddResolved(effect)
+            if not reveal_message.cancel_all_effects:
+                end_message = Message.AfterCardRevealedEnd(this, reveal_message, revealed_message)
+                this.OnAfterCardRevealedEnd(end_message)
 
-            end_message = Message.AfterCardRevealedEnd(this, reveal_message, revealed_message)
-            this.OnAfterCardRevealedEnd(end_message)
+            Effects.UnRegister(check_effects)
 
-        this.card.state.is_revealing = False
+            if not entered:
+                if if_no_entered_play:
+                    if_no_entered_play()
+            else:
+                if if_entered_play:
+                    if_entered_play()
 
-        Effects.UnRegister(check_effects)
-
-        if not entered:
-            if if_no_entered_play:
-                if_no_entered_play()
-        else:
-            if if_entered_play:
-                if_entered_play()
-
-        if revealed_message:
-            return revealed_message
-        else:
-            return reveal_message
+            if revealed_message:
+                return revealed_message
+            else:
+                return reveal_message
+        finally:
+            # Forced Responses and Responses triggered by entering play,
+            # engaging, Incite/Surge, and reveal completion all open only after
+            # this card has finished its complete reveal process.
+            this.card.state.is_revealing = False
+            world.event_manager.EndRevealResponseDeferral()
 
     ################################################################################
     #
@@ -459,4 +509,3 @@ class ModelOnEvent(ModelBase):
         this.card.state.is_swapping_end = True
         this.OnAfterFlip(by_effect, call_reveal=call_reveal)
         this.card.state.is_swapping_end = False
-

@@ -11,7 +11,12 @@ def GetAbilities() -> Sequence['Ability']:
         player = message.GetAgainstPlayer()
 
         if player:
-            value = this.attack
+            values = [
+                attack_message.would_atk_unit_message.attack_damage
+                for attack_message in message.atk_messages
+                if attack_message.would_atk_unit_message is not None
+            ]
+            value = max(values, default=0)
             player.DiscardDeckTopCards(value, effect)
 
 
@@ -22,4 +27,3 @@ def GetAbilities() -> Sequence['Ability']:
             exodus
         ),
     ]
-

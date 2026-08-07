@@ -1,5 +1,5 @@
 [Unit]
-Description=Marvel LCG game server
+Description=Marvel Champions Digital: Ronin Edition server
 Wants=network-online.target
 After=network-online.target
 

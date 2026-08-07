@@ -59,28 +59,28 @@ class HasTeamwork(HasAttribute):
 class CanTeamwork(HasTeamwork):
 
     @override
-    def OnAfterCardEnterPlay(self, message: 'Message.AfterCardEnterPlay') -> None:
+    def GetRuleAbilities(self) -> List['Ability']:
+        return super().GetRuleAbilities() + [AbilityFactory.AfterCardEnterPlay(
+            AbilityType.ForcedResponse,
+            "This",
+            lambda effect, message:
+                effect.this.CastTo(CanTeamwork).ResolveTeamwork(),
+            conditions=[
+                lambda effect, message:
+                    bool(effect.this.CastTo(CanTeamwork).teamwork),
+            ],
+        ).SetName("Teamwork")]
+
+    @final
+    def ResolveTeamwork(self) -> None:
         from game.effect.rule import Teamwork
         from game.card.face.card_type import Minion
         from game.operate.worlds import Worlds
 
-        if self.teamwork:
+        if not self.teamwork:
+            return
 
-            has_teamwork = False
-            minions = Worlds.GetOnFieldMinions(self.card.game_area)
-            for minion in minions:
-                if minion != self and minion.HasTrait(*self.teamwork):
-                    has_teamwork = True
-                    break
-
-            if has_teamwork:
-                if self.card.world.rule.v16_teamwork:
-                    minion = self.card.CastTo(Minion)
-                    minion.DoActivate(minion.GetEngagedPlayer(), Teamwork(minion))
-                else:
-                    for minion in minions:
-                        if minion.teamwork == self.teamwork and not minion.IsDefeated():
-                            minion.DoActivate(minion.GetEngagedPlayer(), Teamwork(minion))
-
-        return super().OnAfterCardEnterPlay(message)
-
+        minions = Worlds.GetOnFieldMinions(self.card.game_area)
+        if any(minion != self and minion.HasTrait(*self.teamwork) for minion in minions):
+            minion = self.card.CastTo(Minion)
+            minion.DoActivate(minion.GetEngagedPlayer(), Teamwork(minion))

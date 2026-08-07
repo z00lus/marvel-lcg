@@ -54,6 +54,10 @@ class UniqueMinionRevealed(GameRule):
     def __repr__(self) -> str:
         return "Unique Minion Revealed"
 
+class UniqueEncounterCardRevealed(GameRule):
+    def __repr__(self) -> str:
+        return "Unique Encounter Card Revealed"
+
 class Activate(GameRule):
     def __repr__(self) -> str:
         return "Activate"
@@ -150,4 +154,3 @@ class EndPhase(GameRule):
 
     def __repr__(self) -> str:
         return "End Phase"
-

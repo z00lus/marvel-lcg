@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import json
 import os
-import subprocess
-import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -18,6 +17,8 @@ from engine import Engine
 from game.ability import AbilityType, CostFunc
 from game.element.resources import Resources
 from game.player.action.player_action import PlayerAction
+from game.scene.loader import LoaderHelper, UnsupportedReplayRulesError
+from game.scene.scene import Scene
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -488,7 +489,7 @@ class IndirectDamageSystemTests(unittest.TestCase):
 
 class WonderManReplayTests(unittest.TestCase):
 
-    def test_saved_rhino_replay_replays_to_completion(self):
+    def test_legacy_saved_rhino_replay_is_rejected(self):
         configured = os.environ.get("WONDER_MAN_REPLAY")
         if configured:
             replay = Path(configured)
@@ -503,24 +504,11 @@ class WonderManReplayTests(unittest.TestCase):
                 )
             replay = candidates[-1]
 
-        result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "unit_test.wonder_man_replay",
-                str(replay.resolve()),
-            ],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-            timeout=30,
-        )
+        with replay.open(encoding='utf-8') as replay_file:
+            data = json.load(replay_file)
 
-        self.assertEqual(
-            result.returncode,
-            0,
-            msg=f"stdout:\n{result.stdout}\n\nstderr:\n{result.stderr}",
-        )
+        with self.assertRaises(UnsupportedReplayRulesError):
+            LoaderHelper.EnsureSupportedReplay(Scene(rules=data.get('rules', [])))
 
 
 if __name__ == "__main__":

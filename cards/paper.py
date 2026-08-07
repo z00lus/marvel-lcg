@@ -69,6 +69,16 @@ class Paper:
     def IsFromSet(self, set_name: "CardFace.SETNAMES") -> bool:
         return self.set_name == set_name
 
+    def GetEncounterSetIdentity(self) -> Tuple[str, str]:
+        """Return the encounter-set identity represented by its printed icon.
+
+        The data source does not expose a separate icon identifier.  A set
+        name is only unique within its product, so the pack/name pair is the
+        stable identity used whenever sets themselves (rather than cards) are
+        compared.
+        """
+        return self.pack, self.set_name
+
     def GetType(self) -> Type['Insert|Challenge|Hero|AlterEgo|Ally|Minion|EncounterVillain|Leader|MainScheme|SchemeSide2|PlayerSideScheme|Upgrade|Support|Attachment|Environment|Event|Obligation|Treachery|Resource|StatusCard|Evidence']:
         from game.card.face.card_type import Insert, Challenge
         from game.card.face.card_type import Minion
@@ -114,4 +124,3 @@ class Paper:
             'Status': StatusCard,
             'Evidence': Evidence,
         }[self.type]
-

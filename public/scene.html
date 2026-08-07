@@ -856,86 +856,6 @@ p:has(#timeout_text) {
             </script>
         </details>
 
-        <details id="rules">
-            <summary> Rule </summary>
-            <script>
-                const data = {
-                    "v16_all": "Enable <strong>all Rules Reference 1.6 changes</strong> listed below.",
-                    "v16_player_elimination": "When a player is eliminated, <strong>all cards they own are placed in their discard pile</strong>.",
-                    "v16_reveal": "During step four of the villain phase, each player reveals and resolves, one at a time, each facedown encounter card dealt to them <strong>in the order those cards were dealt</strong>.",
-                    "v16_teamwork": "After a minion with <strong>Teamwork</strong> enters play and engages a player, it activates against that player if another minion with the specified trait is in play.",
-                    "v16_referential_ability": "If an ability refers to a title shared by multiple cards, it applies only to cards with the highest matching priority:<ol><li>the card on which that ability is printed;</li><li>cards belonging to the same identity or encounter set;</li><li>all other cards.</li></ol>",
-                    "v16_confuse_stun": "A confused character may attempt to thwart or use a <strong>thwart</strong> ability, and a stunned character may attempt to attack or use an <strong>attack</strong> ability, even if there is no valid target.",
-                    "encounter_cards_ignore_crisis": "Environment and encounter cards <strong>are not affected by Crisis icons</strong> in play.",
-                    "crisis_of_infinite_deadpools": "If at least one player uses the <strong>'Pool</strong> aspect, shuffle one copy of <strong>Crisis of Infinite Deadpools</strong> into the encounter deck during setup.",
-                    // "fix_surge": "Complete the process of resolving the original card, <b>as well as any response abilities that are triggered by that card being revealed</b>, before revealing the additional card.",
-                    // "fix_treachery": "After resolving the effects of a treachery card (or the effects are canceled), place the card in the encounter discard pile."
-                }
-
-                // Function to generate checkbox elements
-                const container = document.querySelector('#rules')
-                function generateCheckboxes(data) {
-
-                    for (const [id, text] of Object.entries(data)) {
-                        // Create a label element
-                        const label = document.createElement('label');
-                        label.className = 'rule-option';
-
-                        // Create an input element
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.className = "rule";
-                        if( id.startsWith("v16") && id != "v16_all" ) {
-                            checkbox.classList.add('rule_v16')
-                        }
-                        checkbox.id = id;
-
-                        const name = document.createElement('span');
-                        name.className = 'rule-name';
-                        name.innerText = id;
-
-                        const description = document.createElement('span');
-                        description.className = 'rule-description';
-                        description.innerHTML = text;
-
-                        label.appendChild(checkbox);
-                        label.appendChild(name);
-                        label.appendChild(description);
-                        container.appendChild(label);
-                    }
-                }
-                generateCheckboxes(data)
-
-                document.querySelector('#v16_all').onchange = (e) => {
-                    if( e.target.checked ) {
-                        document.querySelectorAll('.rule_v16').forEach(e => {
-                            e.checked = true
-                        })
-                    }
-                    else {
-                        document.querySelectorAll('.rule_v16').forEach(e => {
-                            e.checked = false
-                        })
-                    }
-                }
-                document.querySelectorAll('.rule_v16').forEach(
-                    e => e.onchange = (e) => {
-                        const elements = document.querySelectorAll('.rule_v16');
-                        const allChecked = Array.from(elements).every(e => e.checked);
-                        if( allChecked ) {
-                            document.querySelector('#v16_all').checked = true
-                        } else {
-                            document.querySelector('#v16_all').checked = false
-                        }
-                    }
-                )
-                document.querySelectorAll('.rule').forEach(e => {
-                    e.checked = true
-                })
-            </script>
-
-        </details>
-
         <details id="challenge">
             <summary>Challenges</summary>
         </details>
@@ -1950,30 +1870,7 @@ p:has(#timeout_text) {
             if( mode_heroic ) {
                 new_game.rules.push(`mode_heroic_${mode_heroic}`)
             }
-            if( document.querySelector('#v16_all').checked ) {
-                new_game.rules.push(`v16_all`)
-            }
-            else {
-                document.querySelectorAll('.rule_v16').forEach(e => {
-                    if( e.checked ) {
-                        new_game.rules.push(e.id)
-                    }
-                })
-            }
-
-            document.querySelectorAll('.rule:not(.rule_v16)').forEach(e => {
-                if( e.checked ) {
-                    new_game.rules.push(e.id)
-                }
-            })
-
-            if( !new_game.rules.includes('crisis_of_infinite_deadpools') ) {
-                new_game.rules.push('no_crisis_of_infinite_deadpools')
-            }
-
-            if( !new_game.rules.includes('encounter_cards_ignore_crisis') ) {
-                new_game.rules.push('no_encounter_cards_ignore_crisis')
-            }
+            new_game.rules.push('v18_all')
 
             let cmd = JSON.stringify(new_game)
             let encoded = encodeURIComponent(cmd);
@@ -2072,9 +1969,8 @@ p:has(#timeout_text) {
 <script>
     // Define the key for caching the form data object
     const CACHE_KEY = 'form_cache_data';
-    cache_ids = ['v16_all', 'v16_player_elimination', 'v16_reveal', 'v16_teamwork', 'v16_referential_ability', 'v16_confuse_stun', 'encounter_cards_ignore_crisis', 'crisis_of_infinite_deadpools',
-        'hide_bug_report', 'show_achievement', 'scene_3d', 'statistics_notification', 'mode_heroic_slider', 'mode_skirmish',
-        'mode', 'rules', 'challenge', 'settings_other',
+    cache_ids = ['hide_bug_report', 'show_achievement', 'scene_3d', 'statistics_notification', 'mode_heroic_slider', 'mode_skirmish',
+        'mode', 'challenge', 'settings_other',
         'timeout_slider',
     ]
 
@@ -2138,6 +2034,13 @@ p:has(#timeout_text) {
             
             if (cachedData) {
                 const formData = JSON.parse(cachedData);
+
+                // Rules Reference 1.8 is the only rules model. Remove obsolete
+                // compatibility controls from caches created by older clients.
+                delete formData.encounter_cards_ignore_crisis;
+                delete formData.crisis_of_infinite_deadpools;
+                delete formData.rules;
+                localStorage.setItem(CACHE_KEY, JSON.stringify(formData));
                 
                 // Iterate over the cached data and apply it to the form elements
                 for (const key in formData) {

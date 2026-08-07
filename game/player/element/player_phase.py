@@ -72,8 +72,10 @@ class PlayerPhase:
     # TODO: use trigger to rewrite?
     def EndPhase(self) -> None:
         from game.card.face.card_face import CardFace
+        from game.card.face.base import EncounterCard
         from game.effect.rule import EndPhase
         from game.operate.faces import Faces
+        from game.operate.worlds import Worlds
 
         player = self.player
         message = Message.WhenPlayerEndPhase(player)
@@ -90,6 +92,16 @@ class PlayerPhase:
             faces.append(face)
             for upgrade in face.GetInventoryDeck().Get():
                 faces.append(upgrade)
+
+        # Encounter cards are not controlled by a player, but the end of the
+        # player phase readies exhausted cards in play regardless of owner.
+        # Do this once for a multiplayer game; each player still readies their
+        # own cards through the existing loop above.
+        if player == player.world.GetFirstPlayer():
+            faces += [
+                face for face in Worlds.GetOnFieldCards(player.GetIdentity().card.game_area)
+                if EncounterCard.IsType(face)
+            ]
         Faces.ReadyAll(faces, effect)
 
         self.player.has_change_form = False
@@ -104,4 +116,3 @@ class PlayerPhase:
     def EndRound(self) -> None:
         player = self.player
         player.stat.OnEndRound()
-

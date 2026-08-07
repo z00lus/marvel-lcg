@@ -1,4 +1,8 @@
-# Fork Goals
+# Marvel Champions Digital: Ronin Edition
+
+> Version 0.6.0 — “Echo”
+
+## Fork Goals
 
 This fork focuses on a simple and convenient **solo Marvel Champions experience**.
 
@@ -8,9 +12,9 @@ This fork focuses on a simple and convenient **solo Marvel Champions experience*
 
 Development should prioritize rules correctness, reliable saves and replays, and improvements that make solo games easier to start and play.
 
-# Progress
+## Progress
 
-## Compared with upstream
+### Compared with upstream
 
 Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/marvel-lcg), this fork currently adds:
 
@@ -20,14 +24,13 @@ Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/mar
 - UI improvements including adjustable animation speed, clearer rule descriptions, corrected keyboard shortcuts, and a **Try Again** action after defeat.
 - Reliable replay saving after a completed game, browser listing and download, correct replay loading, and an overlay control bar with first/previous/play-pause/next/last controls and timeline seeking. Replays now open paused and no longer resize or distort the game board.
 
-## Community integrations and new heroes
+### Community integrations and new heroes
 
 Campaign support and the initial Hercules implementation were merged from the [sdolle1775 fork](https://github.com/sdolle1775/marvel-lcg). The merged campaign work covers Mutant Genesis, NeXt Evolution, Age of Apocalypse, Agents of S.H.I.E.L.D., Galaxy's Most Wanted, and The Mad Titan's Shadow, together with related campaign-state fixes. After the merge, Hercules' special decks, card scripts, UI placement, and rules behavior were corrected in this fork and covered by focused tests.
 
 The **Echo**, **Wonder Man**, and **Daredevil** hero integrations are original work created for this fork. They include starter decks, card scripts, special-deck handling where required, targeted tests, and ongoing replay-based playtesting.
 
-Original open-source of Marvel LCG digital version on [ITCH](https://irefrixs.itch.io/marvel-lcg)
-                        | How to use the card editor        |
+Based on the original open-source [Marvel Champions: Digital Edition](https://irefrixs.itch.io/marvel-lcg) by Irefrixs.
 
 ## Security Warning
 
@@ -39,4 +42,5 @@ Do not install or run any third-party card scripts unless you trust them.
 
 ## Snapshot
 
+![](/docs/assets/image-5.png)
 ![](/docs/assets/image-4.png)

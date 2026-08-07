@@ -6,7 +6,48 @@ from engine.file import FileManager
 
 CATEGORY_NAME = "SCENE"
 
+class UnsupportedReplayRulesError(ValueError):
+    MESSAGE = (
+        "This replay uses legacy rules and is not compatible with this "
+        "Rules Reference 1.8-only branch."
+    )
+
+    def __init__(self) -> None:
+        super().__init__(self.MESSAGE)
+
 class LoaderHelper:
+
+    @staticmethod
+    def NormalizeV18Rules(rules: List[str]) -> List[str]:
+        version_names = {
+            "v15_all", "v16_all", "v18_all",
+            "v16_reveal", "v16_teamwork", "v16_player_elimination",
+            "v16_referential_ability", "v16_confuse_stun",
+            "v17_choice", "v17_ownership_control",
+            "v17_referential_ability", "v17_uniqueness",
+            "v17_actions_activations_costs",
+            "v17_counters_modifiers_card_state",
+            "v17_attacks_villain_transitions",
+            "v17_setup_elimination_you",
+            "v18_timing", "v18_surge", "v18_reveal", "v18_overkill",
+            "v18_attacks", "v18_initiation", "v18_targeting",
+            "v18_swaps", "v18_smaller_rules",
+            "encounter_cards_ignore_crisis",
+            "crisis_of_infinite_deadpools",
+            "fix_surge",
+        }
+        normalized = [
+            rule for rule in rules
+            if rule not in version_names and
+            not (rule.startswith("no_") and rule[3:] in version_names)
+        ]
+        normalized.append("v18_all")
+        return list(sorted(set(normalized)))
+
+    @staticmethod
+    def EnsureSupportedReplay(scene: 'Scene') -> None:
+        if "v18_all" not in scene.rules:
+            raise UnsupportedReplayRulesError()
 
     @staticmethod
     def CreateScene(seed: int, campaign: CampaignDescriptor, players: Sequence[HeroDescriptor], rules: List[str]) -> 'Scene':
@@ -15,7 +56,7 @@ class LoaderHelper:
             metadata={
                 "seed": seed,
             },
-            rules=rules,
+            rules=LoaderHelper.NormalizeV18Rules(rules),
             campaign=campaign,
             players=players,
             inputs=[]
@@ -88,4 +129,3 @@ class SceneLoader:
             return scene
         else:
             return None
-

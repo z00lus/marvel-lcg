@@ -81,6 +81,44 @@ class HasAttack(HasAttribute):
 class CanAttack(CardFace):
 
     @staticmethod
+    def RetargetAttackedPlayer(target: 'Unit2', property: 'AttackProperty') -> Any:
+        controller = target.GetControlByOrOwner()
+        if Player.IsType(controller):
+            property.against_player = controller
+        return controller
+
+    @staticmethod
+    def GetUndefendedTarget(original_target: 'Unit2', defender: 'Unit2') -> 'Unit2':
+        from game.card.face.card_type import Ally
+
+        if Ally.IsType(defender):
+            controller = defender.GetControlByOrOwner()
+            if Player.IsType(controller):
+                return controller.GetIdentity()
+        return original_target
+
+    @staticmethod
+    def ShouldDiscardToughForPiercing(calculated_damage: int, attack_message: 'Message.WhenUnitWouldAttackUnit', target: 'Unit2') -> bool:
+        return calculated_damage > 0 and attack_message.IsPiercing() and target.IsTough()
+
+    @staticmethod
+    def CanContinueInterruptedActivation(attacker: 'Unit2') -> bool:
+        # Same-title stages reuse the card and remain in play. A
+        # different-title stage removes the old villain card.
+        return attacker.IsInPlay()
+
+    @staticmethod
+    def CanContinueToDealAttackDamage(property: 'AttackProperty', by_effect: 'Effect') -> bool:
+        from game.operate.worlds import Worlds
+
+        if Worlds.IsGameOver(by_effect):
+            return False
+        attacked_player = property.against_player
+        if attacked_player and getattr(attacked_player, 'is_eliminated', False):
+            return False
+        return True
+
+    @staticmethod
     def OnDealDamageInternal(this: 'Unit2|CanAttack', units: List['Unit2'], damage: 'int|DamageProperty', by_effect: 'Effect', *, property: 'AttackProperty|None'=None, attack_in_event: bool) -> int|None:
         has_damage = True
 
@@ -145,6 +183,12 @@ class CanAttack(CardFace):
         world = this.card.world
         this = this.card.CastTo(Unit2)
 
+        # Enemy attacks always target both a character and that character's
+        # player, including effects that initiate an attack directly against
+        # an ally rather than an identity.
+        if property.against_player == None and units:
+            CanAttack.RetargetAttackedPlayer(units[0], property)
+
         # Q: If Ebony Maw is prevented from attacking or scheming by a status card, he removes the status gard instead of resolving his activation.
         would_atk_message = Message.WhenUnitWouldAttack(this, units, by_effect, property=property)
         would_atk_message.Send()
@@ -200,8 +244,6 @@ class CanAttack(CardFace):
             )
 
         basic_defense_messages: List['Message.AfterUnitDefenseInternal'] = []
-        attacker_is_defeated = 0
-
         for target in unit_dict:
 
             gain_divided_attack = 0
@@ -235,7 +277,7 @@ class CanAttack(CardFace):
             attacked_you = None
             def update_atk_target(target: 'Unit2'):
                 nonlocal attacked_you
-                attacked_you = target.GetControlByOrOwner()
+                attacked_you = CanAttack.RetargetAttackedPlayer(target, property)
                 return target
 
             if defender:
@@ -255,6 +297,21 @@ class CanAttack(CardFace):
             would_attack_unit_message.Send()
             gain_divided_attack = gain_value_when_divided_for_this_target(would_attack_unit_message)
             atk_target = update_atk_target(would_attack_unit_message.target)
+
+            def update_for_left_defender() -> None:
+                from game.card.face.card_type import Ally
+                nonlocal defense, defense_messages, atk_target
+                if not defender or defender.IsInPlay():
+                    return
+                defense = 0
+                fallback_target = CanAttack.GetUndefendedTarget(target, defender)
+                atk_target = update_atk_target(fallback_target)
+                would_attack_unit_message.ChangeTarget(atk_target, GameRule(defender))
+                would_atk_message.defender = None
+                defense_messages = []
+                being_atk_message.defense_messages = []
+
+            update_for_left_defender()
 
             # If the target of an ally’s basic power leaves play
             # before that ally deals damage equal to its ATK or
@@ -287,8 +344,22 @@ class CanAttack(CardFace):
                             render_ui=True
                         )
                     this.ResolveBoostCards(being_atk_message, gain_att)
-                    if Worlds.IsGameOver(by_effect):
-                        return None
+                    if not CanAttack.CanContinueToDealAttackDamage(property, by_effect):
+                        atk_end_messages.append(
+                            Message.AttackEndsBeforeDamageDealt(
+                                this,
+                                atk_target,
+                                being_atk_message,
+                            )
+                        )
+                        break
+
+                # A same-title stage uses the same card and CastTo() below
+                # continues with its new face. A different-title stage removes
+                # this card from play, which ends the interrupted activation.
+                if not CanAttack.CanContinueInterruptedActivation(this):
+                    atk_end_messages.append(Message.AttackEndsBeforeDamageDealt(this, atk_target, being_atk_message))
+                    break
 
                 this = this.card.CastTo(Unit2)
                 assert CanAttack.IsType(this), f"{this=}"
@@ -296,9 +367,7 @@ class CanAttack(CardFace):
                 if being_atk_message.defender:
                     atk_target = update_atk_target(being_atk_message.defender)
 
-                if defender and defender.IsDefeated():
-                    defense = 0
-                    atk_target = update_atk_target(target)
+                update_for_left_defender()
 
             has_keyword_message = Message.CheckIfAttackMessageHasKeyword(would_attack_unit_message, by_effect)
             has_keyword_message.Send()
@@ -319,24 +388,36 @@ class CanAttack(CardFace):
                         divided_evenly_damage = divided_rest_damage
                 else:
                     damage = property.GetDamage(this)
-                value = unit_dict[target] * damage + would_attack_unit_message.temp_additional_value + gain_divided_attack
-                recalculate = Message.WhenRecalculateAttackDamage(this, atk_target, value, would_atk_message)
-                recalculate.Send()
-                calculated_damage = recalculate.will_take_damage
+                attack_damage = unit_dict[target] * damage + would_attack_unit_message.temp_additional_value + gain_divided_attack
             else:
-                calculated_damage = unit_dict[target] * property.GetDamage(this) + would_attack_unit_message.temp_additional_value
-                recalculate = Message.WhenRecalculateAttackDamage(this, atk_target, calculated_damage, would_atk_message)
-                recalculate.Send()
-                calculated_damage = recalculate.will_take_damage
+                attack_damage = unit_dict[target] * property.GetDamage(this) + would_attack_unit_message.temp_additional_value
 
-            calculated_damage = max(0, calculated_damage - defense)
+            calculate_damage_message = Message.WhenCalculateAttackDamage(
+                this,
+                atk_target,
+                attack_damage,
+                defense,
+                boost_cards,
+                would_attack_unit_message,
+            )
+            calculate_damage_message.Send()
+            calculated_damage = calculate_damage_message.calculated_damage
+
+            if not CanAttack.CanContinueToDealAttackDamage(property, by_effect):
+                atk_end_messages.append(
+                    Message.AttackEndsBeforeDamageDealt(
+                        this,
+                        atk_target,
+                        being_atk_message,
+                    )
+                )
+                break
 
             # unit_health = target.health
 
             excess_damage = 0
-            if would_attack_unit_message.IsPiercing():
-                if atk_target.IsTough():
-                    atk_target.DiscardTough(by_effect, rule="All")
+            if CanAttack.ShouldDiscardToughForPiercing(calculated_damage, would_attack_unit_message, atk_target):
+                atk_target.DiscardTough(by_effect, rule="All")
 
             from game.card.face.card_type import Ally
             from game.card.face.card_type import Minion
@@ -412,9 +493,6 @@ class CanAttack(CardFace):
             total_dealt_damage += calculated_damage
 
             if is_not_delay:
-                retaliate_message = atk_target.ResolveRetaliate(would_attack_unit_message)
-                attacker_is_defeated += retaliate_message != None and isinstance(retaliate_message, Message.AfterUnitDefeatedUnit)
-
                 if being_atk_message.defense_messages:
                     defend_against_message = Message.AfterUnitDefendEnd(being_atk_message.defense_messages, would_atk_message, calculated_damage, took_damage)
                     defend_against_message.Send()
@@ -443,8 +521,8 @@ class CanAttack(CardFace):
                     after_activate_message.Send()
 
                 if use_basic_power_message and \
-                    not this.IsDefeated() and \
-                    not attacker_is_defeated:
+                    this.IsInPlay() and \
+                    not this.IsDefeated():
                     unit = this.card.CastTo(Unit2)
                     after_use_basic_power_message = Message.AfterUnitUseBasicPower(unit, "ATK", end_message, use_basic_power_message)
                     after_use_basic_power_message.Send()
@@ -454,7 +532,8 @@ class CanAttack(CardFace):
             # power, that ability triggers after an attack in which
             # a character made a basic defense resolves.
             for basic_defense_message in basic_defense_messages:
-                if basic_defense_message.IsBasicDefense() and basic_defense_message.use_basic_power_message:
+                if basic_defense_message.defender.IsInPlay() and \
+                    basic_defense_message.IsBasicDefense() and basic_defense_message.use_basic_power_message:
                     after_use_def_power_message = Message.AfterUnitUseBasicPower(basic_defense_message.defender, "DEF", basic_defense_message, basic_defense_message.use_basic_power_message)
                     after_use_def_power_message.Send()
         else:
@@ -549,4 +628,3 @@ class CanAttack(CardFace):
         check_message = Message.CheckIfUnitCanAttack(self, by_effect)
         check_message.Send()
         return check_message.can_attack
-

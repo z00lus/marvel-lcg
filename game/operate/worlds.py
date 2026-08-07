@@ -262,13 +262,7 @@ class Worlds:
 
     @staticmethod
     def GetOnFieldEnvironment(game_area_effect: 'GameArea|Effect') -> List['Environment']:
-        faces: List['Environment'] = []
-        for unit in Worlds.GetPlayersIdentities(game_area_effect):
-            player = unit.GetControlByPlayer()
-            faces += player.area_environment.Get()
-        game_area = Worlds.CastGameArea(game_area_effect)
-        faces += [x for x in game_area_effect.world.area_environment.Get() if x.card.game_area == game_area]
-        return faces
+        return [x for x in Worlds.GetOnFieldCards(game_area_effect) if Environment.IsType(x)]
 
     @staticmethod
     def GetOnFieldCharacters(game_area_effect: 'GameArea|Effect', finder: 'CardFinder|None'=None) -> List['Character']:
@@ -392,24 +386,32 @@ class Worlds:
         faces: List['CardFace'] = []
         areas: List[Deck] = []
 
-        for player in Worlds.GetPlayers(game_area):
-            areas += [player.area_hero, player.area_environment, player.allies, player.supports, player.engaged_minions, player.obligations_area]
+        def get_faces(*check_faces: 'CardFace') -> List['CardFace']:
+            found: List['CardFace'] = []
+            for x in check_faces:
+                found.append(x)
+                found.extend(get_faces(*x.GetInventoryDeck().GetAll()))
+                found.extend(get_faces(*x.GetPlacedCardArea().GetAll()))
+            return found
 
-        for area in [world.area_schemes_main, world.area_schemes_side, world.area_environment, world.scenario.area_villain] + areas:
+        for player in Worlds.GetPlayers(game_area):
+            areas += [player.area_hero, player.allies, player.supports, player.engaged_minions, player.obligations_area]
+
+        for area in [world.area_schemes_main, world.area_schemes_side, world.scenario.area_villain] + areas:
             for face in area.GetAll():
                 if face.card.game_area == game_area:
-                    def get_faces(*check_faces: 'CardFace'):
-                        found: List['CardFace'] = []
-                        for x in check_faces:
-                            found.append(x)
-                            found.extend(get_faces(*x.GetInventoryDeck().GetAll()))
-                            found.extend(get_faces(*x.GetPlacedCardArea().GetAll()))
-                        return found
                     found = get_faces(face)
                     faces.extend(found)
 
+        # An environment in play counts as being in each player's game area,
+        # including when the scenario splits players into separate areas.
+        environment_areas = [world.area_environment] + [x.area_environment for x in world.const_players]
+        for area in environment_areas:
+            for face in area.GetAll():
+                faces.extend(get_faces(face))
+
         faces = [x for x in faces if x.IsFaceUp()]
-        return faces
+        return Types.RemoveDuplicates(faces)
 
     ################################################################################
     # Scheme / Villain
@@ -493,19 +495,37 @@ class Worlds:
                          **kwargs: Unpack['CardFinder.KWArgs'],
                          ) -> List['TC']:
         from game.operate.filter import Filter
+        from game.operate.referential import Referential
         if game_area == None:
             game_area = by_effect.this.card.game_area
 
         # We should not use the `Any`
         faces: List[Any] = Worlds.GetOnFieldCards(by_effect)
-        if finder:
-            faces = finder.Checks(faces)
-
-        return Filter.ByFinder(
-            faces,
-            CardFinder(name=name, trait=trait, card_type=card_type, game_area=game_area, **kwargs),
-            max=max
+        direct_finder = CardFinder(
+            name=name,
+            trait=trait,
+            card_type=card_type,
+            game_area=game_area,
+            **kwargs,
         )
+
+        find_names: List[str] = []
+        for check_finder in [finder, direct_finder]:
+            if check_finder:
+                for find_name in check_finder.check_by_name:
+                    if find_name not in find_names:
+                        find_names.append(find_name)
+        if find_names:
+            faces = list(Referential.Filter(
+                CardFinder(names=find_names),
+                faces,
+                by_effect,
+            ))
+
+        if finder:
+            faces = list(finder.Checks(faces))
+
+        return Filter.ByFinder(faces, direct_finder, max=max)
 
     ################################################################################
     #
@@ -565,7 +585,9 @@ class Worlds:
                             each_time: Callable[['CardFace'], Any]|None=None) -> List['CardFace']:
         deck = Worlds.GetEncounterDeck(by_effect)
         num = Worlds.ConvertPerPlayerIconToInt(num, by_effect)
-        faces = deck.DiscardCardsInternal(num, by_effect, continue_after_shuffle=False, each_time=each_time)
+        # RR 1.8 finishes the current encounter-deck effect after an empty
+        # deck is reset. Discarding several cards is one such effect.
+        faces = deck.DiscardCardsInternal(num, by_effect, continue_after_shuffle=True, each_time=each_time)
         return faces
 
     @staticmethod

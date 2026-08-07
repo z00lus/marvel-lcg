@@ -314,17 +314,3 @@ class RunAt:
             ),
             unregister_after_exec=True,
         )
-
-    @staticmethod
-    def AfterRevealed(face: 'CardFace', operation: Callable[[], Any]):
-        face.effect.RegisterTemp(
-            AbilityFactory.AfterPlayerRevealCard(
-                AbilityType.Temp2,
-                "AnyPlayer",
-                face,
-                lambda effect, message:
-                    operation()
-            ),
-            unregister_after_exec=True,
-        )
-

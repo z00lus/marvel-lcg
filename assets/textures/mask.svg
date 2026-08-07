@@ -1,0 +1,15 @@
+<svg width="75" height="105" xmlns="http://www.w3.org/2000/svg">
+  <path
+  fill="black" fill-opacity="1"
+  d="
+     M-80 0
+     a40 55 0 0 0 155 0
+     Z
+     M0 0
+     l80 0
+     l0 115
+     l-80 0
+     Z
+   "
+/>
+</svg>

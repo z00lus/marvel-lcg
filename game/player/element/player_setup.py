@@ -12,6 +12,29 @@ class PlayerSetup:
     def __init__(self, player: 'Player') -> None:
         self.player = player
 
+    def ValidateV17IdentitySelection(self, identity: 'CardFace') -> None:
+        from game.card.face.card_type import Identity
+
+        for player in self.player.world.const_players:
+            for other_identity in player.area_hero.GetAll():
+                if other_identity.card == identity.card:
+                    continue
+                if Identity.IsType(other_identity) and identity.MatchesV17Unique(other_identity):
+                    raise ValueError(
+                        f"Matching identities cannot be selected together: "
+                        f"{identity.name} and {other_identity.name}"
+                    )
+
+    def ValidateV17DeckUniqueness(self, identity: 'CardFace', deck_faces: Sequence['CardFace']) -> None:
+        unique_faces = [identity] + [face for face in deck_faces if face.IsUnique()]
+        for index, face in enumerate(unique_faces):
+            for other_face in unique_faces[index + 1:]:
+                if face.MatchesV17Unique(other_face):
+                    raise ValueError(
+                        f"A player deck cannot contain matching unique cards: "
+                        f"{face.name} and {other_face.name}"
+                    )
+
     def SetupPlayerAbility(self, hero: 'CardFace'):
         from game.message import Message
         player = self.player
@@ -200,6 +223,7 @@ class PlayerSetup:
         CardFactory.GenerateCards(hero_names, player.set_aside_deck, player.world)
 
         hero_card = player.set_aside_deck.GetAll()[0]
+        self.ValidateV17IdentitySelection(hero_card)
         rule = GameRule(hero_card)
         hero_card.PutIntoPlay(player, rule)
 
@@ -234,7 +258,12 @@ class PlayerSetup:
             player_hero_deck = list(player_deck) + list(hero_deck)
         else:
             player_hero_deck = list(hero_deck) + list(player_deck)
-        CardFactory.GenerateCards(player_hero_deck, player.player_deck, player.world)
+        generated_player_cards = CardFactory.GenerateCards(player_hero_deck, player.player_deck, player.world)
+        if not getattr(player.world.rule, "mode_campaign", False):
+            self.ValidateV17DeckUniqueness(
+                player.GetIdentity(),
+                [card.face for card in generated_player_cards],
+            )
 
         player.stat.ResetPlayedRevealedCards()
         player.flag.Reset()
@@ -249,4 +278,3 @@ class PlayerSetup:
 
         selected_message = Message.AfterPlayerSelectHeroEnd(player, player.GetIdentity())
         selected_message.Send()
-

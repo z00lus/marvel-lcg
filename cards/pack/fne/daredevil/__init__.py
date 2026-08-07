@@ -9,6 +9,19 @@ def GetSenseDeck(player: 'Player') -> 'Deck|None':
     return player.special_decks.get(SENSE_DECK)
 
 
+def RevealSenseDeck(top: 'CardFace', effect: 'Effect') -> None:
+    Unused(top)
+    sense_deck = GetSenseDeck(effect.GetInitiator())
+    if not sense_deck:
+        return
+
+    # The Sense deck has a fixed, inspectable order. Every card is faceup,
+    # although Daredevil's Superhuman Senses can play only its top card.
+    for sense in sense_deck.GetAll():
+        sense.card.can_state.is_like_in_hand = None
+        sense.FlipTo(effect, face_up=True, ui_look_at=False)
+
+
 def SetupSenseDeck(effect: 'Effect', message: 'Message.WhenPlayerSelectHero') -> None:
     from game.message import Message
 
@@ -23,6 +36,28 @@ def SetupSenseDeck(effect: 'Effect', message: 'Message.WhenPlayerSelectHero') ->
     Faces.MoveAllTo(senses, sense_deck, effect)
     Message.WhenDeckCreated_Text(sense_deck)
     sense_deck.Shuffle(effect)
+
+
+def ReturnSenseCardsToDeck() -> Sequence['Ability']:
+    def return_sense_to_deck(effect: 'Effect', message: 'Message.WhenCardWouldLeavePlay') -> None:
+        deck = GetSenseDeck(effect.GetInitiator())
+        if not deck or message.into_area == deck:
+            return
+
+        message.SetBeInstead(effect)
+        Faces.MoveAllToDeck([message.trigger], deck, "Bottom", effect)
+
+    return [
+        AbilityFactory.WhenCardWouldLeavePlay(
+            AbilityType.ForcedInterrupt,
+            CardFinder(trait="SENSE"),
+            return_sense_to_deck,
+            conditions=[
+                lambda effect, message:
+                    message.trigger.GetOwnerPlayer() == effect.GetInitiator()
+            ],
+        ),
+    ]
 
 
 def GetAttachedUpgradeCount(face: 'CardFace') -> int:

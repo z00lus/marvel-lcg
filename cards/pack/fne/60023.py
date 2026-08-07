@@ -9,8 +9,12 @@ def GetAbilities() -> Sequence['Ability']:
         this = effect.this.CastTo(Event)
         player = effect.GetInitiator()
         for _ in range(2):
+            legal_schemes = [
+                scheme for scheme in Worlds.GetOnFieldSchemes(effect)
+                if scheme.CanBeThwartBy(effect)
+            ]
             scheme = player.AskChooseFace(
-                Worlds.GetOnFieldSchemes(effect),
+                legal_schemes,
                 effect,
                 prompt="Choose a scheme to remove 1 threat from",
             )

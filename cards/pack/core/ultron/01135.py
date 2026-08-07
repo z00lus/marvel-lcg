@@ -9,7 +9,7 @@ def GetAbilities() -> Sequence['Ability']:
             player = target.GetControlByPlayer()
             CreateUltronFacedownDrone(player, 1, effect)
 
-    def ultron_attack(effect: 'Effect', message: 'Message.WhenRecalculateAttackDamage') -> int:
+    def ultron_attack(effect: 'Effect', message: 'Message.WhenCalculateAttackDamage') -> int:
         player = message.would_atk_message.property.against_player
         if player:
             return len([x for x in player.GetEngagedMinions() if x.HasTrait("DRONE")])
@@ -28,4 +28,3 @@ def GetAbilities() -> Sequence['Ability']:
             ultron_attack
         )
     ]
-

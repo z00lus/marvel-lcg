@@ -72,6 +72,7 @@ export class MoveCard {
 
         // Set final x/y positions on each card element
         MoveCard.setCardStyles(shown_cards_els, cards_els, list_x2, parent, card_area, offsets.normal_y, offsets.scheme_upgrade_y);
+        MoveCard.positionBoundStatusCards(shown_cards_els);
     }
 
     private static getPadding(parent: HTMLElement) {
@@ -120,10 +121,11 @@ export class MoveCard {
     private static buildAreaXList(parent: HTMLElement, cards_els: HTMLElement[], list_x: number[], padding: number) {
         let rendered_ids: number[] = [];
         let end_offset_x = 0;
+        const statusCountByTarget = new Map<number, number>();
         for (let i = cards_els.length - 1; i >= 0; i--) {
             const object_id = Number(cards_els[i].dataset.id!);
             const card = Cards.getCard(object_id)!;
-            let x = MoveCard.computeCardX(card, list_x);
+            let x = MoveCard.computeCardX(card, list_x, statusCountByTarget);
 
             // Insert padding for grouped/bound cards
             if (!rendered_ids.includes(card.bind_object_id) && i !== cards_els.length - 1 && !card.is_dealt_card) {
@@ -145,7 +147,7 @@ export class MoveCard {
         list_x[list_x.length - 1] += end_offset_x;
     }
 
-    private static computeCardX(card: any, list_x: number[]): number {
+    private static computeCardX(card: any, list_x: number[], statusCountByTarget: Map<number, number>): number {
         let x = 0;
         if (!card.is_face_up) {
             // Shift left for face-down cards
@@ -169,7 +171,13 @@ export class MoveCard {
                     }
                     break;
                 case "StatusCard":
-                    x += MoveCard.cardWidth * 0.5;
+                    if (card.bind_object_id) {
+                        const statusCount = statusCountByTarget.get(card.bind_object_id) ?? 0;
+                        statusCountByTarget.set(card.bind_object_id, statusCount + 1);
+                        x += MoveCard.cardWidth * (statusCount === 0 ? 0.65 : 0.15);
+                    } else {
+                        x += MoveCard.cardWidth * 0.5;
+                    }
                     break;
                 default:
                     if (card.card_type_base === "Scheme") {
@@ -291,6 +299,41 @@ export class MoveCard {
             if( cards_els.includes(c) ) {
                 j2 += 1;
             }
+        }
+    }
+
+    private static positionBoundStatusCards(cards_els: HTMLElement[]) {
+        const statusIndexByTarget = new Map<number, number>();
+        const sortedStatusCards = cards_els
+            .map(element => ({
+                element,
+                card: Cards.getCard(Number(element.dataset.id!)),
+            }))
+            .filter(item =>
+                item.card?.card_type === 'StatusCard' &&
+                item.card.bind_object_id !== 0
+            )
+            .sort((a, b) => a.card!.object_id - b.card!.object_id);
+
+        for (const { element, card } of sortedStatusCards) {
+            const target = Cards.getDiv(card!.bind_object_id);
+            if (!target || target.parentElement !== element.parentElement || target.classList.contains('hide')) {
+                continue;
+            }
+
+            const stackIndex = statusIndexByTarget.get(card!.bind_object_id) ?? 0;
+            statusIndexByTarget.set(card!.bind_object_id, stackIndex + 1);
+
+            const targetX = Number(target.style.getPropertyValue('--x'));
+            const targetY = Number(target.style.getPropertyValue('--y'));
+            // A clockwise rotation moves the artwork's title edge to the
+            // right. Leave that strip visible while the rest stays under
+            // the bound character card.
+            const x = targetX + MoveCard.cardWidth * (0.65 + stackIndex * 0.15);
+            const y = targetY + stackIndex * 10;
+
+            element.style.setProperty('--x', x.toString());
+            element.style.setProperty('--y', y.toString());
         }
     }
 
@@ -417,4 +460,3 @@ export class MoveCard {
         });
     }
 }
-

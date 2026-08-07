@@ -39,7 +39,10 @@ class Engine:
     @staticmethod
     def Initialize() -> bool:
         Ver.Initialize()
-        game_name = f'Marvel LCG {Ver.ui_version_str}'
+        game_name = (
+            f'{Ver.product_name} — {Ver.release_label} '
+            f'[{Ver.ui_version_str}]'
+        )
         System.SetTitle(game_name)
 
         # ConfigVariables.Test()

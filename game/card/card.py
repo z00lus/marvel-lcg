@@ -59,6 +59,11 @@ class Card(Object):
 
         self.owner_original: Final = owner # Fix "51036"
         self.owner_internal: 'Player|Scenario' = owner
+        # Ownership and control are separate concepts as of Rules Reference
+        # 1.7.  ``owner_original`` never changes, ``owner_internal`` may change
+        # for campaign/scenario and linked player cards, and this value records
+        # an explicit change of control without rewriting either owner.
+        self.controller_internal: 'Player|Scenario|None' = None
 
         self.state = CardIsStates()
         self.can_state = CardCanStates()
@@ -195,40 +200,137 @@ class Card(Object):
 
     ################################################################################
     #
-    def SetOwner(self, owner: 'Player|None'):
+    def SetOwner(self, owner: 'Player|Scenario|None'):
         if owner == None:
-            controller = self.world.GetScenario()
-        else:
-            controller = owner
-        self.owner_internal = controller
+            owner = self.world.GetScenario()
+        self.owner_internal = owner
+    def GetOriginalOwner(self) -> 'Player|Scenario':
+        return self.owner_original
     def GetOwner(self) -> 'Player|Scenario':
         return self.owner_internal
-    def GetController(self) -> 'Player|Scenario|None':
-        if self.IsOnField():
-            if self.area.flags.is_side_scheme_area:
-                # Fix "24057" "40027"
-                if PlayerSideScheme.IsType(self.face):
-                    return self.owner_internal
-            bind_card =  self.area.bind_card
-            if bind_card:
-                bind_face = bind_card.face
-                # Fix "30019" attached in the main scheme
-                if MainScheme.IsType(bind_face):
-                    return self.owner_internal
-                # Fix "50121"
-                elif EncounterSideScheme.IsType(bind_face):
-                    return self.owner_internal
-                elif (EncounterCard.IsType(bind_face) or Villain.IsType(bind_face)) and \
-                    ClassCard.IsType(self.face):
-                    return self.owner_internal
-                elif ClassCard.IsType(bind_face) and EncounterCard.IsType(self.face):
-                    return self.owner_internal
-                elif PlayerSideScheme.IsType(bind_face):
-                    return self.owner_internal
 
-            return self.area.GetOwner()
-        else:
+    def SetController(self, controller: 'Player|Scenario|None') -> None:
+        """Record explicit control without changing ownership or card state."""
+        self.controller_internal = controller
+
+    def _ShouldTransferOwnershipWithControl(self) -> bool:
+        """Return whether taking control also changes the in-game owner.
+
+        Linked cards and scenario/campaign player cards begin in a scenario
+        set-aside area, so their printed owner is the scenario.  Under v1.7,
+        the player who takes control of one of those player cards becomes its
+        owner for the remainder of the game.
+        """
+        from game.card.face.base import ClassCard
+
+        printed_classes = self.face.paper.desc.get("Class", "").split(";")
+
+        return (
+            "Linked" in self.face.paper.desc or
+            "Campaign" in printed_classes or
+            (
+                self.owner_original.is_scenario and
+                ClassCard.IsType(self.face)
+            )
+        )
+
+    def _GetControllerPlayArea(self, controller: 'Player|Scenario') -> 'Deck|None':
+        if not isinstance(controller, Player):
             return None
+        if Ally.IsType(self.face):
+            return controller.allies
+        if Support.IsType(self.face):
+            return controller.supports
+        if Identity.IsType(self.face):
+            return controller.area_hero
+        return None
+
+    def ChangeControl(self, controller: 'Player|Scenario', by_effect: 'Effect|None'=None) -> None:
+        """Change control and move a character/support to its new play area."""
+        self.SetController(controller)
+        if by_effect != None and self.IsOnField():
+            into_area = self._GetControllerPlayArea(controller)
+            if into_area != None and into_area != self.area:
+                # In-play to in-play movement deliberately avoids Reset(), so
+                # ready/exhausted state, damage, attachments, and statuses stay
+                # on the card.
+                self.MoveToArea(into_area, by_effect)
+
+    def TakeControl(self, controller: 'Player|Scenario', by_effect: 'Effect|None'=None) -> None:
+        """Apply an explicit take-control instruction under the active rules."""
+        if isinstance(controller, Player) and self._ShouldTransferOwnershipWithControl():
+            self.SetOwner(controller)
+        self.ChangeControl(controller, by_effect)
+
+    def RevertControl(self, by_effect: 'Effect|None'=None) -> None:
+        """End an explicit control-changing effect.
+
+        The card's physical move, when one is required, is performed by the
+        resolving card ability.  Clearing this override makes normal in-play
+        area and attachment control apply again.
+        """
+        owner = self.GetOwner()
+        self.SetController(None)
+        if by_effect != None and self.IsOnField():
+            into_area = self._GetControllerPlayArea(owner)
+            if into_area != None and into_area != self.area:
+                self.MoveToArea(into_area, by_effect)
+
+    def _GetRulesController(self) -> 'Player|Scenario|None':
+        from game.card.face.card_type import Upgrade
+
+        # A player controls cards in their own out-of-play areas.  Scenario
+        # areas likewise remain scenario-controlled, although "you control"
+        # references are restricted to cards in play by the rules.
+        if not self.IsOnField():
+            return self.area.GetOwner()
+
+        bind_card = self.area.bind_card
+        if bind_card:
+            bind_controller = bind_card.GetController()
+            # An upgrade attached to a card controlled by another player is
+            # controlled by that player.  A player upgrade on a scenario-
+            # controlled card remains under its owner's control.
+            if Upgrade.IsType(self.face) and isinstance(bind_controller, Player):
+                return bind_controller
+            if self.controller_internal != None:
+                return self.controller_internal
+            return self.owner_internal
+
+        if self.controller_internal != None:
+            return self.controller_internal
+
+        # Player side schemes are the one player-card type placed in a shared
+        # scenario area while remaining under their owner's control. Other
+        # special shared areas can intentionally represent no player's control.
+        if PlayerSideScheme.IsType(self.face):
+            return self.owner_internal
+
+        return self.area.GetOwner()
+
+    def GetController(self) -> 'Player|Scenario|None':
+        return self._GetRulesController()
+
+    def GetOwnerEquivalentArea(self, into_area: 'Deck') -> 'Deck':
+        """Map a leave-play destination to the current owner's equivalent."""
+        owner = self.GetOwner()
+        if isinstance(owner, Player) and owner not in self.world.players:
+            return self.world.area_removed
+
+        if isinstance(owner, Player):
+            if into_area.flags.is_in_hand:
+                return owner.hand_cards
+            if into_area.flags.is_player_deck:
+                return owner.player_deck
+            if into_area.flags.is_discards:
+                return self.bind_discard_pile or owner.discard_pile
+        else:
+            if into_area.flags.is_player_deck or into_area.flags.is_encounter_deck:
+                return owner.encounter_deck
+            if into_area.flags.is_in_hand or into_area.flags.is_discards:
+                return owner.encounter_discard_pile
+
+        return into_area
 
     ################################################################################
     #
@@ -319,6 +421,7 @@ class Card(Object):
         if ability.is_play:
             assert HasCost.IsType(face), f"{face=}"
             ability.SetPlayCost(face.GetPrintedCostWithRequirement())
+            ability.play_cost_is_x = face.printed_cost_is_x
         effect = Effect(face, ability, is_temp=is_temp, is_local=is_local, world=world)
 
         world.event_manager.RegisterEffect(effect)
@@ -386,6 +489,20 @@ class Card(Object):
         from_area = self.area
         if up_face == None:
             up_face = self.face
+
+        if from_area == self.world.area_removed and \
+            self not in getattr(
+                getattr(by_effect, "context", None),
+                "allowed_removed_cards",
+                set(),
+            ):
+            # Removed from game is stronger than ordinary out-of-play. A
+            # generic move, put-into-play, or return effect cannot retrieve a
+            # card unless its script explicitly searched the removed area.
+            return False
+
+        if from_area.flags.is_in_play and not into_area.flags.is_in_play:
+            into_area = self.GetOwnerEquivalentArea(into_area)
 
         if self.area == into_area:
             return False
@@ -490,6 +607,9 @@ class Card(Object):
 
         self.area.Remove(self)
         into_area.Insert(index, self, target_game_area)
+
+        if from_area.flags.is_in_play and not into_area.flags.is_in_play:
+            self.RevertControl()
 
         self.visible.Update()
 
@@ -614,6 +734,23 @@ class Card(Object):
             return return_value
         return False
 
+    def GetDefaultDiscardArea(self, from_area: 'Deck') -> 'Deck':
+        def get_owner_area(owner: 'Player|Scenario'):
+            if isinstance(owner, Player):
+                return owner.discard_pile
+            return owner.encounter_discard_pile
+
+        if from_area.flags.is_boost_area:
+            # Cosmic Entity events retain their player owner in the encounter
+            # deck, but after resolving as boost cards they go to the encounter
+            # discard pile (Rules Reference FAQ).
+            return self.world.GetScenario().encounter_discard_pile
+        if self.bind_discard_pile != None:
+            return self.bind_discard_pile
+        if from_area.bind_discard_pile:
+            return from_area.bind_discard_pile
+        return get_owner_area(self.owner_internal)
+
     def CheckIfCanDiscard(self, by_effect: 'Effect', *, into_area: 'Literal["Owner"]|Deck|None'=None, ui_group: bool=False, up_face: 'CardFace|None'=None) -> Tuple['Message.WhenCardLeavePlay|Message.WhenCardWouldMoveToArea|None|bool', Message.WhenCardWouldDiscard]:
         from game.message import Message
         from game.operate.faces import Faces
@@ -644,14 +781,8 @@ class Card(Object):
             pass
         elif discard_message.into_area != None:
             into_area = discard_message.into_area
-        elif self.bind_discard_pile != None:
-            into_area = self.bind_discard_pile
-        elif from_area.bind_discard_pile:
-            into_area = from_area.bind_discard_pile
-        elif EncounterCard.IsType(self.face):
-            into_area = get_owner_area(self.owner_original)
         else:
-            into_area = get_owner_area(self.owner_internal)
+            into_area = self.GetDefaultDiscardArea(from_area)
 
         def action():
             Faces.DiscardAll(up_face.card.components.OnDiscard(by_effect), by_effect, simultaneous=True)
@@ -881,4 +1012,3 @@ class Card(Object):
             is_new              = Engine.statistics.IsNew(self.face.paper.card_id),
             is_action           = any(x for x in self.face.effects if x.ability.flags.is_action) #  or x.ability.type.is_resource
         )
-

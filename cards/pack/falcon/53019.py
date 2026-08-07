@@ -13,19 +13,21 @@ def GetAbilities() -> Sequence['Ability']:
         faces = Worlds.GetOnFieldFriendlyCharacters(effect)
         value = Faces.CountTraitNum(faces)
 
-        initiator.ChooseAbilities(
+        initiator.ChooseForEach(
             effect,
-            AbilityFactory.ForChoiceAbility(
-                f"Remove 1 threat from a scheme",
-                lambda targets:
-                    this.RemoveThreatFromSchemes(targets, 1, effect)
-            ).SetTarget(Scheme2),
-            AbilityFactory.ForChoiceAbility(
-                f"Deal 1 damage to an enemy",
-                lambda targets:
-                    this.DealDamage(targets, 1, effect)
-            ).SetTarget(Enemy),
-            repeat=value
+            value,
+            lambda _index: [
+                AbilityFactory.ForChoiceAbility(
+                    "Remove 1 threat from a scheme",
+                    lambda targets:
+                        this.RemoveThreatFromSchemes(targets, 1, effect)
+                ).SetTarget(Scheme2),
+                AbilityFactory.ForChoiceAbility(
+                    "Deal 1 damage to an enemy",
+                    lambda targets:
+                        this.DealDamage(targets, 1, effect)
+                ).SetTarget(Enemy),
+            ],
         )
 
 
@@ -35,4 +37,3 @@ def GetAbilities() -> Sequence['Ability']:
             strength_in_diversity
         ).SetPlay().SetLabel(),
     ]
-

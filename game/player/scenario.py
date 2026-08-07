@@ -90,25 +90,7 @@ class Scenario(User):
 
         def advance(prev_villain: 'Villain', next_villain: 'Villain'):
             villain_card = prev_villain.card
-
             world = by_effect.world
-
-            from game.card.factory import CardFactory
-
-            old_faces: List[CardFace] = []
-            for face in prev_villain.card.printed_faces:
-                old_faces.append(CardFactory.CreateFace(face.paper, world))
-
-            back_faces: List[CardFace] = []
-            first_faces: List[CardFace] = []
-            for face in next_villain.card.printed_faces:
-                if face.IsName(prev_villain.name):
-                    first_faces.append(CardFactory.CreateFace(face.paper, world))
-                else:
-                    back_faces.append(CardFactory.CreateFace(face.paper, world))
-            assert first_faces, f"{next_villain.card.printed_faces=}"
-
-            # next_villain.card.SetAsCard(old_faces[0], old_faces[1:], True)
 
             would_message = Message.WhenVillainWouldAdvance(prev_villain)
             would_message.Send()
@@ -121,6 +103,21 @@ class Scenario(User):
                 message = Message.WhenVillainAdvance(new_villain, by_effect)
                 message.Send()
             else:
+                from game.card.factory import CardFactory
+
+                old_faces: List[CardFace] = []
+                for face in prev_villain.card.printed_faces:
+                    old_faces.append(CardFactory.CreateFace(face.paper, world))
+
+                back_faces: List[CardFace] = []
+                first_faces: List[CardFace] = []
+                for face in next_villain.card.printed_faces:
+                    if face.IsName(prev_villain.name):
+                        first_faces.append(CardFactory.CreateFace(face.paper, world))
+                    else:
+                        back_faces.append(CardFactory.CreateFace(face.paper, world))
+                assert first_faces, f"{next_villain.card.printed_faces=}"
+
                 next_villain.card.SetAsCard(old_faces[0], old_faces[1:], True)
 
                 first_face = None
@@ -142,9 +139,6 @@ class Scenario(User):
 
                 new_villain = new_villain.CastTo(Villain)
                 CardFactory.CardRegisterEffects(villain_card)
-
-                advance_message = Message.WhenVillainWouldAdvance(prev_villain)
-                advance_message.Send()
 
                 # Fix `try_shuffle_deck` in Play Rule
                 new_villain.SetEncounterDeck(prev_villain.encounter_deck)
@@ -210,4 +204,3 @@ class Scenario(User):
         if user == None:
             return False
         return not user.IsPlayer()
-

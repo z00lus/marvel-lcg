@@ -258,6 +258,8 @@ class GameSession:
         if file_path:
             scene = SceneLoader.Load(file_path)
             if scene:
+                from game.scene.loader import LoaderHelper
+                LoaderHelper.EnsureSupportedReplay(scene)
                 self.LoadScene(scene, skip_to, state, break_on)
                 Notify.Command(f"Load: {file_path}")
 

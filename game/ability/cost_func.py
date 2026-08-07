@@ -55,9 +55,11 @@ class CostFunc:
                 return True
 
         @final
-        def PayCost(self, effect: 'Effect', player: 'User') -> bool:
+        def PrepareCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Choose and validate this cost without changing game state."""
             from game.player import Player
 
+            self.ClearPreparedCost()
             can_be_zero = False
             num_range = None
             if effect.ability.flags.is_check_pay:
@@ -87,12 +89,39 @@ class CostFunc:
                 return False
 
             if num_range and not self.selector.AfterSelectTargets(effect, targets, num_range):
+                self.ClearPreparedCost()
                 return False
 
-            # We don't process the cost when checking pay
-            # we will handle the cost in `DoGenerateResources`
+            return True
+
+        @final
+        def CommitCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Apply a cost whose targets were already prepared."""
+            from game.player import Player
+
+            # We don't process the cost when checking pay; resource abilities
+            # handle it later in `DoGenerateResources`.
             if self.call_fn and not effect.ability.flags.is_check_pay:
-                return self.call_fn(targets, effect, player if isinstance(player, Player) else None)
+                return self.call_fn(
+                    self.cost_legal_targets,
+                    effect,
+                    player if isinstance(player, Player) else None,
+                )
+            return True
+
+        @final
+        def ClearPreparedCost(self) -> None:
+            self.cost_legal_targets = []
+
+        @final
+        def PayCost(self, effect: 'Effect', player: 'User') -> bool:
+            """Prepare and immediately apply one standalone cost."""
+            if not self.PrepareCost(effect, player):
+                self.ClearPreparedCost()
+                return False
+            if not self.CommitCost(effect, player):
+                self.ClearPreparedCost()
+                return False
             return True
 
         @final
@@ -775,9 +804,13 @@ class CostFunc:
     # "13027"
     class Spend(Base):
         def __init__(self, cost: 'Cost') -> None:
-            self.return_res: 'Resources'
+            self.cost: Final = cost
+            self.return_res = Resources("0")
+            self.simultaneous_payment = False
 
             def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None') -> bool:
+                if self.simultaneous_payment:
+                    return True
                 # We need to do this before discard them
                 if not player:
                     return False
@@ -790,6 +823,14 @@ class CostFunc:
 
             selector = Select.From("This")
             super().__init__(selector, on_call)
+
+        def SetSimultaneousPayment(self, resources: 'Resources') -> None:
+            self.return_res = resources
+            self.simultaneous_payment = True
+
+        @override
+        def OnEffectEnd(self, targets: Sequence['CardFace'], effect: 'Effect'):
+            self.simultaneous_payment = False
 
     class Counter(Base):
         def __init__(self,

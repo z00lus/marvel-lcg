@@ -12,9 +12,22 @@ class Inventory(Component):
     @override
     def OnParentLeavePlay(self, by_effect: 'Effect'):
         from game.operate.faces import Faces
+        from game.card.face.attribute.has_permanent import HasPermanent
 
         super().OnParentLeavePlay(by_effect)
-        Faces.DiscardAll(self.GetDeck().GetAll(), by_effect)
+        faces = self.GetDeck().GetAll()
+        former_host = self.parent.face
+        ordinary_faces: List['CardFace'] = []
+        for face in faces:
+            if HasPermanent.IsType(face) and face.permanent:
+                Faces.ResolvePermanentAttachmentAfterHostLeaves(
+                    face,
+                    former_host,
+                    by_effect,
+                )
+            else:
+                ordinary_faces.append(face)
+        Faces.DiscardAll(ordinary_faces, by_effect)
 
     @override
     def OnBeforeParentFlip(self, by_effect: 'Effect', no_detach: bool=False):
@@ -63,4 +76,3 @@ class Inventory(Component):
     #
     def GetDeck(self) -> 'Deck2[Asset2]':
         return self.deck
-

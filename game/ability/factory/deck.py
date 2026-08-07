@@ -87,7 +87,6 @@ class AbilityFactoryDeck:
                                     only_during_player_phase: bool=False,
                                     ) -> List['Ability']:
         from game.ability.factory import AbilityFactory
-        from game.card.face.card_type import Hero
 
         def check_only_during_player_phase(effect: 'Effect', message: 'Message.AfterCardsMoved|Message.AfterDeckShuffle|Message.AfterUnitChangeForm|Message.WhenUnitWouldChangeForm') -> bool:
             if only_during_player_phase == False:
@@ -96,12 +95,13 @@ class AbilityFactoryDeck:
             return effect.world.phase.IsPlayerPhase("AnyPlayer")
 
         def magik(effect: 'Effect', message: 'Message.AfterCardsMoved|Message.AfterDeckShuffle|Message.AfterUnitChangeForm|Message.WhenUnitWouldChangeForm|Message.WhenPhaseBegin') -> None:
-            this = effect.this.CastTo(Hero)
-            Unused(this)
-
             for deck in which_deck(effect):
                 face = deck.GetTop()
                 if face:
+                    # A top-deck play permission can change when the deck,
+                    # phase, or identity form changes. Do not retain a stale
+                    # IsLikeInHand result from the previous state.
+                    face.card.can_state.is_like_in_hand = None
                     face.FlipTo(effect, face_up=True, ui_look_at=True)
 
                     if ex_operation:
@@ -153,4 +153,3 @@ class AbilityFactoryDeck:
                 ]
             ),
         ]
-

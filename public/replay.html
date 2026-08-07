@@ -427,7 +427,16 @@ async function doReplay(file_name, is_replay) {
     const response = await fetch(cmd);
     if( !response.ok ) {
         gameWindow?.close();
-        alert(`Could not load replay: ${response.status}`);
+        let error = `Could not load replay (${response.status}).`;
+        try {
+            const data = await response.json();
+            if( data.error ) {
+                error = data.error;
+            }
+        } catch (_) {
+            // Keep the HTTP fallback for non-JSON server errors.
+        }
+        alert(error);
         return;
     }
 

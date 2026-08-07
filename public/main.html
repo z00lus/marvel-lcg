@@ -3,21 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marvel Champions: Digital Edition</title>
+    <title>Marvel Champions Digital: Ronin Edition</title>
     <style>
         body {
-            background-color: rgb(43, 43, 43);
+            background-color: rgb(13, 20, 29);
+            background-image:
+                linear-gradient(rgba(5, 10, 17, 0.3), rgba(5, 10, 17, 0.58)),
+                url("/ronin-start-background.webp");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             color: rgb(198, 198, 198);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100svh;
             font-family: Arial, sans-serif;
             margin: 0;
         }
 
         .menu {
             text-align: center;
+            padding: 2rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+        }
+
+        @media (max-aspect-ratio: 3 / 4) {
+            body {
+                background-position: 68% center;
+            }
         }
 
         .custom-btn {
@@ -141,14 +157,24 @@
         .wild-mode {
             background: rgb(161, 129, 0);
         }
+
+        .based-on {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: rgb(150, 150, 150);
+        }
+
+        .based-on a {
+            color: rgb(150, 190, 220);
+        }
     </style>
 </head>
 
 <body>
     <div class="menu">
-        <h1>Marvel Champions</h1>
-        <h2>Digital Edition</h2>
-        <div id="version"></div>
+        <h1>Marvel Champions Digital</h1>
+        <h2>Ronin Edition</h2>
+        <div id="version">Version 0.6.0 — “Echo”</div>
         <div style="margin-bottom: 5rem;"></div>
         <script>
             function Open(url) {
@@ -175,19 +201,13 @@
             <button class="custom-btn btn-3" onclick="Open('replay')">
                 <span>Replay</span>
             </button>
-            <button class="custom-btn btn-3" onclick="Open('deck')">
-                <span>Deck Editor</span>
-            </button>
-            <button class="custom-btn btn-3" onclick="Open('cards')">
-                <span>View Cards</span>
-            </button>
-            <button class="custom-btn btn-3" onclick="Open('puzzle')">
-                <span>Puzzle</span>
-            </button>
-            <button class="custom-btn btn-3" onclick="Open('credits')">
-                <span>Credits</span>
-            </button>
         </div>
+
+        <p class="based-on">
+            Based on
+            <a href="https://irefrixs.itch.io/marvel-lcg" target="_blank" rel="noopener noreferrer">Marvel Champions: Digital Edition</a>
+            by Irefrixs
+        </p>
 
         <!-- <hr/>
 
@@ -216,7 +236,9 @@
             // version = await response_version.text();
             const version = getCookie('app_version')
             const versionElement = document.querySelector(`#version`);
-            versionElement.innerHTML = `v${version}`;
+            if (version) {
+                versionElement.title = `Engine build ${version}`;
+            }
         })()
     </script>
 
@@ -227,9 +249,18 @@ function doReplay(file_name) {
     ajax.open("GET", cmd, true);
     ajax.onreadystatechange = function () {
         if( this.readyState == 4 ) {
-            console.log('ok')
-            cmd = ".?hot_seat&3d_scene"
-            window.open(cmd)
+            if( this.status >= 200 && this.status < 300 ) {
+                cmd = ".?hot_seat&3d_scene"
+                window.open(cmd)
+            } else {
+                let message = `Could not load replay (${this.status}).`;
+                try {
+                    message = JSON.parse(this.responseText).error ?? message;
+                } catch (_) {
+                    // Keep the HTTP fallback for non-JSON server errors.
+                }
+                alert(message);
+            }
         }
     }
     ajax.send();

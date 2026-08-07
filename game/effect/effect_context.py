@@ -17,12 +17,20 @@ class EffectContext:
         self.initialized_targets: List[bool] = []
         self.paid_this_cost: 'Cost' = Cost("0")
         self.paid_this_resources: 'Resources' = Resources("0")
+        self.chosen_cost_x: int|None = None
         self.targets_internal: List['CardFace'] = []
+        # A card in the removed-from-game area may move only when the
+        # resolving effect explicitly searched that area for that card.
+        self.allowed_removed_cards: Set[Any] = set()
 
         self.bind_message: 'Message2|None' = None # 'self.ability.when', can only set None once, for "45078"
 
         self.is_must_choose = False
         self.only_work_when_no_other_options = False
+        self.allow_partial_resolution = False
+        self.play_initiation_checked = False
+        self.play_initiation_allowed = False
+        self.self_costs_prepared = False
 
         self.target_range: Tuple[int, int] = (0, 0)
         self.all_legal_targets: List['CardFace'] = []
@@ -63,6 +71,7 @@ class EffectContext:
     def ResetBeforeCondition(self):
         self.is_must_choose = False
         self.only_work_when_no_other_options = False
+        self.allow_partial_resolution = False
 
     def ResetAfterOperation(self):
         # Before effect
@@ -72,9 +81,13 @@ class EffectContext:
         self.ask_player: 'Player|None' = None
 
         self.this_effect_need_cost: 'Cost|None' = None
+        self.chosen_cost_x = None
         self.paid_this_res_effects: List['Effect'] = []
+        self.play_initiation_checked = False
+        self.play_initiation_allowed = False
+        self.self_costs_prepared = False
+        self.allowed_removed_cards.clear()
 
         self.initiator: User = self.effect.this.GetControlByOrOwner()
 
         self.targets_internal: List['CardFace']
-

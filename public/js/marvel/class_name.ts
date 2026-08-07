@@ -11,6 +11,7 @@ export class ClassName {
     static select_pay_card = 'select-card-pay'
 
     static active_card = 'activating'
+    static attack_target = 'attack-target'
     static look_at_card = 'looking-at'
     static being_searching = 'being-searching'
     static card_moving = 'moving'
@@ -23,4 +24,3 @@ export class ClassName {
 
     static auto_activate = 'auto-activate'
 }
-

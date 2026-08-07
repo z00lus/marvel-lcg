@@ -10,12 +10,12 @@ class AsideModularSet:
         from game.operate.worlds import Worlds
         from game.operate.rand import Rand
 
-        modular_sets: Dict[str, List['CardFace']] = {}
+        modular_sets: Dict[Tuple[str, str], List['CardFace']] = {}
         for face in Worlds.AsideModular(effect).Get():
-            set_name = face.paper.set_name
-            if set_name not in modular_sets:
-                modular_sets[set_name] = []
-            modular_sets[set_name].append(face)
+            set_identity = face.paper.GetEncounterSetIdentity()
+            if set_identity not in modular_sets:
+                modular_sets[set_identity] = []
+            modular_sets[set_identity].append(face)
 
         names = [x for x in modular_sets]
 
@@ -36,10 +36,9 @@ class AsideModularSet:
     @staticmethod
     def GetSize(effect: 'Effect') -> int:
         from game.operate.worlds import Worlds
-        modular_sets: List[str] = []
+        modular_sets: List[Tuple[str, str]] = []
         for face in Worlds.AsideModular(effect).Get():
-            set_name = face.paper.set_name
-            if set_name not in modular_sets:
-                modular_sets.append(set_name)
+            set_identity = face.paper.GetEncounterSetIdentity()
+            if set_identity not in modular_sets:
+                modular_sets.append(set_identity)
         return len(modular_sets)
-

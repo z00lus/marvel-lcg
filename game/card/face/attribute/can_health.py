@@ -211,109 +211,134 @@ class CanHealth(HasHealth):
                                     from_atk_message: 'Message.WhenUnitWouldAttack|None'=None, # Fix for indirect damage, "43036"
                                     operation: Callable[['Message.AfterUnitTookDamage'], None]|None=None
                                     ) -> List['Message.AfterUnitDefeatedUnit|Message.AfterUnitTookDamage']:
-        from game.card.face.base import Unit2
-
         return_messages: List['Message.AfterUnitDefeatedUnit|Message.AfterUnitTookDamage'] = []
-
-        lost_message_overkill_helper = None
         lost_message_helper = self.TakeDamageNoDeath(source, property, by_effect, would_attack_unit_message, from_atk_message=from_atk_message, operation=operation)
-        excess_damage = 0
-
         if lost_message_helper != None:
-
-            # if isinstance(lost_message, int):
-            #     message = Message.AfterUnitTookDamage(self, source, 0, by_effect, would_take_damage_message, excess_damage=excess_damage)
-            #     message.Send()
-            #     if operation:
-            #         operation(message)
-            #     return message
-
-            if lost_message_helper.lost_message:
-                total_took_damage = lost_message_helper.lost_message.value
-            else:
-                total_took_damage = 0
-
+            would_take_damage_message = lost_message_helper.would_take_damage_message
+            lost_message = lost_message_helper.lost_message
+            total_took_damage = lost_message.value if lost_message else 0
             excess_damage = lost_message_helper.excess_damage
 
-            if overkill_target and excess_damage:
-                lost_message_overkill_helper = overkill_target.TakeDamageNoDeath(source, DamageProperty(damage=excess_damage, is_from_overkill=True), by_effect, would_attack_unit_message, from_atk_message=from_atk_message)
-
-            units: List['Unit2'] = []
-            if self.IsInPlay() and Unit2.IsType(self):
-                units.append(self)
-            if overkill_target and overkill_target.IsInPlay() and excess_damage:
-                units.append(overkill_target)
-
-            world = self.card.world
-            first_player = world.GetFirstPlayer()
-
-            while units:
-                if not units:
-                    break
-
-                sorted_units = first_player.ChooseOrder(
-                    units,
-                    prompt="Simultaneous Overkill",
+            primary_defeated = False
+            if lost_message and self.health <= 0:
+                primary_defeated = self.Death(
+                    source,
+                    by_effect,
+                    would_attack_unit_message,
                 )
-                unit = sorted_units[0]
+                if primary_defeated and would_attack_unit_message:
+                    would_attack_unit_message.would_atk_message.has_defeated_target = True
 
-                if unit:
-                    if lost_message_overkill_helper and \
-                        lost_message_overkill_helper.lost_message and \
-                        lost_message_overkill_helper.lost_message.trigger == unit:
-                        would_take_damage_message = lost_message_overkill_helper.would_take_damage_message
-                    else:
-                        would_take_damage_message = lost_message_helper.would_take_damage_message
+            overkill_messages: List['Message.AfterUnitDefeatedUnit|Message.AfterUnitTookDamage'] = []
+            damaged_overkill_target = None
 
-                    units.remove(unit)
+            # Rules Reference 1.8: excess damage is not dealt until the ally or
+            # minion has actually been defeated by this attack. Tough, damage
+            # prevention/caps, and defeat replacements therefore stop here.
+            if primary_defeated and \
+                overkill_target and \
+                overkill_target.IsInPlay() and \
+                excess_damage > 0:
+                overkill_helper = overkill_target.TakeDamageNoDeath(
+                    source,
+                    DamageProperty(
+                        damage=excess_damage,
+                        is_from_overkill=True,
+                    ),
+                    by_effect,
+                    would_attack_unit_message,
+                    from_atk_message=from_atk_message,
+                )
+                if overkill_helper != None:
+                    overkill_lost_message = overkill_helper.lost_message
+                    overkill_took_damage = overkill_lost_message.value if overkill_lost_message else 0
+                    overkill_excess_damage = overkill_helper.excess_damage
+                    overkill_defeated = False
 
-                    if unit.health <= 0 and \
-                        unit.Death(source, by_effect, would_attack_unit_message):
-                        if would_attack_unit_message:
+                    if overkill_lost_message and overkill_target.health <= 0:
+                        overkill_defeated = overkill_target.Death(
+                            source,
+                            by_effect,
+                            would_attack_unit_message,
+                        )
+                        if overkill_defeated and would_attack_unit_message:
                             would_attack_unit_message.would_atk_message.has_defeated_target = True
 
-                        # Fix defeating "27073" while "27081" is in play
-                        if unit.IsInPlay():
-                            took_damage_message = Message.AfterUnitTookDamage(
-                                unit,
-                                source,
-                                total_took_damage - excess_damage,
-                                by_effect,
-                                would_take_damage_message,
-                                excess_damage=excess_damage)
-                            took_damage_message.Send()
-                            if operation:
-                                operation(took_damage_message)
-
-                        message = Message.AfterUnitDefeatedUnit(
+                    if overkill_defeated:
+                        overkill_message = Message.AfterUnitDefeatedUnit(
                             source,
-                            unit,
-                            total_took_damage,
-                            excess_damage,
                             overkill_target,
+                            overkill_took_damage,
+                            overkill_excess_damage,
+                            None,
                             by_effect,
-                            would_take_damage_message)
-                        message.Send()
-
-                        return_messages.append(message)
-                    else:
-                        if not overkill_target:
-                            damage = total_took_damage
-                        elif unit == overkill_target:
-                            damage = excess_damage
-                        else:
-                            damage = total_took_damage - excess_damage
-                        took_damage_message = Message.AfterUnitTookDamage(
-                            unit,
+                            overkill_helper.would_take_damage_message,
+                        )
+                    elif overkill_lost_message:
+                        overkill_message = Message.AfterUnitTookDamage(
+                            overkill_target,
                             source,
-                            damage,
+                            overkill_took_damage,
                             by_effect,
-                            would_take_damage_message,
-                            excess_damage=0)
-                        took_damage_message.Send()
-                        if operation:
-                            operation(took_damage_message)
-                        return_messages.append(took_damage_message)
+                            overkill_helper.would_take_damage_message,
+                            excess_damage=0,
+                        )
+                    else:
+                        overkill_message = None
+
+                    if overkill_message:
+                        overkill_message.Send()
+                        if isinstance(overkill_message, Message.AfterUnitTookDamage) and operation:
+                            operation(overkill_message)
+                        overkill_messages.append(overkill_message)
+                        if overkill_message.took_damage > 0:
+                            damaged_overkill_target = overkill_target
+
+            if primary_defeated:
+                # Fix defeating "27073" while "27081" is in play.
+                if self.IsInPlay():
+                    took_damage_message = Message.AfterUnitTookDamage(
+                        self,
+                        source,
+                        total_took_damage - excess_damage,
+                        by_effect,
+                        would_take_damage_message,
+                        excess_damage=excess_damage,
+                    )
+                    took_damage_message.Send()
+                    if operation:
+                        operation(took_damage_message)
+
+                primary_message = Message.AfterUnitDefeatedUnit(
+                    source,
+                    self,
+                    total_took_damage,
+                    excess_damage,
+                    damaged_overkill_target,
+                    by_effect,
+                    would_take_damage_message,
+                )
+            elif lost_message:
+                damage = total_took_damage
+                if overkill_target:
+                    damage -= excess_damage
+                primary_message = Message.AfterUnitTookDamage(
+                    self,
+                    source,
+                    damage,
+                    by_effect,
+                    would_take_damage_message,
+                    excess_damage=0,
+                )
+            else:
+                primary_message = None
+
+            if primary_message:
+                primary_message.Send()
+                if isinstance(primary_message, Message.AfterUnitTookDamage) and operation:
+                    operation(primary_message)
+                return_messages.append(primary_message)
+            return_messages += overkill_messages
 
         if lost_message_helper and lost_message_helper.would_take_damage_message.would_deal_damage_message.damage > 0:
             after_damage_message = Message.AfterFaceDealDamage(
@@ -558,4 +583,3 @@ class CanHealth(HasHealth):
             self.Defeated(None, by_effect)
         message = Message.AfterUnitHitPointSet(self.CastTo(Unit2), by_effect)
         message.Send()
-

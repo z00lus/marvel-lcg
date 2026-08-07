@@ -15,8 +15,11 @@ def GetAbilities() -> Sequence['Ability']:
             this.HealthUnits([identity], 1, effect)
 
         if event.HasTrait("DEFENSE"):
-            schemes = Worlds.GetOnFieldSchemes(effect)
-            scheme = initiator.AskChooseFace(schemes, effect)
+            schemes = [
+                scheme for scheme in Worlds.GetOnFieldSchemes(effect)
+                if scheme.CanBeThwartBy(effect)
+            ]
+            scheme = initiator.AskChooseFace(schemes, effect) if schemes else None
             if scheme:
                 this.RemoveThreatFromSchemes([scheme], 1, effect)
 

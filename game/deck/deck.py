@@ -455,7 +455,11 @@ class Deck2(Generic[TC], Object):
         found_face = None
 
         other_discard_faces: List['CardFace'] = []
-        for face in self.Get()[::-1]:
+        max_repeat_times = 10000
+        while self.GetSize() > 0:
+            assert max_repeat_times > 0, "Discard-until did not find a matching card"
+            max_repeat_times -= 1
+            face = self.Get(True)[0]
             face.DiscardInternal(by_effect)
             if not finder or finder.Check(face):
                 found_face = face
@@ -468,8 +472,6 @@ class Deck2(Generic[TC], Object):
         message = Message.AfterCardsMoved({x: self for x in moved_faces}, by_discard=True)
         message.Send()
 
-        if self.GetSize() == 0:
-            return None, other_discard_faces
         if found_face != None:
             if isinstance(card_type, CardFace) or card_type == 'CardFace':
                 return Cast(Any, found_face), other_discard_faces
@@ -491,4 +493,3 @@ class Deck2(Generic[TC], Object):
         return None
 
 Deck = Deck2['CardFace']
-

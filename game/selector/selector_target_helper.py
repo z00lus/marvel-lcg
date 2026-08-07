@@ -6,12 +6,11 @@ from game.message import *
 
 from game.operate.worlds import Worlds
 from game.card.face.base import Asset2
-from game.card.face.card_type import Event
 from game.message.message_type import TargetsMessage
 from game.selector import Select
 
 def get_TeamUp(effect: 'Effect') -> Sequence['CardFace']:
-    assert Event.IsType(effect.this)
+    assert isinstance(effect.this, HasTeamUp), f"{effect.this=}"
     return effect.this.GetTeamUpUnits()
 
 def get_VillainAndEngagedSamePlayerMinion(effect: 'Effect') -> Sequence['CardFace']:
@@ -355,4 +354,3 @@ TARGET_MAP_FUNC: Dict['SELECT.TARGET_TYPE|CardFinderHelper.FINDER_TARGET|SELECT.
     "EnemyLeader"                       : get_EnemyLeader,
     "YourLeader"                        : get_YourLeader,
 }
-

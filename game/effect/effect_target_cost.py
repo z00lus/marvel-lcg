@@ -9,6 +9,7 @@ class TargetCost:
     @dataclass
     class Payment:
         cost: 'Cost'
+        component_costs: List['Cost']
         # str, "RYB", ~~UI only~~, show can generate res of each effect
         # these effects can do pay, and the str store the resources they can generate
         payments: List[Dict['Effect', str]]
@@ -37,6 +38,39 @@ class TargetCost:
             return self.target_cost[None]
         return self.target_cost[face]
 
+    @staticmethod
+    def CanPay(payment: 'TargetCost.Payment') -> bool:
+        """Return whether some available resource combination pays a cost."""
+        available: Dict[Tuple[int, int, int, int, int], Resources] = {}
+
+        def add(resources: 'Resources') -> bool:
+            key = (
+                resources.r,
+                resources.b,
+                resources.y,
+                resources.g,
+                resources.reduce,
+            )
+            available[key] = resources
+            if payment.component_costs:
+                return Resources.CanPayCosts(resources, payment.component_costs)
+            return resources.IsMatchCost(payment.cost)
+
+        if add(Resources("0")):
+            return True
+
+        for payment_option in payment.payments:
+            current = list(available.values())
+            for resources_text in payment_option.values():
+                resources = Resources.FromText(resources_text)
+                for accumulated in current:
+                    if add(accumulated + resources):
+                        return True
+        return False
+
+    def HasPayableTarget(self) -> bool:
+        return any(TargetCost.CanPay(payment) for payment in self.target_cost.values())
+
     def UpdateCost(self, face: 'CardFace|None', diff: 'int'):
         self.target_cost[face].cost += diff
 
@@ -49,8 +83,8 @@ class TargetCost:
     #                 break
     #     return res
 
-    def AddTarget(self, face: 'CardFace|None', cost: 'Cost') -> None:
-        self.target_cost[face] = TargetCost.Payment(cost, [], {})
+    def AddTarget(self, face: 'CardFace|None', cost: 'Cost', *, component_costs: Sequence['Cost']=()) -> None:
+        self.target_cost[face] = TargetCost.Payment(cost, list(component_costs), [], {})
 
     def AddPayment(self, face: 'CardFace|None', cost_effect: 'Effect', cost: 'Resources', check_effect: 'Effect') -> None:
         # pay_info = {effect: res.text_legacy}
@@ -68,10 +102,23 @@ class TargetCost:
                         effects.append(effect)
         return effects
 
+    def GetResourcesForEffects(self, face: 'CardFace|None', paid_effects: Sequence['Effect']) -> 'Resources':
+        """Calculate a selected payment without applying any resource effects."""
+        resources = Resources("0")
+        payment = self.GetPayment(face)
+        for paid_effect in paid_effects:
+            found = False
+            for effect_resources in payment.payments:
+                if paid_effect in effect_resources:
+                    resources += Resources.FromText(effect_resources[paid_effect])
+                    found = True
+                    break
+            assert found, f"{paid_effect=} is not valid for {face=}"
+        return resources
+
     def FindPayEffect(self, target: 'CardFace|None', effect_id: int) -> 'Effect|None':
         for effect_res in self.GetPayment(target).payments:
             for effect in effect_res:
                 if effect.object_id == effect_id:
                     return effect
         return None
-

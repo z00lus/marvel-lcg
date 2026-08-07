@@ -13,6 +13,27 @@ class HasVulnerable(HasAttribute):
         self.RegisterAttribute("Vulnerable", "printed_vulnerable")
         self.RegisterInfoDict('vulnerable')
 
+    @override
+    def GetRuleAbilities(self) -> List['Ability']:
+        def discard_vulnerable(effect: 'Effect', message: 'Message.AfterStatusCardPlaceOn') -> None:
+            from game.operate.faces import Faces
+            Faces.DiscardAll([effect.this], effect)
+
+        return super().GetRuleAbilities() + [AbilityFactory.AfterStatusCardPlaceOn(
+            AbilityType.ForcedInterrupt,
+            "This",
+            ["Confused", "Stunned"],
+            discard_vulnerable,
+            conditions=[
+                lambda effect, message:
+                    effect.this.CastTo(HasVulnerable).IsVulnerable() and
+                    (
+                        effect.this.IsStunned() or
+                        effect.this.IsConfused()
+                    ),
+            ],
+        ).SetName("Vulnerable")]
+
     ################################################################################
     #
     @override
@@ -32,4 +53,3 @@ class HasVulnerable(HasAttribute):
     @final
     def GainVulnerable(self, diff: int, by_effect: 'Effect'):
         self.GainKeyword(diff, 'Vulnerable', by_effect)
-

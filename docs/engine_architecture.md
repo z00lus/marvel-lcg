@@ -2,7 +2,7 @@
 
 # Engine Architecture
 
-This document describes the internal architecture of the Marvel LCG game engine. It's intended for developers who want to understand, modify, or extend the engine.
+This document describes the internal architecture of the Marvel Champions Digital: Ronin Edition game engine. It's intended for developers who want to understand, modify, or extend the engine.
 
 For writing card scripts, see [Card Scripting Guide](card_scripting_guide.md).
 
@@ -386,12 +386,11 @@ image_bytes = ImageCreator.CreateNoImage(card_id)
 
 ### Versioning (`engine/lib/version.py`)
 
-Semantic version management with feature flags:
+Semantic version management for file/version checks:
 
 ```python
 Ver.Initialize()
-if Ver.version >= Versions.fix_surge:
-    # Apply surge fix
+Ver(scene.version).VerifyVersion()
 ```
 
 ---
@@ -582,6 +581,7 @@ class Message2:
     AfterCardEnterPlay          # Card entered play
     WhenUnitWouldTakeDamage     # Damage prevention window
     WhenUnitWouldAttack         # Attack interruption window
+    WhenCalculateAttackDamage  # v1.8 step: ATK/boost modifiers, then DEF
     WhenPlayerRevealCard        # Encounter card revealed
     WhenCardRevealed            # After reveal
     WhenUnitBeDefeated          # Unit defeated
@@ -589,6 +589,14 @@ class Message2:
     WhenObligationGiveToPlayer  # Obligation dealt
     # ... many more
 ```
+
+Enemy attacks use `WhenCalculateAttackDamage` as the sole Rules Reference 1.8
+Calculate Damage boundary. Its `attack_damage` is the modified ATK plus boost
+icons before defense; `calculated_damage` applies the declared hero's DEF once
+and is passed to the later damage instance. Boost abilities resolve before this
+message and any damage they deal remains a separate, non-attack damage event.
+The former `WhenRecalculateAttackDamage` hook was migrated to this message and
+removed; there is no second runtime calculation path.
 
 ### Player System
 
@@ -744,6 +752,28 @@ Create `launch.json` in the project root:
     "debug": false
 }
 ```
+
+For a played card, `EventManager.FilterAvailableEffects()` is only a UI
+preflight that decides which options can be displayed. The normative Rules
+Reference 1.8 initiation path begins in `PlayerAction.ResolveEffect()`:
+
+1. Move the declared card faceup to the player's processing area. It is on the
+   table, but is not in play.
+2. `EffectChecker.CheckPlayInitiation()` checks play/form restrictions, legal
+   targets, and payable costs in that state. Its result is cached for this
+   initiation, so a form change during payment does not reopen step 2.
+3. `EffectChecker.CheckBeforeActive()` validates the chosen targets and payment.
+   Selected resource effects and simultaneous allocations are validated before
+   any resource card is spent.
+4. `ClassCard.Play()` pays additional costs and opens the would-play/play
+   message windows before resolving the card.
+
+If steps 2-4 fail before the play commences, a card moved to processing solely
+for that declaration returns to its source area. Cards that were already in a
+processing area remain subject to their caller's existing "play it, otherwise
+discard it" handling. Because the placement, checks, payments, and return are
+normal modeled operations, replay and undo observe the same deterministic
+sequence.
 
 ### Key Config Variables
 

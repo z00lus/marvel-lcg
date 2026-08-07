@@ -161,7 +161,8 @@ class AbilityTypeFlags:
         AbilityType.FirstPlayerInterrupt:TimingPriority.Interrupt,
         AbilityType.Boost:              TimingPriority.Boost,
         AbilityType.WhenRevealed:       TimingPriority.Boost,
-        AbilityType.WhenDefeated:       TimingPriority.Boost,
+        AbilityType.WhenDefeated:       TimingPriority.ForcedInterrupt,
+        AbilityType.WhenCompleted:      TimingPriority.ForcedInterrupt,
         AbilityType.ForcedResponse:     TimingPriority.ForcedResponse,
         AbilityType.Response:           TimingPriority.Response,
         AbilityType.HeroResponse:       TimingPriority.Response,
@@ -213,7 +214,7 @@ class AbilityTypeFlags:
 
         # @property
         @classmethod
-        def GetPriority(cls) -> 'TimingPriority':
+        def GetPriority(cls, rule: 'WorldRule|None'=None) -> 'TimingPriority':
             return AbilityTypeFlags.TYPE_PRIORITY.get(cls.ability_type, TimingPriority.Normal)
 
         @classmethod
@@ -445,4 +446,3 @@ class AbilityTypeFlags:
         is_challenge = True
         is_forced = True
         ability_type = AbilityType.Challenge
-

@@ -83,6 +83,7 @@ class CardFactory:
         face.Initialize(player_num)
         face.ability.Add(*CardsDB.FindAbilities(paper.card_id, paper.pack, paper.set_name))
         face.ability.Add(*face.GetAbilities())
+        face.ability.Add(*face.GetRuleAbilities())
 
         # Check abilities
         from build import Build

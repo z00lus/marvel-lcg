@@ -31,6 +31,21 @@ class PlayerAsk:
         res_text += self.AskChooseOneText(generate_combinations(g))
         return Resources.FromText(res_text)
 
+    def AskChooseResourceAllocation(self, resources: 'Resources', costs: Sequence['Cost']) -> List['Resources']|None:
+        allocations = Resources.FindCostAllocations(resources, costs)
+        if not allocations:
+            return None
+        if len(allocations) == 1:
+            return allocations[0]
+
+        text_list: List[str] = []
+        for allocation in allocations:
+            parts = [f"card cost: {allocation[0].color_text}"]
+            for index, paid in enumerate(allocation[1:], start=1):
+                parts.append(f"additional cost {index}: {paid.color_text}")
+            text_list.append("; ".join(parts))
+        return self.AskChooseOneText(allocations, text_list)
+
     def MayChoosePaper(self, name_list: Sequence[str]) -> str|None:
         name_list = [f"p_{x}" for x in name_list]
         name = self.MayChooseOneText(name_list)
@@ -413,4 +428,3 @@ class PlayerAsk:
             return faces[0]
         else:
             return None
-

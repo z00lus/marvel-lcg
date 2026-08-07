@@ -88,7 +88,7 @@ export class BtnOk
             if( !Effect.show_cancel ){
                 BtnOk.btn_end_div.classList.add("forced_action")
             }
-            text = 'Continue'
+            text = 'Skip<br/>Interrupts'
         }
         else
         if( Effect.is_in_event == 'asking' ) {

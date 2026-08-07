@@ -48,6 +48,14 @@
     --color2: rgb(249, 76, 24);
 }
 
+#scene .card.attack-target .face .image {
+    outline: 2px solid rgb(255, 45, 45);
+    outline-offset: 2px;
+    box-shadow:
+        -1px -1px 10px 2px rgb(255, 15, 15),
+        1px 1px 10px 2px rgb(249, 76, 24) !important;
+}
+
 .scheme .face .image,
 .thwart .face .image,
 .attack .face .image {
@@ -209,4 +217,3 @@
 .card .face:has(.image .info_pay.has_pay) .info {
     display: none;
 }
-

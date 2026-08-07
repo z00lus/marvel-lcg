@@ -1,0 +1,51 @@
+{
+    "version": "0.5.9.201",
+    "metadata": {
+        "seed": 18001,
+        "comment": "synthetic-v18-loader"
+    },
+    "rules": [
+        "v18_all"
+    ],
+    "campaign": {
+        "version": "0.5.9.201",
+        "campaign_id": "",
+        "name": "Synthetic",
+        "villain": [],
+        "expert": false,
+        "challenges": [],
+        "schemes": [],
+        "set_aside": [],
+        "encounters": [],
+        "encounter_sets": [],
+        "modular_sets": [],
+        "campaign_log": {}
+    },
+    "players": [],
+    "puzzle": [],
+    "inputs": [
+        {
+            "step": 1,
+            "event": "synthetic-start",
+            "effect": {
+                "id": ":synthetic first",
+                "targets": [],
+                "resources": []
+            },
+            "crc": ""
+        },
+        {
+            "step": 2,
+            "event": "synthetic-end",
+            "effect": {
+                "id": ":synthetic second",
+                "targets": [
+                    "c1"
+                ],
+                "resources": []
+            },
+            "crc": ""
+        }
+    ],
+    "checksum": "ecccd19b258fc12a5428a78986a83474abf5c4c44dc1c02a5cf9075155a4784c"
+}

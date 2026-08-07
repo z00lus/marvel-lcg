@@ -83,7 +83,7 @@ class Obligation(Asset2, CanHinder, HasHazard, HasAccelerationIcon, HasUses, Enc
             from game.operate.faces import Faces
             Faces.RemoveAllFromGame([self], GameRule(self))
             player = message.GetToPlayer()
-            player.DealEncounterCards(1, GameRule(self), by_surge=True)
+            player.DealEncounterCards(1, GameRule(self))
             return False
 
     @override

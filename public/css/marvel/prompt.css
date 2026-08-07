@@ -121,6 +121,10 @@ body.game-over #prompt-text {
     animation-play-state: paused;
 }
 
+body.being-attacked #prompt-text {
+    color: rgb(255, 70, 70);
+}
+
 /* #history-text .log-card::before,
 #prompt-text .log-card::before {
     content: "[";
@@ -157,4 +161,3 @@ body:has(#option-buttons .button) #prompt-box-container {
 #prompt-box-container.display-none {
     display: none !important;
 }
-

@@ -14,6 +14,19 @@ class HasRestricted(HasAttribute):
     # def GetAbilities(self) -> List['Ability']:
     #     return super().GetAbilities()
 
+    @override
+    def GetRuleAbilities(self) -> List['Ability']:
+        return super().GetRuleAbilities() + [AbilityFactory.AfterCardEnterPlay(
+            AbilityType.ForcedResponse,
+            "This",
+            lambda effect, message:
+                effect.this.CastTo(HasRestricted).CheckRestrictedLimit([]),
+            conditions=[
+                lambda effect, message:
+                    bool(effect.this.CastTo(HasRestricted).restricted),
+            ],
+        ).SetName("Restricted")]
+
     ################################################################################
     #
     def CheckRestrictedLimit(self, gain_faces: List['CardFace']) -> bool:
@@ -25,15 +38,6 @@ class HasRestricted(HasAttribute):
         if self.restricted:
             self.CheckRestrictedLimit([])
         return super().OnNotTreatAsIfBlank(message)
-
-    @override
-    def OnWouldEnterPlay(self, into_area: 'Deck') -> bool:
-        if super().OnWouldEnterPlay(into_area):
-            if self.restricted:
-                if not self.CheckRestrictedLimit([self]):
-                    return False
-            return True
-        return False
 
     @override
     def OnAfterCardLeavePlay(self, message: 'Message.AfterCardLeavePlay') -> None:
@@ -67,4 +71,3 @@ class HasRestricted(HasAttribute):
     @property
     def restricted(self) -> int:
         return self.GetKeyword('Restricted')
-

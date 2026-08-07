@@ -4,6 +4,7 @@ class HasAttribute(CardFace):
 
     def __init__(self, paper: 'Paper') -> None:
         self.attributes: Dict[str, Tuple[str|Callable[[str], None]|None, Type[int|str|bool]|None]] = {}
+        self.non_numerical_attributes: Set['CardFace.KEY'] = set()
         self.player_num: int = 0
         self.info_dict: List[str] = []
         super().__init__(paper)
@@ -29,6 +30,12 @@ class HasAttribute(CardFace):
         if key == "Linked":
             # We process this in `create_linked_faces`
             return
+        # A dash is an immutable non-numerical value.  It behaves as zero for
+        # comparisons, but does not become a real zero that card effects can
+        # increase through modifiers.
+        if value in ["-", "–", "—"]:
+            self.non_numerical_attributes.add(key)
+            value = "0"
         attr = self.attributes[key]
         name, t = attr
         if name == None:
@@ -64,4 +71,3 @@ class HasAttribute(CardFace):
                 value = 0
             dic |= {key: int(value)}
         return dic | super().GetInfoDict()
-
