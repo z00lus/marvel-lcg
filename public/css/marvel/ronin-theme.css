@@ -1,0 +1,74 @@
+html {
+    background-color: #07101a;
+    background-image: none;
+}
+
+body {
+    background-color: #07101a;
+    background-image:
+        linear-gradient(rgba(4, 9, 15, 0.66), rgba(4, 9, 15, 0.82)),
+        url('/ronin-start-background.webp');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+#scene {
+    background: transparent;
+}
+
+.player-background {
+    border-top: 1px solid rgba(128, 169, 199, 0.18);
+}
+
+.player-background.player-0 {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(52, 75, 126, 0.28), rgba(6, 12, 22, 0.58) 70%),
+        linear-gradient(rgba(15, 27, 48, 0.46), rgba(5, 11, 20, 0.68));
+}
+
+.player-background.player-1 {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(126, 52, 52, 0.26), rgba(22, 7, 10, 0.58) 70%),
+        linear-gradient(rgba(48, 18, 23, 0.44), rgba(20, 6, 10, 0.68));
+}
+
+.player-background.player-2 {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(113, 126, 52, 0.24), rgba(18, 22, 7, 0.58) 70%),
+        linear-gradient(rgba(42, 48, 18, 0.42), rgba(16, 20, 6, 0.68));
+}
+
+.player-background.player-3 {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(52, 126, 68, 0.24), rgba(7, 22, 12, 0.58) 70%),
+        linear-gradient(rgba(18, 48, 27, 0.42), rgba(6, 20, 10, 0.68));
+}
+
+#prompt-box-container {
+    border-color: rgba(143, 190, 224, 0.62);
+    background: rgba(10, 18, 28, 0.9);
+    box-shadow: 0 0.8rem 2.2rem rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+}
+
+#prompt-box-close,
+#prompt-box-lock.locked {
+    color: #8fa6b8;
+}
+
+#message-overlay,
+#game-over-box {
+    border-top: 1px solid rgba(143, 190, 224, 0.35);
+    border-bottom: 1px solid rgba(143, 190, 224, 0.35);
+    background: rgba(7, 14, 23, 0.86);
+    box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(8px);
+}
+
+.lost-connect {
+    border-color: rgba(143, 190, 224, 0.35);
+    background: rgba(10, 18, 28, 0.92);
+    box-shadow: 0 0.6rem 1.4rem rgba(0, 0, 0, 0.4);
+}
