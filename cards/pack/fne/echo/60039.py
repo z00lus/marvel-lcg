@@ -12,10 +12,16 @@ def GetAbilities() -> Sequence['Ability']:
         cost_effects = this.effect.RegisterTemp(
             AbilityFactory.ReduceCostToPlayFaceWhen(Event, 1, player),
             unregister_after_exec=False,
+            until_round_end=True,
         )
 
         def unregister_cost() -> None:
-            Effects.UnRegister(cost_effects)
+            active_cost_effects = [
+                cost_effect for cost_effect in cost_effects
+                if not cost_effect.is_unregister
+            ]
+            if active_cost_effects:
+                Effects.UnRegister(active_cost_effects)
 
         this.effect.RegisterTemp(
             AbilityFactory.AfterPlayerPlayedCard(
@@ -26,7 +32,6 @@ def GetAbilities() -> Sequence['Ability']:
             ),
             unregister_after_exec=True,
         )
-        RunAt.RoundEnd(effect, unregister_cost)
 
     return [
         AbilityFactory.AfterUnitUseBasicPower(
