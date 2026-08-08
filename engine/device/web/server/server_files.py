@@ -1,6 +1,7 @@
 from core import *
 
 from engine.file import Cache
+from engine.lib import ImageLib
 from engine.device.web import *
 
 from aiohttp import web
@@ -25,7 +26,11 @@ class GameServerFiles(GameServerBase):
 
         image_bytes = Cache.LoadImage(file_path)
 
-        return web.Response(body=image_bytes, content_type='image/jpeg', headers=self.HeaderCache)
+        return web.Response(
+            body=image_bytes,
+            content_type=ImageLib.GetContentType(image_bytes),
+            headers=self.HeaderCache,
+        )
 
     def handle_image_request(self, request: web.Request) -> web.StreamResponse:
         # file_path = request.match_info['path']
@@ -37,7 +42,11 @@ class GameServerFiles(GameServerBase):
 
         self.device_manager.AddSize("Image", image_size)
 
-        return web.Response(body=image_bytes, content_type='image/jpeg', headers=self.HeaderCache)
+        return web.Response(
+            body=image_bytes,
+            content_type=ImageLib.GetContentType(image_bytes),
+            headers=self.HeaderCache,
+        )
 
     @override
     def __init__(self) -> None:
@@ -51,4 +60,3 @@ class GameServerFiles(GameServerBase):
 
         self.AddNonAwaitGetSecurity(r'/sets/{path:.+}', self.handle_sets_image)
         self.AddNonAwaitGetSecurity(r'/{path:.+}', self.handle_image_request)
-

@@ -9,6 +9,18 @@ FONT = ConfigVariables.Str('font', 'cour.ttf')
 class ImageLib:
 
     @staticmethod
+    def GetContentType(image_data: bytes) -> str:
+        if image_data.startswith(b'\x89PNG\r\n\x1a\n'):
+            return 'image/png'
+        if image_data.startswith(b'\xff\xd8\xff'):
+            return 'image/jpeg'
+        if len(image_data) >= 12 and image_data[:4] == b'RIFF' and image_data[8:12] == b'WEBP':
+            return 'image/webp'
+        if image_data.startswith((b'GIF87a', b'GIF89a')):
+            return 'image/gif'
+        return 'application/octet-stream'
+
+    @staticmethod
     def ImageToByteArray(image: Image.Image) -> bytes:
         if image.mode == 'RGBA':
             image = image.convert('RGB')
@@ -211,4 +223,3 @@ class ImageCreator:
 
         image_data = ImageCreatorHelper.CreateImage(None, data.name, data.type, data.text, data.aspect, data.rotate)
         return image_data
-

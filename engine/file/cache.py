@@ -14,6 +14,8 @@ IMAGE_SERVERS   = ConfigVariables.ListStr('image_servers', [])
 SAVE_EMPTY_IMAGE = ConfigVariables.Bool('save_empty_image', True)
 BREAK_WHEN_LOAD_ONLINE_IMAGE = ConfigVariables.Bool('break_when_load_online_image', False)
 
+STATUS_TEXTURES = frozenset({"tough", "stunned", "confused"})
+
 class Cache:
 
     cache: Dict[str, bytes] = {}
@@ -42,11 +44,20 @@ class Cache:
         check_folders = IMAGE_FOLDERS.value + [TEXTURE_FOLDER.value] + [CACHE_FOLDER.value]
 
         def try_load_image_data(image_data: bytes):
+            # Status artwork is already authored in its final landscape
+            # orientation. Keep its PNG bytes intact; the browser rotates it
+            # clockwise inside the portrait status-card frame.
+            if file_name in STATUS_TEXTURES:
+                return image_data
             return ImageLib.TryRotateImage(image_data)
 
         # Load the image from the cache and images
         def try_load_image_path(file_path: str) -> bytes|None:
-            for ext_name in [".webp", ".jpg", ".png"]:
+            if file_name in STATUS_TEXTURES:
+                extensions = [".png", ".webp", ".jpg"]
+            else:
+                extensions = [".webp", ".jpg", ".png"]
+            for ext_name in extensions:
                 check_path = file_path + ext_name
                 if FileManager.Exists(check_path):
                     with FileManager.OpenFile(check_path, read=True, bin=True) as file:
@@ -146,4 +157,3 @@ class Cache:
             save_to_file(file_name, "jpg", image_data)
         Cache.SetCache(file_name, image_data)
         return image_data
-

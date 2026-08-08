@@ -1,25 +1,37 @@
 .area .card.type-status-card .face {
-    --status-card-height: calc(var(--card-width) * 0.6376);
+    /* The custom Ronin status artwork uses the canonical 596x380 ratio. */
+    --status-card-width: calc(var(--card-width) * 0.6376);
+    --status-card-height: var(--card-width);
 
-    min-width: var(--card-width);
-    width: var(--card-width);
-    max-width: var(--card-width);
+    min-width: var(--status-card-width);
+    width: var(--status-card-width);
+    max-width: var(--status-card-width);
     min-height: var(--status-card-height);
     height: var(--status-card-height);
     max-height: var(--status-card-height);
+    left: calc((var(--card-width) - var(--status-card-width)) * .5);
     top: calc((var(--card-height) - var(--status-card-height)) * .5);
+    right: auto;
     bottom: auto;
     overflow: visible;
 }
 
-.area .card.type-status-card:not(.moving).gain-status .face {
-    animation: gain-status-card-animation .4s ease-out;
+.area .card.type-status-card .face .image::before {
+    /* Status artwork is stored as a landscape card. Render it at that native
+       aspect ratio, then rotate it clockwise into the portrait card frame. */
+    width: var(--status-card-height);
+    height: var(--status-card-width);
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%) rotate(90deg);
+    transform-origin: center;
+    background-size: 100% 100%;
 }
 
-.area .card.type-status-card:not(.moving) .face {
-    /* Keep the landscape artwork at its natural aspect ratio, then turn the
-       physical status card clockwise before tucking it under its target. */
-    rotate: 90deg;
+.area .card.type-status-card:not(.moving).gain-status .face {
+    animation: gain-status-card-animation .4s ease-out;
 }
 
 @keyframes gain-status-card-animation {

@@ -58,13 +58,27 @@ body {
     color: #8fa6b8;
 }
 
-#message-overlay,
-#game-over-box {
+#message-overlay {
     border-top: 1px solid rgba(143, 190, 224, 0.35);
     border-bottom: 1px solid rgba(143, 190, 224, 0.35);
     background: rgba(7, 14, 23, 0.86);
     box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.52);
     backdrop-filter: blur(8px);
+}
+
+#game-over-box {
+    border-top: 1px solid rgba(143, 190, 224, 0.35);
+    border-bottom: 1px solid rgba(143, 190, 224, 0.35);
+    background: transparent;
+    box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(8px);
+}
+
+#game-over-box-container.minimize #game-over-box {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .lost-connect {
