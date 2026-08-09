@@ -106,9 +106,31 @@
     gap: 0.5rem;
     padding-top: 0.5rem;
 
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
+    /* Keep replay controls reachable even when Safari's landscape viewport is
+       shorter than the game-over content. */
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+#game-over-box.active ~ #game-over-buttons {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body:not(.game-over) #game-over-buttons,
+body:not(.game-over) #game-over-close {
+    display: none;
+}
+
+#game-over-box-container.minimize #game-over-buttons {
+    opacity: 0;
+    pointer-events: none;
 }
 
 #game-over-buttons button {
@@ -149,16 +171,22 @@
 
 #game-over-close {
     font-size: 1rem;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    pointer-events: all;
+    position: fixed;
+    right: max(20px, calc(env(safe-area-inset-right) + 12px));
+    top: max(3.5rem, calc(env(safe-area-inset-top) + 1rem));
+    pointer-events: none;
+    opacity: 0;
     color: #AAA;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 0.3s, opacity 0.3s;
     /* background: red; */
     /* border: 1px red solid; */
     z-index: 9999;
+}
+
+#game-over-box.active ~ #game-over-close {
+    opacity: 1;
+    pointer-events: all;
 }
 
 #game-over-close i.fa {

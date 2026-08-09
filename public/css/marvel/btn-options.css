@@ -38,6 +38,18 @@
     pointer-events: all;
 }
 
+/* Once a choice starts target selection, the prompt already shows the chosen
+   effect. Remove the option overlay from both hit-testing and view so cards
+   underneath remain selectable on touch screens. */
+#option-buttons.target-selection-active {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#option-buttons.target-selection-active .button {
+    pointer-events: none;
+}
+
 /* #btn-hide-option-buttons {
     --height: calc(4 * var(--font-size));
     top: calc(50% - (4 * var(--font-size)) - var(--height) + (.5 * var(--font-size)));
@@ -142,4 +154,3 @@ body.pause #option-buttons {
     color: inherit;
     margin: calc(var(--font-size-out) * .15);
 }
-

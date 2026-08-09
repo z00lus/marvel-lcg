@@ -1,0 +1,33 @@
+/* Compact solo table for 4:3 touch tablets such as iPad.
+   The desktop scene is 16:9, so fitting it into a 4:3 viewport makes every
+   card unnecessarily small. Use the otherwise empty horizontal space and
+   keep all edge zones inside the narrower logical scene. */
+@media (hover: none) and (pointer: coarse) and (min-width: 700px) and (max-aspect-ratio: 3 / 2) {
+    :root {
+        --scene-width: 1440;
+        --card-width: 145px;
+        --card-height: 201px;
+    }
+
+    #area-schemes-main,
+    #area-schemes-side {
+        --x: 1400;
+    }
+
+    #victory-display {
+        --x: 800;
+    }
+
+    #area-removed,
+    #removed-pool {
+        --x: 950;
+    }
+
+    #nemesis-pool {
+        --x: 1100;
+    }
+
+    #area-advanced {
+        --x: 1250;
+    }
+}

@@ -38,7 +38,24 @@ export class Effect {
             Effect.response_json_ask.options[Effect.response_json_ask.options.length-1].name == "Cancel"
     }
 
+    private static setOptionTargetSelection(active: boolean) {
+        Effect.options_button_div.classList.toggle('target-selection-active', active)
+
+        if( active ) {
+            const focused_element = document.activeElement
+            if( focused_element instanceof HTMLElement && Effect.options_button_div.contains(focused_element) ) {
+                focused_element.blur()
+            }
+            Effect.options_button_div.setAttribute('inert', '')
+            Effect.options_button_div.setAttribute('aria-hidden', 'true')
+        } else {
+            Effect.options_button_div.removeAttribute('inert')
+            Effect.options_button_div.removeAttribute('aria-hidden')
+        }
+    }
+
     static reset() {
+        Effect.setOptionTargetSelection(false)
         Effect.options_button_div.replaceChildren()
 
         Effect.clicked_card_div = undefined
@@ -181,6 +198,7 @@ export class Effect {
     }
 
     static onCancel() {
+        Effect.setOptionTargetSelection(false)
         if( Effect.isExEffect() ) {
             if( SelectStep.isTargets() || SelectStep.isCost() ) {
                 Effect.select_effect_obj.selected_targets = []
@@ -691,6 +709,7 @@ export class Effect {
     }
 
     private static updateButtons(options: EffectDescriptor[]){
+        Effect.setOptionTargetSelection(false)
         Effect.options_button_div.replaceChildren()
 
         if( options.length == 0 ) {
@@ -759,6 +778,10 @@ export class Effect {
                         Effect.select_effect_obj.selected_targets = []
                         SelectStep.setTargets(true)
                     }
+
+                    Effect.setOptionTargetSelection(
+                        Effect.options_button_div.querySelector('.button.clicked') !== null
+                    )
 
                     if( can_select_all_as_target &&
                         can_auto_activate &&
@@ -833,7 +856,7 @@ export class Effect {
                     }
                 } else {
                     button.addEventListener('click', function(e){
-                        const btn = e.target as HTMLElement
+                        const btn = e.currentTarget as HTMLButtonElement
                         btn.classList.toggle('clicked')
                         if( btn.classList.contains('clicked') ) {
                             for( let child of Effect.options_button_div.childNodes ) {
@@ -844,6 +867,7 @@ export class Effect {
                             UpdateCards(JSON.parse(btn.dataset.json_str!))
                             console.log(button.innerHTML)
                         } else {
+                            Effect.setOptionTargetSelection(false)
                             SelectStep.setEffect()
                             Effect.select_effect_obj.clear()
                             UI.selectCountClear()
@@ -859,6 +883,7 @@ export class Effect {
     }
 
     static setOptions() {
+        Effect.setOptionTargetSelection(false)
         Effect.options_button_div.replaceChildren()
 
         Effect.is_in_event = ''
@@ -937,4 +962,3 @@ export class Effect {
 }
 
 (window as any).Effect = Effect;
-

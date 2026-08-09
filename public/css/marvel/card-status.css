@@ -50,7 +50,10 @@
 }
 
 .area .card.type-status-card.bind-card {
-    --z: 0;
+    /* Keep the status below its bound character (--z: 1), but above the
+       player background plane. At z=0 a hero status can disappear behind
+       the lower-table background even though the engine created it. */
+    --z: 0.5;
 }
 
 .area .card.type-status-card.bind-card:hover {
