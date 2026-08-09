@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+*.py[cod]
+*.log
+crash*.json
+statistics.json
+save_*.json
+assets/cache
+public/js/**/*.js.map
+node_modules
+docs/superpowers

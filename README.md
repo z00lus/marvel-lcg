@@ -41,5 +41,20 @@ Based on the original open-source [Marvel Champions: Digital Edition](https://ir
 This game runs Python card scripts, which is not safe.  
 Do not install or run any third-party card scripts unless you trust them.
 
+## Running with Docker
+
+Install Docker Desktop for Windows, then run these commands from the project
+folder:
+
+```powershell
+docker compose up --build
+```
+
+Open `http://127.0.0.1:2345/` in a browser. The local `assets`, `replays`, and
+`runtime` folders are mounted into the container, so downloaded images and
+game data survive container recreation. Stop the server with `Ctrl+C`; run it
+in the background with `docker compose up --build -d` and stop it with
+`docker compose down`.
+
 这个游戏会运行用 Python 编写的卡牌脚本，这不安全。  
 除非你完全信任，否则不要安装或运行任何第三方的卡牌脚本。
