@@ -19,6 +19,18 @@ body.hold-alt .image-preview-div {
     height: 88.0vh;
 }
 
+/* Status textures are native landscape images. Keep their table cards rotated,
+   but show the enlarged preview upright and at the texture's 596:380 ratio. */
+.image-preview-div.status-card-preview {
+    width: 61.6vh;
+    height: 39.276vh;
+}
+
+body.hold-alt .image-preview-div.status-card-preview {
+    width: 88vh;
+    height: 56.109vh;
+}
+
 body.hold-alt #image-preview-div-center,
 body.hold-alt #image-preview-div-left,
 body.hold-alt #image-preview-div-right {

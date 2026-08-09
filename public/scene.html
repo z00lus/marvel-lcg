@@ -1360,8 +1360,8 @@ p:has(#timeout_text) {
         <div style="display: flex;">
             <p>Statistics Notification: </p>
             <select id="statistics_notification">
-                <option value="0">Off</option>
-                <option selected="selected" value="1">First time</option>
+                <option selected="selected" value="0">Off</option>
+                <option value="1">First time</option>
                 <option value="2">All</option>
             </select>
         </div>
@@ -1908,16 +1908,16 @@ p:has(#timeout_text) {
             const options = [
                 getOption('#show_achievement', '&show_achievement'),
                 getOption('#hide_bug_report', '&hide_bug_report'),
-                document.querySelector('#statistics_notification').value == '1' ? `` : `&notification=${document.querySelector('#statistics_notification').value}`,
+                `&notification=${document.querySelector('#statistics_notification').value}`,
                 getOption('#scene_3d', '&3d_scene'),
             ].join('');
 
             const newUrl = `${currentProtocol}//${currentHost}`;
 
             if( player_id == "hot_seat" ) {
-                return `${newUrl}/?hot_seat${options}`
+                return `${newUrl}/table?hot_seat${options}`
             } else {
-                return `${newUrl}?p=${player_id}${options}`
+                return `${newUrl}/table?p=${player_id}${options}`
             }
         }
 
@@ -1970,6 +1970,7 @@ p:has(#timeout_text) {
 <script>
     // Define the key for caching the form data object
     const CACHE_KEY = 'form_cache_data';
+    const STATISTICS_NOTIFICATION_DEFAULT_OFF_MIGRATION = 'ronin_statistics_notification_default_off_v1';
     cache_ids = ['hide_bug_report', 'show_achievement', 'scene_3d', 'statistics_notification', 'mode_heroic_slider', 'mode_skirmish',
         'mode', 'challenge', 'settings_other',
         'timeout_slider',
@@ -2035,6 +2036,14 @@ p:has(#timeout_text) {
             
             if (cachedData) {
                 const formData = JSON.parse(cachedData);
+
+                // Existing profiles inherited the upstream "First time"
+                // default. Migrate that stored selection to Off once, while
+                // still allowing the player to opt back in afterwards.
+                if (!localStorage.getItem(STATISTICS_NOTIFICATION_DEFAULT_OFF_MIGRATION)) {
+                    formData.statistics_notification = '0';
+                    localStorage.setItem(STATISTICS_NOTIFICATION_DEFAULT_OFF_MIGRATION, '1');
+                }
 
                 // Rules Reference 1.8 is the only rules model. Remove obsolete
                 // compatibility controls from caches created by older clients.

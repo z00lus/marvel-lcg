@@ -12,8 +12,8 @@ export class Setting {
     static is_auto_test = search_params.has('auto_test')
     static ssr_bonus = search_params.has('ssr_bonus')
     static no_tilt = !search_params.has('3d_card')
-    static statistics_off = search_params.has('notification') && search_params.get('notification') == '0'
-    static statistics_first = !search_params.has('notification') || search_params.has('notification') && search_params.get('notification') == '1'
+    static statistics_off = !search_params.has('notification') || search_params.get('notification') == '0'
+    static statistics_first = search_params.get('notification') == '1'
     static statistics_all = search_params.has('notification') && search_params.get('notification') == '2'
     static is_hot_seat = search_params.has('hot_seat')
     static is_watch = search_params.has('watch')

@@ -371,13 +371,15 @@ export class HoverCard{
 
     static show(bg_image: string, name: string, type: string, text: string, rotate_times: string, debug_text: string, is_new: boolean) {
         const preview_div = HoverCard.getPreview()
+        const is_status_card = type == "StatusCard"
+        preview_div.parentElement!.classList.toggle('status-card-preview', is_status_card)
         preview_div.classList.remove('opacity')
         HoverCard.is_overlay = false
         if( bg_image ) {
             HoverCard.is_showing = true
             // console.log(bg_image)
             preview_div.style.transform = "none"
-            preview_div.style.setProperty('--rotate-times', rotate_times)
+            preview_div.style.setProperty('--rotate-times', is_status_card ? '0' : rotate_times)
             // console.log(rotate_times)
             // void preview_div.offsetWidth;
             preview_div.style.setProperty('--bg-image', bg_image)
