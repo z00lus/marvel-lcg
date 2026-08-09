@@ -37,7 +37,10 @@ class V18PlayInitiationOrderTests(unittest.TestCase):
         processing = SimpleNamespace(
             flags=SimpleNamespace(is_processing=True),
         )
-        card = SimpleNamespace(area=source)
+        card = SimpleNamespace(
+            area=source,
+            can_state=SimpleNamespace(is_like_in_hand=None),
+        )
         face = Mock()
         face.card = card
         face.IsLikeInHand.return_value = True
@@ -84,6 +87,24 @@ class V18PlayInitiationOrderTests(unittest.TestCase):
 
         def check_after_placement(message, player):
             self.assertIs(face.card.area, processing)
+            return True
+
+        effect.checker.CheckPlayInitiation.side_effect = check_after_placement
+
+        with patch('game.operate.faces.Faces.MoveAllToProcessingArea', side_effect=place), \
+             patch('game.operate.faces.Faces.MoveAllTo', side_effect=restore):
+            self.assertTrue(action.ResolveEffect(effect, object()))
+
+        effect.checker.CheckPlayInitiation.assert_called_once()
+        effect.checker.CheckBeforeActive.assert_called_once()
+        face.Play.assert_called_once()
+
+    def test_from_hand_payment_eligibility_survives_table_declaration(self):
+        action, _, effect, face, _, processing, place, restore = self.MakePlay()
+
+        def check_after_placement(message, player):
+            self.assertIs(face.card.area, processing)
+            self.assertIs(face.card.can_state.is_like_in_hand, True)
             return True
 
         effect.checker.CheckPlayInitiation.side_effect = check_after_placement

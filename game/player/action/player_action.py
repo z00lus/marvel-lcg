@@ -423,6 +423,13 @@ class PlayerAction:
             from_index = from_area.GetIndex(this)
             moved_for_play_initiation = not from_area.flags.is_processing
             Faces.MoveAllToProcessingArea([this], effect)
+            # RR 1.8 moves the declared card to the table before validating
+            # restrictions, targets, and payment. Preserve the declaration's
+            # original hand-like state across that move: MoveToArea resets the
+            # card cache, but resource abilities such as Star-Lord's
+            # "What could go wrong?" still need to know that the card is being
+            # played from hand during the normative payment check.
+            this.card.can_state.is_like_in_hand = is_like_from_hand
         else:
             from_area = None
 
