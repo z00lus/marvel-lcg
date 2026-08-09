@@ -21,6 +21,7 @@ type ScenarioData = {
 
 type HeroData = {
     name: string;
+    deck_name?: string;
     hero: string[];
     player_deck: string[];
 };
@@ -37,6 +38,7 @@ type HeroChoice = {
     name: string;
     imageId: string;
     data: HeroData;
+    isUserDeck: boolean;
 };
 
 type CampaignChoice = {
@@ -131,8 +133,15 @@ async function loadCampaignChoices(): Promise<CampaignChoice[]> {
 }
 
 async function loadHeroChoices(): Promise<HeroChoice[]> {
-    const paths = await fetchJson<string[]>('/list_starter_deck?');
-    const choices = await Promise.all(paths.map(async (path): Promise<HeroChoice | null> => {
+    const [starterPaths, userPaths] = await Promise.all([
+        fetchJson<string[]>('/list_starter_deck?'),
+        fetchJson<string[]>('/list_user_deck?'),
+    ]);
+    const deckPaths = [
+        ...userPaths.map(path => ({path, isUserDeck: true})),
+        ...starterPaths.map(path => ({path, isUserDeck: false})),
+    ];
+    const choices = await Promise.all(deckPaths.map(async ({path, isUserDeck}): Promise<HeroChoice | null> => {
         const id = getFileName(path);
         try {
             const data = await fetchJson<HeroData>(`/get_hero_json?${encodeURIComponent(id)}`);
@@ -140,9 +149,15 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
             if (!data.name || !imageId) {
                 return null;
             }
-            return { id, name: data.name, imageId, data };
+            return {
+                id,
+                name: data.deck_name ?? data.name,
+                imageId,
+                data,
+                isUserDeck,
+            };
         } catch (error) {
-            console.warn(`Failed to load starter deck ${id}`, error);
+            console.warn(`Failed to load hero deck ${id}`, error);
             return null;
         }
     }));
@@ -276,12 +291,14 @@ function renderHeroes(choices: HeroChoice[]): void {
     heroChoices = choices;
     heroList.replaceChildren();
     for (const choice of choices) {
-        heroList.appendChild(createChoiceButton(
+        const button = createChoiceButton(
             choice.id,
             choice.name,
             choice.imageId,
             () => selectHero(choice),
-        ));
+        );
+        button.classList.toggle('user-deck', choice.isUserDeck);
+        heroList.appendChild(button);
     }
 
     const savedHeroId = localStorage.getItem(heroStorageKey);

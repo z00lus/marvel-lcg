@@ -217,6 +217,40 @@ input {
     box-shadow: 0 0 1.15rem rgba(32, 185, 255, 0.42);
 }
 
+.choice-card.user-deck {
+    border-color: rgba(232, 184, 74, 0.72);
+    background:
+        radial-gradient(circle at 15% 10%, rgba(232, 184, 74, 0.2), transparent 42%),
+        linear-gradient(145deg, rgba(58, 42, 70, 0.98), rgba(22, 27, 39, 0.98));
+    box-shadow: 0 0.55rem 1.25rem rgba(0, 0, 0, 0.3), 0 0 0.8rem rgba(180, 119, 210, 0.16);
+}
+
+.choice-card.user-deck::before {
+    content: "MY DECK";
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 1;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid rgba(255, 235, 169, 0.8);
+    border-radius: 0.25rem;
+    background: rgba(43, 24, 51, 0.9);
+    color: #ffe7a3;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.55);
+}
+
+.choice-card.user-deck:hover,
+.choice-card.user-deck.selected {
+    border-color: #f0c25c;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(240, 194, 92, 0.3), transparent 44%),
+        linear-gradient(145deg, rgba(73, 47, 86, 0.98), rgba(27, 35, 48, 0.98));
+    box-shadow: 0 0 1.15rem rgba(220, 160, 74, 0.38);
+}
+
 .choice-card.selected::after {
     content: "✓";
     position: absolute;

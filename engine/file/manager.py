@@ -9,6 +9,7 @@ REPLAY_FOLDERS          = ConfigVariables.Folders('replay_folders', ["./replays/
 LOAD_FOLDERS            = ConfigVariables.Folders('load_folders', ["./replays/"])
 DECK_FOLDERS            = ConfigVariables.Folders('deck_folders', ["./deck/"])
 STARTER_DECK_FOLDER     = ConfigVariables.Folder('starter_deck_folder', "./deck/starter")
+USER_DECK_FOLDER        = ConfigVariables.Folder('user_deck_folder', "./deck/user-decks")
 ENCOUNTER_SETS_FOLDERS  = ConfigVariables.Folders('encounter_sets_folders', ["./data/encounter_sets/", "./data/nemesis/", "./data/"])
 SCENARIOS_FOLDERS       = ConfigVariables.Folders('scenarios_folders', ["./data/scenarios/", "./data/challenges/",  "./data/"])
 CUSTOM_SCENARIOS_FOLDER = ConfigVariables.Folder('custom_scenario_folder', "./data/scenarios_custom/")
@@ -183,7 +184,7 @@ class FileManager:
             if load_type == 'Replay':
                 return ['./'] + REPLAY_FOLDERS.value + LOAD_FOLDERS.value
             if load_type == 'Hero':
-                return DECK_FOLDERS.value + [STARTER_DECK_FOLDER.value]
+                return DECK_FOLDERS.value + [USER_DECK_FOLDER.value, STARTER_DECK_FOLDER.value]
             if load_type == 'EncounterSet':
                 return ENCOUNTER_SETS_FOLDERS.value
             if load_type == 'Campaign':
@@ -210,4 +211,3 @@ class FileManager:
         else:
             Log.Assert(CATEGORY_NAME, f"File {file_names} not found")
             return None
-

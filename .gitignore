@@ -11,6 +11,7 @@
 /crash.log
 /statistics.json
 /deck/*.json
+/deck/user-decks/
 /replays/
 /tasks/
 /rules/

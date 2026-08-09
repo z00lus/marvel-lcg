@@ -18,11 +18,13 @@ class WebDeviceManager(DeviceManager):
 
     def __init__(self) -> None:
         from engine.device.web.server.server import GameServer
+        from engine.marvelcdb import MarvelCdbDeckSync
 
         super().__init__()
 
         self.client_manager = ClientManager()
         self.httpds : List[GameServer] = []
+        self.marvelcdb_deck_sync = MarvelCdbDeckSync()
 
         server_addresses    = SERVER_ADDRESSES.value[:]
         port                = PORT.value
@@ -51,6 +53,8 @@ class WebDeviceManager(DeviceManager):
             self.httpds.append(GameServer(self))
             self.httpds[-1].Run(ip, port, "Server")
 
+        self.marvelcdb_deck_sync.Start()
+
         self.stat_sent_size: Dict[str, int] = {}
 
     @override
@@ -68,6 +72,7 @@ class WebDeviceManager(DeviceManager):
     @override
     def OnShutdown(self):
         super().OnShutdown()
+        self.marvelcdb_deck_sync.Stop()
         for httpd in self.httpds:
             httpd.Shutdown()
 

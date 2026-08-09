@@ -12,6 +12,7 @@ CARDS_JSON_FILE         = ConfigVariables.File('cards_json_file')
 REPLAY_FOLDERS          = ConfigVariables.Folders('replay_folders')
 DECK_FOLDERS            = ConfigVariables.Folders('deck_folders')
 STARTER_DECK_FOLDER     = ConfigVariables.Folder('starter_deck_folder')
+USER_DECK_FOLDER        = ConfigVariables.Folder('user_deck_folder', './deck/user-decks')
 ENCOUNTER_SETS_FOLDERS  = ConfigVariables.Folders('encounter_sets_folders')
 SCENARIOS_FOLDERS       = ConfigVariables.Folders('scenarios_folders')
 CUSTOM_SCENARIOS_FOLDER = ConfigVariables.Folder('custom_scenario_folder')
@@ -37,6 +38,14 @@ class GameServerGet(GameServerBase):
 
     async def list_starter_deck(self, request: web.Request) -> web.Response:
         return self.ListFile(STARTER_DECK_FOLDER.value)
+
+    async def list_user_deck(self, request: web.Request) -> web.Response:
+        files = FileManager.ListFiles(
+            USER_DECK_FOLDER.value,
+            ext='.json',
+            check_file_name=lambda name: not name.startswith('.'),
+        )
+        return web.json_response(files)
 
     async def list_replay_files(self, request: web.Request) -> web.Response:
         if READ_ONLY_FIRST_REPLAY_FOLDER.value:
@@ -217,6 +226,7 @@ class GameServerGet(GameServerBase):
         self.AddAwaitGetSecurity('/list_encounter_sets', self.list_encounter_sets)
         self.AddAwaitGetSecurity('/list_deck', self.list_deck)
         self.AddAwaitGetSecurity('/list_starter_deck', self.list_starter_deck)
+        self.AddAwaitGetSecurity('/list_user_deck', self.list_user_deck)
         self.AddAwaitGetSecurity('/list_replay_files', self.list_replay_files)
         self.AddAwaitGetSecurity('/list_puzzle_files', self.list_puzzle_files)
         self.AddAwaitGetSecurity('/list_puzzle_test_files', self.list_puzzle_test_files)
