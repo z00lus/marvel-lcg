@@ -2,9 +2,7 @@
 
 > Version 0.6.0 — “Echo”
 
-## Snapshot
-
-![](/docs/assets/image-6.png)
+> **This edition uses Marvel Champions Rules Reference v1.8 as its supported rules model.**
 
 ## Fork Goals
 
@@ -16,17 +14,46 @@ This fork focuses on a simple and convenient **solo Marvel Champions experience*
 
 Development should prioritize rules correctness, reliable saves and replays, and improvements that make solo games easier to start and play.
 
+## Snapshot
+
+![](/docs/assets/image-6.png)
+
+## Running
+
+### Linux and macOS
+
+Install Git, Python 3.10 or newer, and Node.js, then run:
+
+```bash
+git clone https://github.com/z00lus/marvel-lcg.git
+cd marvel-lcg
+./run.sh
+```
+
+`run.sh` creates the virtual environment, installs Python dependencies, compiles the frontend when necessary, and starts the server. Open `http://127.0.0.1:2345/` locally or `http://SERVER_IP:2345/` from another device on the same trusted network.
+
+### Docker
+
+From the cloned project directory, run:
+
+```bash
+docker compose up --build
+```
+
+Open `http://127.0.0.1:2345/`. Use `docker compose up --build -d` to run in the background and `docker compose down` to stop it. Docker is also the recommended way to run the server on Windows.
+
 ## Progress
 
 ### Compared with upstream
 
 Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/marvel-lcg), this fork currently adds:
 
-- A solo-first **Quick Game** screen with scenario and bundled starter-deck selection, remembered choices, input validation, and double-start protection.
-- A separate simplified **Campaign** flow for starting or continuing a solo campaign.
-- Better Linux self-hosting through `run.sh`, LAN-friendly defaults, a systemd unit, and server installation documentation.
-- UI improvements including adjustable animation speed, clearer rule descriptions, corrected keyboard shortcuts, and a **Try Again** action after defeat.
-- Reliable replay saving after a completed game, browser listing and download, correct replay loading, and an overlay control bar with first/previous/play-pause/next/last controls and timeline seeking. Replays now open paused and no longer resize or distort the game board.
+- A Rules Reference **v1.8** engine update focused on solo rules correctness, including timing, status cards, damage, targeting, and ability initiation.
+- Solo-first **Quick Game** and **Campaign** screens with prepared-deck selection, remembered choices, and optional Expert difficulty.
+- A cohesive Ronin-themed interface with improved tablet and touch layouts, a settings screen, adjustable animation speed, and replay autosaving.
+- Reliable replay saving, browsing, downloading, loading, step controls, timeline seeking, and paused-at-start playback.
+- Manual and daily synchronization of public MarvelCDB deck IDs into a clearly marked user-deck collection.
+- Better self-hosting through `run.sh`, Docker Compose, LAN-friendly defaults, a systemd unit, and Linux server documentation.
 
 ### Community integrations and new heroes
 
@@ -40,21 +67,6 @@ Based on the original open-source [Marvel Champions: Digital Edition](https://ir
 
 This game runs Python card scripts, which is not safe.  
 Do not install or run any third-party card scripts unless you trust them.
-
-## Running with Docker
-
-Install Docker Desktop for Windows, then run these commands from the project
-folder:
-
-```powershell
-docker compose up --build
-```
-
-Open `http://127.0.0.1:2345/` in a browser. The local `assets`, `replays`, and
-`runtime` folders are mounted into the container, so downloaded images and
-game data survive container recreation. Stop the server with `Ctrl+C`; run it
-in the background with `docker compose up --build -d` and stop it with
-`docker compose down`.
 
 这个游戏会运行用 Python 编写的卡牌脚本，这不安全。  
 除非你完全信任，否则不要安装或运行任何第三方的卡牌脚本。
