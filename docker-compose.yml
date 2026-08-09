@@ -1,0 +1,14 @@
+services:
+  marvel-lcg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: marvel-lcg
+    ports:
+      - "2345:2345"
+    volumes:
+      - ./assets:/app/assets
+      - ./replays:/app/replays
+      - ./runtime:/app/runtime
+    command: ["python", "-u", "main.py", "--game_statistics_file=./runtime/statistics.json"]
+    restart: unless-stopped
