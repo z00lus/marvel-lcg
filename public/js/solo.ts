@@ -321,7 +321,7 @@ async function startGame(): Promise<void> {
         if (!response.ok) {
             throw new Error(`${response.status} ${response.statusText}`);
         }
-        window.location.assign('/?p=0');
+        window.location.assign('/table?p=0');
     } catch (error) {
         console.error(error);
         errorMessage.textContent = 'Could not create the game. Check the server log and try again.';

@@ -5,7 +5,7 @@ from engine.device.web.server.server_base import GameServerBase
 
 from engine.file import FileManager
 from engine.lib import Json
-# from engine.log import Log
+from engine.log import Log
 from game.puzzle.puzzle_data import PuzzleData
 from game.game_run.game_new import NewGameDescriptor
 
@@ -20,6 +20,27 @@ class GameServerNewGame(GameServerBase):
         new_game = Json.LoadsAs(data, NewGameDescriptor)
         self.game.NewGame(new_game)
         return web.json_response({'result': "New game created"})
+
+    async def active_session_status(self, request: web.Request) -> web.Response:
+        return web.json_response({
+            'available': self.game.HasActiveSession(),
+            'live': self.game.HasLiveActiveSession(),
+        })
+
+    async def continue_game(self, request: web.Request) -> web.Response:
+        from game.scene.loader import UnsupportedReplayRulesError
+
+        try:
+            result = self.game.ContinueActiveSession()
+        except UnsupportedReplayRulesError as exc:
+            return web.json_response({'error': str(exc)}, status=409)
+        except Exception as exc:
+            Log.FailedTrace("WEB", exc, no_take_as_error=True)
+            return web.json_response({'error': "The active game could not be restored"}, status=500)
+
+        if result is None:
+            return web.json_response({'error': "There is no active game to continue"}, status=404)
+        return web.json_response({'result': result})
 
     async def retry_game(self, request: web.Request) -> web.Response:
         world = self.game.world
@@ -107,6 +128,8 @@ class GameServerNewGame(GameServerBase):
     def play_puzzle(self, puzzle: 'PuzzleData'):
         from game.scene.scene import Scene
 
+        self.game.active_session_enabled = False
+
         def get_cards_text(cards: List[str]) -> str:
             text = ",".join(f"'{x}'" for x in cards)
             return text
@@ -174,6 +197,7 @@ class GameServerNewGame(GameServerBase):
     async def new_puzzle_replay(self, request: web.Request) -> web.Response:
         from game.scene.scene import Scene
 
+        self.game.active_session_enabled = False
         scene = Json.LoadsAs(request.rel_url.query_string, Scene)
         scene.UpdateVersion()
 
@@ -182,6 +206,7 @@ class GameServerNewGame(GameServerBase):
         return web.json_response({'result': "New game created"})
 
     async def new_puzzle(self, request: web.Request) -> web.Response:
+        self.game.active_session_enabled = False
         puzzle = Json.LoadsAs(request.rel_url.query_string, PuzzleData)
         self.play_puzzle(puzzle)
         return web.json_response({'result': "New game created"})
@@ -202,6 +227,8 @@ class GameServerNewGame(GameServerBase):
     def __init__(self) -> None:
         super().__init__()
         self.AddAwaitGetSecurity('/new', self.new_game)
+        self.AddAwaitGetSecurity('/active_session', self.active_session_status)
+        self.AddPostSecurity('/continue_game', self.continue_game)
         self.AddPostSecurity('/retry', self.retry_game)
         self.AddAwaitGetSecurity('/new_debug', self.new_debug)
         self.AddAwaitGetSecurity('/load_replay', self.load_replay)

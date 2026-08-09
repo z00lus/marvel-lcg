@@ -141,6 +141,7 @@
         button:disabled {
             filter: grayscale(1);
             transition: none;
+            cursor: not-allowed;
         }
         
         button:disabled span:before,
@@ -193,10 +194,13 @@
         </style>
 
         <div class="main">
-            <button class="custom-btn btn-3" onclick="Open('solo')">
+            <button class="custom-btn btn-3" onclick="Open('/solo?ronin-session=1')">
                 <span>Quick Game</span>
             </button>
-            <button class="custom-btn btn-3" onclick="Open('campaign')">
+            <button id="continue-game" class="custom-btn btn-3" disabled>
+                <span>Continue Game</span>
+            </button>
+            <button class="custom-btn btn-3" onclick="Open('/campaign?ronin-session=1')">
                 <span>Campaign</span>
             </button>
             <button class="custom-btn btn-3" onclick="Open('replay')">
@@ -223,6 +227,51 @@
     </div>
 
     <script>
+        const continueGameButton = document.querySelector('#continue-game');
+        const continueGameLabel = continueGameButton.querySelector('span');
+
+        async function refreshActiveSession() {
+            try {
+                const response = await fetch('/active_session');
+                if (!response.ok) {
+                    throw new Error(`Session check failed: ${response.status}`);
+                }
+                const session = await response.json();
+                continueGameButton.disabled = !session.available;
+                continueGameButton.title = session.available
+                    ? (session.live ? 'Open the active game table' : 'Restore the last completed turn')
+                    : 'No active game is saved';
+            } catch (error) {
+                console.error(error);
+                continueGameButton.disabled = true;
+                continueGameButton.title = 'Could not check the active game';
+            }
+        }
+
+        continueGameButton.addEventListener('click', async () => {
+            if (continueGameButton.disabled) {
+                return;
+            }
+
+            continueGameButton.disabled = true;
+            continueGameLabel.textContent = 'Continuing...';
+            try {
+                const response = await fetch('/continue_game', {method: 'POST'});
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error ?? `Continue failed: ${response.status}`);
+                }
+                window.location.assign('/table?p=0');
+            } catch (error) {
+                console.error(error);
+                alert(error instanceof Error ? error.message : 'Could not continue the game.');
+                continueGameLabel.textContent = 'Continue Game';
+                await refreshActiveSession();
+            }
+        });
+
+        void refreshActiveSession();
+
         // Function to get a cookie
         function getCookie(name) {
             let nameEQ = name + "=";
@@ -254,7 +303,7 @@ function doReplay(file_name) {
     ajax.onreadystatechange = function () {
         if( this.readyState == 4 ) {
             if( this.status >= 200 && this.status < 300 ) {
-                cmd = ".?hot_seat&3d_scene"
+                cmd = "/table?hot_seat&3d_scene"
                 window.open(cmd)
             } else {
                 let message = `Could not load replay (${this.status}).`;

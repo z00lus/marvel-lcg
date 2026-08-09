@@ -105,7 +105,9 @@ class WebServer:
             elif not self.IsVersionMatch(request):
                 return self.LoadHtmlCleanCache()
             else:
-                return self.ReadFile(html)
+                response = self.ReadFile(html)
+                response.headers['Cache-Control'] = 'no-cache, must-revalidate'
+                return response
         self.web_app.router.add_get(path, handle)
 
     @final

@@ -76,6 +76,11 @@ class FileManager:
         return True
 
     @staticmethod
+    def Replace(file_path: str, new_path: str):
+        os.replace(file_path, new_path)
+        return True
+
+    @staticmethod
     def GetBaseName(file_path: str):
         return os.path.basename(file_path)
 

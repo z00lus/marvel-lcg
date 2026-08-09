@@ -11,15 +11,19 @@ CATEGORY_NAME = "WEB"
 
 class GameServerFiles(GameServerBase):
 
+    async def handle_main(self, request: web.Request) -> web.StreamResponse:
+        response = self.ReadFile('./public/main.html')
+        response.headers['Cache-Control'] = 'no-cache, must-revalidate'
+        return response
+
     async def handle_marvel(self, request: web.Request) -> web.StreamResponse:
-        if request.query_string == '':
-            return self.ReadFile('./public/main.html')
-        else:
-            return self.ReadFile('./public/marvel.html')
+        response = self.ReadFile('./public/marvel.html')
+        response.headers['Cache-Control'] = 'no-cache, must-revalidate'
+        return response
 
     async def handle_players_404(self, request: web.Request) -> web.StreamResponse:
         player = request.match_info.get('player')
-        return web.Response(text=f"Please visiting /?p={player}", status=404)
+        return web.Response(text=f"Please visit /table?p={player}", status=404)
 
     def handle_sets_image(self, request: web.Request) -> web.StreamResponse:
         file_path = request.path
@@ -54,7 +58,8 @@ class GameServerFiles(GameServerBase):
 
         self.AddDefaultGet()
 
-        self.AddAwaitGetSecurity('/', self.handle_marvel)
+        self.AddAwaitGetSecurity('/', self.handle_main)
+        self.AddAwaitGetSecurity('/table', self.handle_marvel)
         self.AddAwaitGetSecurity(r'/p={player:\d+}', self.handle_players_404)
         self.AddAwaitGetSecurity('/watch', self.handle_marvel)
 

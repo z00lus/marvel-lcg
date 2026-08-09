@@ -1,8 +1,10 @@
 from core import *
+import os
 from build import Build
 from engine.log import Log
 from engine.profile import Coverage, Profile
 from engine.config import ConfigVariables
+from engine.file import FileManager
 from engine.device.manager import *
 from game import *
 from game.world import *
@@ -18,6 +20,7 @@ CATEGORY_NAME = "GAME"
 ON_STARTUP_LOAD_SAVE_FILE   = ConfigVariables.File('on_startup_load_save_file', "")
 PAUSE_TEST_STATISTICS       = ConfigVariables.Bool('pause_test_statistics', True)
 AUTO_SAVE_AFTER_GAME_OVER   = ConfigVariables.Bool('auto_save_after_game_over', False)
+ACTIVE_SESSION_FILE         = ConfigVariables.File('active_session_file', "./save_active_session.json")
 
 class Game:
 
@@ -29,6 +32,7 @@ class Game:
 
         self.controller_manager = ControllerManager(self, device_manager)
         self.statistics = statistics
+        self.active_session_enabled = False
 
     @property
     def world(self) -> 'World|None':
@@ -55,6 +59,7 @@ class Game:
         from engine.log import Log
 
         is_testing = Test.IsInTesting()
+        save_new_active_session = self.active_session_enabled and self.state.start_state.is_new
         self.UpdatePauseStatistics(is_testing)
 
         Log.Setup()
@@ -62,7 +67,10 @@ class Game:
             Coverage.Setup()
 
         Tracker.ResetStats()
-        return self.session.GameSetup(self.controller_manager, self.state)
+        setup_ok = self.session.GameSetup(self.controller_manager, self.state)
+        if setup_ok and save_new_active_session:
+            self.SaveActiveSession()
+        return setup_ok
 
     def GameLoop(self):
         if self.world:
@@ -122,20 +130,96 @@ class Game:
     def Restart(self, seed: int|None=-1) -> None:
         assert self.world
         self.world.game_over.SetExit()
+        self.active_session_enabled = True
+        self.RemoveActiveSessionFile()
+        self.controller_manager.replay.SetIsReplay(False)
         self.session.Restart(seed)
         self.controller_manager.OnRestart()
 
     def Shutdown(self):
         self.controller_manager.OnShutdown()
 
+    ################################################################################
+    # One server-side checkpoint is shared by every browser connected to this
+    # server. It is intentionally separate from user-created replay files.
+    @property
+    def active_session_file(self) -> str:
+        return ACTIVE_SESSION_FILE.value
+
+    @property
+    def active_session_temp_file(self) -> str:
+        path, extension = os.path.splitext(self.active_session_file)
+        return f"{path}.tmp{extension}"
+
+    def RemoveActiveSessionFile(self) -> None:
+        for file_path in [self.active_session_file, self.active_session_temp_file]:
+            if FileManager.IsFile(file_path):
+                FileManager.Delete(file_path)
+
+    def HasLiveActiveSession(self) -> bool:
+        return bool(
+            self.active_session_enabled and
+            self.state.is_running and
+            self.world and
+            not self.world.is_game_over and
+            not self.scene.is_puzzle and
+            not self.controller_manager.replay.is_replay
+        )
+
+    def HasActiveSession(self) -> bool:
+        return self.HasLiveActiveSession() or FileManager.IsFile(self.active_session_file)
+
+    def SaveActiveSession(self) -> bool:
+        from game.test import Test
+
+        if Test.IsInTesting() or not self.HasLiveActiveSession():
+            return False
+
+        try:
+            saved_file = self.session.SaveScene(
+                name=self.active_session_temp_file,
+                delete_old=False,
+            )
+            if saved_file is None:
+                return False
+
+            FileManager.Replace(saved_file, self.active_session_file)
+            Log.Info(CATEGORY_NAME, f"Active session saved: {self.active_session_file}")
+            return True
+        except Exception as exc:
+            Log.FailedTrace(CATEGORY_NAME, exc, no_take_as_error=True)
+            return False
+
+    def ContinueActiveSession(self) -> Literal["live", "loaded"]|None:
+        if self.HasLiveActiveSession():
+            return "live"
+        if not FileManager.IsFile(self.active_session_file):
+            return None
+
+        self.active_session_enabled = True
+        try:
+            # -1 replays every recorded choice, then stops at the saved turn
+            # boundary and resumes as a normal game rather than a replay.
+            self.controller_manager.replay.SetIsReplay(False)
+            self.session.Load(self.active_session_file, -1, "Load")
+            self.controller_manager.OnNewGame()
+        except Exception:
+            self.active_session_enabled = False
+            raise
+        return "loaded"
+
     def NewGame(self, new_game: 'NewGameDescriptor') -> None:
         if self.world:
             self.world.game_over.SetExit()
 
+        self.active_session_enabled = True
+        self.RemoveActiveSessionFile()
+        self.controller_manager.replay.SetIsReplay(False)
         self.session.NewGame(new_game)
         self.controller_manager.OnNewGame()
 
     def LoadReplay(self, file_path: 'str') -> None:
+        self.active_session_enabled = False
         self.session.Load(file_path, None, "Replay")
         self.controller_manager.OnNewGame()
 
@@ -175,6 +259,9 @@ class Game:
     def SetGameOver(self) -> bool:
         self.SetGameOverInternal()
         if self.state.exit_state.is_normal_exit:
+            if self.active_session_enabled:
+                self.active_session_enabled = False
+                self.RemoveActiveSessionFile()
             self.statistics.Save()
 
         if self.state.start_state.is_undo:

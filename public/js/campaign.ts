@@ -431,7 +431,7 @@ async function startGame(): Promise<void> {
         };
         saveCampaign(saved);
         saveActiveCampaignRun(activeRun);
-        window.location.assign('/?p=0');
+        window.location.assign('/table?p=0');
     } catch (error) {
         console.error(error);
         errorMessage.textContent = 'Could not create the campaign game. Check the server log and try again.';

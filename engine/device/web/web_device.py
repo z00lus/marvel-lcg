@@ -16,7 +16,7 @@ class WebDevice(OutputDevice, InputDevice):
 
         # port = manager.port
         # ip_address = manager.ip_address
-        # Log.Info(CATEGORY_NAME, f"URL: http://{ip_address}:{port}/?p={controller.player_id}")
+        # Log.Info(CATEGORY_NAME, f"URL: http://{ip_address}:{port}/table?p={controller.player_id}")
 
         super().__init__(controller, manager)
 
@@ -51,4 +51,3 @@ class WebDevice(OutputDevice, InputDevice):
     @override
     def Render(self) -> None:
         self.manager_web.httpds[-1].WebSendRender(self.controller.player_id, "WaitSync")
-

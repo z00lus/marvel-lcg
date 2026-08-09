@@ -237,7 +237,7 @@ Use ";" for multiple card
     //     ajax.onreadystatechange = function () {
     //         if( this.readyState == 4 ) {
     //             console.log('ok')
-    //             cmd = ".?hot_seat"
+    //             cmd = "/table?hot_seat"
     //             window.open(cmd)
     //         }
     //     }
@@ -328,8 +328,8 @@ Use ";" for multiple card
             }
 
             const responseData = await response.json(); // Parse the JSON response
-            // cmd = ".?hot_seat&show_all_cards"
-            cmd = ".?hot_seat"
+            // cmd = "/table?hot_seat&show_all_cards"
+            cmd = "/table?hot_seat"
             if( show_id ) {
                 cmd += '&show_card_id&show_all_cards'
             }

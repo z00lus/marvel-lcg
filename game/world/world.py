@@ -577,6 +577,11 @@ class World(WorldAction, WorldFind):
             if self.is_game_over:
                 return
 
+            # In solo play this is the stable end-of-turn checkpoint: end-phase
+            # discards, draw-up, readying, and all player-phase triggers have
+            # finished, while the villain phase has not begun yet.
+            self.controller_manager.game.SaveActiveSession()
+
             phase_begin("Villain")
             if self.is_game_over:
                 return
