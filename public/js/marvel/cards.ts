@@ -296,7 +296,15 @@ class CardRender {
         }
     
         function sortFn(a: CardDescriptor, b: CardDescriptor): number {
-            if (b.card_type === "StatusCard") return 1;
+            // Status cards must be the first bound cards after their target.
+            // Area rendering reverses this list for DOM/layout order, so a
+            // stable, symmetric comparison is important: the old one-sided
+            // check produced a different order depending on the cards'
+            // insertion order. An upgrade could then occupy the status-card
+            // reveal space and completely cover the status beside a hero.
+            const aIsStatus = a.card_type === "StatusCard";
+            const bIsStatus = b.card_type === "StatusCard";
+            if (aIsStatus !== bIsStatus) return aIsStatus ? -1 : 1;
             if (b.is_dealt_card) return 1;
             if (b.card_type === "Hero" || b.card_type === "AlterEgo") return 1;
             if (a.is_face_up === b.is_face_up && a.is_face_up === false) return 0;
