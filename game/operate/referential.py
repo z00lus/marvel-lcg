@@ -4,6 +4,25 @@ from . import *
 @final
 class Referential:
     @staticmethod
+    def _IsEncounterCard(face: 'CardFace') -> bool:
+        """Return whether ``face`` belongs to the encounter card class.
+
+        A few scenario cards, including the Milano, use a player-card type so
+        they can stay in a player's play area, but are explicitly printed with
+        the Encounter class.  Referential targeting must classify those cards
+        as encounter cards rather than ordinary player cards.
+        """
+        from game.card.face.base import ClassCard
+
+        return EncounterCard.IsType(face) or \
+            ClassCard.IsType(face) and face.IsClass("Encounter")
+
+    @staticmethod
+    def _IsPlayerCard(face: 'CardFace') -> bool:
+        return PlayerCard.IsType(face) and \
+            not Referential._IsEncounterCard(face)
+
+    @staticmethod
     def _GetPlayers(world: 'World') -> Sequence['Player']:
         try:
             return world.const_players
@@ -121,10 +140,16 @@ class Referential:
 
         # 3. Player cards for an ability on a player card, or encounter cards
         # for an ability on an encounter card. Never cross that boundary.
-        if PlayerCard.IsType(this):
-            return [face for face in legal_faces if PlayerCard.IsType(face)]
-        if EncounterCard.IsType(this):
-            return [face for face in legal_faces if EncounterCard.IsType(face)]
+        if Referential._IsEncounterCard(this):
+            return [
+                face for face in legal_faces
+                if Referential._IsEncounterCard(face)
+            ]
+        if Referential._IsPlayerCard(this):
+            return [
+                face for face in legal_faces
+                if Referential._IsPlayerCard(face)
+            ]
         return legal_faces
 
     @staticmethod

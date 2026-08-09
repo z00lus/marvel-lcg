@@ -1,16 +1,31 @@
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 # Match the application's normal import order without initializing the server.
 from engine import Engine
 
 from cards.database import CardsDB
 from cards.paper import Paper
+from engine.lib.version import Ver
+from game.ability.cost_func import CostFunc
 from game.card.card_finder import CardFinder
-from game.card.face.card_type import Ally, Event, Hero, Minion, Obligation, Treachery, Upgrade
+from game.card.factory import CardFactory
+from game.card.face.card_type import (
+    Ally,
+    Event,
+    Hero,
+    Minion,
+    Obligation,
+    Support,
+    Treachery,
+    Upgrade,
+)
+from game.effect.effect_checker import EffectChecker
+from game.operate.faces import Faces
 from game.operate.referential import Referential
 from game.operate.worlds import Worlds
+from game.player import Player
 
 
 CARD_TYPES = {
@@ -19,6 +34,7 @@ CARD_TYPES = {
     Hero: "Hero",
     Minion: "Minion",
     Obligation: "Obligation",
+    Support: "Support",
     Treachery: "Treachery",
     Upgrade: "Upgrade",
 }
@@ -31,6 +47,9 @@ class FakeCard:
         self.printed_faces = [face]
         self.owner_original = owner
         self.game_area = game_area
+        self.area = SimpleNamespace(
+            flags=SimpleNamespace(is_deck=False),
+        )
         face.card = self
 
     def GetOriginalOwner(self):
@@ -54,7 +73,7 @@ def MakeFace(
     game_area=None,
 ):
     desc = {}
-    if face_type in (Ally, Event, Upgrade):
+    if face_type in (Ally, Event, Support, Upgrade):
         desc["Class"] = card_class or "Basic"
     paper = Paper(
         card_id=card_id,
@@ -296,6 +315,36 @@ class ReferentialFilterV17Tests(unittest.TestCase):
 
         self.assertEqual(result, [encounter_venom])
 
+    def test_encounter_reference_includes_encounter_class_support(self):
+        source = MakeFace(
+            Treachery,
+            "Interception Imminent",
+            card_id="t043",
+            set_name="Ronan",
+        )
+        milano = MakeFace(
+            Support,
+            "Milano",
+            card_id="t044",
+            set_name="Ship Command",
+            card_class="Encounter",
+        )
+        player_support = MakeFace(
+            Support,
+            "Milano",
+            card_id="t045",
+            card_class="Basic",
+        )
+        effect = MakeEffect(source, [source, milano, player_support])
+
+        result = Referential.Filter(
+            CardFinder(name="Milano"),
+            [milano, player_support],
+            effect,
+        )
+
+        self.assertEqual(result, [milano])
+
     def test_player_reference_does_not_cross_to_encounter_card(self):
         source = MakeFace(Event, "Call for Venom", card_id="t050")
         player_venom = MakeFace(
@@ -319,6 +368,34 @@ class ReferentialFilterV17Tests(unittest.TestCase):
         )
 
         self.assertEqual(result, [player_venom])
+
+    def test_player_reference_does_not_cross_to_encounter_class_support(self):
+        source = MakeFace(Event, "Call the Milano", card_id="t053")
+        player_milano = MakeFace(
+            Support,
+            "Milano",
+            card_id="t054",
+            card_class="Basic",
+        )
+        encounter_milano = MakeFace(
+            Support,
+            "Milano",
+            card_id="t055",
+            set_name="Ship Command",
+            card_class="Encounter",
+        )
+        effect = MakeEffect(
+            source,
+            [source, player_milano, encounter_milano],
+        )
+
+        result = Referential.Filter(
+            CardFinder(name="Milano"),
+            [player_milano, encounter_milano],
+            effect,
+        )
+
+        self.assertEqual(result, [player_milano])
 
     def test_each_referenced_title_uses_its_own_priority(self):
         source = MakeFace(Event, "Alpha", card_id="t060")
@@ -417,6 +494,74 @@ class WorldsReferentialLookupTests(unittest.TestCase):
             result = Worlds.FindCardsOnField(effect, name="Venom")
 
         self.assertEqual(result, [encounter_venom])
+
+
+class InterceptionImminentRegressionTests(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        Ver.Initialize()
+        if not CardsDB.papers:
+            CardsDB.Initialize()
+
+    def test_interception_imminent_exhausts_milano_and_removes_threat(self):
+        world = Mock()
+        world.GetPlayerNumIcon.return_value = 1
+        world.const_players = []
+        world.players = []
+
+        scheme = CardFactory.CreateFace(
+            CardsDB.FindCardPaper("16106b"),
+            world,
+        )
+        milano = CardFactory.CreateFace(
+            CardsDB.FindCardPaper("16142"),
+            world,
+        )
+        scenario = object()
+        game_area = object()
+        FakeCard(scheme, scenario, game_area)
+        FakeCard(milano, scenario, game_area)
+        world.object_manager = SimpleNamespace(
+            card_dict={0: scheme.card, 1: milano.card},
+        )
+
+        # Select the actual First Player Action rather than relying on the
+        # ordering of rule/setup abilities added to the face.
+        ability = next(
+            candidate for candidate in scheme.ability.abilities
+            if candidate.flags.is_first_player_type
+        )
+        cost = next(
+            candidate for candidate in ability.cost_funcs
+            if isinstance(candidate, CostFunc.Exhaust)
+        )
+        effect = SimpleNamespace(
+            this=scheme,
+            world=world,
+            ability=ability,
+            initiator=None,
+            cost_func=SimpleNamespace(GetAll=lambda: [cost]),
+        )
+        checker = EffectChecker.__new__(EffectChecker)
+        checker.effect = effect
+
+        player = object.__new__(Player)
+        player.AskChooseFaces = Mock(return_value=[milano])
+
+        with patch.object(Worlds, "GetOnFieldCards", return_value=[scheme, milano]), \
+             patch.object(Support, "CanExhaust", return_value=True), \
+             patch.object(Support, "IsInDeck", return_value=False), \
+             patch.object(Faces, "ExhaustAll", return_value=[milano]) as exhaust:
+            self.assertTrue(checker.HasCostTargets())
+            self.assertTrue(cost.PayCost(effect, player))
+
+        exhaust.assert_called_once_with([milano], effect)
+
+        with patch.object(scheme, "RemoveThreatFromSchemes") as remove_threat:
+            ability.operation(effect, Mock())
+
+        remove_threat.assert_called_once_with([scheme], 3, effect)
 
 
 if __name__ == "__main__":
