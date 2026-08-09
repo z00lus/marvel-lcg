@@ -206,7 +206,9 @@ class WebServer:
 
         async def handle_favicon(request: web.Request):
             file_path = './public/favicon.ico'
-            return self.ReadFile(file_path)
+            response = self.ReadFile(file_path)
+            response.headers['Cache-Control'] = 'no-cache, must-revalidate'
+            return response
 
         async def handle_authenticate(request: web.Request) -> web.Response:
             data = await request.json()
