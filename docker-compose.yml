@@ -10,5 +10,5 @@ services:
       - ./assets:/app/assets
       - ./replays:/app/replays
       - ./runtime:/app/runtime
-    command: ["python", "-u", "main.py", "--game_statistics_file=./runtime/statistics.json"]
+    command: ["python", "-u", "main.py", "-game_statistics_file", "./runtime/statistics.json", "-game_history_file", "./runtime/statistics.sqlite3"]
     restart: unless-stopped

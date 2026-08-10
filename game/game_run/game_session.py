@@ -29,10 +29,14 @@ class GameSession:
         self.world: 'World|None' = None
         self.game = game
         self.preserve_replay_inputs_on_restart = False
+        self.undo_count = 0
         # self.condition = Condition("State")
 
     def Restart(self, seed: int|None) -> None:
         assert self.scene
+        from game.statistics.game_history import GameHistory
+        GameHistory.ResetSceneOutcome(self.scene)
+        self.undo_count = 0
         self.SetScene(self.scene, 'New')
         if seed:
             self.scene.SetSeed(seed)
@@ -40,6 +44,7 @@ class GameSession:
     def NewGame(self, new_game: 'NewGameDescriptor') -> None:
         from game.scene.loader import SceneLoader
         scene = SceneLoader.NewFromJson(new_game.campaign_json, new_game.encounter_set_names, new_game.hero_json, new_game.seed, new_game.rules, new_game.campaign_log)
+        self.undo_count = 0
         self.SetScene(scene, 'New')
         assert self.scene
         self.timeout = new_game.timeout
@@ -49,6 +54,7 @@ class GameSession:
 
     def SetScene(self, scene: 'Scene', state: 'GameState.START_STATE'):
         self.scene = scene
+        self.undo_count = scene.GetMetadataInt('undo_count')
         self.version = Ver(scene.version)
         self.game_id += 1
         self.start_time = Time.GetTime()
@@ -65,6 +71,11 @@ class GameSession:
         max_timeout = self.timeout
         scene = self.scene
         assert scene
+
+        if not scene.is_puzzle and not controller_manager.replay.is_replay \
+                and not state.start_state.is_in_testing:
+            from game.statistics.game_history import GameHistory
+            GameHistory.EnsureSceneGameId(scene)
 
         player_num = len(scene.players)
 
@@ -193,6 +204,9 @@ class GameSession:
     ################################################################################
     #
     def Undo(self, undo: int):
+        self.undo_count += 1
+        if self.scene:
+            self.scene.SetMetadataInt('undo_count', self.undo_count)
         if self.world:
             self.world.game_over.SetUndo()
         self.ExitWait()

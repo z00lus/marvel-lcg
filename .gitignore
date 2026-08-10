@@ -10,6 +10,11 @@
 /crash.json
 /crash.log
 /statistics.json
+/statistics.sqlite3
+/statistics.sqlite3-journal
+/statistics.sqlite3-shm
+/statistics.sqlite3-wal
+/runtime/
 /deck/*.json
 /deck/user-decks/
 /replays/

@@ -52,6 +52,14 @@ sudo journalctl -u marvel-lcg.service -f
 
 After starting the service, open `http://SERVER_IP_ADDRESS:2345` on your phone or another device. Run `hostname -I` on the server to find its IP address. If a firewall is enabled, allow TCP port `2345` only for the local network.
 
+Completed solo games are stored in `/opt/marvel-lcg/statistics.sqlite3`. The
+service user must retain write access to this file and its directory. Back up
+this file together with `replays/` to preserve game history and achievement
+progress.
+
+Docker Compose stores the same database as `runtime/statistics.sqlite3`; the
+existing `./runtime:/app/runtime` volume keeps it across container rebuilds.
+
 ## Updating
 
 Copy the files again with `rsync`, install any updated dependencies, and restart the service:

@@ -9,6 +9,7 @@ REPLAY_FOLDERS = ConfigVariables.Folders('replay_folders')
 class Test:
 
     is_in_test = False
+    silent_progress = False
     test_cases: List[str] = []
 
     @staticmethod
@@ -64,4 +65,3 @@ class Test:
     @staticmethod
     def IsInTesting() -> bool:
         return Test.is_in_test
-

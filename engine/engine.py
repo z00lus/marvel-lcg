@@ -3,6 +3,8 @@ from engine.device.manager import DeviceManager
 
 from game import *
 from game.statistics.game_statistics import GameStatistics
+from game.statistics.game_history import GameHistory
+from game.statistics.replay_outcome_analyzer import ReplayOutcomeAnalyzer
 from build import Build
 from engine.log import Log
 from engine.lib import TransText, ImageCreator, Ver
@@ -32,9 +34,11 @@ class Engine:
 
     game: 'Game'
     statistics: 'GameStatistics'
+    game_history: 'GameHistory'
 
     has_crashed = False
     in_unit_test = False
+    suppress_crash_save = False
 
     @staticmethod
     def Initialize() -> bool:
@@ -94,6 +98,10 @@ class Engine:
 
             Engine.statistics = GameStatistics()
             Engine.statistics.Load()
+            Engine.game_history = GameHistory()
+            Engine.game_history.Initialize(
+                ReplayOutcomeAnalyzer(Engine.statistics),
+            )
 
             device = DeviceManager
             if DEVICE.value == "web":
@@ -104,7 +112,11 @@ class Engine:
                 device = KeyDeviceManager
 
             Engine.device_manager = device()
-            Engine.game = Game(Engine.statistics, Engine.device_manager)
+            Engine.game = Game(
+                Engine.statistics,
+                Engine.device_manager,
+                Engine.game_history,
+            )
             return True
 
         if Build.release:
@@ -145,6 +157,7 @@ class Engine:
     def Shutdown():
         Log.Print("\n--- Engine Shutdown ---")
         Engine.game.Shutdown()
+        Engine.game_history.Close()
 
         if EDITOR.value:
             from editor.editor import Editor
@@ -160,6 +173,8 @@ class Engine:
     #
     @staticmethod
     def SaveCrash():
+        if Engine.suppress_crash_save:
+            return
         if not Engine.has_crashed:
             game = getattr(Engine, 'game', None)
             if game and game.session.scene:

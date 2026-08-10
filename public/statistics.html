@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics — Marvel Champions Digital: Ronin Edition</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
+    <link rel="stylesheet" href="/public/css/statistics.css">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">RONIN ARCHIVES</p>
+                <h1>Game History</h1>
+                <p class="subtitle">Solo results, matchups, and achievements from this server.</p>
+            </div>
+            <a class="back-link" href="/main">← Main menu</a>
+        </header>
+
+        <div id="loading" class="state-panel">Reading the archives…</div>
+        <div id="error" class="state-panel error" hidden></div>
+
+        <div id="dashboard" hidden>
+            <section id="overview" class="overview-grid" aria-label="Overview"></section>
+
+            <section class="panel achievements-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">MILESTONES</p>
+                        <h2>Achievements</h2>
+                    </div>
+                    <span id="achievement-count" class="count-badge"></span>
+                </div>
+                <div id="achievements" class="achievement-grid"></div>
+            </section>
+
+            <section class="split-grid">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">HERO RECORDS</p>
+                            <h2>Heroes</h2>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead><tr><th>Hero</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                            <tbody id="heroes"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">VILLAIN RECORDS</p>
+                            <h2>Villains</h2>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead><tr><th>Villain</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                            <tbody id="villains"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">HEAD TO HEAD</p>
+                        <h2>Matchups</h2>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead><tr><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                        <tbody id="matchups"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">MISSION LOG</p>
+                        <h2>Recent games</h2>
+                    </div>
+                    <span id="unknown-note" class="muted"></span>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead><tr><th>Date</th><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Result</th><th>Rounds</th><th>Time</th></tr></thead>
+                        <tbody id="recent-games"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="/public/js/statistics_page.js"></script>
+</body>
+</html>

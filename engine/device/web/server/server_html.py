@@ -17,6 +17,7 @@ class GameServerHTML(GameServerBase):
         self.AddHtmlSecurity('/scene', './public/scene.html')
         self.AddHtmlSecurity('/replay', './public/replay.html')
         self.AddHtmlSecurity('/settings', './public/settings.html')
+        self.AddHtmlSecurity('/statistics', './public/statistics.html')
         self.AddHtmlSecurity('/puzzle', './public/replay.html')
         self.AddHtmlSecurity('/credits', './public/credits.html')
         self.AddHtmlSecurity('/puzzle_editor', './public/puzzle_editor.html')

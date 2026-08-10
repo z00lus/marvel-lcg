@@ -17,15 +17,17 @@ METADATA_KEY_LIST = Literal[
 ]
 
 METADATA_KEY_BOOL = Literal[
-    "is_puzzle"
+    "is_puzzle", "statistics_eligible"
 ]
 
 METADATA_KEY_INT = Literal[
-    "seed"
+    "seed", "rounds", "remaining_hit_points", "minions_in_play",
+    "side_schemes_in_play", "undo_count"
 ]
 
 METADATA_KEY_STR = Literal[
-    "time", "path", "comment", "cover", "report", "sign"
+    "time", "path", "comment", "cover", "report", "sign", "game_id",
+    "game_result", "game_over_reason"
 ]
 
 METADATA_KEY_FLOAT = Literal[
@@ -119,8 +121,8 @@ class Scene:
         if playtime:
             self.SetMetadataFloat("playtime", playtime)
 
-        # Abandoned
-        for key in ["undo_count", "goto_count"]:
+        # Old debug-only navigation metadata is not part of a replay.
+        for key in ["goto_count"]:
             self.metadata.pop(key, None) # type: ignore
 
         if report:

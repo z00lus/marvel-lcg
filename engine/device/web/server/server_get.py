@@ -6,6 +6,7 @@ from engine.device import *
 from aiohttp import web
 from engine.device.web.server.server_base import GameServerBase
 from engine.config import ConfigVariables
+from engine.task import TaskManager
 
 READ_ONLY_FIRST_REPLAY_FOLDER   = ConfigVariables.Bool('read_only_first_replay_folder', True)
 CARDS_JSON_FILE         = ConfigVariables.File('cards_json_file')
@@ -148,6 +149,16 @@ class GameServerGet(GameServerBase):
     async def get_session_statistics(self, request: web.Request) -> web.Response:
         return web.json_response(self.game.session.statistics.dic)
 
+    async def get_game_history(self, request: web.Request) -> web.Response:
+        history = self.game.game_history
+        if history is None:
+            return web.json_response({
+                'available': False,
+                'error': 'Game history is disabled.',
+            })
+        dashboard = await TaskManager.ToThread(history.GetDashboard)
+        return web.json_response(dashboard)
+
     async def get_active_campaign(self, request: web.Request) -> web.Response:
         world = self.game.world
         if not world or not world.rule.mode_campaign.val or not world.scene.campaign.campaign_id:
@@ -243,6 +254,7 @@ class GameServerGet(GameServerBase):
         self.AddAwaitGetSecurity('/get_completion_rate', self.get_completion_rate)
         self.AddAwaitGetSecurity('/get_statistics', self.get_statistics)
         self.AddAwaitGetSecurity('/get_session_statistics', self.get_session_statistics)
+        self.AddAwaitGetSecurity('/get_game_history', self.get_game_history)
         self.AddAwaitGetSecurity('/get_active_campaign', self.get_active_campaign)
         self.AddAwaitGetSecurity('/get_play_scene_name', self.get_play_scene_name)
         self.AddAwaitGetSecurity('/get_max_timeout', self.get_max_timeout)

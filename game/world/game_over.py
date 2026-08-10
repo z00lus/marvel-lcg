@@ -67,6 +67,13 @@ class GameOverReason:
                 message = Message.WhenGameOver(players_won, reason, by_effect)
                 message.Send()
 
+                from game.statistics.game_history import GameHistory
+                GameHistory.CaptureOutcomeMetadata(
+                    game,
+                    message.players_won,
+                    message.reason,
+                )
+
                 self.players_won = message.players_won
                 self.by_effect = message.by_effect
                 self.reason = message.reason
@@ -104,4 +111,3 @@ class GameOverReason:
     @property
     def is_exit(self) -> bool:
         return self.reason == "Exit"
-

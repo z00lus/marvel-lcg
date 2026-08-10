@@ -14,6 +14,7 @@ from game.game_run.game_new import NewGameDescriptor
 from game.game_run.game_state import GameState
 from game.game_run.game_session import GameSession
 from game.statistics.game_statistics import GameStatistics
+from game.statistics.game_history import GameHistory
 
 CATEGORY_NAME = "GAME"
 
@@ -24,7 +25,12 @@ ACTIVE_SESSION_FILE         = ConfigVariables.File('active_session_file', "./sav
 
 class Game:
 
-    def __init__(self, statistics: 'GameStatistics', device_manager: 'DeviceManager') -> None:
+    def __init__(
+        self,
+        statistics: 'GameStatistics',
+        device_manager: 'DeviceManager',
+        game_history: 'GameHistory|None'=None,
+    ) -> None:
         from engine.controller import ControllerManager
 
         self.state      = GameState()
@@ -32,6 +38,7 @@ class Game:
 
         self.controller_manager = ControllerManager(self, device_manager)
         self.statistics = statistics
+        self.game_history = game_history
         self.active_session_enabled = False
 
     @property
@@ -259,6 +266,11 @@ class Game:
     def SetGameOver(self) -> bool:
         self.SetGameOverInternal()
         if self.state.exit_state.is_normal_exit:
+            if self.game_history:
+                try:
+                    self.game_history.RecordCompletedGame(self)
+                except Exception as exc:
+                    Log.FailedTrace(CATEGORY_NAME, exc, no_take_as_error=True)
             if self.active_session_enabled:
                 self.active_session_enabled = False
                 self.RemoveActiveSessionFile()

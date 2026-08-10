@@ -186,7 +186,7 @@ class Log:
     @staticmethod
     def Test(*info: object):
         from game.test import Test
-        if Test.IsInTesting():
+        if Test.IsInTesting() and not Test.silent_progress:
             infos = " ".join(str(x) for x in info)
             PrintUtf8(infos)
 
@@ -304,4 +304,3 @@ class Log:
             if check_has_key('Warn'):
                 return True
         return False
-
