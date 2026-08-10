@@ -332,10 +332,21 @@ class PuzzleHelper:
 
             visitor.visit(parsed_code)
 
+            # Bind the c<object_id> shorthands in an explicit namespace.
+            #
+            # These used to be created with `exec(f'c{c} = ...')` and read by the
+            # following bare `exec(command)`. That only worked because locals()
+            # inside a function returned the same cached dict on every call, so
+            # the writes from the first exec were visible to the second. PEP 667
+            # (Python 3.13) makes locals() an independent snapshot, so those
+            # bindings are discarded and every puzzle referencing c1/c2/... dies
+            # with NameError during setup. Passing a namespace explicitly is
+            # version-independent.
+            namespace: Dict[str, Any] = {'Puzzle': Puzzle, 'world': world}
             for c in world.object_manager.card_dict:
-                exec(f'c{c} = world.object_manager.card_dict[{c}].face')
+                namespace[f'c{c}'] = world.object_manager.card_dict[c].face
 
-            exec(command)  # Only execute if the command is valid
+            exec(command, namespace)  # Only execute if the command is valid
             # try:
             #     pass
             # except ValueError as e:
