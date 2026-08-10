@@ -10,6 +10,13 @@ import {
     saveActiveCampaignRun,
     saveCampaign,
 } from './campaign_state.js';
+import {
+    DeckSourceController,
+    createDeckSourceController,
+    getDeckHeroCode,
+    refreshCampaignDeck,
+    saveCampaignDeck,
+} from './marvelcdb_deck.js';
 
 type ScenarioData = {
     name: string;
@@ -24,6 +31,7 @@ type HeroData = {
     deck_name?: string;
     hero: string[];
     player_deck: string[];
+    metadata?: Record<string, string>;
 };
 
 type ScenarioChoice = {
@@ -59,6 +67,8 @@ type CampaignGamePayload = {
 
 const heroStorageKey = 'marvel_lcg_solo_hero';
 
+const marvelCdbUpdate = document.querySelector<HTMLButtonElement>('#marvelcdb-update')!;
+
 const savedCampaignSection = document.querySelector<HTMLElement>('#saved-campaign-section')!;
 const savedCampaignStatus = document.querySelector<HTMLElement>('#saved-campaign-status')!;
 const savedCampaignName = document.querySelector<HTMLElement>('#saved-campaign-name')!;
@@ -85,6 +95,8 @@ let selectedScenarioIndex = 0;
 let resumedCampaign: SavedCampaign | null = null;
 let isStarting = false;
 let selectionRequest = 0;
+
+let deckSourceController: DeckSourceController | null = null;
 
 function getFileName(path: string): string {
     return path.replace(/^.*[\\/]/, '').replace(/\.[^/.]+$/, '');
@@ -133,11 +145,15 @@ async function loadCampaignChoices(): Promise<CampaignChoice[]> {
 }
 
 async function loadHeroChoices(): Promise<HeroChoice[]> {
-    const [starterPaths, userPaths] = await Promise.all([
+    // Campaign decks are listed too: a resumed run matches its saved `heroId`
+    // against this list, and a frozen MarvelCDB deck lives only in that folder.
+    const [starterPaths, userPaths, campaignPaths] = await Promise.all([
         fetchJson<string[]>('/list_starter_deck?'),
         fetchJson<string[]>('/list_user_deck?'),
+        fetchJson<string[]>('/list_campaign_deck?').catch(() => [] as string[]),
     ]);
     const deckPaths = [
+        ...campaignPaths.map(path => ({path, isUserDeck: true})),
         ...userPaths.map(path => ({path, isUserDeck: true})),
         ...starterPaths.map(path => ({path, isUserDeck: false})),
     ];
@@ -198,18 +214,44 @@ function markSelected(container: HTMLElement, selectedId: string): void {
 }
 
 function updatePlayButton(): void {
-    playButton.disabled = isStarting || !selectedCampaign || !selectedScenario || !selectedHero;
+    // A resumed campaign already has its frozen deck on disk, so it does not
+    // need a freshly resolved one to start the next scenario.
+    const awaitingDeck = deckSourceController?.getSource() === 'marvelcdb'
+        && !deckSourceController.getDeck()
+        && !resumedCampaign;
+    playButton.disabled = isStarting
+        || deckSourceController?.isBusy() === true
+        || !selectedCampaign
+        || !selectedScenario
+        || !selectedHero
+        || awaitingDeck;
     if (!isStarting) {
         playButton.textContent = resumedCampaign ? 'Continue Campaign' : 'Play';
     }
 }
 
-function selectHero(choice: HeroChoice): void {
+/**
+ * Offer a MarvelCDB refresh only for a campaign deck that came from MarvelCDB.
+ *
+ * A campaign deck is frozen once saved; between scenarios the player may
+ * deliberately pull the current version, which is the one point in a run where
+ * rebuilding is legal.
+ */
+function updateRefreshButton(): void {
+    const deckId = selectedHero?.data.metadata?.marvelcdb_id;
+    marvelCdbUpdate.hidden = !(resumedCampaign && deckId);
+}
+
+function selectHero(choice: HeroChoice, keepMarvelCdbDeck = false): void {
     selectedHero = choice;
     localStorage.setItem(heroStorageKey, choice.id);
     heroSelection.textContent = choice.name;
     markSelected(heroList, choice.id);
     errorMessage.textContent = '';
+    if (!keepMarvelCdbDeck) {
+        deckSourceController?.clear();
+    }
+    updateRefreshButton();
     updatePlayButton();
 }
 
@@ -333,7 +375,57 @@ async function renderSavedCampaign(saved: SavedCampaign | null): Promise<void> {
     resumeCampaignButton.onclick = () => void selectCampaign(definition, saved);
 }
 
+async function refreshSelectedCampaignDeck(): Promise<void> {
+    const heroId = selectedHero?.id;
+    if (!heroId || marvelCdbUpdate.disabled) {
+        return;
+    }
+
+    marvelCdbUpdate.disabled = true;
+    const previousLabel = marvelCdbUpdate.textContent;
+    marvelCdbUpdate.textContent = 'Updating…';
+    errorMessage.textContent = '';
+
+    try {
+        const result = await refreshCampaignDeck(heroId);
+        const choice = heroChoices.find((entry) => entry.id === heroId);
+        if (choice) {
+            choice.data = result.deck as HeroData;
+        }
+        // Silent success reads the same as a no-op, so say what moved.
+        errorMessage.textContent = result.changed === 0
+            ? 'Deck is already up to date.'
+            : `Updated — ${result.changed} card${result.changed === 1 ? '' : 's'} changed.`;
+    } catch (error) {
+        errorMessage.textContent = error instanceof Error
+            ? error.message
+            : 'Could not update that deck from MarvelCDB.';
+    } finally {
+        marvelCdbUpdate.disabled = false;
+        marvelCdbUpdate.textContent = previousLabel;
+    }
+}
+
 async function initialize(): Promise<void> {
+    deckSourceController = createDeckSourceController({
+        onChange: updatePlayButton,
+        onResolved: (deck) => {
+            const heroCode = getDeckHeroCode(deck);
+            const match = heroChoices.find((choice) =>
+                getFirstCardId(choice.data.hero ?? []).toLowerCase() === heroCode);
+            if (match && match.id !== selectedHero?.id) {
+                selectHero(match, true);
+                // The hero grid is long; a switch off-screen would look like
+                // nothing happened.
+                heroList.querySelector(`[data-id="${CSS.escape(match.id)}"]`)
+                    ?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+                return `Switched to ${match.data.name}`;
+            }
+            return null;
+        },
+    });
+    marvelCdbUpdate.addEventListener('click', () => void refreshSelectedCampaignDeck());
+
     const [campaignResult, heroResult] = await Promise.allSettled([
         loadCampaignChoices(),
         loadHeroChoices(),
@@ -384,6 +476,31 @@ async function startGame(): Promise<void> {
     playButton.setAttribute('aria-busy', 'true');
     updatePlayButton();
 
+    // A MarvelCDB deck becomes a file for the run: campaigns persist their hero
+    // as a deck id, and freezing it is what stops the deck drifting between
+    // scenarios without the player asking.
+    let heroDeck: HeroData = selectedHero.data;
+    let heroId = selectedHero.id;
+    const resolvedDeck = deckSourceController?.getSource() === 'marvelcdb'
+        ? deckSourceController.getDeck()
+        : null;
+    if (resolvedDeck) {
+        try {
+            const stored = await saveCampaignDeck(selectedCampaign.id, resolvedDeck);
+            heroDeck = stored.deck as HeroData;
+            heroId = stored.hero_id;
+        } catch (error) {
+            console.error(error);
+            errorMessage.textContent = error instanceof Error
+                ? error.message
+                : 'Could not save that deck for the campaign.';
+            isStarting = false;
+            playButton.removeAttribute('aria-busy');
+            updatePlayButton();
+            return;
+        }
+    }
+
     const campaignLog = resumedCampaign?.campaignLog ?? createInitialCampaignLog(selectedCampaign.id);
     const scenarioData = {
         ...selectedScenario.data,
@@ -396,7 +513,7 @@ async function startGame(): Promise<void> {
     const payload: CampaignGamePayload = {
         campaign_json: JSON.stringify(scenarioData),
         encounter_set_names: encounterSetNames,
-        hero_json: [JSON.stringify(selectedHero.data)],
+        hero_json: [JSON.stringify(heroDeck)],
         seed: -1,
         timeout: 0,
         challenges: [],
@@ -417,7 +534,7 @@ async function startGame(): Promise<void> {
             version: 1,
             campaignId: selectedCampaign.id,
             scenarioIndex: selectedScenarioIndex,
-            heroId: selectedHero.id,
+            heroId,
             campaignLog,
             completed: false,
             updatedAt: new Date().toISOString(),

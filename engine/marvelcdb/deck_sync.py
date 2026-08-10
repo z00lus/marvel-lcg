@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections import Counter
 import copy
 from datetime import datetime, timedelta, timezone
 import json
 import os
+import re
 import threading
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -33,12 +35,37 @@ STARTER_DECK_FOLDER = ConfigVariables.Folder(
     'starter_deck_folder',
     './deck/starter',
 )
+# Campaign decks live apart from './deck/user-decks' on purpose. The periodic
+# sync rewrites `user-decks/{deck_id}.json` on a timer, so a campaign deck
+# parked there could be silently replaced mid-run -- exactly the drift a frozen
+# campaign deck exists to prevent.
+CAMPAIGN_DECK_FOLDER = ConfigVariables.Folder(
+    'campaign_deck_folder',
+    './deck/campaign-decks',
+)
 
 
 class MarvelCdbDeckSync:
 
     API_URL = 'https://marvelcdb.com/api/public/deck/{deck_id}'
+    DECKLIST_API_URL = 'https://marvelcdb.com/api/public/decklist/{deck_id}'
     STATE_VERSION = 1
+
+    # MarvelCDB publishes two kinds of deck under separate endpoints:
+    # `deck` is a user's own deck that they have shared, `decklist` is a
+    # published decklist. Both are unauthenticated and return the same shape,
+    # so the only thing that matters is picking the right one. A pasted link
+    # tells us which; a bare ID does not, so we try both.
+    DECK_KIND = 'deck'
+    DECKLIST_KIND = 'decklist'
+    DECK_KINDS = (DECK_KIND, DECKLIST_KIND)
+
+    WEB_URL = 'https://marvelcdb.com/{kind}/view/{deck_id}'
+
+    _URL_PATTERN = re.compile(
+        r'marvelcdb\.com/(?:api/public/)?(deck|decklist)(?:/(?:view|edit))?/(\d+)',
+        re.IGNORECASE,
+    )
 
     def __init__(
         self,
@@ -48,8 +75,11 @@ class MarvelCdbDeckSync:
         starter_deck_folder: str|None=None,
         interval_seconds: int|None=None,
         fetch_deck: Callable[[str], Dict[str, Any]]|None=None,
+        fetch_deck_ref: Callable[[str|None, str], Dict[str, Any]]|None=None,
+        campaign_deck_folder: str|None=None,
     ) -> None:
         self.user_deck_folder = user_deck_folder or USER_DECK_FOLDER.value
+        self.campaign_deck_folder = campaign_deck_folder or CAMPAIGN_DECK_FOLDER.value
         self.state_file = state_file or MARVELCDB_SYNC_STATE_FILE.value
         self.starter_deck_folder = starter_deck_folder or STARTER_DECK_FOLDER.value
         self.interval_seconds = (
@@ -57,36 +87,70 @@ class MarvelCdbDeckSync:
             if interval_seconds is None
             else interval_seconds
         )
-        self.fetch_deck = fetch_deck or self.FetchDeck
+        # Two injection points so the periodic sync keeps its single-argument
+        # contract while kind-aware callers can still be tested offline.
+        # Injecting only `fetch_deck_ref` redirects both paths.
+        self.fetch_deck_ref = fetch_deck_ref or self.FetchDeckRef
+        self.fetch_deck = fetch_deck or (
+            lambda deck_id: self.fetch_deck_ref(None, deck_id)
+        )
 
         self._condition = threading.Condition(threading.RLock())
         self._sync_lock = threading.Lock()
         self._stopping = False
         self._thread: threading.Thread|None = None
 
-    @staticmethod
-    def ParseDeckIds(value: str|List[str]) -> List[str]:
+    @classmethod
+    def ParseDeckRef(cls, value: str) -> Tuple[str|None, str]:
+        """Resolve a pasted MarvelCDB reference to a ``(kind, deck_id)`` pair.
+
+        Accepts a bare numeric ID or any MarvelCDB deck/decklist URL. ``kind``
+        is ``None`` for a bare ID: the number alone does not say which of the
+        two endpoints holds it, so the caller has to try both.
+        """
+        reference = str(value).strip()
+        if not reference:
+            raise ValueError('Enter a MarvelCDB deck ID or link.')
+
+        match = cls._URL_PATTERN.search(reference)
+        if match:
+            return match.group(1).lower(), str(int(match.group(2)))
+
+        if reference.isascii() and reference.isdecimal():
+            return None, str(int(reference))
+
+        raise ValueError(f'Invalid MarvelCDB deck ID or link: {reference}')
+
+    @classmethod
+    def ParseDeckIds(cls, value: str|List[str]) -> List[str]:
         if not isinstance(value, (str, list)):
             raise ValueError('MarvelCDB deck IDs must be a comma-separated list.')
         values = value.split(',') if isinstance(value, str) else value
         deck_ids: List[str] = []
 
         for raw_value in values:
-            deck_id = str(raw_value).strip()
-            if not deck_id:
+            reference = str(raw_value).strip()
+            if not reference:
                 continue
-            if not deck_id.isascii() or not deck_id.isdecimal():
-                raise ValueError(f'Invalid MarvelCDB deck ID: {deck_id}')
-            normalized = str(int(deck_id))
-            if normalized not in deck_ids:
-                deck_ids.append(normalized)
+            _kind, deck_id = cls.ParseDeckRef(reference)
+            if deck_id not in deck_ids:
+                deck_ids.append(deck_id)
 
         return deck_ids
 
-    @staticmethod
-    def FetchDeck(deck_id: str) -> Dict[str, Any]:
+    @classmethod
+    def _RequestJson(cls, url: str) -> Dict[str, Any]|None:
+        """Fetch ``url``, returning the decoded object or ``None`` if it is not
+        a JSON deck.
+
+        MarvelCDB answers a miss with ``HTTP 200`` and an HTML page rather than
+        a 404, so a non-JSON body is an ordinary "not on this endpoint" result
+        and must stay distinguishable from a transport failure -- otherwise a
+        bare ID could never fall through from one endpoint to the other, and a
+        simple typo would surface as a raw JSONDecodeError.
+        """
         request = Request(
-            MarvelCdbDeckSync.API_URL.format(deck_id=deck_id),
+            url,
             headers={
                 'Accept': 'application/json',
                 'User-Agent': 'Marvel Champions Digital: Ronin Edition/0.6.0',
@@ -95,27 +159,51 @@ class MarvelCdbDeckSync:
 
         try:
             with urlopen(request, timeout=20) as response:
-                data = json.loads(response.read().decode('utf-8'))
+                payload = response.read().decode('utf-8')
         except HTTPError as exc:
             if exc.code == 404:
-                raise ValueError(
-                    f'Deck {deck_id} was not found or is not shared publicly.'
-                ) from exc
+                return None
             raise ValueError(
-                f'MarvelCDB returned HTTP {exc.code} for deck {deck_id}.'
+                f'MarvelCDB returned HTTP {exc.code} for {url}.'
             ) from exc
         except URLError as exc:
             raise ValueError(
-                f'Could not connect to MarvelCDB for deck {deck_id}: {exc.reason}'
+                f'Could not connect to MarvelCDB: {exc.reason}'
             ) from exc
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise ValueError(
-                f'MarvelCDB returned invalid JSON for deck {deck_id}.'
-            ) from exc
+        except UnicodeDecodeError:
+            return None
 
-        if not isinstance(data, dict):
-            raise ValueError(f'MarvelCDB returned invalid data for deck {deck_id}.')
-        return data
+        try:
+            data = json.loads(payload)
+        except json.JSONDecodeError:
+            return None
+
+        return data if isinstance(data, dict) else None
+
+    @classmethod
+    def FetchDeckRef(cls, kind: str|None, deck_id: str) -> Dict[str, Any]:
+        """Fetch a deck by ``kind``, or by trying both kinds when it is unknown."""
+        for candidate in ((kind,) if kind else cls.DECK_KINDS):
+            template = (
+                cls.API_URL if candidate == cls.DECK_KIND else cls.DECKLIST_API_URL
+            )
+            data = cls._RequestJson(template.format(deck_id=deck_id))
+            if data is not None:
+                data.setdefault('marvelcdb_kind', candidate)
+                return data
+
+        if kind:
+            raise ValueError(
+                f'MarvelCDB {kind} {deck_id} was not found or is not shared publicly.'
+            )
+        raise ValueError(
+            f'{deck_id} was not found as a MarvelCDB deck or decklist. '
+            'Check the ID, or paste the full link.'
+        )
+
+    @classmethod
+    def FetchDeck(cls, deck_id: str) -> Dict[str, Any]:
+        return cls.FetchDeckRef(None, deck_id)
 
     @staticmethod
     def _card_faces(card: str) -> List[str]:
@@ -177,10 +265,17 @@ class MarvelCdbDeckSync:
         if not isinstance(metadata, dict):
             metadata = {}
             converted['metadata'] = metadata
+        # Record which endpoint this came from. Without it a later refresh has
+        # to guess, and guessing wrong silently fetches a different deck that
+        # happens to share the ID.
+        kind = str(remote_deck.get('marvelcdb_kind', '')).lower()
+        if kind not in cls.DECK_KINDS:
+            kind = cls.DECK_KIND
         metadata.update({
             'marvelcdb_id': deck_id,
+            'marvelcdb_kind': kind,
             'marvelcdb_name': deck_name,
-            'url': f'https://marvelcdb.com/deck/view/{deck_id}',
+            'url': cls.WEB_URL.format(kind=kind, deck_id=deck_id),
             'date_update': str(remote_deck.get('date_update', '')),
         })
         return converted
@@ -235,6 +330,100 @@ class MarvelCdbDeckSync:
                     templates[hero_code] = template
         return templates
 
+    @staticmethod
+    def _select_template(
+        templates: Dict[str, Dict[str, Any]],
+        remote_deck: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        hero_code = str(remote_deck.get('hero_code', '')).lower()
+        template = templates.get(hero_code)
+        if template is None:
+            hero_name = str(remote_deck.get('hero_name', 'Unknown hero'))
+            raise ValueError(
+                f'{hero_name} ({hero_code or "no hero code"}) has no '
+                'starter deck in this installation.'
+            )
+        return template
+
+    @classmethod
+    def _deck_hero_code(cls, deck: Dict[str, Any]) -> str:
+        for hero in deck.get('hero', []):
+            faces = cls._card_faces(hero)
+            if faces:
+                return faces[0]
+        return ''
+
+    @staticmethod
+    def _count_card_changes(before: List[str], after: List[str]) -> int:
+        counted_before = Counter(before)
+        counted_after = Counter(after)
+        difference = (counted_before - counted_after) + (counted_after - counted_before)
+        return sum(difference.values())
+
+    def ResolveDeck(self, reference: str) -> Dict[str, Any]:
+        """Fetch and convert a MarvelCDB deck without writing anything to disk.
+
+        Quick Play uses this: the converted deck goes straight to `/new` as
+        `hero_json`, so trying a netdeck never leaves a file behind to clean up.
+        """
+        kind, deck_id = self.ParseDeckRef(reference)
+        remote_deck = self.fetch_deck_ref(kind, deck_id)
+        template = self._select_template(self._load_templates(), remote_deck)
+        return self.ConvertDeck(remote_deck, template)
+
+    def CampaignDeckPath(self, hero_id: str) -> str:
+        return FileManager.JoinPath(self.campaign_deck_folder, f'{hero_id}.json')
+
+    @staticmethod
+    def CampaignDeckHeroId(campaign_id: str, hero_code: str) -> str:
+        combined = f'{campaign_id}-{hero_code}'.lower()
+        hero_id = re.sub(r'[^a-z0-9_-]+', '-', combined).strip('-')
+        if not hero_id:
+            raise ValueError('A campaign deck needs both a campaign and a hero.')
+        return hero_id
+
+    def SaveCampaignDeck(self, campaign_id: str, deck: Dict[str, Any]) -> Dict[str, Any]:
+        """Freeze a resolved deck for the duration of a campaign run.
+
+        Campaigns persist their hero as a deck-file id, so a netdeck has to
+        become a real file for `heroId` to keep working. Frozen is the point:
+        it only changes when the player asks it to, via RefreshCampaignDeck.
+        """
+        hero_id = self.CampaignDeckHeroId(campaign_id, self._deck_hero_code(deck))
+        self._save_json(deck, self.CampaignDeckPath(hero_id))
+        return {'hero_id': hero_id, 'deck': deck}
+
+    def RefreshCampaignDeck(self, hero_id: str) -> Dict[str, Any]:
+        """Re-pull a frozen campaign deck from MarvelCDB, on explicit request."""
+        deck_path = self.CampaignDeckPath(hero_id)
+        if not FileManager.Exists(deck_path):
+            raise ValueError('No campaign deck was saved under that name.')
+
+        current = self._read_json(deck_path)
+        metadata = current.get('metadata') or {}
+        deck_id = str(metadata.get('marvelcdb_id', '')).strip()
+        if not deck_id:
+            raise ValueError('That campaign deck did not come from MarvelCDB.')
+        kind = str(metadata.get('marvelcdb_kind', '')).lower() or None
+
+        remote_deck = self.fetch_deck_ref(kind, deck_id)
+        template = self._select_template(self._load_templates(), remote_deck)
+        updated = self.ConvertDeck(remote_deck, template)
+
+        # Rebuilding between scenarios is legal; swapping hero is not.
+        if self._deck_hero_code(updated) != self._deck_hero_code(current):
+            raise ValueError(
+                'That MarvelCDB deck now plays a different hero, and a campaign '
+                'cannot change hero mid-run.'
+            )
+
+        changed = self._count_card_changes(
+            current.get('player_deck', []),
+            updated.get('player_deck', []),
+        )
+        self._save_json(updated, deck_path)
+        return {'hero_id': hero_id, 'deck': updated, 'changed': changed}
+
     def GetStatus(self) -> Dict[str, Any]:
         with self._condition:
             state = self._load_state()
@@ -266,15 +455,7 @@ class MarvelCdbDeckSync:
                             f'instead of {deck_id}.'
                         )
 
-                    hero_code = str(remote_deck.get('hero_code', '')).lower()
-                    template = templates.get(hero_code)
-                    if template is None:
-                        hero_name = str(remote_deck.get('hero_name', 'Unknown hero'))
-                        raise ValueError(
-                            f'{hero_name} ({hero_code or "no hero code"}) has no '
-                            'starter deck in this installation.'
-                        )
-
+                    template = self._select_template(templates, remote_deck)
                     converted = self.ConvertDeck(remote_deck, template)
                     output_path = FileManager.JoinPath(
                         self.user_deck_folder,

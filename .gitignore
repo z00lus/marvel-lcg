@@ -12,6 +12,7 @@
 /statistics.json
 /deck/*.json
 /deck/user-decks/
+/deck/campaign-decks/
 /replays/
 /tasks/
 /rules/
