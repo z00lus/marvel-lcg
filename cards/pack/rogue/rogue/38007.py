@@ -39,6 +39,12 @@ def GetAbilities() -> Sequence['Ability']:
             return True
         return False
 
+    def can_attach_touched(faces: Sequence['CardFace'], effect: 'Effect') -> bool:
+        if not faces:
+            return False
+        touched = FindTouched(effect)
+        return touched != None and faces[0].card.IsOnField()
+
     # def get_touched(effect: 'Effect') -> Sequence['CardFace']:
     #     touched = GetTouched(effect)
     #     if touched:
@@ -50,8 +56,11 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityType.HeroAction,
             energy_transfer
         ).SetPlay().SetLabel()
-        .SetCostFunc(CostFunc.Custom(CardFinder(card_type=Unit2, non_name="Rogue"), attach_touched))
+        .SetCostFunc(CostFunc.Custom(
+            CardFinder(card_type=Unit2, non_name="Rogue"),
+            attach_touched,
+            validate_fn=can_attach_touched,
+        ))
         # .SetCostFunc(CostFunc.DealDamage(2, selector=Select.From(get_targets_fn=get_touched)))
         .SetTarget(name="Rogue"),
     ]
-

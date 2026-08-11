@@ -11,21 +11,19 @@ def GetAbilities() -> Sequence['Ability']:
         this.DealDamage(effect.targets, 8, effect)
         Faces.GiveStatus(effect.targets, "Stunned", effect)
 
-    def teleport_drop_cost(targets: Sequence['CardFace'], effect: 'Effect') -> bool:
-        # For stunned
+    def get_bamf_cost(effect: 'Effect') -> Sequence['CardFace']:
         if not effect.targets:
-            return False
+            return []
         bamf = effect.targets[0].GetInventoryDeck().FindCard(name="Bamf!")
-        if not bamf:
-            return False
-        return not not Faces.DiscardAll([bamf], effect)
+        return [bamf] if bamf else []
 
     return [
         AbilityFactory.WhenInYourPlayTurn(
             AbilityType.HeroAction,
             teleport_drop
         ).SetPlay().SetLabel('attack')
-        .SetCostFunc(CostFunc.Custom(None, teleport_drop_cost))
+        .SetCostFunc(CostFunc.Discard(
+            Select.From(get_bamf_cost, range=(1, 1)),
+        ))
         .SetTarget(Enemy, with_attach=CardFinder(name="Bamf!")),
     ]
-

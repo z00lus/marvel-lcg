@@ -11,6 +11,7 @@ defeat_hydra = importlib.import_module("cards.pack.hercules.hercules.59002")
 embody_pathos = importlib.import_module("cards.pack.hercules.hercules.59003")
 protect_humanity = importlib.import_module("cards.pack.hercules.hercules.59004")
 gauntlets = importlib.import_module("cards.pack.hercules.hercules.59013")
+marvel_boy = importlib.import_module("cards.pack.hercules.59025")
 
 
 class HerculesScriptLoadTests(TestCase):
@@ -211,6 +212,46 @@ class GauntletsOfHerculesTests(TestCase):
         effect.GetInitiator.return_value = player
 
         self.assertTrue(condition(effect, Mock()))
+
+
+class MarvelBoyAdditionalCostTests(TestCase):
+
+    def GetCostAndEffect(self):
+        cost = marvel_boy.GetAbilities()[0].cost_funcs[0]
+        identity = Mock()
+        player = Mock()
+        player.GetIdentity.return_value = identity
+        effect = Mock()
+        effect.GetInitiator.return_value = player
+        source = Mock()
+        cost.cost_legal_targets = [source]
+        return cost, effect, identity, source
+
+    def test_stalwart_identity_rejects_confused_cost_before_commit(self):
+        cost, effect, identity, source = self.GetCostAndEffect()
+        identity.HasTrait.return_value = False
+        identity.CanbeConfused.return_value = False
+
+        with patch.object(cost.selector, "GetAllLegalTargets", return_value=[source]):
+            self.assertFalse(cost.ValidatePreparedCost(effect))
+
+        identity.GainStatus.assert_not_called()
+
+    def test_stalwart_identity_hides_the_unpayable_play_option(self):
+        cost, effect, identity, source = self.GetCostAndEffect()
+        identity.HasTrait.return_value = False
+        identity.CanbeConfused.return_value = False
+
+        with patch.object(cost.selector, "GetAllLegalTargets", return_value=[source]):
+            self.assertFalse(cost.HasTargets(effect))
+
+    def test_eternal_identity_does_not_need_to_accept_confused(self):
+        cost, effect, identity, source = self.GetCostAndEffect()
+        identity.HasTrait.return_value = True
+        identity.CanbeConfused.return_value = False
+
+        with patch.object(cost.selector, "GetAllLegalTargets", return_value=[source]):
+            self.assertTrue(cost.ValidatePreparedCost(effect))
 
 
 class ProtectHumanityTests(TestCase):

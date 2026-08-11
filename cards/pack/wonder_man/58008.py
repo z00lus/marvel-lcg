@@ -17,6 +17,10 @@ def GetAbilities() -> Sequence['Ability']:
             return Faces.DiscardAll(targets, effect) == list(targets)
         return Event.IsType(message.for_effect.this)
 
+    def can_pay_jet_belt_cost(targets: Sequence['CardFace'], effect: 'Effect') -> bool:
+        message = effect.GetBindMessage(Message.WhenPlayerPayingResources)
+        return bool(targets) or Event.IsType(message.for_effect.this)
+
     return [
         AbilityFactory.DoGenerateResources(
             AbilityType.HeroResource,
@@ -25,6 +29,7 @@ def GetAbilities() -> Sequence['Ability']:
         ).SetCostFunc(CostFunc.Custom(
             Select.From(lambda effect: GetIonicCards(effect), range=(0, 1)),
             pay_jet_belt_cost,
+            validate_fn=can_pay_jet_belt_cost,
         ))
         .SetCostFunc(CostFunc.Exhaust("This")),
         AbilityFactory.CanGenerateResources(

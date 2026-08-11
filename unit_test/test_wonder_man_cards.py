@@ -94,6 +94,39 @@ class PacifismTests(unittest.TestCase):
         discard.assert_called_once_with(cards, effect)
 
 
+class JetBeltCostTests(unittest.TestCase):
+
+    def setUp(self):
+        self.module = load_card("58008")
+        self.cost = self.module.GetAbilities()[0].cost_funcs[0]
+
+    def test_non_event_payment_requires_an_ionic_card(self):
+        effect = Mock()
+        effect.GetBindMessage.return_value = SimpleNamespace(
+            for_effect=SimpleNamespace(this=Mock()),
+        )
+        self.cost.cost_legal_targets = []
+
+        with (
+            patch.object(self.cost.selector, "GetAllLegalTargets", return_value=[]),
+            patch.object(self.module.Event, "IsType", return_value=False),
+        ):
+            self.assertFalse(self.cost.ValidatePreparedCost(effect))
+
+    def test_event_payment_may_use_jet_belt_without_an_ionic_card(self):
+        effect = Mock()
+        effect.GetBindMessage.return_value = SimpleNamespace(
+            for_effect=SimpleNamespace(this=Mock()),
+        )
+        self.cost.cost_legal_targets = []
+
+        with (
+            patch.object(self.cost.selector, "GetAllLegalTargets", return_value=[]),
+            patch.object(self.module.Event, "IsType", return_value=True),
+        ):
+            self.assertTrue(self.cost.ValidatePreparedCost(effect))
+
+
 class ScarletWitchTests(unittest.TestCase):
 
     @staticmethod

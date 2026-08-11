@@ -8,7 +8,12 @@ from engine import Engine
 
 from game.ability.ability_type import AbilityType
 from game.card.face.card_type import Attachment, Identity
+from game.effect.effect_checker import EffectChecker
+from game.effect.effect_target_cost import TargetCost
+from game.element.cost import Cost
+from game.element.resources import Resources
 from game.event.manager import EventManager
+from game.operate.faces import Faces
 
 
 class EncounterAttachmentActionTests(unittest.TestCase):
@@ -114,6 +119,76 @@ class EncounterAttachmentActionTests(unittest.TestCase):
 
         self.assertEqual(available, [])
         effect.failures.SetText.assert_called_once()
+
+    def AssertTypedPaymentDiscardsAttachment(
+        self,
+        module_name: str,
+        ability_type: AbilityType,
+        resources: str,
+        expected_cost: str,
+    ):
+        ability = self.GetCardAction(module_name, ability_type)
+        payment_effect = object()
+        target_cost = TargetCost()
+        target_cost.SetNoneTargetOnly()
+        target_cost.AddTarget(None, Cost(expected_cost))
+        target_cost.AddPayment(
+            None,
+            payment_effect,
+            Resources(resources),
+            object(),
+        )
+        attachment = Mock(name=module_name)
+        context = SimpleNamespace(
+            ignore_resource_cost=False,
+            paid_this_res_effects=[payment_effect],
+            paid_this_cost=Cost("0"),
+            paid_this_resources=Resources("0"),
+            this_effect_need_cost=None,
+            targets_internal=[],
+            target_range=(0, 0),
+        )
+        effect = SimpleNamespace(
+            this=attachment,
+            ability=ability,
+            targets=[],
+            context=context,
+            cost_func=SimpleNamespace(GetAll=lambda: []),
+            PrepareSelfCosts=Mock(return_value=True),
+            ValidatePreparedSelfCosts=Mock(return_value=True),
+            ClearPreparedSelfCosts=Mock(),
+        )
+        checker = EffectChecker.__new__(EffectChecker)
+        checker.effect = effect
+        checker.ability = ability
+        checker.cost_for_different_target = target_cost
+        checker.failures = Mock()
+        player = Mock()
+        player.SpendResource.return_value = Resources(resources)
+
+        self.assertTrue(checker.CheckBeforeActive(player))
+        player.SpendResource.assert_called_once()
+
+        with patch.object(Faces, "DiscardAll", return_value=[attachment]) as discard:
+            ability.operation(effect, Mock())
+
+        discard.assert_called_once_with([attachment], effect)
+
+    def test_restrained_pays_energy_physical_then_discards_itself(self):
+        self.AssertTypedPaymentDiscardsAttachment(
+            "cards.pack.mts.ebony_maw.21083",
+            AbilityType.HeroAction,
+            "YR",
+            "YR",
+        )
+
+    def test_seduced_pays_energy_mental_then_discards_itself(self):
+        self.AssertTypedPaymentDiscardsAttachment(
+            "cards.pack.mts.enchantress.21179",
+            AbilityType.AlterEgoAction,
+            "YB",
+            "YB",
+        )
 
 
 if __name__ == "__main__":

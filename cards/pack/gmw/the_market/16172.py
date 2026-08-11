@@ -24,7 +24,8 @@ def GetAbilities() -> Sequence['Ability']:
         AbilityFactory.WhenInYourPlayTurn(
             AbilityType.HeroAction,
             navigation_column
-        ).SetCostFunc(CostFunc.Exhaust("This"))
-        .SetCostFunc(CostFunc.Custom(None, navigation_column_cost)),
+        # Ask for and commit the discard first. If the player cancels the hand
+        # choice, the deterministic exhaust cost has not been paid yet.
+        ).SetCostFunc(CostFunc.Custom(None, navigation_column_cost))
+        .SetCostFunc(CostFunc.Exhaust("This")),
     ]
-
