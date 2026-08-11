@@ -11,10 +11,10 @@ The comparison baseline is upstream commit
 (`master`, 2026-07-31). Version 0.6.0 is the first release carrying the
 **Ronin Edition** name and the **Echo** codename.
 
-## Version 0.6.0 — “Echo” (in development)
+## Version 0.6.0 — “Echo” (2026-08-11)
 
-These changes are under development on `feature/rules-v18` and are not yet
-part of the fork's `master` branch.
+This is the first Ronin Edition release. The Rules Reference 1.8 work and the
+fork changes described below are included in the `master` branch.
 
 ### Rules engine
 
