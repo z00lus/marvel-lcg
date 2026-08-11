@@ -12,4 +12,5 @@ class NewGameDescriptor:
     challenges: List['GameChallenge.CHALLENGE']
     rules: List[str]
     campaign_log: Dict[str, str]
+    campaign_progress: Dict[str, Any] = field(default_factory=lambda: {})
     # custom_script: str = field(default="")

@@ -7,6 +7,7 @@ from engine.file import FileManager
 from engine.lib import Json
 from engine.log import Log
 from game.puzzle.puzzle_data import PuzzleData
+from game.game_run.campaign_progress import CampaignProgressConflict
 from game.game_run.game_new import NewGameDescriptor
 
 class GameServerNewGame(GameServerBase):
@@ -16,9 +17,14 @@ class GameServerNewGame(GameServerBase):
         return web.json_response({'result': "New game created"})
 
     async def new_game(self, request: web.Request) -> web.Response:
-        data = request.rel_url.query.get('data', "")
-        new_game = Json.LoadsAs(data, NewGameDescriptor)
-        self.game.NewGame(new_game)
+        try:
+            data = request.rel_url.query.get('data', "")
+            new_game = Json.LoadsAs(data, NewGameDescriptor)
+            self.game.NewGame(new_game)
+        except CampaignProgressConflict as exc:
+            return web.json_response({'error': str(exc)}, status=409)
+        except ValueError as exc:
+            return web.json_response({'error': str(exc)}, status=400)
         return web.json_response({'result': "New game created"})
 
     async def active_session_status(self, request: web.Request) -> web.Response:

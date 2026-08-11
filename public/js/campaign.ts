@@ -7,8 +7,6 @@ import {
     getCampaignDefinition,
     getSavedCampaign,
     recordCampaignVictory,
-    saveActiveCampaignRun,
-    saveCampaign,
 } from './campaign_state.js';
 import {
     DeckSourceController,
@@ -63,6 +61,11 @@ type CampaignGamePayload = {
     challenges: string[];
     rules: string[];
     campaign_log: Record<string, string>;
+    campaign_progress: {
+        campaign: SavedCampaign;
+        activeRun: ActiveCampaignRun;
+        replace: boolean;
+    };
 };
 
 const heroStorageKey = 'marvel_lcg_solo_hero';
@@ -504,7 +507,7 @@ async function initialize(): Promise<void> {
 
     try {
         await recordCampaignVictory();
-        await renderSavedCampaign(getSavedCampaign());
+        await renderSavedCampaign(await getSavedCampaign());
     } catch (error) {
         console.error(error);
         savedCampaignSection.hidden = true;
@@ -517,7 +520,14 @@ async function startGame(): Promise<void> {
         return;
     }
 
-    const existingSave = getSavedCampaign();
+    let existingSave: SavedCampaign | null;
+    try {
+        existingSave = await getSavedCampaign();
+    } catch (error) {
+        console.error(error);
+        errorMessage.textContent = 'Could not read campaign progress from the server.';
+        return;
+    }
     if (
         !resumedCampaign &&
         existingSave &&
@@ -567,6 +577,22 @@ async function startGame(): Promise<void> {
         ...(selectedScenario.data.encounter_sets ?? []),
         ...(selectedScenario.data.modular_sets ?? []),
     ]));
+    const saved: SavedCampaign = {
+        version: 1,
+        campaignId: selectedCampaign.id,
+        scenarioIndex: selectedScenarioIndex,
+        heroId,
+        campaignLog,
+        completed: false,
+        updatedAt: new Date().toISOString(),
+    };
+    const activeRun: ActiveCampaignRun = {
+        version: 1,
+        campaignId: selectedCampaign.id,
+        scenarioId: selectedScenario.id,
+        scenarioName: selectedScenario.name,
+        scenarioIndex: selectedScenarioIndex,
+    };
     const payload: CampaignGamePayload = {
         campaign_json: JSON.stringify(scenarioData),
         encounter_set_names: encounterSetNames,
@@ -579,36 +605,25 @@ async function startGame(): Promise<void> {
             'v18_all',
         ],
         campaign_log: campaignLog,
+        campaign_progress: {
+            campaign: saved,
+            activeRun,
+            replace: resumedCampaign === null,
+        },
     };
 
     try {
         const response = await fetch(`/new?data=${encodeURIComponent(JSON.stringify(payload))}`);
         if (!response.ok) {
-            throw new Error(`${response.status} ${response.statusText}`);
+            const result = await response.json().catch(() => null) as {error?: string} | null;
+            throw new Error(result?.error ?? `${response.status} ${response.statusText}`);
         }
-
-        const saved: SavedCampaign = {
-            version: 1,
-            campaignId: selectedCampaign.id,
-            scenarioIndex: selectedScenarioIndex,
-            heroId,
-            campaignLog,
-            completed: false,
-            updatedAt: new Date().toISOString(),
-        };
-        const activeRun: ActiveCampaignRun = {
-            version: 1,
-            campaignId: selectedCampaign.id,
-            scenarioId: selectedScenario.id,
-            scenarioName: selectedScenario.name,
-            scenarioIndex: selectedScenarioIndex,
-        };
-        saveCampaign(saved);
-        saveActiveCampaignRun(activeRun);
         window.location.assign('/table?p=0');
     } catch (error) {
         console.error(error);
-        errorMessage.textContent = 'Could not create the campaign game. Check the server log and try again.';
+        errorMessage.textContent = error instanceof Error
+            ? error.message
+            : 'Could not create the campaign game. Check the server log and try again.';
         isStarting = false;
         playButton.removeAttribute('aria-busy');
         updatePlayButton();

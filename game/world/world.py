@@ -28,6 +28,12 @@ GAME_OVER: TypeAlias = Literal[True, False]
 
 class World(WorldAction, WorldFind):
 
+    def ShouldDeferCampaignCardSetup(self, face: 'CardFace') -> bool:
+        """Let the AOS campaign restore Evidence and Board state itself."""
+        return self.rule.mode_campaign.val and \
+            self.scene.campaign.campaign_id == "agents_of_shield" and \
+            (Evidence.IsType(face) or face.HasTrait("BOARD MEMBER"))
+
     def __init__(self, scene: 'Scene', controllers: List['Controller']) -> None:
         from game.deck import Deck2, DeckType
         from game.card.face.base import SchemeSide2
@@ -284,7 +290,11 @@ class World(WorldAction, WorldFind):
                 [x.set_aside_nemesis_sets for x in self.const_players] + \
                 [self.GetScenario().encounter_deck] + \
                 self.additional_decks
-        faces = [x for y in decks for x in y.GetAll() if HasSetup.IsType(x) and x.printed_setup > 0]
+        faces = [
+            x for y in decks for x in y.GetAll()
+            if HasSetup.IsType(x) and x.printed_setup > 0 and
+            not self.ShouldDeferCampaignCardSetup(x)
+        ]
         for face in faces:
             face.ProcessSetup(game_start_effect)
 
@@ -302,7 +312,10 @@ class World(WorldAction, WorldFind):
             villain.Reveal(None, game_start_effect)
 
         # Evidence
-        faces = [x for y in decks for x in y.GetAll() if Evidence.IsType(x)]
+        faces = [
+            x for y in decks for x in y.GetAll()
+            if Evidence.IsType(x) and not self.ShouldDeferCampaignCardSetup(x)
+        ]
         for face in faces:
             face.Setup(False)
 

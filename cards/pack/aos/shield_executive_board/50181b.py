@@ -34,6 +34,6 @@ def GetAbilities() -> Sequence['Ability']:
             'secret',
             medical_officers_aid
         ),
-        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame()
+        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame(),
+        IfThereAre3BoardMemberAttachmentsInPlayAfterThisEntersPlay(),
     ]
-

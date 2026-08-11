@@ -21,6 +21,6 @@ def GetAbilities() -> Sequence['Ability']:
             'secret',
             surveillance_officers_aid
         ),
-        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame()
+        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame(),
+        IfThereAre3BoardMemberAttachmentsInPlayAfterThisEntersPlay(),
     ]
-

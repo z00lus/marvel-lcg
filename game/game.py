@@ -13,6 +13,7 @@ from game.scene.loader import SceneLoader
 from game.game_run.game_new import NewGameDescriptor
 from game.game_run.game_state import GameState
 from game.game_run.game_session import GameSession
+from game.game_run.campaign_progress import CampaignProgressStore
 from game.statistics.game_statistics import GameStatistics
 from game.statistics.game_history import GameHistory
 
@@ -40,6 +41,7 @@ class Game:
         self.statistics = statistics
         self.game_history = game_history
         self.active_session_enabled = False
+        self.campaign_progress = CampaignProgressStore()
 
     @property
     def world(self) -> 'World|None':
@@ -216,6 +218,21 @@ class Game:
         return "loaded"
 
     def NewGame(self, new_game: 'NewGameDescriptor') -> None:
+        campaign_progress = getattr(new_game, 'campaign_progress', {})
+        progress_store = getattr(self, 'campaign_progress', None)
+        prepared_progress = None
+        if progress_store and campaign_progress:
+            # Validate replacement before disturbing the current game. The
+            # record itself is committed only after NewGame accepted the
+            # descriptor.
+            prepared_progress = progress_store.PrepareStart(campaign_progress)
+            # On resume, PrepareStart deliberately keeps the server copy. Feed
+            # that exact log into SceneLoader as well, so a stale browser can
+            # never roll campaign state back inside the new scenario.
+            new_game.campaign_log = dict(
+                prepared_progress['campaign']['campaignLog'],
+            )
+
         if self.world:
             self.world.game_over.SetExit()
 
@@ -223,6 +240,8 @@ class Game:
         self.RemoveActiveSessionFile()
         self.controller_manager.replay.SetIsReplay(False)
         self.session.NewGame(new_game)
+        if prepared_progress:
+            progress_store.CommitPreparedStart(prepared_progress)
         self.controller_manager.OnNewGame()
 
     def LoadReplay(self, file_path: 'str') -> None:
@@ -266,6 +285,15 @@ class Game:
     def SetGameOver(self) -> bool:
         self.SetGameOverInternal()
         if self.state.exit_state.is_normal_exit:
+            campaign_progress = getattr(self, 'campaign_progress', None)
+            if campaign_progress:
+                try:
+                    campaign_progress.AdvanceGame(self)
+                except Exception as exc:
+                    # A persistence problem must not turn a completed game into
+                    # an engine crash. The authenticated endpoint can retry the
+                    # same idempotent update from the final screen.
+                    Log.FailedTrace(CATEGORY_NAME, exc, no_take_as_error=True)
             if self.game_history:
                 try:
                     self.game_history.RecordCompletedGame(self)

@@ -212,6 +212,8 @@ def EachPlayerSearchForAnAlly(level: int) -> 'Ability':
 
 def ExpertCampaignEachPlayerMayHealAtMissionThreatCost() -> 'Ability':
     def action(effect: 'Effect', message: 'Message.WhenCampaignSetup') -> None:
+        from game.operate.campaign_logs import CampaignLog
+
         mission = Worlds.FindCardOnField(
             effect,
             card_type=EncounterSideScheme,
@@ -221,6 +223,16 @@ def ExpertCampaignEachPlayerMayHealAtMissionThreatCost() -> 'Ability':
             return
 
         for player in Worlds.GetPlayers(effect):
+            if (
+                not Worlds.IsExpert(effect)
+                and not CampaignLog.GetIntByPlayer(
+                    "Remaining hit points",
+                    player.player_id,
+                    effect,
+                )
+            ):
+                continue
+
             def heal_identity(targets: Sequence['CardFace'], player=player) -> None:
                 effect.this.PlaceThreatOnSchemes([mission], 3, effect)
                 effect.this.HealthUnits(targets, "All", effect)
@@ -233,7 +245,7 @@ def ExpertCampaignEachPlayerMayHealAtMissionThreatCost() -> 'Ability':
                 ).SetTarget([player.GetIdentity()], canbe_heal=True),
             )
 
-    return AbilityFactoryCampaign.WhenCampaignSetupExpertOnly(
+    return AbilityFactoryCampaign.WhenCampaignSetup(
         action,
         campaign_id=CAMPAIGN_ID,
     )

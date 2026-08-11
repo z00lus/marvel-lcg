@@ -40,12 +40,36 @@ def _campaign_int(key: str, effect: 'Effect') -> int:
     return CampaignLog.GetIntInternal(key, effect)
 
 
-def _encounter_card_or_generate(card_id: str, effect: 'Effect') -> 'CardFace':
-    face = Worlds.GetEncounterDeck(effect).FindCard(card_ids=[card_id])
-    if face:
-        return face
+def _campaign_flag(key: str, effect: 'Effect') -> bool:
+    from game.operate.campaign_logs import CampaignLog
+
+    return CampaignLog.GetStrInternal(key, effect).strip().lower() in {
+        "1", "on", "true", "yes",
+    }
+
+
+def _campaign_card_or_generate(card_ids: str, effect: 'Effect') -> 'CardFace':
+    ids = card_ids.split(",")
+    areas = [
+        Worlds.GetEncounterDeck(effect),
+        Worlds.AsideDeck(effect),
+        effect.world.area_evidence,
+        effect.world.area_removed,
+    ]
+    for area in areas:
+        face = area.FindCard(card_ids=ids)
+        if face:
+            return face
+
+    for face in Worlds.GetOnFieldCards(effect):
+        linked_ids = [face.paper.card_id] + [
+            back.paper.card_id for back in face.card.back_faces
+        ]
+        if any(card_id in ids for card_id in linked_ids):
+            return face
+
     return CardFactory.GenerateCard(
-        card_id,
+        card_ids,
         Worlds.AsideDeck(effect),
         effect.world,
     ).face
@@ -56,7 +80,7 @@ def PrepareEvidenceEnvelopes() -> 'Ability':
         import random as python_random
 
         evidence = {
-            card_id: _encounter_card_or_generate(card_id, effect)
+            card_id: _campaign_card_or_generate(card_id, effect)
             for card_id in EVIDENCE_IDS
         }
 
@@ -88,9 +112,12 @@ def PrepareEvidenceEnvelopes() -> 'Ability':
         shield_envelope.Create(effect, villain)
         shield_envelope.PushCards([evidence[card_id] for card_id in shield_ids], effect)
 
-        first_player = Worlds.GetFirstPlayer(effect)
-        for card_id in earned_ids:
-            evidence[card_id].PutIntoPlay(first_player, effect)
+        # Earned Evidence is campaign information, not a card in play or in
+        # either envelope. Its Setup instruction resolves separately below.
+        Faces.RemoveAllFromGame(
+            [evidence[card_id] for card_id in earned_ids],
+            effect,
+        )
 
     return AbilityFactoryCampaign.WhenCampaignSetup(
         action,
@@ -103,16 +130,7 @@ def PrepareExecutiveBoard(level: int) -> 'Ability':
         first_player = Worlds.GetFirstPlayer(effect)
 
         for name, linked_ids in BOARD_MEMBERS.items():
-            card_id = linked_ids.split(",")[0]
-            member = Worlds.GetEncounterDeck(effect).FindCard(card_ids=[card_id])
-            if not member:
-                member = CardFactory.GenerateCard(
-                    linked_ids,
-                    Worlds.AsideDeck(effect),
-                    effect.world,
-                ).face
-            member.PutIntoPlay(first_player, effect)
-
+            member = _campaign_card_or_generate(linked_ids, effect)
             if level == 1:
                 secrets = 2
             else:
@@ -120,8 +138,27 @@ def PrepareExecutiveBoard(level: int) -> 'Ability':
                     f"Scenario {level - 1} {name} Secret Counters",
                     effect,
                 )
-            if secrets:
-                Faces.PlaceCountersOn([member], secrets, "secret", effect)
+
+            if _campaign_flag(f"{name} Flipped", effect):
+                # A level-five scenario can have put the printed Setup face in
+                # play before campaign setup. Move it back to the supported
+                # staging area so restored counters cannot trigger its normal
+                # in-game flip response.
+                if member.IsInPlay():
+                    Faces.MoveAllTo([member], Worlds.AsideDeck(effect), effect)
+                if secrets:
+                    Faces.PlaceCountersOn([member], secrets, "secret", effect)
+                if Environment.IsType(member):
+                    member.card.Flip(effect, call_reveal=False, ui_group=True)
+                member.card.face.PutIntoPlay(first_player, effect)
+            else:
+                if not member.IsInPlay():
+                    member.PutIntoPlay(first_player, effect)
+                if secrets:
+                    Faces.PlaceCountersOn([member], secrets, "secret", effect)
+
+            if Attachment.IsType(member.card.face):
+                CampaignLog.SetStr(f"{name} Flipped", "Yes", effect.world)
 
         generated_interference: List['CardFace'] = []
         encounter_deck = Worlds.GetEncounterDeck(effect)
@@ -141,6 +178,94 @@ def PrepareExecutiveBoard(level: int) -> 'Ability':
         action,
         campaign_id=CAMPAIGN_ID,
     )
+
+
+def ResolveEarnedEvidenceSetup() -> 'Ability':
+    def action(effect: 'Effect', message: 'Message.WhenCampaignSetup') -> None:
+        earned_ids = set(_campaign_list("Evidence Earned", effect))
+        for card_id in EVIDENCE_IDS:
+            if card_id not in earned_ids:
+                continue
+            evidence = effect.world.area_removed.FindCard(card_ids=[card_id])
+            if evidence and Evidence.IsType(evidence):
+                evidence.Setup(False)
+
+    return AbilityFactoryCampaign.WhenCampaignSetup(
+        action,
+        campaign_id=CAMPAIGN_ID,
+    )
+
+
+def ResolveCampaignVictory(level: int) -> 'Ability':
+    def action(effect: 'Effect', message: 'Message.WhenGameOver') -> None:
+        members = Worlds.FindCardsOnField(effect, trait="BOARD MEMBER")
+
+        if level <= 4:
+            for name in BOARD_MEMBERS:
+                member = next((face for face in members if face.name == name), None)
+                if not member:
+                    member = next((
+                        face for face in members
+                        if any(back.name == name for back in face.card.back_faces)
+                    ), None)
+                if not member:
+                    continue
+                CampaignLog.SetStr(
+                    f"Scenario {level} {name} Secret Counters",
+                    str(member.GetCounters("secret")),
+                    effect.world,
+                )
+                if Attachment.IsType(member):
+                    CampaignLog.SetStr(
+                        f"{name} Flipped",
+                        "Yes",
+                        effect.world,
+                    )
+
+        investigated = any(
+            Environment.IsType(member) and member.GetCounters("secret") == 0
+            for member in members
+        )
+        if not investigated:
+            return
+
+        shield_envelope = Worlds.ScenarioDeck(effect, "S.H.I.E.L.D.Envelope")
+        if not shield_envelope.initialize:
+            return
+        earned_ids = [
+            card_id for card_id in _campaign_list("Evidence Earned", effect)
+            if card_id in EVIDENCE_IDS
+        ]
+        candidates = [
+            evidence
+            for evidence in shield_envelope.deck.FindCards(card_type=Evidence)
+            if evidence.paper.card_id not in earned_ids
+        ]
+        if not candidates:
+            return
+
+        evidence = Rand.RandomChoice(candidates, effect)
+        first_player = Worlds.GetFirstPlayer(effect)
+        Faces.LookAt([evidence], first_player, effect)
+        Faces.RemoveAllFromGame([evidence], effect)
+
+        earned_ids.append(evidence.paper.card_id)
+        CampaignLog.SetStr(
+            "Evidence Earned",
+            ";".join(earned_ids),
+            effect.world,
+        )
+
+    return Ability(
+        AbilityType.ForcedResponse,
+        Message.WhenGameOver,
+        [
+            lambda effect, message: message.players_won,
+            lambda effect, message:
+                Worlds.IsCampaignSelected(effect, CAMPAIGN_ID),
+        ],
+        action,
+    ).NoOutOfPlayLimit()
 
 
 def ApplyBatrocCampaignSetup() -> 'Ability':
@@ -262,24 +387,12 @@ def ExpertCampaignEachPlayerMayHealAtSecretCost() -> 'Ability':
     )
 
 
-def ResolveEarnedEvidenceSetupAfterMulligans() -> 'Ability':
-    def action(effect: 'Effect', message: 'Message.WhenGameWouldBegin') -> None:
-        for evidence in effect.world.area_evidence.FindCards(card_type=Evidence):
-            evidence.Setup(False)
-
-    return AbilityFactory.WhenGameWouldBegin(
-        action,
-        conditions=[
-            lambda effect, message:
-                Worlds.IsCampaignSelected(effect, CAMPAIGN_ID),
-        ],
-    )
-
-
 def CampaignSetup(level: int) -> List['Ability']:
     abilities: List['Ability'] = [
         PrepareEvidenceEnvelopes(),
         PrepareExecutiveBoard(level),
+        ResolveEarnedEvidenceSetup(),
+        ResolveCampaignVictory(level),
     ]
 
     if level == 2:
@@ -297,5 +410,4 @@ def CampaignSetup(level: int) -> List['Ability']:
             ExpertCampaignEachPlayerMayHealAtSecretCost(),
         ])
 
-    abilities.append(ResolveEarnedEvidenceSetupAfterMulligans())
     return abilities

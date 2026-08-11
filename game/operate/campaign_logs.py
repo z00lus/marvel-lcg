@@ -59,6 +59,18 @@ LOG_INT_KEY: TypeAlias = Literal[
     "Scenario 1 Minions and side schemes in play",
     "Scenario 2 Rescued Captives",
     "Evasion Counters",
+    "Scenario 1 Chief Medical Officer Secret Counters",
+    "Scenario 1 Chief Surveillance Officer Secret Counters",
+    "Scenario 1 Chief Tactical Officer Secret Counters",
+    "Scenario 2 Chief Medical Officer Secret Counters",
+    "Scenario 2 Chief Surveillance Officer Secret Counters",
+    "Scenario 2 Chief Tactical Officer Secret Counters",
+    "Scenario 3 Chief Medical Officer Secret Counters",
+    "Scenario 3 Chief Surveillance Officer Secret Counters",
+    "Scenario 3 Chief Tactical Officer Secret Counters",
+    "Scenario 4 Chief Medical Officer Secret Counters",
+    "Scenario 4 Chief Surveillance Officer Secret Counters",
+    "Scenario 4 Chief Tactical Officer Secret Counters",
 ]
 
 LOG_STR_KEY: TypeAlias = Literal[
@@ -96,6 +108,9 @@ LOG_STR_KEY: TypeAlias = Literal[
     "Scenario 3 Overseer",
     "Scenario 4 Overseer",
     "Scenario 5 Overseer",
+    "Chief Medical Officer Flipped",
+    "Chief Surveillance Officer Flipped",
+    "Chief Tactical Officer Flipped",
 ]
 
 class CampaignLog:

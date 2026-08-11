@@ -79,6 +79,52 @@ class LoaderHelper:
 
 class SceneLoader:
 
+    ENCOUNTER_SET_FAMILIES = ("standard", "expert")
+
+    @staticmethod
+    def GetEncounterSetFamily(encounter_set: str) -> str|None:
+        for family in SceneLoader.ENCOUNTER_SET_FAMILIES:
+            if encounter_set == family or encounter_set.startswith(f"{family}_"):
+                return family
+        return None
+
+    @staticmethod
+    def MergeEncounterSets(required: Sequence[str], selected: Sequence[str]) -> List[str]:
+        """Preserve required sets while replacing selected difficulty variants."""
+        selected_by_family: Dict[str, str] = {}
+        for encounter_set in selected:
+            family = SceneLoader.GetEncounterSetFamily(encounter_set)
+            if family:
+                selected_by_family[family] = encounter_set
+
+        merged: List[str] = []
+        placed_families: Set[str] = set()
+
+        def append_unique(encounter_set: str) -> None:
+            if encounter_set not in merged:
+                merged.append(encounter_set)
+
+        for encounter_set in required:
+            family = SceneLoader.GetEncounterSetFamily(encounter_set)
+            if family and family in selected_by_family:
+                if family not in placed_families:
+                    append_unique(selected_by_family[family])
+                    placed_families.add(family)
+            else:
+                append_unique(encounter_set)
+
+        for encounter_set in selected:
+            family = SceneLoader.GetEncounterSetFamily(encounter_set)
+            if family:
+                if family in placed_families:
+                    continue
+                if selected_by_family[family] != encounter_set:
+                    continue
+                placed_families.add(family)
+            append_unique(encounter_set)
+
+        return merged
+
     @staticmethod
     def NewFromJson(campaign_json: str, encounter_set_names: List[str]|None, hero_jsons: List[str], seed: int, rules: List[str], campaign_log: Dict[str, str]) -> 'Scene':
         players: List[HeroDescriptor] = []
@@ -91,9 +137,15 @@ class SceneLoader:
         campaign.UpdateVersion()
 
         if encounter_set_names != None:
-            campaign.encounter_sets = encounter_set_names[:]
+            campaign.encounter_sets = SceneLoader.MergeEncounterSets(
+                campaign.encounter_sets,
+                encounter_set_names,
+            )
         else:
-            campaign.encounter_sets += campaign.modular_sets
+            campaign.encounter_sets = SceneLoader.MergeEncounterSets(
+                campaign.encounter_sets,
+                campaign.modular_sets,
+            )
 
         if campaign_log:
             campaign.campaign_log |= campaign_log

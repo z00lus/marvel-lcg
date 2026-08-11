@@ -13,7 +13,7 @@ def GetAbilities() -> Sequence['Ability']:
         player.ChooseAbilities(
             effect,
             AbilityFactory.ForChoiceAbility(
-                "",
+                "Deal 2 damage to a friendly character",
                 lambda targets:
                     this.DealDamage(targets, 2, effect)
             ).SetTarget(Friend)
@@ -29,6 +29,6 @@ def GetAbilities() -> Sequence['Ability']:
             'secret',
             tactical_officers_aid
         ),
-        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame()
+        IfThereAre3BoardMemberAttachmentsInPlayPlayersLoseTheGame(),
+        IfThereAre3BoardMemberAttachmentsInPlayAfterThisEntersPlay(),
     ]
-

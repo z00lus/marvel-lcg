@@ -22,14 +22,11 @@ export type ActiveCampaignRun = {
     scenarioIndex: number;
 };
 
-type ActiveCampaignResponse = {
-    active: boolean;
-    campaign_id?: string;
-    scenario_name?: string;
-    campaign_log?: Record<string, string>;
-    game_over?: boolean;
-    players_won?: boolean | null;
-    is_replay?: boolean;
+type CampaignProgressResponse = {
+    campaign: SavedCampaign | null;
+    advanced?: boolean;
+    migrated?: boolean;
+    reason?: string;
 };
 
 export const campaignDefinitions: CampaignDefinition[] = [
@@ -97,7 +94,7 @@ export function getCampaignDefinition(campaignId: string): CampaignDefinition | 
     return campaignDefinitions.find((definition) => definition.id === campaignId) ?? null;
 }
 
-export function getSavedCampaign(): SavedCampaign | null {
+function getLegacySavedCampaign(): SavedCampaign | null {
     const saved = loadStorageValue<SavedCampaign>(savedCampaignStorageKey);
     if (!saved || saved.version !== 1 || !getCampaignDefinition(saved.campaignId)) {
         return null;
@@ -105,11 +102,7 @@ export function getSavedCampaign(): SavedCampaign | null {
     return saved;
 }
 
-export function saveCampaign(saved: SavedCampaign): void {
-    localStorage.setItem(savedCampaignStorageKey, JSON.stringify(saved));
-}
-
-export function getActiveCampaignRun(): ActiveCampaignRun | null {
+function getLegacyActiveCampaignRun(): ActiveCampaignRun | null {
     const active = loadStorageValue<ActiveCampaignRun>(activeCampaignRunStorageKey);
     if (!active || active.version !== 1) {
         return null;
@@ -117,8 +110,51 @@ export function getActiveCampaignRun(): ActiveCampaignRun | null {
     return active;
 }
 
-export function saveActiveCampaignRun(active: ActiveCampaignRun): void {
-    localStorage.setItem(activeCampaignRunStorageKey, JSON.stringify(active));
+function validateSavedCampaign(saved: SavedCampaign | null): SavedCampaign | null {
+    if (!saved || saved.version !== 1 || !getCampaignDefinition(saved.campaignId)) {
+        return null;
+    }
+    return saved;
+}
+
+async function parseResponse(response: Response): Promise<CampaignProgressResponse> {
+    const result = await response.json() as CampaignProgressResponse & {error?: string};
+    if (!response.ok) {
+        throw new Error(result.error ?? `${response.status} ${response.statusText}`);
+    }
+    return result;
+}
+
+/**
+ * Read the server-owned save, migrating the old browser save exactly once.
+ * A server record always wins, so opening the campaign page on an old device
+ * can never overwrite progress already continued from another browser.
+ */
+export async function getSavedCampaign(): Promise<SavedCampaign | null> {
+    const response = await parseResponse(await fetch('/campaign_progress?'));
+    const serverCampaign = validateSavedCampaign(response.campaign);
+    if (serverCampaign) {
+        localStorage.removeItem(savedCampaignStorageKey);
+        localStorage.removeItem(activeCampaignRunStorageKey);
+        return serverCampaign;
+    }
+
+    const legacyCampaign = getLegacySavedCampaign();
+    if (!legacyCampaign) {
+        return null;
+    }
+
+    const migration = await parseResponse(await fetch('/campaign_progress/migrate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            campaign: legacyCampaign,
+            activeRun: getLegacyActiveCampaignRun(),
+        }),
+    }));
+    localStorage.removeItem(savedCampaignStorageKey);
+    localStorage.removeItem(activeCampaignRunStorageKey);
+    return validateSavedCampaign(migration.campaign);
 }
 
 export function createInitialCampaignLog(campaignId: string): Record<string, string> {
@@ -136,53 +172,14 @@ export function createInitialCampaignLog(campaignId: string): Record<string, str
 let progressUpdate: Promise<SavedCampaign | null> | null = null;
 
 async function updateCampaignAfterVictory(): Promise<SavedCampaign | null> {
-    const activeRun = getActiveCampaignRun();
-    const saved = getSavedCampaign();
-    if (!activeRun || !saved || saved.completed) {
-        return null;
-    }
-    if (
-        saved.campaignId !== activeRun.campaignId ||
-        saved.scenarioIndex !== activeRun.scenarioIndex
-    ) {
-        return null;
-    }
-
-    const response = await fetch('/get_active_campaign?');
-    if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
-    }
-    const current = await response.json() as ActiveCampaignResponse;
-    if (
-        !current.active ||
-        current.is_replay ||
-        current.game_over !== true ||
-        current.players_won !== true ||
-        current.campaign_id !== activeRun.campaignId ||
-        current.scenario_name !== activeRun.scenarioName
-    ) {
-        return null;
-    }
-
-    const definition = getCampaignDefinition(saved.campaignId);
-    if (!definition) {
-        return null;
-    }
-
-    const completed = activeRun.scenarioIndex >= definition.scenarios.length - 1;
-    const updated: SavedCampaign = {
-        ...saved,
-        scenarioIndex: completed ? activeRun.scenarioIndex : activeRun.scenarioIndex + 1,
-        campaignLog: {
-            ...saved.campaignLog,
-            ...(current.campaign_log ?? {}),
-        },
-        completed,
-        updatedAt: new Date().toISOString(),
-    };
-    saveCampaign(updated);
-    localStorage.removeItem(activeCampaignRunStorageKey);
-    return updated;
+    // A game started before server-owned persistence may still have its
+    // campaign marker only in this browser. Migrate it before asking the
+    // server to verify and record the victory.
+    await getSavedCampaign();
+    const result = await parseResponse(await fetch('/campaign_progress/advance', {
+        method: 'POST',
+    }));
+    return validateSavedCampaign(result.campaign);
 }
 
 export function recordCampaignVictory(): Promise<SavedCampaign | null> {

@@ -15,11 +15,21 @@ def EvidenceInternal(card_class: "ClassCard.CARD_CLASS", card_type: Type[CardFac
         this = effect.this.CastTo(Evidence)
         Unused(this)
 
+        collection_choices: Set[str] = set()
+
         def action_a(player: 'Player'):
             def search(targets: Sequence['CardFace']):
                 Faces.PlaceCountersOn(targets, 1, 'secret', effect)
-                face = Search.Collection(effect, player, card_classes=[card_class], card_type=card_type)
+                face = Search.Collection(
+                    effect,
+                    player,
+                    card_classes=[card_class],
+                    card_type=card_type,
+                    check_fn=lambda paper:
+                        paper.card_id not in collection_choices,
+                )
                 if face:
+                    collection_choices.add(face.paper.card_id)
                     Faces.ShuffleAllTo([face], player.player_deck, effect)
 
             player.MayChooseOneAbility(
@@ -57,5 +67,4 @@ def EvidenceInternal(card_class: "ClassCard.CARD_CLASS", card_type: Type[CardFac
     return AbilityFactory.WhenCardSetup(
         "This",
         medical_records
-    )
-
+    ).NoOutOfPlayLimit()

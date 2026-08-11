@@ -3,11 +3,12 @@ from engine.device.web.server.server_html import GameServerHTML
 from engine.device.web.server.server_get import GameServerGet
 from engine.device.web.server.server_new_game import GameServerNewGame
 from engine.device.web.server.server_marvelcdb import GameServerMarvelCdb
+from engine.device.web.server.server_campaign_progress import GameServerCampaignProgress
 from engine.device.web.server.server_socket import GameServerSocket
 from engine.device.web.server.server_sync import GameServerSync
 from engine.device.manager.web.manager import WebDeviceManager
 
-class GameServer(GameServerFiles, GameServerHTML, GameServerGet, GameServerNewGame, GameServerMarvelCdb, GameServerSocket, GameServerSync):
+class GameServer(GameServerFiles, GameServerHTML, GameServerGet, GameServerNewGame, GameServerMarvelCdb, GameServerCampaignProgress, GameServerSocket, GameServerSync):
 
     def __init__(self, manager: 'WebDeviceManager') -> None:
         self.SetManager(manager)
