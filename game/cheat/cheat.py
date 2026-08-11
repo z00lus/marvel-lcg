@@ -9,7 +9,24 @@ from engine.config import ConfigVariables
 
 CATEGORY_NAME = "COMMAND"
 
+QUICK_SAVE_FOLDER = ConfigVariables.Folder('quick_save_folder', ".")
+
 class Cheat:
+
+    @staticmethod
+    def ResolveQuickSavePath(path: str) -> str:
+        """Place numbered table saves in the configured persistent folder."""
+        import re
+
+        match = re.fullmatch(r"(save_[0-3]\.json)(:-?\d+)?", path)
+        if not match:
+            return path
+
+        file_path = FileManager.JoinPath(
+            QUICK_SAVE_FOLDER.value,
+            match.group(1),
+        )
+        return file_path + (match.group(2) or "")
 
     ################################################################################
     # No save in history inputs
@@ -40,7 +57,7 @@ class Cheat:
                 step = game.controller_manager.replay.current_step_id - step
                 game.session.Undo(step)
 
-        command = input_command
+        command = Cheat.ResolveQuickSavePath(input_command)
         # Load scene
         # Start with version [0.5.7.104]
         if not command.startswith("/"):
@@ -120,7 +137,7 @@ class Cheat:
         def do_save(args: str=""):
             name = game.scene.GetSaveFileName()
             if args:
-                name = args
+                name = Cheat.ResolveQuickSavePath(args)
                 ex_save_name = None
             else:
                 name = None
@@ -130,7 +147,11 @@ class Cheat:
                 return f"Save: {name}"
 
         def do_load(args: str):
-            game.session.Load(args, None, "Load")
+            game.session.Load(
+                Cheat.ResolveQuickSavePath(args),
+                None,
+                "Load",
+            )
 
         # def do_save_level(args: List[str]):
         #     name = game.scene.scene.save_name

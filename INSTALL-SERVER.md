@@ -57,8 +57,10 @@ service user must retain write access to this file and its directory. Back up
 this file together with `replays/` to preserve game history and achievement
 progress.
 
-Docker Compose stores the same database as `runtime/statistics.sqlite3`; the
-existing `./runtime:/app/runtime` volume keeps it across container rebuilds.
+Docker Compose stores the same database as `runtime/statistics.sqlite3`. The
+existing `./runtime:/app/runtime` volume also stores campaign progress,
+`save_active_session.json`, and the numbered QSave files, keeping all of them
+across container rebuilds.
 
 ## Updating
 

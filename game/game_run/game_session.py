@@ -173,6 +173,10 @@ class GameSession:
         else:
             file_name = name
 
+        FileManager.MakeDir(FileManager.GetDirName(file_name))
+        if ex_save_name != None:
+            FileManager.MakeDir(FileManager.GetDirName(ex_save_name))
+
         if not Test.IsInTesting():
             playtime = self.GetPlayTime(scene)
         else:

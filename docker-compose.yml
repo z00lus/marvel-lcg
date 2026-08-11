@@ -10,5 +10,5 @@ services:
       - ./assets:/app/assets
       - ./replays:/app/replays
       - ./runtime:/app/runtime
-    command: ["python", "-u", "main.py", "-game_statistics_file", "./runtime/statistics.json", "-game_history_file", "./runtime/statistics.sqlite3", "-campaign_progress_file", "./runtime/save_campaign_progress.json"]
+    command: ["python", "-u", "main.py", "-game_statistics_file", "./runtime/statistics.json", "-game_history_file", "./runtime/statistics.sqlite3", "-campaign_progress_file", "./runtime/save_campaign_progress.json", "-active_session_file", "./runtime/save_active_session.json", "-quick_save_folder", "./runtime"]
     restart: unless-stopped
