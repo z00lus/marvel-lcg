@@ -68,36 +68,16 @@ docker compose restart
 
 #### Updating on Windows with Docker Desktop
 
-Open PowerShell in the existing cloned repository.
-
-**ONLY for the first update from an older build:** preserve any active Continue/QSave files if needed. Copy them from the old container into a temporary migration directory before rebuilding:
-
-```powershell
-New-Item -ItemType Directory -Force .\save-migration | Out-Null
-docker cp marvel-lcg:/app/save_active_session.json .\save-migration\save_active_session.json
-docker cp marvel-lcg:/app/save_0.json .\save-migration\save_0.json
-```
-
-Either `docker cp` command may report that the file does not exist when there is no active Continue checkpoint or QSave. The same command can be used for `save_1.json`, `save_2.json`, or `save_3.json` when those slots are needed.
-
-Update the source and rebuild the image:
+Open PowerShell in the existing cloned repository, update the source, and rebuild the service:
 
 ```powershell
 git status --short
 git pull --ff-only origin master
 docker compose build --pull
-```
-
-After upgrading from that older build, place the preserved files into the corresponding persistent `runtime/` directory, then recreate the service:
-
-```powershell
-New-Item -ItemType Directory -Force .\runtime | Out-Null
-if (Test-Path .\save-migration\save_active_session.json) { Copy-Item .\save-migration\save_active_session.json .\runtime\save_active_session.json }
-if (Test-Path .\save-migration\save_0.json) { Copy-Item .\save-migration\save_0.json .\runtime\save_0.json }
 docker compose up -d --remove-orphans
 ```
 
-Repeat the conditional `Copy-Item` command for `save_1.json`, `save_2.json`, or `save_3.json` when those slots were preserved. This migration is needed only for the first update from an older build. Future builds save Continue and all numbered QSave files directly in `runtime/`, so these copy steps do not need to be repeated.
+Continue Game is stored in `runtime/save_active_session.json`; QSave and Save 1–3 are stored in `runtime/save_0.json` through `runtime/save_3.json`. Because `runtime/` is mounted from the Windows host, these files survive container rebuilds and recreation.
 
 If `git status` shows tracked local changes, preserve or commit them before pulling. Do not reset them blindly. Check the updated container with:
 
