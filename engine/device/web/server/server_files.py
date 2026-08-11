@@ -12,14 +12,10 @@ CATEGORY_NAME = "WEB"
 class GameServerFiles(GameServerBase):
 
     async def handle_main(self, request: web.Request) -> web.StreamResponse:
-        response = self.ReadFile('./public/main.html')
-        response.headers['Cache-Control'] = 'no-cache, must-revalidate'
-        return response
+        return self.ReadHtmlFile('./public/main.html')
 
     async def handle_marvel(self, request: web.Request) -> web.StreamResponse:
-        response = self.ReadFile('./public/marvel.html')
-        response.headers['Cache-Control'] = 'no-cache, must-revalidate'
-        return response
+        return self.ReadHtmlFile('./public/marvel.html')
 
     async def handle_players_404(self, request: web.Request) -> web.StreamResponse:
         player = request.match_info.get('player')

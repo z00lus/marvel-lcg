@@ -116,13 +116,18 @@ class AssetVersion:
 
         Any well-formed token is accepted rather than only the current one, so a
         page cached from an earlier build still resolves to the file that exists
-        now instead of 404ing. It is served with the newer bytes under the older
-        URL, which is the same outcome the browser would reach by revalidating.
+        now instead of 404ing. ``ReadFile`` only marks the current token as
+        immutable; bytes returned through an older token are never cached.
         """
         match = cls._PREFIX_PATTERN.match(path)
         if not match:
             return path, False
         return path[match.end():], True
+
+    @classmethod
+    def HasCurrentPrefix(cls, path: str) -> bool:
+        match = cls._PREFIX_PATTERN.match(path)
+        return bool(match and match.group(1) == cls.Token())
 
     @classmethod
     def RewriteHtml(cls, html: str) -> str:
@@ -282,6 +287,7 @@ class WebServer:
 
     @final
     def ReadFile(self, file_path: str, find_paths: List[str]=[]) -> web.Response:
+        has_current_version = AssetVersion.HasCurrentPrefix(file_path)
         file_path, is_versioned = AssetVersion.StripPrefix(file_path)
 
         if file_path.startswith("/"):
@@ -312,8 +318,14 @@ class WebServer:
                 return web.Response(status=404, headers=self.HeaderNoStore)
             data = read_file(found_path, True)
             mime_type = MimeType.GetMimeType(file_path)
-            if is_versioned:
+            if has_current_version:
                 header = self.HeaderCacheImmutable
+            elif is_versioned:
+                # Serving current bytes through an old content URL keeps an
+                # already-open page alive, but caching that response as
+                # immutable would permanently associate the wrong bytes with
+                # the old token.
+                header = self.HeaderNoStore
             elif Build.release:
                 header = self.HeaderCache
             else:

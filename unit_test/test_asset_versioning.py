@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import tempfile
 import unittest
@@ -9,6 +10,7 @@ from urllib.parse import urljoin
 # Match the application's normal import order without starting the server.
 from engine import Engine
 
+from engine.device.web.server.server_files import GameServerFiles
 from engine.network.web_server import AssetVersion, WebServer
 
 
@@ -128,6 +130,15 @@ class TestStripPrefix(unittest.TestCase):
             '/v/000000000000/public/js/solo.js')
         self.assertEqual((stripped, versioned), ('/public/js/solo.js', True))
 
+    def test_only_the_current_token_is_recognised_as_current(self):
+        with patch.object(AssetVersion, '_token', 'abcdef123456'):
+            self.assertTrue(AssetVersion.HasCurrentPrefix(
+                '/v/abcdef123456/public/js/solo.js'))
+            self.assertFalse(AssetVersion.HasCurrentPrefix(
+                '/v/000000000000/public/js/solo.js'))
+            self.assertFalse(AssetVersion.HasCurrentPrefix(
+                '/public/js/solo.js'))
+
 
 class TestComputeToken(unittest.TestCase):
 
@@ -182,12 +193,29 @@ class TestResponseHeaders(unittest.TestCase):
             with open(asset, 'w', encoding='utf-8') as file:
                 file.write('export const probe = 1;\n')
 
-            response = self.server.ReadFile(
-                '/v/abcdef123456/public/js/probe.js', [folder])
+            with patch.object(AssetVersion, '_token', 'abcdef123456'):
+                response = self.server.ReadFile(
+                    '/v/abcdef123456/public/js/probe.js', [folder])
 
             self.assertEqual(response.status, 200)
             self.assertIn('immutable', response.headers['Cache-Control'])
             self.assertEqual(bytes(response.body).decode(), 'export const probe = 1;\n')
+
+    def test_an_old_versioned_url_is_served_but_not_cached(self):
+        with tempfile.TemporaryDirectory() as folder:
+            os.makedirs(os.path.join(folder, 'public', 'js'))
+            asset = os.path.join(folder, 'public', 'js', 'probe.js')
+            with open(asset, 'w', encoding='utf-8') as file:
+                file.write('export const probe = 2;\n')
+
+            with patch.object(AssetVersion, '_token', 'abcdef123456'):
+                response = self.server.ReadFile(
+                    '/v/000000000000/public/js/probe.js', [folder])
+
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.headers['Cache-Control'], 'no-store')
+            self.assertNotIn('immutable', response.headers['Cache-Control'])
+            self.assertEqual(bytes(response.body).decode(), 'export const probe = 2;\n')
 
     def test_a_missing_file_is_never_cached(self):
         response = self.server.ReadFile('/public/js/does-not-exist.js')
@@ -223,6 +251,25 @@ class TestResponseHeaders(unittest.TestCase):
         # used to stamp `no-cache` over every response including 404s, which
         # made a max-age assertion here pass no matter what ReadFile returned.
         self.assertEqual(response.headers['Cache-Control'], 'no-store')
+
+
+class TestPrimaryPageHandlers(unittest.TestCase):
+
+    def setUp(self):
+        self.server = GameServerFiles()
+
+    def test_table_handler_versions_the_real_game_page(self):
+        with patch.object(AssetVersion, '_token', 'abcdef123456'):
+            response = asyncio.run(self.server.handle_marvel(None))
+
+        html = bytes(response.body).decode('utf-8')
+        self.assertEqual(response.status, 200)
+        self.assertEqual(
+            response.headers['Cache-Control'], 'no-cache, must-revalidate')
+        self.assertIn(
+            '/v/abcdef123456/public/js/marvel/marvel.js', html)
+        self.assertIn(
+            '/v/abcdef123456/public/css/marvel/marvel.css', html)
 
 
 if __name__ == '__main__':
