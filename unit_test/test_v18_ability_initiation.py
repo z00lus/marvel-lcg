@@ -234,13 +234,14 @@ class V18FailedInitiationContextTests(unittest.TestCase):
         self.assertEqual(context.allowed_removed_cards, set())
         self.assertIs(context.initiator, owner)
 
-    def test_successful_operation_cleanup_clears_resolved_targets(self):
+    def test_successful_operation_keeps_resolved_targets_for_choice_caller(self):
         context, _ = self.MakeContext()
-        context.targets_internal = [object()]
+        selected_target = object()
+        context.targets_internal = [selected_target]
 
         context.ResetAfterOperation()
 
-        self.assertEqual(context.targets_internal, [])
+        self.assertEqual(context.targets_internal, [selected_target])
 
     def test_normative_play_check_is_cached_for_one_initiation(self):
         context = SimpleNamespace(

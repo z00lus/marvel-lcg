@@ -9,6 +9,7 @@ from cards.database import CardsDB
 from engine.lib.version import Ver
 from game.card.factory import CardFactory
 from game.element.resources import Resources
+from game.effect.effect import Effect
 from game.effect.rule import GameRule
 from game.event.manager import EventManager
 from game.message import Message
@@ -118,6 +119,72 @@ class RealCardActivationRegressionTests(unittest.TestCase):
                 None,
             ),
             [],
+        )
+
+    def test_helicarrier_reduces_next_playable_one_cost_card_to_zero(self):
+        world, player, identity = self.MakeWorld()
+        helicarrier = CardFactory.GenerateCard(
+            "01092",
+            player.supports,
+            world,
+            ui_render=False,
+        ).face
+        interrogation_room = CardFactory.GenerateCard(
+            "01063",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        helicarrier_effect = next(
+            candidate for candidate in helicarrier.effect.global_effects
+            if candidate.ability.flags.is_action
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+
+        with patch.object(
+            player,
+            "AskChooseFaces",
+            return_value=[helicarrier],
+        ), patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ):
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [helicarrier_effect],
+                player,
+                world,
+                None,
+            )
+            self.assertEqual(available, [helicarrier_effect])
+            helicarrier_effect.context.targets_internal = [identity]
+            self.assertTrue(helicarrier_effect.checker.CheckBeforeActive(player))
+            self.assertTrue(helicarrier_effect.ResolveSelf(
+                message,
+                helicarrier_effect,
+            ))
+
+            play_effect = next(
+                candidate for candidate in interrogation_room.effect.global_effects
+                if candidate.ability.is_play
+            )
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [play_effect],
+                player,
+                world,
+                None,
+            )
+
+        self.assertEqual(available, [play_effect])
+        self.assertEqual(
+            play_effect.checker.cost_for_different_target.GetCost(None).val,
+            0,
         )
 
     def test_interception_imminent_exhausts_milano_and_removes_threat(self):
@@ -349,6 +416,106 @@ class RealCardActivationRegressionTests(unittest.TestCase):
         self.assertEqual(player.discard_pile.GetSize(), discard_size)
         self.assertEqual(world.area_processing.GetSize(), 0)
         self.assertEqual(world.stat.once_per_game_effects, [])
+
+    def test_resolved_choice_keeps_mulligan_faces_until_the_caller_discards_them(self):
+        world, player, identity = self.MakeWorld()
+        selected = CardFactory.GenerateCard(
+            "01060",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        kept = CardFactory.GenerateCard(
+            "01061",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+
+        def resolve_choice(by_effect, *abilities, **kwargs):
+            choice = Effect(identity, abilities[0], world=world)
+            choice.context.targets_internal = [selected]
+            # Choice callers read effect.targets after the choice effect has
+            # completed its normal operation cleanup.
+            choice.context.ResetAfterOperation()
+            return [choice]
+
+        with patch.object(player, "ChooseAbilities", side_effect=resolve_choice):
+            discarded = player.AskDiscardFaces(
+                player.hand_cards.Get(),
+                (0, "All"),
+                GameRule(identity),
+            )
+
+        self.assertEqual(discarded, [selected])
+        self.assertIs(selected.card.area, player.discard_pile)
+        self.assertIs(kept.card.area, player.hand_cards)
+
+    def test_avengers_mansion_play_pays_with_normal_discard_resource_choices(self):
+        world, player, identity = self.MakeWorld()
+        mansion = CardFactory.GenerateCard(
+            "01091",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        resource_faces = [
+            CardFactory.GenerateCard(
+                card_id,
+                player.hand_cards,
+                world,
+                ui_render=False,
+            ).face
+            for card_id in ("01060", "01061", "01063", "01093")
+        ]
+        play_effect = next(
+            candidate for candidate in mansion.effect.global_effects
+            if candidate.ability.is_play
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+
+        def resolve_cost_target(by_effect, *abilities, **kwargs):
+            choice = Effect(identity, abilities[0], world=world)
+            choice.context.targets_internal = [by_effect.this]
+            choice.context.ResetAfterOperation()
+            return [choice]
+
+        with patch.object(
+            player,
+            "ChooseAbilities",
+            side_effect=resolve_cost_target,
+        ), patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ):
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [play_effect],
+                player,
+                world,
+                None,
+            )
+            self.assertEqual(available, [play_effect])
+            play_effect.context.targets_internal = \
+                play_effect.context.all_legal_targets[:1]
+            play_effect.context.paid_this_res_effects = [
+                face.effect.Find(func_name="DiscardPay")[0]
+                for face in resource_faces
+            ]
+
+            self.assertTrue(player.ResolveEffect(play_effect, message))
+
+        self.assertIs(mansion.card.area, player.supports)
+        self.assertEqual(player.hand_cards.GetSize(), 0)
+        self.assertEqual(
+            set(player.discard_pile.Get()),
+            set(resource_faces),
+        )
 
 
 if __name__ == "__main__":

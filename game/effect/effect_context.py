@@ -90,7 +90,11 @@ class EffectContext:
 
         self.initiator: User = self.effect.this.GetControlByOrOwner()
 
-        self.targets_internal = []
+        # A resolved choice effect is returned to its caller, which reads the
+        # selected faces from ``effect.targets`` after resolution completes.
+        # Keep those targets available here; the next target-selection pass
+        # replaces them, while failed initiations clear them explicitly in
+        # ResetFailedInitiation().
 
     def ResetFailedInitiation(self) -> None:
         """Discard every transient choice from an uncommitted initiation."""
