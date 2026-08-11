@@ -10,6 +10,8 @@ from engine.log import Log
 from engine.file import FileManager
 import hashlib
 import asyncio
+import os
+import re
 
 CATEGORY_NAME = "WEB"
 
@@ -27,6 +29,116 @@ one year:   31536000
 PASSWORD            = ConfigVariables.Str('password', "")
 DETECTED_VERSION    = ConfigVariables.Bool('detected_version', True)
 
+
+class AssetVersion:
+    """Content-derived token that versions the URLs of static code.
+
+    Every css/js reference in a served page is rewritten to
+    ``/v/<token>/public/...``, and those URLs are then safe to cache as
+    ``immutable``: the URL itself changes whenever the code does, so a returning
+    browser cannot serve a stale copy of a file that has since been edited.
+
+    Two decisions worth stating, because the obvious alternatives do not work
+    here:
+
+    **A path prefix, not a query string.** The pages load ES modules, and a
+    relative import resolves against the *path* of the importing module -- a
+    query string is not inherited. From ``/public/js/solo.js?v=2``, the
+    ``./marvelcdb_deck.js`` import still resolves to the unversioned
+    ``/public/js/marvelcdb_deck.js`` and keeps its stale cached copy, so
+    query-string versioning covers the entry point and silently misses the
+    dependency graph. A prefix is inherited, so one rewrite in the HTML versions
+    every module reachable from it.
+
+    **Derived from content, not from Ver.ui_version_str.** The engine already
+    forces a clean-cache interstitial when that string changes
+    (``IsVersionMatch``); the stale-asset problem still happened, because the
+    release that changed the code did not bump the string. A token keyed on it
+    would not have busted anything. Hashing the bytes removes the dependency on
+    remembering to bump.
+    """
+
+    URL_PREFIX = '/v'
+    FOLDERS = ('./public/js', './public/css')
+    TOKEN_LENGTH = 12
+
+    # Matches only what Compute() can emit, so a real file living under a path
+    # that happens to start with /v/ is not mistaken for a versioned URL.
+    _PREFIX_PATTERN = re.compile(r'^/v/([0-9a-f]{%d})(?=/)' % TOKEN_LENGTH)
+
+    # Local css/js in an href/src. Anything absolute (http:, //) or of another
+    # type is left alone: media is content-addressed already and genuinely
+    # immutable, so it does not need or want a token.
+    _REFERENCE_PATTERN = re.compile(
+        r'''(?P<attr>\b(?:href|src)\s*=\s*)(?P<quote>["'])(?P<url>/(?!/)[^"']*?\.(?:css|js))(?P<query>\?[^"']*)?(?P=quote)''',
+        re.IGNORECASE,
+    )
+
+    _token: str|None = None
+
+    @classmethod
+    def Token(cls) -> str:
+        """The current token, computed once per process."""
+        if cls._token is None:
+            cls._token = cls.Compute()
+        return cls._token
+
+    @classmethod
+    def Compute(cls) -> str:
+        digest = hashlib.sha256()
+        for folder in cls.FOLDERS:
+            for directory, _sub_folders, file_names in sorted(os.walk(folder)):
+                for file_name in sorted(file_names):
+                    file_path = os.path.join(directory, file_name)
+                    # The path is hashed as well as the bytes, so that renaming
+                    # or removing a file changes the token even when the
+                    # surviving contents are unchanged.
+                    digest.update(os.path.relpath(file_path, folder).encode('utf-8'))
+                    try:
+                        with open(file_path, 'rb') as file:
+                            digest.update(file.read())
+                    except OSError as exc:
+                        # An unreadable file must not take the server down, but
+                        # it must still perturb the token: silently hashing
+                        # nothing would let a broken deploy look cached-correct.
+                        Log.Debug(CATEGORY_NAME, f'asset hash skipped {file_path}: {exc}')
+                        digest.update(b'<unreadable>')
+        return digest.hexdigest()[:cls.TOKEN_LENGTH]
+
+    @classmethod
+    def Reset(cls) -> None:
+        """Drop the memoised token. For tests, and for a future reload hook."""
+        cls._token = None
+
+    @classmethod
+    def StripPrefix(cls, path: str) -> Tuple[str, bool]:
+        """Return ``(path_without_prefix, was_versioned)``.
+
+        Any well-formed token is accepted rather than only the current one, so a
+        page cached from an earlier build still resolves to the file that exists
+        now instead of 404ing. It is served with the newer bytes under the older
+        URL, which is the same outcome the browser would reach by revalidating.
+        """
+        match = cls._PREFIX_PATTERN.match(path)
+        if not match:
+            return path, False
+        return path[match.end():], True
+
+    @classmethod
+    def RewriteHtml(cls, html: str) -> str:
+        prefix = f'{cls.URL_PREFIX}/{cls.Token()}'
+
+        def replace(match: 're.Match[str]') -> str:
+            url = match.group('url')
+            if cls.StripPrefix(url)[1]:
+                return match.group(0)
+            quote = match.group('quote')
+            query = match.group('query') or ''
+            return f'{match.group("attr")}{quote}{prefix}{url}{query}{quote}'
+
+        return cls._REFERENCE_PATTERN.sub(replace, html)
+
+
 class WebServer:
 
     HandleAsyncType: TypeAlias = Callable[["web.Request"], Awaitable["web.StreamResponse"]]
@@ -42,6 +154,16 @@ class WebServer:
             self.hash_password = None
 
         WebServer.HeaderCache = {'Cache-Control': f'public, max-age={CACHE_MAX_AGE.value}'}
+        # A versioned URL names one exact build of one file, so it can be
+        # cached without revalidation. `immutable` tells the browser to skip the
+        # conditional request it would otherwise make on a forced reload.
+        WebServer.HeaderCacheImmutable = {
+            'Cache-Control': f'public, max-age={CACHE_MAX_AGE.value}, immutable'
+        }
+        # A 404 is not a fact about the world, it is a fact about right now:
+        # caching it for a year meant a file added or fixed later stayed missing
+        # until the browser cache was cleared by hand.
+        WebServer.HeaderNoStore = {'Cache-Control': 'no-store'}
 
     ################################################################################
     #
@@ -105,9 +227,7 @@ class WebServer:
             elif not self.IsVersionMatch(request):
                 return self.LoadHtmlCleanCache()
             else:
-                response = self.ReadFile(html)
-                response.headers['Cache-Control'] = 'no-cache, must-revalidate'
-                return response
+                return self.ReadHtmlFile(html)
         self.web_app.router.add_get(path, handle)
 
     @final
@@ -138,7 +258,32 @@ class WebServer:
             return web.json_response({})
 
     @final
+    def ReadHtmlFile(self, file_path: str, find_paths: List[str]=[]) -> web.Response:
+        """Serve a page with its css/js references versioned.
+
+        The page itself must not be cached, or the browser keeps serving an old
+        document containing old tokens and the versioning never takes effect.
+        """
+        response = self.ReadFile(file_path, find_paths)
+        if response.status != 200 or not response.body:
+            # Leave a 404 with the no-store ReadFile gave it. Overwriting that
+            # with `no-cache` would still be an improvement on a year, but it
+            # permits storing the response, and it is the weaker guarantee.
+            return response
+
+        response.headers['Cache-Control'] = 'no-cache, must-revalidate'
+        try:
+            html = bytes(response.body).decode('utf-8')
+        except UnicodeDecodeError:
+            return response
+
+        response.body = AssetVersion.RewriteHtml(html).encode('utf-8')
+        return response
+
+    @final
     def ReadFile(self, file_path: str, find_paths: List[str]=[]) -> web.Response:
+        file_path, is_versioned = AssetVersion.StripPrefix(file_path)
+
         if file_path.startswith("/"):
             file_path = "." + file_path
 
@@ -164,10 +309,12 @@ class WebServer:
             found_path = find_path(file_path)
             if found_path is None:
                 Log.Debug(CATEGORY_NAME, f"File not found: {file_path}")
-                return web.Response(status=404, headers=self.HeaderCache)
+                return web.Response(status=404, headers=self.HeaderNoStore)
             data = read_file(found_path, True)
             mime_type = MimeType.GetMimeType(file_path)
-            if Build.release:
+            if is_versioned:
+                header = self.HeaderCacheImmutable
+            elif Build.release:
                 header = self.HeaderCache
             else:
                 header = {}
@@ -175,7 +322,7 @@ class WebServer:
         except Exception as exc:
             Log.Debug(CATEGORY_NAME, f"{file_path=}")
             Log.FailedTrace(CATEGORY_NAME, exc)
-            return web.Response(status=404, headers=self.HeaderCache)
+            return web.Response(status=404, headers=self.HeaderNoStore)
 
     @final
     def Run(self, ip: str, port: int, name: str="") -> None:
@@ -243,7 +390,7 @@ class WebServer:
             return response
 
         async def handle_html(request: web.Request):
-            return self.ReadFile(request.path, ['./public/'])
+            return self.ReadHtmlFile(request.path, ['./public/'])
 
         async def handle_css(request: web.Request):
             return self.ReadFile(request.path, ['./public/css', './public/'])
@@ -253,13 +400,13 @@ class WebServer:
 
         async def handle_ts(request: web.Request):
             if Build.release:
-                return web.Response(status=404, headers=self.HeaderCache)
+                return web.Response(status=404, headers=self.HeaderNoStore)
             else:
                 return self.ReadFile(request.path, ['./public/js', './public/'])
 
         async def handle_js_map(request: web.Request):
             if Build.release:
-                return web.Response(status=404, headers=self.HeaderCache)
+                return web.Response(status=404, headers=self.HeaderNoStore)
             else:
                 return self.ReadFile(request.path, ['./public/js', './public/'])
 
