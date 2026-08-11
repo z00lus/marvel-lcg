@@ -44,7 +44,11 @@ def _encounter_card_or_generate(card_id: str, effect: 'Effect') -> 'CardFace':
     face = Worlds.GetEncounterDeck(effect).FindCard(card_ids=[card_id])
     if face:
         return face
-    return CardFactory.GenerateCard(card_id, None, effect.world).face
+    return CardFactory.GenerateCard(
+        card_id,
+        Worlds.AsideDeck(effect),
+        effect.world,
+    ).face
 
 
 def PrepareEvidenceEnvelopes() -> 'Ability':
@@ -104,7 +108,7 @@ def PrepareExecutiveBoard(level: int) -> 'Ability':
             if not member:
                 member = CardFactory.GenerateCard(
                     linked_ids,
-                    None,
+                    Worlds.AsideDeck(effect),
                     effect.world,
                 ).face
             member.PutIntoPlay(first_player, effect)
@@ -124,7 +128,11 @@ def PrepareExecutiveBoard(level: int) -> 'Ability':
         for card_id in INTERFERENCE_IDS:
             if not encounter_deck.FindCard(card_ids=[card_id]):
                 generated_interference.append(
-                    CardFactory.GenerateCard(card_id, None, effect.world).face
+                    CardFactory.GenerateCard(
+                        card_id,
+                        Worlds.AsideDeck(effect),
+                        effect.world,
+                    ).face
                 )
         if generated_interference:
             Faces.ShuffleAllTo(generated_interference, encounter_deck, effect)
@@ -194,7 +202,11 @@ def ApplyBaronZemoCampaignSetup() -> 'Ability':
             effect,
         ):
             if card_id in ADAPTOID_ENVIRONMENT_IDS:
-                card = CardFactory.GenerateCard(card_id, None, effect.world)
+                card = CardFactory.GenerateCard(
+                    card_id,
+                    Worlds.AsideDeck(effect),
+                    effect.world,
+                )
                 card.face.PutIntoPlay(first_player, effect)
 
         encounter_deck = Worlds.GetEncounterDeck(effect)

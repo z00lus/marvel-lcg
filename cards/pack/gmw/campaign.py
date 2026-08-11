@@ -36,7 +36,7 @@ def _campaign_str(key: str, effect: 'Effect') -> str:
 def _generate_challenge_side_scheme(level: int, effect: 'Effect') -> 'CardFace':
     card = CardFactory.GenerateCard(
         CHALLENGE_SIDE_SCHEMES[level],
-        None,
+        Worlds.AsideDeck(effect),
         effect.world,
     )
     if Worlds.IsExpert(effect):

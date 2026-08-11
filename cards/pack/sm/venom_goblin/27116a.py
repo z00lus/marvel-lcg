@@ -33,7 +33,11 @@ def GetAbilities() -> Sequence['Ability']:
             "27098": "27162",
             "27099": "27163",
         }[x] for x in card_ids]
-        cards = CardFactory.GenerateCards(card_ids2, None, effect.world)
+        cards = CardFactory.GenerateCards(
+            card_ids2,
+            Worlds.AsideDeck(effect),
+            effect.world,
+        )
         Faces.ShuffleAllTo([x.face for x in cards], "EncounterDeck", effect)
 
     def campaign_expert(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
@@ -47,4 +51,3 @@ def GetAbilities() -> Sequence['Ability']:
             skies_over_new_york
         )
     ]
-

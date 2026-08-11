@@ -67,8 +67,13 @@ class AbilityFactoryCampaign:
     @staticmethod
     def PutCardIntoPlay(card_id: str, under_control: Literal["FirstPlayer"]|None=None, *, campaign_id: str|None=None) -> 'Ability':
         from game.card.factory import CardFactory
+        from game.operate.worlds import Worlds
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
-            card = CardFactory.GenerateCard(card_id, None, effect.world)
+            card = CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             face = card.face
             face.PutIntoPlay("FirstPlayer", effect, under_control=under_control != None)
         return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
@@ -77,8 +82,13 @@ class AbilityFactoryCampaign:
     def ShuffleCardIntoDeck(card_id: str, deck: Literal["EncounterDeck"], *, campaign_id: str|None=None) -> 'Ability':
         from game.card.factory import CardFactory
         from game.operate.faces import Faces
+        from game.operate.worlds import Worlds
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
-            card = CardFactory.GenerateCard(card_id, None, effect.world)
+            card = CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             Faces.ShuffleAllTo([card.face], deck, effect)
         return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
 
@@ -88,10 +98,15 @@ class AbilityFactoryCampaign:
         from engine.lib import Random
         from game.operate.campaign_logs import CampaignLog
         from game.operate.faces import Faces
+        from game.operate.worlds import Worlds
         def action(effect: 'Effect', message: 'Message.WhenCampaignSetup'):
             checked_ids = CampaignLog.GetList("Community Service: Victory for Scenarios #1-4", effect)
             card_id = Random.RandomChoice([x for x in card_ids if x not in checked_ids])
-            card = CardFactory.GenerateCard(card_id, None, effect.world)
+            card = CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             Faces.ShuffleAllTo([card.face], "EncounterDeck", effect)
         return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=campaign_id)
 

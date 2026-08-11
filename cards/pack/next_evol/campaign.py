@@ -40,7 +40,11 @@ def PutEarnedCampaignEnvironmentsIntoPlay() -> 'Ability':
     def action(effect: 'Effect', message: 'Message.WhenCampaignSetup') -> None:
         first_player = Worlds.GetFirstPlayer(effect)
         for card_id in _earned_environment_ids(effect):
-            card = CardFactory.GenerateCard(card_id, None, effect.world)
+            card = CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             card.face.PutIntoPlay(first_player, effect)
 
     return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
@@ -59,7 +63,7 @@ def SetupCampaignPlayerSideScheme(level: int) -> 'Ability':
         if current_id in PLAYER_SIDE_SCHEMES and current_id not in previously_selected:
             card = CardFactory.GenerateCard(
                 PLAYER_SIDE_SCHEMES[current_id][0],
-                None,
+                Worlds.AsideDeck(effect),
                 effect.world,
             )
             card.face.PutIntoPlay(Worlds.GetFirstPlayer(effect), effect)
@@ -67,7 +71,7 @@ def SetupCampaignPlayerSideScheme(level: int) -> 'Ability':
         encounter_faces = [
             CardFactory.GenerateCard(
                 PLAYER_SIDE_SCHEMES[card_id][1],
-                None,
+                Worlds.AsideDeck(effect),
                 effect.world,
             ).face
             for card_id in selected
@@ -134,9 +138,17 @@ def DealBlackTomAndCreepingWillows() -> 'Ability':
         black_tom = encounter_deck.FindCard(name="Black Tom Cassidy", card_type=Minion)
         willows = encounter_deck.FindCards(name="Creeping Willow", card_type=Minion)
         if not black_tom:
-            black_tom = CardFactory.GenerateCard("40132", None, effect.world).face
+            black_tom = CardFactory.GenerateCard(
+                "40132",
+                Worlds.AsideDeck(effect),
+                effect.world,
+            ).face
         while len(willows) < len(players):
-            willows.append(CardFactory.GenerateCard("40133", None, effect.world).face)
+            willows.append(CardFactory.GenerateCard(
+                "40133",
+                Worlds.AsideDeck(effect),
+                effect.world,
+            ).face)
         faces = [black_tom, *willows[:len(players)]]
         Rand.Shuffle(faces, effect)
 

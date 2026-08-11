@@ -75,7 +75,11 @@ def FollowSetupInstructionOfReputationTrack() -> 'Ability':
 
         if value >= 1:
             card_ids = CampaignLog.GetList("Osborn Tech: Reputation Track Penalty", effect)
-            cards = CardFactory.GenerateCards(card_ids, None, effect.world)
+            cards = CardFactory.GenerateCards(
+                card_ids,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             Faces.ShuffleAllTo([x.face for x in cards], "EncounterDeck", effect)
         if value >= 5:
             this.PlaceThreatOnSchemes("MainScheme", "1*", effect)

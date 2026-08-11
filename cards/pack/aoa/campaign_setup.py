@@ -86,7 +86,11 @@ def AddPreviousMissionRewardsAndPenalties(level: int) -> 'Ability':
                 _generate_into_player_deck(ally_id, player, effect)
 
         if "45168a" in removed and "45168a" not in defeated:
-            sea_wall = CardFactory.GenerateCard("45177", None, effect.world).face
+            sea_wall = CardFactory.GenerateCard(
+                "45177",
+                Worlds.AsideDeck(effect),
+                effect.world,
+            ).face
             Faces.ShuffleAllTo([sea_wall], "EncounterDeck", effect)
 
     return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
@@ -95,7 +99,11 @@ def AddPreviousMissionRewardsAndPenalties(level: int) -> 'Ability':
 def ShuffleAgeOfApocalypseSetIntoEncounterDeck() -> 'Ability':
     def action(effect: 'Effect', message: 'Message.WhenCampaignSetup') -> None:
         faces = [
-            CardFactory.GenerateCard(card_id, None, effect.world).face
+            CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            ).face
             for card_id in ["45164", "45164", "45165", "45165"]
         ]
         Faces.ShuffleAllTo(faces, "EncounterDeck", effect)
@@ -133,7 +141,7 @@ def SetupMission(level: int) -> 'Ability':
         if mission_id:
             mission = CardFactory.GenerateCard(
                 f"{mission_id},{mission_id[:-1]}b",
-                None,
+                Worlds.AsideDeck(effect),
                 effect.world,
             ).face
             mission.PutIntoPlay(first_player, effect)
@@ -141,13 +149,17 @@ def SetupMission(level: int) -> 'Ability':
         if overseer_id:
             overseer = CardFactory.GenerateCard(
                 f"{overseer_id},{overseer_id[:-1]}b",
-                None,
+                Worlds.AsideDeck(effect),
                 effect.world,
             ).face
             overseer.card.bind_discard_pile = Worlds.GetEncounterDiscardPile(effect)
             Faces.MoveAllTo([overseer], Worlds.ScenarioArea(effect, "MissionArea"), effect)
 
-        mission_team = CardFactory.GenerateCard("45171a,45171b", None, effect.world).face
+        mission_team = CardFactory.GenerateCard(
+            "45171a,45171b",
+            Worlds.AsideDeck(effect),
+            effect.world,
+        ).face
         mission_team.PutIntoPlay(first_player, effect, under_control=True)
 
         # Resolve the selected mission's campaign-log Setup instruction.
@@ -158,7 +170,11 @@ def SetupMission(level: int) -> 'Ability':
             for player in Worlds.GetPlayers(effect):
                 _generate_into_player_deck("45178", player, effect)
         elif mission_id == "45168a":
-            sea_wall = CardFactory.GenerateCard("45177", None, effect.world).face
+            sea_wall = CardFactory.GenerateCard(
+                "45177",
+                Worlds.AsideDeck(effect),
+                effect.world,
+            ).face
             Faces.ShuffleAllTo([sea_wall], "EncounterDeck", effect)
         elif mission_id == "45169a":
             for card_id in CAMPAIGN_ALLIES:

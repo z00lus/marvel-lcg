@@ -19,7 +19,11 @@ def _log_yes(key: str, effect: 'Effect') -> bool:
 
 
 def _generate_linked_face(card_ids: str, effect: 'Effect') -> 'CardFace':
-    return CardFactory.GenerateCard(card_ids, None, effect.world).face
+    return CardFactory.GenerateCard(
+        card_ids,
+        Worlds.AsideDeck(effect),
+        effect.world,
+    ).face
 
 
 def _flip_to_back(face: 'CardFace', effect: 'Effect') -> 'CardFace':
@@ -28,7 +32,11 @@ def _flip_to_back(face: 'CardFace', effect: 'Effect') -> 'CardFace':
 
 
 def _shuffle_encounter_card(card_id: str, effect: 'Effect') -> None:
-    face = CardFactory.GenerateCard(card_id, None, effect.world).face
+    face = CardFactory.GenerateCard(
+        card_id,
+        Worlds.AsideDeck(effect),
+        effect.world,
+    ).face
     Faces.ShuffleAllTo([face], "EncounterDeck", effect)
 
 

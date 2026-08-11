@@ -87,7 +87,11 @@ def EachPlayerPutRandomRoleUpgradeIntoPlay(level: int) -> 'Ability':
                 continue
 
             card_id = Rand.RandomChoice(available_ids, effect)
-            card = CardFactory.GenerateCard(card_id, None, effect.world)
+            card = CardFactory.GenerateCard(
+                card_id,
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             card.face.PutIntoPlay(player, effect, under_control=True)
 
     return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
@@ -98,7 +102,11 @@ def PutJubileeIntoPlay() -> 'Ability':
         from game.operate.campaign_logs import CampaignLog
 
         if CampaignLog.GetStr("Jubilee", effect):
-            card = CardFactory.GenerateCard("32088b", None, effect.world)
+            card = CardFactory.GenerateCard(
+                "32088b",
+                Worlds.AsideDeck(effect),
+                effect.world,
+            )
             card.face.PutIntoPlay(Worlds.GetFirstPlayer(effect), effect, under_control=True)
 
     return AbilityFactoryCampaign.WhenCampaignSetup(action, campaign_id=CAMPAIGN_ID)
