@@ -157,8 +157,49 @@ class Effect(Object):
         self.context.self_costs_prepared = True
         return True
 
+    def ValidatePreparedSelfCosts(self) -> bool:
+        """Validate the complete prepared cost set before its first commit."""
+        reservations: Set[Tuple[str, int]] = set()
+        consumptions: Dict[Tuple[str, int, str], Tuple[int, int]] = {}
+        for cost_func in self.cost_func.GetAll():
+            try:
+                valid = cost_func.ValidatePreparedCost(self)
+            except Exception as exc:
+                info = Log.OnCrash(
+                    CATEGORY_NAME,
+                    exc,
+                    self.GetDisplayName(),
+                    cost_func.call_fn,
+                )
+                self.world.render.ErrorOccurred(info)
+                return False
+            if not valid:
+                return False
+            for kind, target in cost_func.GetPreparedReservations():
+                reservation = (kind, id(target))
+                if reservation in reservations:
+                    return False
+                reservations.add(reservation)
+            for kind, target, name, requested, available in cost_func.GetPreparedConsumptions():
+                key = (kind, id(target), name)
+                total, previous_available = consumptions.get(key, (0, available))
+                if previous_available != available:
+                    return False
+                total += requested
+                if total > available:
+                    return False
+                consumptions[key] = (total, available)
+        return True
+
     def ProcessSelfCost(self) -> bool:
         if not self.PrepareSelfCosts():
+            return False
+
+        # Revalidate every choice as one set before committing the first
+        # mutation. This catches stale targets and mutually exclusive costs
+        # (such as exhausting the same card twice) without partial payment.
+        if not self.ValidatePreparedSelfCosts():
+            self.ClearPreparedSelfCosts()
             return False
 
         for cost_func in self.cost_func.GetAll():

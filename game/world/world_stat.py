@@ -7,6 +7,7 @@ from game.message import *
 
 class WorldStat:
     def __init__(self) -> None:
+        self.once_per_game_effects: List['Effect'] = []
         self.once_per_round_effects: List['Effect'] = []
         self.once_per_round_player_effects: Dict['Player', List['Effect']] = {}
         self.once_per_phase_player_effects: Dict['Player', List['Effect']] = {}
@@ -47,6 +48,7 @@ class WorldStat:
             self.once_per_phase_player_effects[player].append(effect)
 
     def RecordEffect(self, effect: 'Effect'):
+        self.once_per_game_effects.append(effect)
         self.once_per_round_effects.append(effect)
         self.once_per_phase_effects.append(effect)
 
@@ -62,6 +64,9 @@ class WorldStat:
 
     ################################################################################
     # return True means can process
+    def IsOncePerGame(self, ability: 'Ability|None') -> bool:
+        return ability not in [x.ability for x in self.once_per_game_effects]
+
     def IsOncePerRound(self, ability: 'Ability|None') -> bool:
         return ability not in [x.ability for x in self.once_per_round_effects]
 
@@ -77,4 +82,3 @@ class WorldStat:
 
     def IsOncePerPhase(self, ability: 'Ability|None') -> bool:
         return ability not in [x.ability for x in self.once_per_phase_effects]
-

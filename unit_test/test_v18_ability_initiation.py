@@ -7,6 +7,7 @@ from engine import Engine
 
 from game.effect.effect_checker import EffectChecker
 from game.effect.effect import Effect
+from game.effect.effect_context import EffectContext
 from game.effect.effect_target_cost import TargetCost
 from game.element.cost import Cost
 from game.element.resources import Resources
@@ -59,7 +60,11 @@ class V18PlayInitiationOrderTests(unittest.TestCase):
                 selectors=[],
                 flags=SimpleNamespace(is_delay_ability=False),
             ),
-            context=SimpleNamespace(paid_this_resources=Resources("0")),
+            context=SimpleNamespace(
+                paid_this_resources=Resources("0"),
+                ResetFailedInitiation=Mock(),
+            ),
+            ClearPreparedSelfCosts=Mock(),
         )
         player = SimpleNamespace(
             stat=Mock(),
@@ -184,6 +189,58 @@ class V18PlayInitiationOrderTests(unittest.TestCase):
         move_back.assert_called_once_with([face], source, effect, index=3)
         discard.assert_not_called()
         face.Play.assert_not_called()
+        effect.ClearPreparedSelfCosts.assert_called_once()
+        effect.context.ResetFailedInitiation.assert_called_once()
+
+
+class V18FailedInitiationContextTests(unittest.TestCase):
+
+    def MakeContext(self):
+        owner = object()
+        effect = SimpleNamespace(
+            this=SimpleNamespace(GetControlByOrOwner=lambda: owner),
+        )
+        context = EffectContext(effect)
+        return context, owner
+
+    def test_failed_initiation_clears_targets_payment_and_cached_legality(self):
+        context, owner = self.MakeContext()
+        context.targets_internal = [object()]
+        context.all_legal_targets = [object()]
+        context.target_range = (1, 2)
+        context.paid_this_res_effects = [object()]
+        context.paid_this_resources = Resources("YR")
+        context.paid_this_cost = Cost("2")
+        context.this_effect_need_cost = Cost("2")
+        context.chosen_cost_x = 2
+        context.play_initiation_checked = True
+        context.play_initiation_allowed = True
+        context.self_costs_prepared = True
+        context.allowed_removed_cards.add(object())
+
+        context.ResetFailedInitiation()
+
+        self.assertEqual(context.targets_internal, [])
+        self.assertEqual(context.all_legal_targets, [])
+        self.assertEqual(context.target_range, (0, 0))
+        self.assertEqual(context.paid_this_res_effects, [])
+        self.assertEqual(context.paid_this_resources.val, 0)
+        self.assertEqual(context.paid_this_cost.val, 0)
+        self.assertIsNone(context.this_effect_need_cost)
+        self.assertIsNone(context.chosen_cost_x)
+        self.assertFalse(context.play_initiation_checked)
+        self.assertFalse(context.play_initiation_allowed)
+        self.assertFalse(context.self_costs_prepared)
+        self.assertEqual(context.allowed_removed_cards, set())
+        self.assertIs(context.initiator, owner)
+
+    def test_successful_operation_cleanup_clears_resolved_targets(self):
+        context, _ = self.MakeContext()
+        context.targets_internal = [object()]
+
+        context.ResetAfterOperation()
+
+        self.assertEqual(context.targets_internal, [])
 
     def test_normative_play_check_is_cached_for_one_initiation(self):
         context = SimpleNamespace(
@@ -339,6 +396,7 @@ class V18PlayPaymentRollbackTests(unittest.TestCase):
             context=context,
             cost_func=SimpleNamespace(GetAll=lambda: []),
             PrepareSelfCosts=Mock(return_value=True),
+            ValidatePreparedSelfCosts=Mock(return_value=True),
             ClearPreparedSelfCosts=Mock(),
             world=SimpleNamespace(
                 rule=SimpleNamespace(v17_actions_activations_costs=True),
@@ -370,6 +428,16 @@ class V18PlayPaymentRollbackTests(unittest.TestCase):
 
         self.assertFalse(checker.CheckBeforeActive(player))
 
+        player.SpendResource.assert_not_called()
+        player.res_pool.Reset.assert_not_called()
+
+    def test_conflicting_prepared_costs_do_not_spend_resources(self):
+        checker, player = self.MakeChecker("Y", "1")
+        checker.effect.ValidatePreparedSelfCosts.return_value = False
+
+        self.assertFalse(checker.CheckBeforeActive(player))
+
+        checker.effect.ClearPreparedSelfCosts.assert_called_once()
         player.SpendResource.assert_not_called()
         player.res_pool.Reset.assert_not_called()
 
@@ -478,6 +546,9 @@ class V18AbilityInitiationChecklistTests(unittest.TestCase):
             PrepareSelfCosts=Mock(
                 side_effect=lambda: order.append('costs prepared') or True,
             ),
+            ValidatePreparedSelfCosts=Mock(
+                side_effect=lambda: order.append('costs validated') or True,
+            ),
             ClearPreparedSelfCosts=Mock(),
         )
         checker = EffectChecker.__new__(EffectChecker)
@@ -493,7 +564,12 @@ class V18AbilityInitiationChecklistTests(unittest.TestCase):
 
         self.assertEqual(
             order,
-            ['target confirmed', 'costs prepared', 'resources spent'],
+            [
+                'target confirmed',
+                'costs prepared',
+                'costs validated',
+                'resources spent',
+            ],
         )
 
     def test_canceling_a_later_cost_does_not_commit_an_earlier_cost(self):
@@ -555,6 +631,7 @@ class V18AbilityInitiationChecklistTests(unittest.TestCase):
             context=context,
             cost_func=SimpleNamespace(GetAll=lambda: []),
             PrepareSelfCosts=Mock(return_value=False),
+            ValidatePreparedSelfCosts=Mock(return_value=True),
             ClearPreparedSelfCosts=Mock(),
         )
         checker = EffectChecker.__new__(EffectChecker)
@@ -595,20 +672,42 @@ class V18AbilityInitiationChecklistTests(unittest.TestCase):
 
         stat.RecordEffect(effect)
         stat.RecordEffectWithPlayer(effect, player)
+        self.assertFalse(stat.IsOncePerGame(ability))
         self.assertFalse(stat.IsOncePerPhase(ability))
         self.assertFalse(stat.IsOncePerRound(ability))
         self.assertFalse(stat.IsOncePerPhasePerPlayer(ability, player))
         self.assertFalse(stat.IsOncePerRoundPerPlayer(ability, player))
 
         stat.OnPhaseEnd()
+        self.assertFalse(stat.IsOncePerGame(ability))
         self.assertTrue(stat.IsOncePerPhase(ability))
         self.assertTrue(stat.IsOncePerPhasePerPlayer(ability, player))
         self.assertFalse(stat.IsOncePerRound(ability))
         self.assertFalse(stat.IsOncePerRoundPerPlayer(ability, player))
 
         stat.OnRoundEnd()
+        self.assertFalse(stat.IsOncePerGame(ability))
         self.assertTrue(stat.IsOncePerRound(ability))
         self.assertTrue(stat.IsOncePerRoundPerPlayer(ability, player))
+
+    def test_once_per_game_limit_is_reconstructed_by_replaying_the_activation(self):
+        ability = object()
+
+        def reconstruct_stat():
+            stat = WorldStat()
+            stat.RecordEffect(SimpleNamespace(ability=ability))
+            return stat
+
+        original = reconstruct_stat()
+        continued = reconstruct_stat()
+
+        self.assertFalse(original.IsOncePerGame(ability))
+        self.assertFalse(continued.IsOncePerGame(ability))
+        for stat in (original, continued):
+            stat.OnPhaseEnd()
+            stat.OnRoundEnd()
+            stat.OnTurnEnd()
+            self.assertFalse(stat.IsOncePerGame(ability))
 
 if __name__ == '__main__':
     unittest.main()

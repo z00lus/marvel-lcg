@@ -112,6 +112,7 @@ class V17SimultaneousResourceCostTests(unittest.TestCase):
             context=context,
             cost_func=SimpleNamespace(GetAll=lambda: [spend]),
             PrepareSelfCosts=Mock(return_value=True),
+            ValidatePreparedSelfCosts=Mock(return_value=True),
             ClearPreparedSelfCosts=Mock(),
             world=SimpleNamespace(
                 rule=SimpleNamespace(v17_actions_activations_costs=True),
@@ -183,6 +184,7 @@ class V17ActionCostEligibilityTests(unittest.TestCase):
             context=context,
             targets=[],
             PrepareSelfCosts=Mock(return_value=True),
+            ValidatePreparedSelfCosts=Mock(return_value=True),
             ClearPreparedSelfCosts=Mock(),
         )
         checker.ability = SimpleNamespace(selectors=[])

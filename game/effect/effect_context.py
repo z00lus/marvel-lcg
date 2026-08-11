@@ -90,4 +90,22 @@ class EffectContext:
 
         self.initiator: User = self.effect.this.GetControlByOrOwner()
 
-        self.targets_internal: List['CardFace']
+        self.targets_internal = []
+
+    def ResetFailedInitiation(self) -> None:
+        """Discard every transient choice from an uncommitted initiation."""
+        self.target_range = (0, 0)
+        self.all_legal_targets = []
+        self.targets_internal = []
+        self.ignore_resource_cost = False
+        self.ask_player = None
+        self.this_effect_need_cost = None
+        self.chosen_cost_x = None
+        self.paid_this_res_effects = []
+        self.paid_this_cost = Cost("0")
+        self.paid_this_resources = Resources("0")
+        self.play_initiation_checked = False
+        self.play_initiation_allowed = False
+        self.self_costs_prepared = False
+        self.allowed_removed_cards.clear()
+        self.initiator = self.effect.this.GetControlByOrOwner()

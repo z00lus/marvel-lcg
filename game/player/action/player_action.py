@@ -483,6 +483,12 @@ class PlayerAction:
             effect.ability.selectors[0]:
             effect.ability.selectors[0].IfSelectTargetFailure(effect)
 
+        # No part of a failed initiation may leak into the next attempt.  In
+        # particular, target and resource selections are controller input and
+        # must not survive a canceled or no-longer-payable action.
+        effect.ClearPreparedSelfCosts()
+        effect.context.ResetFailedInitiation()
+
         # Error
         from game.test import Test
         if Test.IsInTesting():

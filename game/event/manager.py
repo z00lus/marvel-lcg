@@ -492,6 +492,16 @@ class EventManager:
                 current_player = world.GetCurrentPlayer()
                 check_player = None
 
+                # Optional-effect routing contract:
+                # - resource effects belong to the player paying the cost;
+                # - encounter-card actions belong to the active player;
+                # - player cards in play belong to their controller, while
+                #   player cards out of play belong to that area's owner;
+                # - obligations in the obligations area belong to the player
+                #   they were given to.
+                # These checks select who may initiate the effect. Form,
+                # timing, targets, costs, and limits are checked later by the
+                # EffectChecker and must not be duplicated here.
                 if effect.ability.flags.is_resource or effect.ability.flags.is_discard_pay:
                     check_player = message.CastTo(Message.WhenPlayerPayingResources).GetToPlayer()
                 elif effect.ability.any_player_can_trigger_this_when:

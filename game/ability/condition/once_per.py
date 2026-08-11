@@ -11,6 +11,12 @@ def GetForDelayAbility(effect: 'Effect') -> 'Ability|None':
 class ConditionOncePer:
 
     @staticmethod
+    def LimitOncePerGame(effect: 'Effect', message: 'Message2') -> bool:
+        world = effect.world
+        ability = GetForDelayAbility(effect)
+        return world.stat.IsOncePerGame(ability)
+
+    @staticmethod
     def LimitOncePerRound(effect: 'Effect', message: 'Message2') -> bool:
         world = effect.world
         ability = GetForDelayAbility(effect)
@@ -51,4 +57,3 @@ class ConditionOncePer:
         if ability == None:
             return True
         return ability.paper not in [x.ability.paper for x in message.once_per_event_effects]
-

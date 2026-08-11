@@ -272,6 +272,8 @@ class EffectChecker:
                     target,
                     paid_effects,
                 )
+                if selected_resources == None:
+                    return False
                 if not selected_resources.IsMatchCost(need_cost):
                     return False
                 if payment.component_costs:
@@ -306,6 +308,10 @@ class EffectChecker:
         # All additional-cost targets and choices are confirmed before any
         # resource card is spent or any exhaust/discard cost changes state.
         if not effect.PrepareSelfCosts():
+            self.failures.Set(player, EffectFailure.CheckPay)
+            return False
+        if not effect.ValidatePreparedSelfCosts():
+            effect.ClearPreparedSelfCosts()
             self.failures.Set(player, EffectFailure.CheckPay)
             return False
 

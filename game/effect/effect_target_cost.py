@@ -102,8 +102,14 @@ class TargetCost:
                         effects.append(effect)
         return effects
 
-    def GetResourcesForEffects(self, face: 'CardFace|None', paid_effects: Sequence['Effect']) -> 'Resources':
-        """Calculate a selected payment without applying any resource effects."""
+    def GetResourcesForEffects(self, face: 'CardFace|None', paid_effects: Sequence['Effect']) -> 'Resources|None':
+        """Calculate a selected payment without applying any resource effects.
+
+        A payment offer can become stale between rendering the choice and
+        confirming it (for example after a target-dependent discount changes).
+        Treat an effect that is no longer valid for the selected target as a
+        failed payment instead of raising during ability initiation.
+        """
         resources = Resources("0")
         payment = self.GetPayment(face)
         for paid_effect in paid_effects:
@@ -113,7 +119,8 @@ class TargetCost:
                     resources += Resources.FromText(effect_resources[paid_effect])
                     found = True
                     break
-            assert found, f"{paid_effect=} is not valid for {face=}"
+            if not found:
+                return None
         return resources
 
     def FindPayEffect(self, target: 'CardFace|None', effect_id: int) -> 'Effect|None':

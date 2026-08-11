@@ -8,9 +8,11 @@ from engine import Engine
 
 from game.ability.condition.card_type import ConditionCardType
 from game.card.card_finder import CardFinder
-from game.card.face.base import Scheme2
+from game.card.face.base import Enemy, Scheme2, Unit2, Villain
 from game.card.face.card_type import MainScheme
+from game.message import Message
 from game.operate.worlds import Worlds
+from game.player import Player
 from game.selector.selector_filter import SelectorFilter
 
 
@@ -110,6 +112,52 @@ class V18ReferentialTargetingTests(unittest.TestCase):
             self.assertTrue(main_scheme.CanBeThwartBy(effect))
 
         effect.IsIgnoreKeyword.assert_called_once_with('Crisis', effect)
+
+    def test_guard_blocks_only_the_villain_target(self):
+        player = object.__new__(Player)
+        guard = Mock()
+        guard.IsGuard.return_value = True
+        player.GetEngagedMinions = Mock(return_value=[guard])
+        effect = Mock(initiator=player)
+        effect.GetInitiator.return_value = player
+        effect.IsIgnoreKeyword.return_value = False
+        villain = object.__new__(Villain)
+
+        with patch.object(Unit2, 'CanBeAttackBy', return_value=True):
+            self.assertFalse(villain.CanBeAttackBy(effect))
+
+        ordinary_enemy = SimpleNamespace()
+        can_attack = SimpleNamespace(can_be_attack=True, Send=Mock())
+        with patch.object(Enemy, 'IsType', return_value=True), \
+             patch.object(
+                 Message,
+                 'CheckIfUnitCanBeAttackBy',
+                 return_value=can_attack,
+             ):
+            self.assertTrue(Unit2.CanBeAttackBy(ordinary_enemy, effect))
+
+    def test_patrol_blocks_only_the_main_scheme_target(self):
+        patrol = Mock()
+        effect = Mock()
+        effect.IsIgnoreKeyword.return_value = False
+        effect.IsPlayerInitiator.return_value = True
+        main_scheme = object.__new__(MainScheme)
+        main_scheme.card = Mock()
+
+        with patch.object(Worlds, 'FindMainScheme', return_value=main_scheme), \
+             patch.object(Worlds, 'GetCrisisFaces', return_value=[]), \
+             patch.object(MainScheme, 'GetPatrolFaces', return_value=[patrol]), \
+             patch.object(Scheme2, 'CanBeThwartBy', return_value=True):
+            self.assertFalse(main_scheme.CanBeThwartBy(effect))
+
+        side_scheme = SimpleNamespace(threat=1)
+        can_thwart = SimpleNamespace(can_be_thwart=True, Send=Mock())
+        with patch.object(
+            Message,
+            'CheckIfSchemeCanBeThwartBy',
+            return_value=can_thwart,
+        ):
+            self.assertTrue(Scheme2.CanBeThwartBy(side_scheme, effect))
 
     def test_improvisation_does_not_offer_crisis_blocked_main_scheme(self):
         module = import_module('cards.pack.fne.echo.60046')

@@ -1009,6 +1009,10 @@ class Ability:
         self.default_choose = True
         return self
 
+    def LimitOncePerGame(self) -> 'Ability':
+        self.conditions = [Condition.LimitOncePerGame] + self.conditions
+        return self
+
     def LimitOncePerRound(self) -> 'Ability':
         self.conditions = [Condition.LimitOncePerRound] + self.conditions
         return self
@@ -1120,7 +1124,8 @@ class Ability:
         self.labels = effect.ability.labels[:]
         self.func_names = set(effect.ability.func_names)
         # self.conditions += effect.ability.conditions
-        for condition in [Condition.LimitOncePerRound,
+        for condition in [Condition.LimitOncePerGame,
+                        Condition.LimitOncePerRound,
                         Condition.LimitOncePerRoundPerPlayer,
                         Condition.LimitOncePerPhase,
                         Condition.LimitOncePerEvent,

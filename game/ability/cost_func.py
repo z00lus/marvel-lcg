@@ -33,10 +33,11 @@ def TakeDamageOnCall(targets: Sequence['CardFace'], damage: int, effect: 'Effect
 class CostFunc:
 
     class Base:
-        def __init__(self, selector: 'Selector', call_fn: Callable[[Sequence['CardFace'], 'Effect', 'Player|None'], bool]|None, check_fn: Callable[['Effect'], None|Literal[True]]|None=None) -> None:
+        def __init__(self, selector: 'Selector', call_fn: Callable[[Sequence['CardFace'], 'Effect', 'Player|None'], bool]|None, check_fn: Callable[['Effect'], None|Literal[True]]|None=None, *, validate_fn: Callable[[Sequence['CardFace'], 'Effect'], bool]|None=None) -> None:
             self.selector = selector
             self.call_fn = call_fn
             self.check_fn = check_fn
+            self.validate_fn = validate_fn
             if self.selector:
                 self.selector.selector_end.not_move = True
             self.cost_legal_targets: Sequence[CardFace] = []
@@ -48,11 +49,23 @@ class CostFunc:
         @final
         def HasTargets(self, effect: 'Effect') -> bool:
             if self.check_fn and self.check_fn(effect):
-                return True
-            if self.selector:
-                return self.selector.HasLegalTargets(effect)
+                targets = []
+                has_targets = True
+            elif self.selector:
+                targets = self.selector.GetAllLegalTargets(effect, just_check=True)
+                has_targets = len(targets) >= self.selector.selector_range.GetTargetMin(
+                    effect,
+                    targets,
+                )
             else:
-                return True
+                targets = []
+                has_targets = True
+
+            if not has_targets:
+                return False
+            if self.validate_fn:
+                return self.validate_fn(targets, effect)
+            return True
 
         @final
         def PrepareCost(self, effect: 'Effect', player: 'User') -> bool:
@@ -110,6 +123,50 @@ class CostFunc:
             return True
 
         @final
+        def ValidatePreparedCost(self, effect: 'Effect') -> bool:
+            """Revalidate a prepared choice without asking for input.
+
+            Resource abilities and other initiation windows can change the
+            board after a cost target was chosen.  Validate every prepared
+            target immediately before the first cost is committed so a stale
+            later cost cannot leave an earlier cost partially paid.
+            """
+            selector_is_valid = False
+            if self.check_fn and self.check_fn(effect):
+                selector_is_valid = True
+            elif not self.selector:
+                selector_is_valid = True
+            else:
+                legal_targets = self.selector.GetAllLegalTargets(
+                    effect,
+                    just_check=True,
+                )
+                selector_is_valid = all(
+                    target in legal_targets
+                    for target in self.cost_legal_targets
+                )
+
+            if not selector_is_valid:
+                return False
+            if self.validate_fn:
+                return self.validate_fn(self.cost_legal_targets, effect)
+            return True
+
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            """Return mutually-exclusive state claimed by this cost."""
+            return []
+
+        def GetPreparedConsumptions(self) -> List[Tuple[str, 'CardFace', str, int, int]]:
+            """Return additive state consumed by this cost.
+
+            Each entry contains the state kind, target, counter/token name,
+            requested amount, and amount currently available. The effect
+            aggregates entries from every prepared cost before committing any
+            of them.
+            """
+            return []
+
+        @final
         def ClearPreparedCost(self) -> None:
             self.cost_legal_targets = []
 
@@ -160,7 +217,12 @@ class CostFunc:
     #         super().__init__(selector, on_call)
 
     class Custom(Base):
-        def __init__(self, selector: 'Selector|CardFinder|None', call_fn: Callable[[Sequence['CardFace'], 'Effect'], bool]) -> None:
+        def __init__(self,
+                     selector: 'Selector|CardFinder|None',
+                     call_fn: Callable[[Sequence['CardFace'], 'Effect'], bool],
+                     *,
+                     validate_fn: Callable[[Sequence['CardFace'], 'Effect'], bool]|None=None,
+                     ) -> None:
             self.return_value: Any = None
             def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None'):
                 return call_fn(targets, effect)
@@ -168,7 +230,7 @@ class CostFunc:
                 selector = Select.From("This")
             elif isinstance(selector, CardFinder):
                 selector = Select.From(selector)
-            super().__init__(selector, on_call)
+            super().__init__(selector, on_call, validate_fn=validate_fn)
 
     class LookAtDeck(Base):
         def __init__(self, deck_name: Literal["YourPlayerDeck", "EncounterDeck"], size: int, *, discard:int=0) -> None:
@@ -253,6 +315,10 @@ class CostFunc:
                 )
             selector.selector_filter.AddParameter(canbe_exhaust=True)
             super().__init__(selector, on_call, on_check)
+
+        @override
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            return [("ready", target) for target in self.cost_legal_targets]
 
     # class Choose2(Base):
     #     def __init__(self, traits: List["CardFace.TRAITS"],
@@ -441,6 +507,19 @@ class CostFunc:
                     trait: "CardFace.TRAITS|None"=None,
                     card_type: 'Type[TC]|Any|None'=None,) -> None:
             from game.card.card_finder import CardFinder
+            self.value = value
+
+            def can_pay_damage(effect: 'Effect', face: 'CardFace') -> bool:
+                from game.ability.condition.card_type import ConditionCardType
+                from game.card.face.base import Unit2
+
+                if not ConditionCardType.TargetCanTakeDamage(effect, face):
+                    return False
+                unit = face.CastTo(Unit2)
+                damage = value if isinstance(value, int) else value(effect)
+                # Damage paid as a cost must all be taken and cannot defeat
+                # the character. Tough would prevent the damage instead.
+                return unit.health > damage and not unit.IsTough()
 
             def on_call(targets: Sequence['CardFace'], effect: 'Effect', player: 'Player|None') -> bool:
                 if not isinstance(value, int):
@@ -461,8 +540,27 @@ class CostFunc:
                         card_type=card_type,
                     ),
                 )
-            selector.selector_filter.AddParameter(has_non_health=False)
+            selector.selector_filter.AddParameter(
+                has_non_health=False,
+                check_effect_fn=can_pay_damage,
+            )
             super().__init__(selector, on_call)
+
+        @override
+        def GetPreparedConsumptions(self) -> List[Tuple[str, 'CardFace', str, int, int]]:
+            from game.card.face.base import Unit2
+            if not isinstance(self.value, int):
+                return []
+            return [
+                (
+                    "health",
+                    target,
+                    "health",
+                    self.value,
+                    max(0, target.CastTo(Unit2).health - 1),
+                )
+                for target in self.cost_legal_targets
+            ]
 
     class TakeDamageUpTo(Base):
         def __init__(self, maximum: int,
@@ -643,6 +741,10 @@ class CostFunc:
             )
             super().__init__(selector, on_call)
 
+        @override
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            return [("zone", target) for target in self.cost_legal_targets]
+
     class RemoveFromCampaignLog(Base):
         def __init__(self, target: 'Literal["This"]',
                     ) -> None:
@@ -688,6 +790,10 @@ class CostFunc:
                 )
             super().__init__(selector, on_call)
 
+        @override
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            return [("zone", target) for target in self.cost_legal_targets]
+
     class ReturnToHand(Base):
         def __init__(self,
                     target: 'TARGET_TYPE|None'=None,
@@ -730,6 +836,10 @@ class CostFunc:
             # if selector.filter.finder.card_type == None:
             #     selector.filter.AddFinder(CardFinder(card_type=PlayerCard))
             super().__init__(selector, on_call)
+
+        @override
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            return [("zone", target) for target in self.cost_legal_targets]
 
     # "01018"
     class Discard(Base):
@@ -798,6 +908,10 @@ class CostFunc:
             super().__init__(selector, on_call)
 
         @override
+        def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
+            return [("zone", target) for target in self.cost_legal_targets]
+
+        @override
         def OnEffectEnd(self, targets: Sequence['CardFace'], effect: 'Effect'):
             pass
 
@@ -841,6 +955,8 @@ class CostFunc:
             from game.card.face.attribute.can_place_counter import CanPlaceCounter
             # from game.operate.faces import Faces
             self.return_remove_counter: int = 0
+            self.size = size
+            self.name = name
 
             def has_enough_counter(effect: 'Effect', face: 'CardFace') -> bool:
                 # TODO: Fix
@@ -900,6 +1016,22 @@ class CostFunc:
             selector.selector_filter.AddParameter(check_effect_fn=has_enough_counter)
             super().__init__(selector, on_call)
 
+        @override
+        def GetPreparedConsumptions(self) -> List[Tuple[str, 'CardFace', str, int, int]]:
+            from game.card.face.attribute.can_place_counter import CanPlaceCounter
+            if not isinstance(self.size, int):
+                return []
+            return [
+                (
+                    "counter",
+                    target,
+                    self.name,
+                    self.size,
+                    target.CastTo(CanPlaceCounter).GetCounters(self.name),
+                )
+                for target in self.cost_legal_targets
+            ]
+
     class PlaceCounter(Base):
         def __init__(self,
                      target: 'TARGET_TYPE',
@@ -948,6 +1080,8 @@ class CostFunc:
                      name: 'CardFace.TOKEN'):
             from game.card.face.attribute.can_place_token import CanPlaceToken
             self.return_removed_tokens = 0
+            self.size = size
+            self.name = name
 
             def has_enough_counter(effect: 'Effect', face: 'CardFace') -> bool:
                 if isinstance(face, CanPlaceToken):
@@ -992,6 +1126,22 @@ class CostFunc:
                 selector = Select.From(target)
             selector.selector_filter.AddParameter(check_effect_fn=has_enough_counter)
             super().__init__(selector, on_call)
+
+        @override
+        def GetPreparedConsumptions(self) -> List[Tuple[str, 'CardFace', str, int, int]]:
+            from game.card.face.attribute.can_place_token import CanPlaceToken
+            if not isinstance(self.size, int):
+                return []
+            return [
+                (
+                    "token",
+                    target,
+                    self.name,
+                    self.size,
+                    target.CastTo(CanPlaceToken).GetTokens(self.name),
+                )
+                for target in self.cost_legal_targets
+            ]
 
     class RemoveEachCounter(Base):
         def __init__(self, target: 'TARGET_TYPE', name: 'CardFace.COUNTER') -> None:
