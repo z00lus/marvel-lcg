@@ -45,6 +45,12 @@ type SoloGamePayload = {
     campaign_log: Record<string, string>;
 };
 
+import {
+    DeckSourceController,
+    createDeckSourceController,
+    getDeckHeroCode,
+} from './marvelcdb_deck.js';
+
 const scenarioStorageKey = 'marvel_lcg_solo_scenario';
 const heroStorageKey = 'marvel_lcg_solo_hero';
 
@@ -59,10 +65,15 @@ const errorMessage = document.querySelector<HTMLElement>('#error-message')!;
 const expertMode = document.querySelector<HTMLInputElement>('#expert-mode')!;
 const expertModeDescription = document.querySelector<HTMLElement>('#expert-mode-description')!;
 const difficultySelection = document.querySelector<HTMLElement>('#difficulty-selection')!;
-
 let selectedScenario: ScenarioChoice | null = null;
 let selectedHero: HeroChoice | null = null;
 let isStarting = false;
+let heroChoices: HeroChoice[] = [];
+
+// The precon is the deck that ships with the hero; a MarvelCDB deck replaces
+// only the player deck, so the hero choice stays the source of truth for the
+// signature cards, obligations and nemesis set.
+let deckSourceController: DeckSourceController | null = null;
 
 function getFileName(path: string): string {
     return path.replace(/^.*[\\/]/, '').replace(/\.[^/.]+$/, '');
@@ -81,7 +92,13 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 function updatePlayButton(): void {
-    playButton.disabled = isStarting || !selectedScenario || !selectedHero;
+    const awaitingDeck = deckSourceController?.getSource() === 'marvelcdb'
+        && !deckSourceController.getDeck();
+    playButton.disabled = isStarting
+        || deckSourceController?.isBusy() === true
+        || !selectedScenario
+        || !selectedHero
+        || awaitingDeck;
 }
 
 function markSelected(container: HTMLElement, selectedId: string): void {
@@ -111,12 +128,17 @@ function selectScenario(choice: ScenarioChoice): void {
     updatePlayButton();
 }
 
-function selectHero(choice: HeroChoice): void {
+function selectHero(choice: HeroChoice, keepMarvelCdbDeck = false): void {
     selectedHero = choice;
     localStorage.setItem(heroStorageKey, choice.id);
     heroSelection.textContent = choice.name;
     markSelected(heroList, choice.id);
     errorMessage.textContent = '';
+    // Picking a different hero by hand abandons a loaded deck; a deck that
+    // switched the hero itself keeps it, having just supplied it.
+    if (!keepMarvelCdbDeck) {
+        deckSourceController?.clear();
+    }
     updatePlayButton();
 }
 
@@ -238,6 +260,7 @@ function renderScenarios(choices: ScenarioChoice[]): void {
 
 function renderHeroes(choices: HeroChoice[]): void {
     const savedId = localStorage.getItem(heroStorageKey);
+    heroChoices = choices;
     heroList.replaceChildren();
 
     for (const choice of choices) {
@@ -259,6 +282,26 @@ function renderHeroes(choices: HeroChoice[]): void {
 }
 
 async function initialize(): Promise<void> {
+    deckSourceController = createDeckSourceController({
+        onChange: updatePlayButton,
+        onResolved: (deck) => {
+            // The deck names its own hero, so a mismatch with the current
+            // selection is corrected rather than rejected.
+            const heroCode = getDeckHeroCode(deck);
+            const match = heroChoices.find((choice) =>
+                getFirstCardId(choice.data.hero ?? []).toLowerCase() === heroCode);
+            if (match && match.id !== selectedHero?.id) {
+                selectHero(match, true);
+                // The hero grid is long; a switch off-screen would look like
+                // nothing happened.
+                heroList.querySelector(`[data-id="${CSS.escape(match.id)}"]`)
+                    ?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+                return `Switched to ${match.data.name}`;
+            }
+            return null;
+        },
+    });
+
     const [scenarioResult, heroResult] = await Promise.allSettled([
         loadScenarioChoices(),
         loadHeroChoices(),
@@ -285,9 +328,19 @@ async function startGame(): Promise<void> {
     if (isStarting || !selectedScenario || !selectedHero) {
         return;
     }
+    const resolvedDeck = deckSourceController?.getSource() === 'marvelcdb'
+        ? deckSourceController.getDeck()
+        : null;
+    if (deckSourceController?.getSource() === 'marvelcdb' && !resolvedDeck) {
+        return;
+    }
 
     const scenarioChoice = selectedScenario;
     const heroChoice = selectedHero;
+    // A resolved MarvelCDB deck is a complete hero deck -- the conversion keeps
+    // the hero, signature cards, obligations and nemesis set from the precon and
+    // replaces only the player deck.
+    const heroDeck = resolvedDeck ?? heroChoice.data;
 
     isStarting = true;
     errorMessage.textContent = '';
@@ -309,7 +362,7 @@ async function startGame(): Promise<void> {
         const payload: SoloGamePayload = {
             campaign_json: JSON.stringify(scenario),
             encounter_set_names: encounterSetNames,
-            hero_json: [JSON.stringify(heroChoice.data)],
+            hero_json: [JSON.stringify(heroDeck)],
             seed: -1,
             timeout: 0,
             challenges: [],

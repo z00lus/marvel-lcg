@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
-    <link rel="stylesheet" href="/public/css/solo.css">
+    <link rel="stylesheet" href="/public/css/solo.css?marvelcdb-deck=1">
 </head>
 <body>
     <main class="solo-setup">
@@ -66,10 +66,35 @@
             <div class="section-heading">
                 <div>
                     <span class="step-number">3</span>
-                    <h2 id="hero-heading">Starter Deck</h2>
+                    <h2 id="hero-heading">Deck</h2>
                 </div>
                 <span id="hero-selection" class="current-selection">Not selected</span>
             </div>
+            <div class="deck-source" role="group" aria-label="Deck">
+                <label class="deck-source-option">
+                    <input type="radio" name="deck-source" value="precon" checked>
+                    <span>Precon</span>
+                </label>
+                <label class="deck-source-option">
+                    <input type="radio" name="deck-source" value="marvelcdb">
+                    <span>MarvelCDB deck</span>
+                </label>
+                <button id="marvelcdb-update" type="button" class="marvelcdb-update" hidden>
+                    Update from MarvelCDB
+                </button>
+            </div>
+
+            <div id="marvelcdb-panel" class="marvelcdb-panel" hidden>
+                <div class="marvelcdb-row">
+                    <input id="marvelcdb-reference" type="text" inputmode="url"
+                           autocomplete="off" spellcheck="false"
+                           placeholder="Paste a MarvelCDB link or deck ID">
+                    <button id="marvelcdb-load" type="button">Load</button>
+                </div>
+                <p id="marvelcdb-deck-status" class="load-status" aria-live="polite"></p>
+                <div id="marvelcdb-recent" class="marvelcdb-recent" aria-label="Recent decks" hidden></div>
+            </div>
+
             <p id="hero-status" class="load-status">Loading decks…</p>
             <div id="hero-list" class="choice-grid" aria-live="polite"></div>
         </section>
@@ -81,6 +106,6 @@
         </footer>
     </main>
 
-    <script type="module" src="/public/js/campaign.js?ronin-session=1"></script>
+    <script type="module" src="/public/js/campaign.js?ronin-session=1&amp;marvelcdb-deck=1"></script>
 </body>
 </html>

@@ -448,6 +448,142 @@ input {
     display: none !important;
 }
 
+.deck-source {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.1rem;
+    margin: 0.9rem 0 1.15rem;
+}
+
+.deck-source-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #cfdae4;
+    cursor: pointer;
+}
+
+.deck-source-option input {
+    accent-color: #78d2ff;
+}
+
+.marvelcdb-update {
+    margin-left: auto;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid rgba(232, 184, 74, 0.6);
+    border-radius: 0.45rem;
+    background: rgba(43, 24, 51, 0.75);
+    color: #ffe7a3;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.marvelcdb-update[hidden] {
+    display: none;
+}
+
+.marvelcdb-update:hover:not(:disabled) {
+    border-color: #f0c25c;
+    background: rgba(63, 36, 74, 0.9);
+}
+
+.marvelcdb-update:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.marvelcdb-panel {
+    margin: 0 0 1.35rem;
+    padding: 0.9rem;
+    border: 2px solid rgba(120, 151, 174, 0.25);
+    border-radius: 0.72rem;
+    background: linear-gradient(145deg, rgba(33, 48, 62, 0.72), rgba(15, 25, 35, 0.72));
+}
+
+.marvelcdb-panel[hidden] {
+    display: none;
+}
+
+.marvelcdb-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.marvelcdb-row input {
+    flex: 1 1 18rem;
+    min-width: 0;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid rgba(120, 151, 174, 0.4);
+    border-radius: 0.45rem;
+    background: rgba(11, 18, 26, 0.85);
+    color: #eef2f6;
+    font: inherit;
+}
+
+.marvelcdb-row input:focus {
+    outline: none;
+    border-color: #78d2ff;
+}
+
+.marvelcdb-row button {
+    padding: 0.5rem 1.1rem;
+    border: 1px solid rgba(120, 210, 255, 0.55);
+    border-radius: 0.45rem;
+    background: rgba(30, 62, 84, 0.9);
+    color: #d9f1ff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.marvelcdb-row button:hover:not(:disabled) {
+    border-color: #78d2ff;
+    background: rgba(41, 84, 112, 0.95);
+}
+
+.marvelcdb-row button:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.load-status.error {
+    color: #ff9a8a;
+}
+
+.marvelcdb-recent {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.marvelcdb-recent[hidden] {
+    display: none;
+}
+
+.recent-deck {
+    max-width: 14rem;
+    overflow: hidden;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(232, 184, 74, 0.6);
+    border-radius: 999px;
+    background: rgba(43, 24, 51, 0.75);
+    color: #ffe7a3;
+    font: inherit;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.recent-deck:hover {
+    border-color: #f0c25c;
+    background: rgba(63, 36, 74, 0.9);
+}
+
 @media (max-width: 44rem) {
     .page-header {
         align-items: flex-start;
