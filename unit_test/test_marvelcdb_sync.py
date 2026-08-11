@@ -55,13 +55,16 @@ def create_remote_deck(deck_id='1130039'):
 class TestMarvelCdbDeckSync(unittest.TestCase):
 
     def test_parse_deck_ids_normalizes_and_deduplicates(self):
+        # Renamed from ParseDeckIds: it returns canonical references now, so
+        # that a pasted decklist link keeps naming the decklist endpoint. A
+        # bare ID has no kind to encode and still passes through unchanged.
         self.assertEqual(
-            MarvelCdbDeckSync.ParseDeckIds('1130039, 01130039,,1143133'),
+            MarvelCdbDeckSync.ParseDeckRefs('1130039, 01130039,,1143133'),
             ['1130039', '1143133'],
         )
 
         with self.assertRaisesRegex(ValueError, 'Invalid MarvelCDB deck ID'):
-            MarvelCdbDeckSync.ParseDeckIds('1130039,deck-name')
+            MarvelCdbDeckSync.ParseDeckRefs('1130039,deck-name')
 
     def test_convert_deck_keeps_identity_template_and_replaces_player_cards(self):
         converted = MarvelCdbDeckSync.ConvertDeck(

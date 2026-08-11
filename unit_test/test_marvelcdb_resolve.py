@@ -60,14 +60,25 @@ class TestParseDeckRef(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     MarvelCdbDeckSync.ParseDeckRef(reference)
 
-    def test_parse_deck_ids_accepts_links(self):
-        # The Settings sync box gains URL support for free by sharing the parser.
+    def test_parse_deck_refs_keeps_the_kind_a_url_declared(self):
+        # The Settings sync box gains URL support for free by sharing the
+        # parser, but it must store the kind too: normalising to a bare ID here
+        # is what let a decklist URL later sync deck/<same id>.
         self.assertEqual(
-            MarvelCdbDeckSync.ParseDeckIds(
+            MarvelCdbDeckSync.ParseDeckRefs(
                 'https://marvelcdb.com/decklist/view/63988/slug,12345'
             ),
-            ['63988', '12345'],
+            ['https://marvelcdb.com/decklist/view/63988', '12345'],
         )
+
+    def test_canonical_refs_round_trip(self):
+        # ParseDeckRefs stores what CanonicalRef renders, and the sync loop
+        # parses it straight back, so the two must be exact inverses.
+        for kind, deck_id in [('deck', '123'), ('decklist', '123'), (None, '123')]:
+            with self.subTest(kind=kind):
+                ref = MarvelCdbDeckSync.CanonicalRef(kind, deck_id)
+                self.assertEqual(MarvelCdbDeckSync.ParseDeckRef(ref), (kind, deck_id))
+                self.assertEqual(MarvelCdbDeckSync.ParseDeckRefs(ref), [ref])
 
 
 class TestFetchFallback(unittest.TestCase):
@@ -266,6 +277,190 @@ class TestCampaignDeck(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, 'did not come from MarvelCDB'):
                 service.RefreshCampaignDeck('handmade')
+
+    def test_hero_id_needs_both_halves(self):
+        with self.assertRaisesRegex(ValueError, 'both a campaign and a hero'):
+            MarvelCdbDeckSync.CampaignDeckHeroId('mutant_genesis', '')
+        with self.assertRaisesRegex(ValueError, 'both a campaign and a hero'):
+            MarvelCdbDeckSync.CampaignDeckHeroId('', '01001a')
+        with self.assertRaisesRegex(ValueError, 'both a campaign and a hero'):
+            MarvelCdbDeckSync.CampaignDeckHeroId('   ', '01001a')
+
+        # Non-empty but unusable: nothing survives the alphabet.
+        with self.assertRaisesRegex(ValueError, 'Invalid campaign deck name'):
+            MarvelCdbDeckSync.CampaignDeckHeroId('...', '///')
+
+
+class TestCampaignDeckPathTraversal(unittest.TestCase):
+    """`hero_id` reaches CampaignDeckPath straight from an HTTP body."""
+
+    HOSTILE = [
+        '../../outside',
+        '../outside',
+        '..',
+        'sub/outside',
+        'sub\\outside',
+        '/etc/passwd',
+        '/absolute',
+        'C:\\windows\\system32',
+        'name.with.dots',
+        '-leading-hyphen',
+        'trailing-hyphen-',
+        'space in name',
+        'null\x00byte',
+        '',
+        '   ',
+        '%2e%2e%2foutside',
+        'deck\n../outside',
+    ]
+
+    def _service(self, folder: str) -> MarvelCdbDeckSync:
+        campaign = os.path.join(folder, 'campaign')
+        os.makedirs(campaign, exist_ok=True)
+        return MarvelCdbDeckSync(
+            user_deck_folder=os.path.join(folder, 'user'),
+            campaign_deck_folder=campaign,
+            state_file=os.path.join(folder, '.state.json'),
+            starter_deck_folder=os.path.join(folder, 'starter'),
+        )
+
+    def test_hostile_ids_are_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            service = self._service(folder)
+            for hero_id in self.HOSTILE:
+                with self.subTest(hero_id=hero_id):
+                    with self.assertRaises(ValueError):
+                        service.CampaignDeckPath(hero_id)
+
+    def test_refresh_rejects_hostile_ids_before_touching_disk(self):
+        """The escape target must survive untouched, not merely be reported.
+
+        Rejecting the path is only half the property. A refresh that validated
+        late could still read the outside file and write it back, so assert the
+        bytes are unchanged afterwards.
+        """
+        with tempfile.TemporaryDirectory() as folder:
+            service = self._service(folder)
+
+            outside_path = os.path.join(folder, 'outside.json')
+            original = Json.Dumps(dict(SPIDER_MAN_TEMPLATE), indent=4)
+            with open(outside_path, 'w', encoding='utf-8') as file:
+                file.write(original)
+
+            for hero_id in ['../outside', '../../outside', 'sub/../../outside']:
+                with self.subTest(hero_id=hero_id):
+                    with self.assertRaises(ValueError):
+                        service.RefreshCampaignDeck(hero_id)
+
+            with open(outside_path, encoding='utf-8') as file:
+                self.assertEqual(file.read(), original)
+
+    def test_generated_ids_are_accepted_and_stay_inside(self):
+        """The guard must not reject what CampaignDeckHeroId actually emits."""
+        with tempfile.TemporaryDirectory() as folder:
+            service = self._service(folder)
+            campaign_folder = os.path.realpath(os.path.join(folder, 'campaign'))
+
+            for campaign_id, hero_code in [
+                ('mutant_genesis', '01001a'),
+                ('The Rise of Red Skull', '01001a'),
+                ('sinister-motives', '26002'),
+            ]:
+                hero_id = MarvelCdbDeckSync.CampaignDeckHeroId(campaign_id, hero_code)
+                path = service.CampaignDeckPath(hero_id)
+                with self.subTest(hero_id=hero_id):
+                    self.assertEqual(os.path.dirname(path), campaign_folder)
+                    self.assertTrue(path.endswith('.json'))
+
+
+class TestSyncPreservesDeckKind(unittest.TestCase):
+
+    @staticmethod
+    def _remote(kind: str, name: str) -> dict:
+        deck = create_remote_deck('123')
+        deck['name'] = name
+        deck['marvelcdb_kind'] = kind
+        return deck
+
+    def test_a_decklist_url_never_syncs_the_deck_of_the_same_id(self):
+        """deck/123 and decklist/123 are different decks that share a number.
+
+        The Settings box stored a parsed URL as a bare ID, so the periodic sync
+        probed `deck` first and silently pulled the wrong one.
+        """
+        with tempfile.TemporaryDirectory() as folder:
+            starter = os.path.join(folder, 'starter')
+            user = os.path.join(folder, 'user')
+            os.makedirs(starter)
+            os.makedirs(user)
+            write_starter_template(starter)
+
+            bodies = {
+                'deck': self._remote('deck', 'Wrong deck'),
+                'decklist': self._remote('decklist', 'Right decklist'),
+            }
+            asked: list = []
+
+            def fetch_ref(kind, deck_id):
+                asked.append(kind)
+                return bodies[kind or 'deck']
+
+            service = MarvelCdbDeckSync(
+                user_deck_folder=user,
+                campaign_deck_folder=os.path.join(folder, 'campaign'),
+                state_file=os.path.join(folder, '.state.json'),
+                starter_deck_folder=starter,
+                fetch_deck_ref=fetch_ref,
+            )
+
+            result = service.SyncDecks('https://marvelcdb.com/decklist/view/123/slug')
+
+            self.assertEqual(result['errors'], [])
+            self.assertEqual(asked, ['decklist'])
+            self.assertEqual(result['synced'][0]['name'], 'Right decklist')
+
+            # The kind has to survive the round trip through state, or the next
+            # scheduled sync reverts to probing `deck` first.
+            with open(os.path.join(folder, '.state.json'), encoding='utf-8') as file:
+                state = json.load(file)
+            self.assertEqual(
+                state['deck_ids'],
+                ['https://marvelcdb.com/decklist/view/123'],
+            )
+            self.assertEqual(
+                MarvelCdbDeckSync.ParseDeckRefs(state['deck_ids']),
+                ['https://marvelcdb.com/decklist/view/123'],
+            )
+
+    def test_a_bare_id_still_probes_both_endpoints(self):
+        """Existing sync state holds bare IDs and must keep working."""
+        with tempfile.TemporaryDirectory() as folder:
+            starter = os.path.join(folder, 'starter')
+            user = os.path.join(folder, 'user')
+            os.makedirs(starter)
+            os.makedirs(user)
+            write_starter_template(starter)
+
+            asked: list = []
+
+            def fetch_ref(kind, deck_id):
+                asked.append(kind)
+                return self._remote('deck', 'Probed deck')
+
+            service = MarvelCdbDeckSync(
+                user_deck_folder=user,
+                campaign_deck_folder=os.path.join(folder, 'campaign'),
+                state_file=os.path.join(folder, '.state.json'),
+                starter_deck_folder=starter,
+                fetch_deck_ref=fetch_ref,
+            )
+
+            result = service.SyncDecks('123')
+
+            self.assertEqual(result['errors'], [])
+            self.assertEqual(asked, [None])
+            with open(os.path.join(folder, '.state.json'), encoding='utf-8') as file:
+                self.assertEqual(json.load(file)['deck_ids'], ['123'])
 
 
 if __name__ == '__main__':

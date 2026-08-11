@@ -67,6 +67,10 @@ class MarvelCdbDeckSync:
         re.IGNORECASE,
     )
 
+    # The exact shape CampaignDeckHeroId emits, and the only shape
+    # CampaignDeckPath will interpolate into a filesystem path.
+    _HERO_ID_PATTERN = re.compile(r'[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?')
+
     def __init__(
         self,
         *,
@@ -87,13 +91,18 @@ class MarvelCdbDeckSync:
             if interval_seconds is None
             else interval_seconds
         )
-        # Two injection points so the periodic sync keeps its single-argument
-        # contract while kind-aware callers can still be tested offline.
-        # Injecting only `fetch_deck_ref` redirects both paths.
-        self.fetch_deck_ref = fetch_deck_ref or self.FetchDeckRef
-        self.fetch_deck = fetch_deck or (
-            lambda deck_id: self.fetch_deck_ref(None, deck_id)
-        )
+        # Everything fetches through `fetch_deck_ref` now, because every caller
+        # has a kind to pass -- `None` for a bare ID. The single-argument
+        # `fetch_deck` is still accepted so existing callers and tests keep
+        # working, and is adapted rather than kept as a second live seam: two
+        # seams meant a test could stub one and leave the other reaching the
+        # network.
+        if fetch_deck_ref is not None:
+            self.fetch_deck_ref = fetch_deck_ref
+        elif fetch_deck is not None:
+            self.fetch_deck_ref = lambda kind, deck_id: fetch_deck(deck_id)
+        else:
+            self.fetch_deck_ref = self.FetchDeckRef
 
         self._condition = threading.Condition(threading.RLock())
         self._sync_lock = threading.Lock()
@@ -122,21 +131,43 @@ class MarvelCdbDeckSync:
         raise ValueError(f'Invalid MarvelCDB deck ID or link: {reference}')
 
     @classmethod
-    def ParseDeckIds(cls, value: str|List[str]) -> List[str]:
+    def CanonicalRef(cls, kind: str|None, deck_id: str) -> str:
+        """Render a ``(kind, deck_id)`` pair back to a single parseable string.
+
+        A bare ID stays bare -- there is no kind to encode, and inventing one
+        would make the two-endpoint fallback unreachable. This is the inverse of
+        ParseDeckRef for every value ParseDeckRef can return, so a reference can
+        round-trip through storage without losing which endpoint it named.
+        """
+        if kind not in cls.DECK_KINDS:
+            return str(deck_id)
+        return cls.WEB_URL.format(kind=kind, deck_id=deck_id)
+
+    @classmethod
+    def ParseDeckRefs(cls, value: str|List[str]) -> List[str]:
+        """Normalise a comma-separated list of references for storage.
+
+        Returns canonical references, NOT bare IDs. Returning bare IDs here
+        discarded the kind that ParseDeckRef had just recovered, so a URL
+        naming `decklist/123` was stored as `123` and the next periodic sync
+        probed `deck/123` first -- fetching a different deck that happened to
+        share the number. Bare IDs pass through unchanged, so existing sync
+        state keeps working without a migration.
+        """
         if not isinstance(value, (str, list)):
             raise ValueError('MarvelCDB deck IDs must be a comma-separated list.')
         values = value.split(',') if isinstance(value, str) else value
-        deck_ids: List[str] = []
+        refs: List[str] = []
 
         for raw_value in values:
             reference = str(raw_value).strip()
             if not reference:
                 continue
-            _kind, deck_id = cls.ParseDeckRef(reference)
-            if deck_id not in deck_ids:
-                deck_ids.append(deck_id)
+            ref = cls.CanonicalRef(*cls.ParseDeckRef(reference))
+            if ref not in refs:
+                refs.append(ref)
 
-        return deck_ids
+        return refs
 
     @classmethod
     def _RequestJson(cls, url: str) -> Dict[str, Any]|None:
@@ -302,7 +333,9 @@ class MarvelCdbDeckSync:
 
         try:
             state = self._read_json(self.state_file)
-            state['deck_ids'] = self.ParseDeckIds(state.get('deck_ids', []))
+            # The key keeps its historical name; it now holds canonical
+            # references, and a bare ID is still a valid one.
+            state['deck_ids'] = self.ParseDeckRefs(state.get('deck_ids', []))
             state.setdefault('version', self.STATE_VERSION)
             state.setdefault('last_sync', '')
             state.setdefault('last_result', None)
@@ -371,16 +404,48 @@ class MarvelCdbDeckSync:
         template = self._select_template(self._load_templates(), remote_deck)
         return self.ConvertDeck(remote_deck, template)
 
-    def CampaignDeckPath(self, hero_id: str) -> str:
-        return FileManager.JoinPath(self.campaign_deck_folder, f'{hero_id}.json')
+    @classmethod
+    def ValidateCampaignHeroId(cls, hero_id: str) -> str:
+        """Accept only the shape CampaignDeckHeroId produces.
 
-    @staticmethod
-    def CampaignDeckHeroId(campaign_id: str, hero_code: str) -> str:
-        combined = f'{campaign_id}-{hero_code}'.lower()
-        hero_id = re.sub(r'[^a-z0-9_-]+', '-', combined).strip('-')
-        if not hero_id:
+        `hero_id` arrives from an HTTP body, and CampaignDeckPath puts it in a
+        filesystem path, so anything outside this alphabet is a traversal
+        attempt: `../../outside` would otherwise resolve above the campaign
+        folder and let a refresh read and overwrite an unrelated file. The
+        alphabet excludes `.`, `/` and `\\` entirely, which is what makes
+        traversal unrepresentable rather than merely detected.
+        """
+        candidate = str(hero_id).strip()
+        if not cls._HERO_ID_PATTERN.fullmatch(candidate):
+            raise ValueError(f'Invalid campaign deck name: {hero_id!r}')
+        return candidate
+
+    def CampaignDeckPath(self, hero_id: str) -> str:
+        safe_id = self.ValidateCampaignHeroId(hero_id)
+        folder = os.path.realpath(self.campaign_deck_folder)
+        path = os.path.realpath(FileManager.JoinPath(folder, f'{safe_id}.json'))
+
+        # Belt and braces: unreachable while the alphabet holds, so if it fires
+        # the alphabet has regressed. The order matters -- containment cannot be
+        # the primary guard, because `sub/outside`, `..` and `name.with.dots`
+        # all resolve to paths that are legitimately inside this folder and
+        # would pass it while still not being names we ever generate.
+        if os.path.commonpath([folder, path]) != folder:
+            raise ValueError(f'Invalid campaign deck name: {hero_id!r}')
+        return path
+
+    @classmethod
+    def CampaignDeckHeroId(cls, campaign_id: str, hero_code: str) -> str:
+        campaign = str(campaign_id).strip()
+        hero = str(hero_code).strip()
+        if not campaign or not hero:
             raise ValueError('A campaign deck needs both a campaign and a hero.')
-        return hero_id
+
+        combined = f'{campaign}-{hero}'.lower()
+        hero_id = re.sub(r'[^a-z0-9_-]+', '-', combined).strip('-_')
+        # Both parts were non-empty but may have held nothing usable, and the
+        # result has to satisfy the validator that guards the path.
+        return cls.ValidateCampaignHeroId(hero_id)
 
     def SaveCampaignDeck(self, campaign_id: str, deck: Dict[str, Any]) -> Dict[str, Any]:
         """Freeze a resolved deck for the duration of a campaign run.
@@ -430,14 +495,14 @@ class MarvelCdbDeckSync:
             return copy.deepcopy(state)
 
     def SyncDecks(self, deck_ids_value: str|List[str]) -> Dict[str, Any]:
-        deck_ids = self.ParseDeckIds(deck_ids_value)
-        if not deck_ids:
+        deck_refs = self.ParseDeckRefs(deck_ids_value)
+        if not deck_refs:
             raise ValueError('Enter at least one MarvelCDB deck ID.')
 
         with self._sync_lock:
             with self._condition:
                 state = self._load_state()
-                state['deck_ids'] = deck_ids
+                state['deck_ids'] = deck_refs
                 self._save_state(state)
                 self._condition.notify_all()
 
@@ -445,9 +510,10 @@ class MarvelCdbDeckSync:
             synced: List[Dict[str, str]] = []
             errors: List[Dict[str, str]] = []
 
-            for deck_id in deck_ids:
+            for deck_ref in deck_refs:
+                kind, deck_id = self.ParseDeckRef(deck_ref)
                 try:
-                    remote_deck = self.fetch_deck(deck_id)
+                    remote_deck = self.fetch_deck_ref(kind, deck_id)
                     returned_id = str(remote_deck.get('id', ''))
                     if returned_id != deck_id:
                         raise ValueError(
@@ -479,7 +545,7 @@ class MarvelCdbDeckSync:
             }
             with self._condition:
                 state = self._load_state()
-                state['deck_ids'] = deck_ids
+                state['deck_ids'] = deck_refs
                 state['last_sync'] = result['synced_at']
                 state['last_result'] = result
                 self._save_state(state)
