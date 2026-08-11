@@ -418,6 +418,7 @@ class TestSyncPreservesDeckKind(unittest.TestCase):
             self.assertEqual(result['errors'], [])
             self.assertEqual(asked, ['decklist'])
             self.assertEqual(result['synced'][0]['name'], 'Right decklist')
+            self.assertTrue(os.path.exists(os.path.join(user, 'decklist-123.json')))
 
             # The kind has to survive the round trip through state, or the next
             # scheduled sync reverts to probing `deck` first.
@@ -431,6 +432,38 @@ class TestSyncPreservesDeckKind(unittest.TestCase):
                 MarvelCdbDeckSync.ParseDeckRefs(state['deck_ids']),
                 ['https://marvelcdb.com/decklist/view/123'],
             )
+
+    def test_explicit_deck_and_decklist_with_same_id_do_not_overwrite(self):
+        with tempfile.TemporaryDirectory() as folder:
+            starter = os.path.join(folder, 'starter')
+            user = os.path.join(folder, 'user')
+            os.makedirs(starter)
+            os.makedirs(user)
+            write_starter_template(starter)
+
+            def fetch_ref(kind, deck_id):
+                return self._remote(kind, f'{kind} {deck_id}')
+
+            service = MarvelCdbDeckSync(
+                user_deck_folder=user,
+                campaign_deck_folder=os.path.join(folder, 'campaign'),
+                state_file=os.path.join(folder, '.state.json'),
+                starter_deck_folder=starter,
+                fetch_deck_ref=fetch_ref,
+            )
+
+            result = service.SyncDecks([
+                'https://marvelcdb.com/deck/view/123',
+                'https://marvelcdb.com/decklist/view/123',
+            ])
+
+            self.assertEqual(result['errors'], [])
+            deck = MarvelCdbDeckSync._read_json(
+                os.path.join(user, 'deck-123.json'))
+            decklist = MarvelCdbDeckSync._read_json(
+                os.path.join(user, 'decklist-123.json'))
+            self.assertEqual(deck['deck_name'], 'deck 123')
+            self.assertEqual(decklist['deck_name'], 'decklist 123')
 
     def test_a_bare_id_still_probes_both_endpoints(self):
         """Existing sync state holds bare IDs and must keep working."""

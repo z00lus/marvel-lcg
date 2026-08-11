@@ -87,6 +87,7 @@ const playButton = document.querySelector<HTMLButtonElement>('#play-button')!;
 const errorMessage = document.querySelector<HTMLElement>('#error-message')!;
 
 const scenarioCache = new Map<string, ScenarioChoice>();
+const campaignHeroCache = new Map<string, HeroChoice>();
 let heroChoices: HeroChoice[] = [];
 let selectedCampaign: CampaignDefinition | null = null;
 let selectedScenario: ScenarioChoice | null = null;
@@ -144,40 +145,59 @@ async function loadCampaignChoices(): Promise<CampaignChoice[]> {
     return choices.filter((choice): choice is CampaignChoice => choice !== null);
 }
 
+async function loadHeroChoice(path: string, isUserDeck: boolean): Promise<HeroChoice | null> {
+    const id = getFileName(path);
+    try {
+        const data = await fetchJson<HeroData>(`/get_hero_json?${encodeURIComponent(id)}`);
+        const imageId = getFirstCardId(data.hero ?? []);
+        if (!data.name || !imageId) {
+            return null;
+        }
+        return {
+            id,
+            name: data.deck_name ?? data.name,
+            imageId,
+            data,
+            isUserDeck,
+        };
+    } catch (error) {
+        console.warn(`Failed to load hero deck ${id}`, error);
+        return null;
+    }
+}
+
 async function loadHeroChoices(): Promise<HeroChoice[]> {
-    // Campaign decks are listed too: a resumed run matches its saved `heroId`
-    // against this list, and a frozen MarvelCDB deck lives only in that folder.
-    const [starterPaths, userPaths, campaignPaths] = await Promise.all([
+    // Frozen campaign decks are deliberately not exposed as ordinary choices.
+    // They belong to one saved run and are loaded explicitly when that run is
+    // resumed; otherwise a new campaign could accidentally reuse and later
+    // refresh another campaign's frozen file.
+    const [starterPaths, userPaths] = await Promise.all([
         fetchJson<string[]>('/list_starter_deck?'),
         fetchJson<string[]>('/list_user_deck?'),
-        fetchJson<string[]>('/list_campaign_deck?').catch(() => [] as string[]),
     ]);
     const deckPaths = [
-        ...campaignPaths.map(path => ({path, isUserDeck: true})),
         ...userPaths.map(path => ({path, isUserDeck: true})),
         ...starterPaths.map(path => ({path, isUserDeck: false})),
     ];
-    const choices = await Promise.all(deckPaths.map(async ({path, isUserDeck}): Promise<HeroChoice | null> => {
-        const id = getFileName(path);
-        try {
-            const data = await fetchJson<HeroData>(`/get_hero_json?${encodeURIComponent(id)}`);
-            const imageId = getFirstCardId(data.hero ?? []);
-            if (!data.name || !imageId) {
-                return null;
-            }
-            return {
-                id,
-                name: data.deck_name ?? data.name,
-                imageId,
-                data,
-                isUserDeck,
-            };
-        } catch (error) {
-            console.warn(`Failed to load hero deck ${id}`, error);
-            return null;
-        }
-    }));
+    const choices = await Promise.all(deckPaths.map(
+        ({path, isUserDeck}) => loadHeroChoice(path, isUserDeck)));
     return choices.filter((choice): choice is HeroChoice => choice !== null);
+}
+
+async function loadCampaignHeroChoice(heroId: string): Promise<HeroChoice | null> {
+    const regularChoice = heroChoices.find((choice) => choice.id === heroId);
+    if (regularChoice) {
+        return regularChoice;
+    }
+    const cached = campaignHeroCache.get(heroId);
+    if (cached) {
+        return cached;
+    }
+    const choice = await loadHeroChoice(heroId, true);
+    if (choice) {
+        campaignHeroCache.set(heroId, choice);
+    }
+    return choice;
 }
 
 function createChoiceButton(
@@ -239,12 +259,19 @@ function updatePlayButton(): void {
  */
 function updateRefreshButton(): void {
     const deckId = selectedHero?.data.metadata?.marvelcdb_id;
-    marvelCdbUpdate.hidden = !(resumedCampaign && deckId);
+    const isSavedCampaignDeck = resumedCampaign?.heroId === selectedHero?.id;
+    marvelCdbUpdate.hidden = !(isSavedCampaignDeck && deckId);
 }
 
-function selectHero(choice: HeroChoice, keepMarvelCdbDeck = false): void {
+function selectHero(
+    choice: HeroChoice,
+    keepMarvelCdbDeck = false,
+    remember = true,
+): void {
     selectedHero = choice;
-    localStorage.setItem(heroStorageKey, choice.id);
+    if (remember) {
+        localStorage.setItem(heroStorageKey, choice.id);
+    }
     heroSelection.textContent = choice.name;
     markSelected(heroList, choice.id);
     errorMessage.textContent = '';
@@ -280,6 +307,24 @@ async function selectCampaign(
     const request = ++selectionRequest;
     selectedCampaign = definition;
     resumedCampaign = saved;
+    updateRefreshButton();
+
+    // A resumed run may select a frozen deck that is intentionally absent from
+    // the normal grid. When the player switches back to starting a new
+    // campaign, restore the last ordinary choice instead of leaking that
+    // frozen deck into the new run.
+    if (!saved && selectedHero && !heroChoices.some((choice) => choice.id === selectedHero?.id)) {
+        const regularHero = heroChoices.find(
+            (choice) => choice.id === localStorage.getItem(heroStorageKey));
+        if (regularHero) {
+            selectHero(regularHero);
+        } else {
+            selectedHero = null;
+            heroSelection.textContent = 'Not selected';
+            markSelected(heroList, '');
+            updateRefreshButton();
+        }
+    }
     selectedScenario = null;
     selectedScenarioIndex = Math.min(
         Math.max(saved?.scenarioIndex ?? 0, 0),
@@ -301,9 +346,19 @@ async function selectCampaign(
         renderScenario(scenario, definition);
 
         if (saved?.heroId) {
-            const savedHero = heroChoices.find((choice) => choice.id === saved.heroId);
+            const savedHero = await loadCampaignHeroChoice(saved.heroId);
+            if (request !== selectionRequest) {
+                return;
+            }
             if (savedHero) {
-                selectHero(savedHero);
+                // Do not persist a run-specific file as the user's ordinary
+                // deck choice. It must only be selected by this resume path.
+                selectHero(savedHero, false, false);
+            } else {
+                selectedHero = null;
+                heroSelection.textContent = 'Saved campaign deck not found';
+                markSelected(heroList, '');
+                throw new Error(`Saved campaign deck ${saved.heroId} was not found`);
             }
         }
     } catch (error) {
@@ -365,12 +420,14 @@ async function renderSavedCampaign(saved: SavedCampaign | null): Promise<void> {
 
     const scenarioIndex = Math.min(Math.max(saved.scenarioIndex, 0), definition.scenarios.length - 1);
     const scenario = await loadScenario(definition.scenarios[scenarioIndex]);
+    const savedHero = await loadCampaignHeroChoice(saved.heroId);
+    const savedHeroName = savedHero?.name ?? 'Saved deck not found';
     savedCampaignSection.hidden = false;
     savedCampaignName.textContent = definition.name;
     savedCampaignStatus.textContent = saved.completed ? 'Completed' : `Scenario ${scenarioIndex + 1} of ${definition.scenarios.length}`;
     savedCampaignSummary.textContent = saved.completed
-        ? `Completed with ${heroChoices.find((choice) => choice.id === saved.heroId)?.name ?? 'your hero'}.`
-        : `${scenario.name} · ${heroChoices.find((choice) => choice.id === saved.heroId)?.name ?? 'Starter deck not found'}`;
+        ? `Completed with ${savedHeroName}.`
+        : `${scenario.name} · ${savedHeroName}`;
     resumeCampaignButton.hidden = saved.completed;
     resumeCampaignButton.onclick = () => void selectCampaign(definition, saved);
 }

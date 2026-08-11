@@ -523,9 +523,14 @@ class MarvelCdbDeckSync:
 
                     template = self._select_template(templates, remote_deck)
                     converted = self.ConvertDeck(remote_deck, template)
+                    # `deck/123` and `decklist/123` are independent MarvelCDB
+                    # records. Keep the historical `123.json` name for bare
+                    # IDs, but include the explicit kind when the player pasted
+                    # a URL so two records with the same number can coexist.
+                    file_id = f'{kind}-{deck_id}' if kind in self.DECK_KINDS else deck_id
                     output_path = FileManager.JoinPath(
                         self.user_deck_folder,
-                        f'{deck_id}.json',
+                        f'{file_id}.json',
                     )
                     self._save_json(converted, output_path)
                     synced.append({
