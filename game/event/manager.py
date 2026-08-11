@@ -515,9 +515,12 @@ class EventManager:
                         check_player = this.GetGaveToPlayer()
                     else:
                         check_player = current_player
-                elif Attachment.IsType(this) and \
-                    not Identity.IsType(this.bind_face):
-                    # Fix "21179"
+                elif Attachment.IsType(this):
+                    # Encounter attachments can expose player actions even
+                    # when they are attached to an identity.  They remain
+                    # scenario-owned, so checking their controller would hide
+                    # those actions from the active player (for example,
+                    # Restrained "21083" and Seduced "21179").
                     check_player = current_player
                 elif Minion.IsType(this):
                     # Fix "27131"
