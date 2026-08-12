@@ -31,7 +31,13 @@ class SelectorEnd:
             SelectorEnd.DoShuffle(effect, peeked_faces, False, True)
 
     @staticmethod
-    def DoMove(effect: 'Effect', faces: Sequence['CardFace'], need_move: bool) -> List['Deck']:
+    def DoMove(
+            effect: 'Effect',
+            faces: Sequence['CardFace'],
+            need_move: bool,
+            *,
+            shuffle_origin_on_restore: bool=False,
+            ) -> List['Deck']:
         from game.operate.faces import Faces
 
         places: List[Deck] = []
@@ -46,7 +52,11 @@ class SelectorEnd:
 
         if need_move:
             if moved_faces:
-                Faces.MoveAllToProcessingArea(moved_faces, effect)
+                Faces.MoveAllToProcessingArea(
+                    moved_faces,
+                    effect,
+                    shuffle_origin_on_restore=shuffle_origin_on_restore,
+                )
         else:
             # if moved_faces:
             #     CardFace.PeekCards(moved_faces, effect)
@@ -58,7 +68,12 @@ class SelectorEnd:
     def DoShuffle(effect: 'Effect', faces: Sequence['CardFace'], need_move: bool, is_failure: bool) -> None:
         from game.deck.deck import Deck
 
-        places: List[Deck] = SelectorEnd.DoMove(effect, faces, need_move)
+        places: List[Deck] = SelectorEnd.DoMove(
+            effect,
+            faces,
+            need_move,
+            shuffle_origin_on_restore=True,
+        )
 
         if need_move or is_failure:
             for deck in Types.RemoveDuplicates(places):
@@ -69,4 +84,3 @@ class SelectorEnd:
                     pass
                 else:
                     deck.Shuffle(effect)
-

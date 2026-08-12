@@ -187,6 +187,122 @@ class RealCardActivationRegressionTests(unittest.TestCase):
             0,
         )
 
+    def test_photographic_reflexes_preserves_tucked_origin_during_initiation(self):
+        world, player, echo = self.MakeWorld(
+            hero_name="Echo",
+            identity_card_id="60037a,60037b",
+        )
+        tucked_area = echo.GetPlacedCardArea()
+        haymaker = CardFactory.GenerateCard(
+            "01087",
+            tucked_area,
+            world,
+            ui_render=False,
+        ).face
+        photographic_reflexes = CardFactory.GenerateCard(
+            "60040a",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        rhino = CardFactory.GenerateCard(
+            "01094",
+            world.GetScenario().area_villain,
+            world,
+            ui_render=False,
+        ).face
+        rhino.ResetHealth(GameRule(rhino))
+        initial_rhino_health = rhino.health
+
+        play_effect = next(
+            candidate for candidate in haymaker.effect.global_effects
+            if candidate.ability.is_play
+        )
+        # The separate CheckIfFaceIsLikeInHand ability is already covered by
+        # the card integration; keep this regression focused on preserving the
+        # tuck-pile origin once play initiation moves the event to processing.
+        haymaker.card.can_state.is_like_in_hand = True
+        turn_message = Message.WhenPlayerInTurn(player, 1)
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+
+        def resolve_optional(effects, message, priority, forced=False):
+            self.assertIsInstance(message, Message.WhenPlayerWouldPlayCard)
+            spend_effect = effects[0]
+            self.assertTrue(player.ResolveEffect(spend_effect, message))
+            return spend_effect, False
+
+        with patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ), patch.object(
+            player,
+            "ChoiceAndSpellEffect",
+            side_effect=resolve_optional,
+        ), patch.object(
+            player,
+            "AskChooseFace",
+            return_value=photographic_reflexes,
+        ):
+            available = EventManager.FilterAvailableEffects(
+                turn_message,
+                [play_effect],
+                player,
+                world,
+                None,
+            )
+            self.assertEqual(available, [play_effect])
+            self.assertEqual(
+                play_effect.checker.cost_for_different_target.GetCost(None).val,
+                0,
+            )
+            play_effect.context.targets_internal = [rhino]
+            self.assertTrue(player.ResolveEffect(play_effect, turn_message))
+
+        self.assertIs(photographic_reflexes.card.area, player.discard_pile)
+        self.assertIs(haymaker.card.area, player.discard_pile)
+        self.assertEqual(rhino.health, initial_rhino_health - 3)
+
+    def test_failed_play_initiation_clears_declared_source_area(self):
+        world, player, _ = self.MakeWorld()
+        haymaker = CardFactory.GenerateCard(
+            "01087",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        play_effect = next(
+            candidate for candidate in haymaker.effect.global_effects
+            if candidate.ability.is_play
+        )
+        haymaker.card.can_state.is_like_in_hand = True
+        turn_message = Message.WhenPlayerInTurn(player, 1)
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+
+        with patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ):
+            available = EventManager.FilterAvailableEffects(
+                turn_message,
+                [play_effect],
+                player,
+                world,
+                None,
+            )
+            self.assertEqual(available, [])
+            self.assertFalse(player.ResolveEffect(play_effect, turn_message))
+
+        self.assertIs(haymaker.card.area, player.hand_cards)
+        self.assertIsNone(play_effect.context.declared_play_from_area)
+
     def test_interception_imminent_exhausts_milano_and_removes_threat(self):
         world, player, _ = self.MakeWorld()
         scheme = CardFactory.GenerateCard(

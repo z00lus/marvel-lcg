@@ -11,6 +11,13 @@ def GetAbilities() -> Sequence['Ability']:
             initiator.hand_cards.FindCards(name="Photographic Reflexes", card_type=Event)
         )
 
+    def is_playing_tucked_event(effect: 'Effect', play_effect: 'Effect') -> bool:
+        tucked_area = effect.this.GetPlacedCardArea()
+        return (
+            play_effect.this.card.area == tucked_area or
+            play_effect.context.declared_play_from_area == tucked_area
+        )
+
     def watch_and_learn(effect: 'Effect', message: 'Message.AfterPlayerPlayedCard') -> None:
         this = effect.this.CastTo(Hero)
         played_event = message.played_face
@@ -66,7 +73,7 @@ def GetAbilities() -> Sequence['Ability']:
             "You",
             conditions=[
                 lambda effect, message:
-                    message.check_effect.this.card.area == effect.this.GetPlacedCardArea() and
+                    is_playing_tucked_event(effect, message.check_effect) and
                     has_photographic_reflexes(effect)
             ],
         ),
@@ -77,7 +84,7 @@ def GetAbilities() -> Sequence['Ability']:
             spend_photographic_reflexes,
             conditions=[
                 lambda effect, message:
-                    message.from_area == effect.this.GetPlacedCardArea() and
+                    is_playing_tucked_event(effect, message.play_effect) and
                     has_photographic_reflexes(effect)
             ],
         ),

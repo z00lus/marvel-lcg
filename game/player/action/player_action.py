@@ -420,6 +420,7 @@ class PlayerAction:
         # Fix for https://itch.io/t/4493777/interaction-between-magik-mutant-protector-defensive-energy
         if effect.ability.is_play and not effect.ability.flags.is_delay_ability:
             from_area = this.card.area
+            effect.context.declared_play_from_area = from_area
             from_index = from_area.GetIndex(this)
             moved_for_play_initiation = not from_area.flags.is_processing
             Faces.MoveAllToProcessingArea([this], effect)

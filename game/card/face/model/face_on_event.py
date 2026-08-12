@@ -185,6 +185,21 @@ class ModelOnEvent(ModelBase):
         if not this.IsFaceUp():
             this.FlipTo(by_effect, face_up=True)
         from_area = this.card.area
+        processing_origin = by_effect.context.processing_origins.get(this.card)
+
+        def fail_put_into_play() -> bool:
+            by_effect.context.processing_origins.pop(this.card, None)
+            if processing_origin and this.card.area.flags.is_processing:
+                origin_area, origin_index, shuffle_origin = processing_origin
+                Faces.MoveAllTo(
+                    [this],
+                    origin_area,
+                    by_effect,
+                    index=origin_index,
+                )
+                if shuffle_origin and origin_area.flags.is_deck:
+                    origin_area.Shuffle(by_effect)
+            return False
 
         if exhaust:
             # See also "38028", "40171"
@@ -203,8 +218,11 @@ class ModelOnEvent(ModelBase):
 
         message = Message.WhenCardPutIntoPlay(this, player, from_area, by_effect, target_game_area)
         if not this.OnPutIntoPlay(message):
-            return False
+            return fail_put_into_play()
+        if message.put_into_play_failed:
+            return fail_put_into_play()
 
+        by_effect.context.processing_origins.pop(this.card, None)
         message = Message.AfterCardPutIntoPlay(this, message)
         self.OnAfterCardPutIntoPlay(message)
         return True

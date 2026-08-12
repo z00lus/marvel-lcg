@@ -399,6 +399,7 @@ class SenderCard:
             self.by_effect: Final = by_effect
             self.from_area: Final = from_area
             self.target_game_area: Final = target_game_area
+            self.put_into_play_failed = False
             super().__init__(player=player, trigger=face, end_event=Message.AfterCardPutIntoPlay)
             # text = TransText("{face} puts into play", face=face)
             # self.Present(text, "", face)

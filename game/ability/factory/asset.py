@@ -174,6 +174,12 @@ class AbilityFactoryAsset:
                     player = message.GetToPlayer()
                     if_cannot_operation(effect, player)
 
+            # RR 1.8 "Attach To": an attachment that cannot attach as it
+            # enters play does not enter play.  The caller restores its prior
+            # game area (or leaves an explicit fallback operation intact).
+            if not this.card.state.is_attached:
+                message.put_into_play_failed = True
+
         return Ability(
             AbilityType.NonKeyword,
             Message.WhenCardPutIntoPlay,
@@ -236,4 +242,3 @@ class AbilityFactoryAsset:
             "This",
             adamantium_claws_boost
         )
-

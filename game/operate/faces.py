@@ -117,7 +117,12 @@ class Faces:
         return moved_faces
 
     @staticmethod
-    def MoveAllToProcessingArea(faces: Sequence['CardFace'], by_effect: 'Effect') -> List['CardFace']:
+    def MoveAllToProcessingArea(
+            faces: Sequence['CardFace'],
+            by_effect: 'Effect',
+            *,
+            shuffle_origin_on_restore: bool=False,
+            ) -> List['CardFace']:
         from game.message import Message
         if not faces:
             return []
@@ -131,7 +136,23 @@ class Faces:
         else:
             area = world.area_processing
 
+        remembered_cards: List['Card'] = []
+        for moving_face in faces:
+            card = moving_face.card
+            if card.area.flags.is_processing:
+                continue
+            by_effect.context.processing_origins[card] = (
+                card.area,
+                card.area.GetIndex(moving_face),
+                shuffle_origin_on_restore,
+            )
+            remembered_cards.append(card)
+
         moved_faces = Faces.MoveAllTo(faces, area, by_effect)
+        moved_cards = {moved_face.card for moved_face in moved_faces}
+        for card in remembered_cards:
+            if card not in moved_cards:
+                by_effect.context.processing_origins.pop(card, None)
         # area = faces[0].card
         # from_decks = Faces.GetDecksInDeck(faces)
         # for face in faces:

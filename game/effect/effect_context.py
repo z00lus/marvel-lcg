@@ -22,6 +22,10 @@ class EffectContext:
         # A card in the removed-from-game area may move only when the
         # resolving effect explicitly searched that area for that card.
         self.allowed_removed_cards: Set[Any] = set()
+        # Search and play effects temporarily move cards to a processing area.
+        # Keep the rules-level origin here so a failed "put into play" can
+        # return the card to the game area it occupied before that UI move.
+        self.processing_origins: Dict[Any, Tuple['Deck', int, bool]] = {}
 
         self.bind_message: 'Message2|None' = None # 'self.ability.when', can only set None once, for "45078"
 
@@ -30,6 +34,11 @@ class EffectContext:
         self.allow_partial_resolution = False
         self.play_initiation_checked = False
         self.play_initiation_allowed = False
+        # A played card is moved to the processing area before its RR 1.8
+        # initiation checks.  Preserve the rules-level source area so cost
+        # modifiers and "as if in hand" effects can still identify where the
+        # declared card came from during those checks.
+        self.declared_play_from_area: 'Deck|None' = None
         self.self_costs_prepared = False
 
         self.target_range: Tuple[int, int] = (0, 0)
@@ -85,8 +94,10 @@ class EffectContext:
         self.paid_this_res_effects: List['Effect'] = []
         self.play_initiation_checked = False
         self.play_initiation_allowed = False
+        self.declared_play_from_area = None
         self.self_costs_prepared = False
         self.allowed_removed_cards.clear()
+        self.processing_origins.clear()
 
         self.initiator: User = self.effect.this.GetControlByOrOwner()
 
@@ -110,6 +121,8 @@ class EffectContext:
         self.paid_this_resources = Resources("0")
         self.play_initiation_checked = False
         self.play_initiation_allowed = False
+        self.declared_play_from_area = None
         self.self_costs_prepared = False
         self.allowed_removed_cards.clear()
+        self.processing_origins.clear()
         self.initiator = self.effect.this.GetControlByOrOwner()
