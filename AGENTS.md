@@ -4,7 +4,7 @@ This file applies to the entire repository. It is guidance for coding agents wor
 
 ## Project overview
 
-Marvel Champions Digital: Ronin Edition is a Python game engine with an aiohttp web server and a browser frontend written in HTML, CSS, and TypeScript. The current release identity is **Version 0.6.0 — “Echo”**.
+Marvel Champions Digital: Ronin Edition is a Python game engine with an aiohttp web server and a browser frontend written in HTML, CSS, and TypeScript. The current development identity is **Version 0.6.1 — “Echo”**.
 
 The main layers are:
 

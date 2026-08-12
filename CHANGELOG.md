@@ -1,6 +1,6 @@
 # Marvel Champions Digital: Ronin Edition Changelog
 
-> Version 0.6.0 — “Echo”
+> Current development version: 0.6.1 — “Echo”
 
 This document records the user-visible and development changes made in this
 fork after it diverged from the original
@@ -10,6 +10,23 @@ The comparison baseline is upstream commit
 [`a77154a`](https://github.com/irefrixs/marvel-lcg/commit/a77154ab7e2f800a6ae82da6e67efd83dc3c8045)
 (`master`, 2026-07-31). Version 0.6.0 is the first release carrying the
 **Ronin Edition** name and the **Echo** codename.
+
+## Version 0.6.1 — “Echo” (Unreleased)
+
+### Rules and cards
+
+- Corrected player-side-scheme rewards so cards such as Sidearm enter the
+  proper player area instead of remaining detached on the table.
+- Corrected Photographic Reflexes resolution and exclusive thwart-target
+  restrictions such as Hope Summers being limited to Stryfe's Grasp.
+
+### Interface
+
+- Distinguished Retaliate damage from ordinary card activation in the game
+  log.
+- Removed the duplicate `was defeated` log entry emitted for defeated schemes.
+- Added a prominent reminder that Ronin Edition is a testing and learning
+  platform and is not a replacement for supporting the physical card game.
 
 ## Version 0.6.0 — “Echo” (2026-08-11)
 

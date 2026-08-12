@@ -1,8 +1,10 @@
 # Marvel Champions Digital: Ronin Edition
 
-> Version 0.6.0 — “Echo”
+> Version 0.6.1 — “Echo”
 
 > **This edition uses Marvel Champions Rules Reference v1.8 as its supported rules model.**
+
+> **Please support the physical game.** Buy Marvel Champions products you enjoy and support your friendly local game store whenever possible. Ronin Edition is intended as a testing, training, and learning platform—a convenient way to explore heroes, practise decks, and become familiar with the game—not as a replacement for the physical card game.
 
 ## Fork Goals
 

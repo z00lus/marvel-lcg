@@ -17,11 +17,11 @@ class V18SetupUiTests(unittest.TestCase):
             Build.PRODUCT_NAME,
             'Marvel Champions Digital: Ronin Edition',
         )
-        self.assertEqual(Build.RELEASE_VERSION, '0.6.0')
+        self.assertEqual(Build.RELEASE_VERSION, '0.6.1')
         self.assertEqual(Build.RELEASE_CODENAME, 'Echo')
-        self.assertEqual(str(Ver.version), '0.6.0.0')
-        self.assertEqual(Ver.ui_version_str, '0.6.0.0r')
-        self.assertEqual(Ver.release_label, 'Version 0.6.0 — “Echo”')
+        self.assertEqual(str(Ver.version), '0.6.1.0')
+        self.assertEqual(Ver.ui_version_str, '0.6.1.0r')
+        self.assertEqual(Ver.release_label, 'Version 0.6.1 — “Echo”')
 
     def test_start_page_displays_ronin_edition_and_echo_release(self):
         source = (ROOT / 'public/main.html').read_text(encoding='utf-8')
@@ -29,7 +29,7 @@ class V18SetupUiTests(unittest.TestCase):
         self.assertIn('Marvel Champions Digital: Ronin Edition', source)
         self.assertIn('<h1>Marvel Champions Digital</h1>', source)
         self.assertIn('<h2>Ronin Edition</h2>', source)
-        self.assertIn('Version 0.6.0 — “Echo”', source)
+        self.assertIn('Version 0.6.1 — “Echo”', source)
         self.assertIn('Based on', source)
         self.assertIn('Marvel Champions: Digital Edition', source)
         self.assertIn('by Irefrixs', source)

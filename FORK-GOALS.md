@@ -1,6 +1,6 @@
 # Marvel Champions Digital: Ronin Edition
 
-> Version 0.6.0 — “Echo”
+> Version 0.6.1 — “Echo”
 
 ## Fork Goals
 

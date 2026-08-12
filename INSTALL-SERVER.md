@@ -1,6 +1,6 @@
 # Installing Marvel Champions Digital: Ronin Edition as a Server
 
-> Version 0.6.0 — “Echo”
+> Version 0.6.1 — “Echo”
 
 This guide is intended for Debian, Ubuntu, or Armbian with Python 3.10 or newer. The server is installed in `/opt/marvel-lcg` and runs under a dedicated `marvel-lcg` user.
 
