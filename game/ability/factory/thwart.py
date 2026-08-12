@@ -257,7 +257,11 @@ class AbilityFactoryThwart:
                     ],
                     lambda effect, message:
                         message.SetCannotBeThwart(effect),
-                    is_local=who_thwart == "This" or cannot_thwart == "This" or can_only_thwart == "This"
+                    # A "can only thwart this scheme" restriction must inspect
+                    # attempts against every scheme, not only messages already
+                    # related to this card.  The allowed target may be local;
+                    # the restriction itself is global.
+                    is_local=who_thwart == "This" or cannot_thwart == "This"
                 )
             ]
 
@@ -271,4 +275,3 @@ class AbilityFactoryThwart:
             )
 
         return abilities
-

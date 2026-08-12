@@ -194,8 +194,6 @@ class SenderScheme:
         def __init__(self, this: 'Scheme2', by_effect: 'Effect', message: 'Message.WhenSchemeBeDefeated') -> None:
             self.killer: Final = by_effect.this
             super().__init__(trigger=this, pre_message=message)
-            text = TransText("{this} was defeated", this=this)
-            self.Present(text, "", this, by_effect.this)
 
     # TODO: Pre message
     class AfterUnitDefeatedScheme(TriggerFaceMessage, ThwarterMessage):
@@ -205,4 +203,3 @@ class SenderScheme:
             self.by_effect: Final = by_effect
             super().__init__(trigger=killer, thwarter=killer, thwarted=[scheme])
             self.AddRelatedFace(killer, scheme, by_effect)
-
