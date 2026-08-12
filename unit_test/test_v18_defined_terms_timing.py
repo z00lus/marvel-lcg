@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 import importlib
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 # Preserve the application's normal import ordering.
 from engine import Engine
@@ -10,8 +10,10 @@ from cards.database import CardsDB
 from engine.lib.version import Ver
 from game.ability.ability_type import AbilityType, TimingPriority
 from game.card.factory import CardFactory
+from game.card.face.attribute.can_retaliate import CanRetaliate
 from game.card.face.model.face_on_event import ModelOnEvent
 from game.message import Message
+from game.message.sender.sender_effect import GetEffectActivationText
 from game.world.world_rule import WorldRule
 
 
@@ -87,6 +89,24 @@ class V18DefinedTermsTimingTests(unittest.TestCase):
         quickstrike.ResolveQuickstrike.assert_called_once_with(
             engage_message.engaged_player
         )
+
+    def test_retaliate_activation_log_names_the_keyword_and_damage(self):
+        face = MagicMock()
+        face.__str__.return_value = "Nebula"
+        retaliating_face = SimpleNamespace(retaliate=2)
+        face.CastTo.return_value = retaliating_face
+        effect = SimpleNamespace(
+            ability=SimpleNamespace(name="Retaliate"),
+            targets=[],
+        )
+
+        text = GetEffectActivationText(effect, face)
+
+        self.assertEqual(
+            text.text_no_symbol,
+            "Nebula retaliates for 2 damage",
+        )
+        face.CastTo.assert_called_once_with(CanRetaliate)
 
     def test_toughness_and_temporary_adapters_apply_their_effects(self):
         rule = self.MakeRule('v18_all')

@@ -1,6 +1,26 @@
 from . import *
 from typing import Final
 
+
+def GetEffectActivationText(effect: 'Effect', face: 'CardFace') -> 'TransText':
+    if effect.ability.name == "Retaliate":
+        from game.card.face.attribute.can_retaliate import CanRetaliate
+        retaliate = face.CastTo(CanRetaliate).retaliate
+        return TransText(
+            "{face} retaliates for {damage} damage",
+            face=face,
+            damage=retaliate,
+        )
+
+    if effect.targets:
+        return TransText(
+            "{face} activates, targets {targets}",
+            face=face,
+            targets=effect.targets,
+        )
+    return TransText("{face} activates", face=face)
+
+
 class SenderEffect:
 
     class WhenEffectWouldResolve(TriggerFaceMessage, TriggerNonePlayerMessage, CanBeInstead, CanGainValueMessage, HasEndEventMessage):
@@ -27,10 +47,7 @@ class SenderEffect:
             super().__init__(trigger=face, player=player, end_event=Message.AfterEffectResolved)
 
             if effect.ability.flags.need_render_ui:
-                if effect.targets:
-                    text = TransText("{face} activates, targets {targets}", face=face, targets=effect.targets)
-                else:
-                    text = TransText("{face} activates", face=face)
+                text = GetEffectActivationText(effect, face)
                 self.Present(text, "activate", face, *effect.targets)
 
     class AfterEffectResolved(TriggerFaceMessage, TriggerNonePlayerMessage, HasPreEventMessage):
@@ -60,4 +77,3 @@ class SenderEffect:
             super().__init__(player=player, trigger=face)
             text = TransText("{face} would surge against {player}", face=face, player=player)
             self.Present(text, "activate", face, player.GetIdentity())
-
