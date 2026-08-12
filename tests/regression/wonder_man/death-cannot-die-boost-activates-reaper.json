@@ -1,0 +1,46 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58029",
+    "comment": "death-cannot-die-boost-activates-reaper",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PutIntoPlay('58026')",
+        "Puzzle.Boost('58029')",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "40",
+        "--answer",
+        "{\"id\":0,\"targets\":[],\"resources\":[]}",
+        "--dump-asks"
+    ],
+    "expect": {
+        "attack_prompts": 3,
+        "hero_hp": 6
+    },
+    "checksum": "35aa8abcdcbcffc01980e29de2b7961c0420923141209cd36dfc6f7edf685c3b"
+}

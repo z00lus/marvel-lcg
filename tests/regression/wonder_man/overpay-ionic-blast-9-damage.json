@@ -1,0 +1,57 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "overpay-ionic-blast-9-damage",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58004",
+                "58003",
+                "58003",
+                "58003",
+                "58003"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "26",
+        "--strict",
+        "--prefer",
+        "Play",
+        "--avoid",
+        "Change_Form,Attack,Thwart",
+        "--overpay",
+        "3",
+        "--pay-color",
+        "Y"
+    ],
+    "expect": {
+        "enemy_hp": {
+            "Rhino": 5
+        }
+    },
+    "checksum": "770d505c5d2e9c5b3e8872ab79e31ecaa833a6edfb40f1417c02841964db2a89"
+}

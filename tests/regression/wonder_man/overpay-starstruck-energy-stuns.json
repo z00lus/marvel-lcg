@@ -1,0 +1,58 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "overpay-starstruck-energy-stuns",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58005",
+                "58003",
+                "58003"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "26",
+        "--strict",
+        "--prefer",
+        "Play",
+        "--avoid",
+        "Change_Form,Attack,Thwart",
+        "--overpay",
+        "1",
+        "--pay-color",
+        "Y"
+    ],
+    "expect": {
+        "enemy_hp": {
+            "Rhino": 13
+        },
+        "villain_area_has": [
+            "Stunned"
+        ]
+    },
+    "checksum": "7cae3ae825575e783da83e8a71a2f34c6868ad067531f9e8467e521ffbafd4bf"
+}

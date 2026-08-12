@@ -1,0 +1,55 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "60001a",
+    "comment": "sense-upgrade-returns-to-deck-bottom",
+    "note": "Matt Murdock's Forced Interrupt sends a leaving Sense upgrade to the BOTTOM of the Sense deck, never to a discard pile. Radar Sense starts third from the bottom and must end up first, so a size-only assertion cannot pass this. Also pins the recursion guard: without the into_area condition on the redirect, MoveToBottom re-fires WhenCardWouldLeavePlay and the engine dies with RecursionError.",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "60001a,60001b"
+            ],
+            "hand_cards": [
+                "01088",
+                "01088",
+                "01088"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.PutIntoPlay(c5)",
+        "Puzzle.Discard(c5)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "16",
+        "--passive"
+    ],
+    "expect": {
+        "additional_deck": [
+            "Radar Sense",
+            "Acute Tactility",
+            "Superior Taste",
+            "Heightened Hearing",
+            "Enhanced Olfaction"
+        ],
+        "additional_deck_top_face_up": true,
+        "additional_discard": [],
+        "player_discard": []
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58027",
+    "comment": "brother-vs-brother-cost-not-enforced",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PutIntoPlay('58027')",
+        "Puzzle.PutIntoPlay('58026')",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "40",
+        "--answer",
+        "{\"id\":0,\"targets\":[],\"resources\":[]}",
+        "--dump-asks"
+    ],
+    "expect": {
+        "reaper_attackable_with_empty_hand": false
+    },
+    "xfail": "58027: AdditionalCostToAttack is attacker-keyed, so the discard cost to attack Grim Reaper is not enforced. Flip to a pass when a target-keyed cost keyword exists.",
+    "checksum": "769b0f270bac4c5b3ff2c4efbece8d8a3c601ce2769f6a50caae1fe510fb291d"
+}

@@ -1,0 +1,62 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "comment": "heightened-hearing-blunts-the-attack",
+    "note": "60004 Heightened Hearing: when attached enemy attacks, discard this card, that enemy gets -3 ATK for that attack. Rhino stage 3 (ATK 4) because stage 1's ATK 2 cannot show a -3 at all. Puzzle.Boost(c10) is what makes him attack -- it calls villain.DoActivate, so no villain phase is needed; Armored Rhino Suit is the boost card precisely because it has no Boost key, hence zero boost icons and a deterministic ATK. The basic defense is DECLINED, so no DEF is subtracted and the arithmetic is exactly 4 - 3 = 1: hero 10 - 1 = 9. That pins the modifier at -3 and nothing else -- a control with no upgrade attached takes the full 4 and lands on 6, and a -2 would land on 8. Frame budget matters here more than anywhere else in the suite: at 18 frames this board still reads 10 because the damage has not been applied yet, which looks like a clean prevent and is really a half-resolved read. Two bugs this pins, both of which left the card cycling back into the Sense deck with the hero taking full damage and no error anywhere: pairing SetLabel('defense') with WhenUnitWouldAttackUnit (SpecialDefense has no branch for that message and hits assert False), and omitting NoOutOfPlayLimit (the Discard cost removes the card from play before CheckNotOutOfPlay runs).",
+    "cover": "60001a",
+    "seed": 10010001,
+    "villain": [
+        "01096"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [
+        "01098"
+    ],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "60001a,60001b"
+            ],
+            "hand_cards": [
+                "01088",
+                "01088",
+                "01088"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.PutIntoPlay(c4)",
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.Boost(c10)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "24",
+        "--strict",
+        "--greedy",
+        "--decline",
+        "Defense",
+        "--avoid",
+        "Change_Form,Superhuman,Attack,Thwart"
+    ],
+    "expect": {
+        "hero_hp": 9,
+        "additional_deck": [
+            "Heightened Hearing",
+            "Acute Tactility",
+            "Superior Taste",
+            "Radar Sense",
+            "Enhanced Olfaction"
+        ],
+        "additional_discard": []
+    }
+}

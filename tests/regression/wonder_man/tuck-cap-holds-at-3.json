@@ -1,0 +1,55 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "tuck-cap-holds-at-3",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58003",
+                "58003",
+                "58003",
+                "58003"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PlaceThreat(c3,4)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "70",
+        "--strict",
+        "--greedy",
+        "--avoid",
+        "Change_Form,Attack,Thwart"
+    ],
+    "expect": {
+        "tucked": 3,
+        "hero_attack": 4,
+        "main_scheme_threat": 0,
+        "player_discard_has": [
+            "Active Altruism"
+        ]
+    },
+    "checksum": "f98b6c32c87b0dfc3a8c82ce27a6b554384becfca880ccae418d50f41e164ac2"
+}

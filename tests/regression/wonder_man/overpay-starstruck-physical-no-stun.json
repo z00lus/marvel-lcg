@@ -1,0 +1,58 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "overpay-starstruck-physical-no-stun",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58005",
+                "58010",
+                "58010"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "26",
+        "--strict",
+        "--prefer",
+        "Play",
+        "--avoid",
+        "Change_Form,Attack,Thwart",
+        "--overpay",
+        "1",
+        "--pay-color",
+        "R"
+    ],
+    "expect": {
+        "enemy_hp": {
+            "Rhino": 13
+        },
+        "villain_area_lacks": [
+            "Stunned"
+        ]
+    },
+    "checksum": "0e9d40858be5b8862208ed8515ee670f295af221fea2adbca3da86f454baba7d"
+}

@@ -1,0 +1,46 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58029",
+    "comment": "death-cannot-die-activates-reaper",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PutIntoPlay('58026')",
+        "Puzzle.Reveal('58029')",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "40",
+        "--answer",
+        "{\"id\":0,\"targets\":[],\"resources\":[]}",
+        "--dump-asks"
+    ],
+    "expect": {
+        "attack_prompts": 2,
+        "hero_hp": 8
+    },
+    "checksum": "de95dba85fee196e62de0ae46f5fe277a613ee597c1a85f88a5d39d120749baa"
+}

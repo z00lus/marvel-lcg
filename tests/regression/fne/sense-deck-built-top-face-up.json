@@ -1,0 +1,52 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "60001a",
+    "comment": "sense-deck-built-top-face-up",
+    "note": "BeginGameWithSetAside puts the five Sense upgrades in additional_discard_pile, not additional_deck. 60001b must shuffle them across at setup, or Daredevil's whole mechanic is inert.",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "60001a,60001b"
+            ],
+            "hand_cards": [
+                "01088",
+                "01088",
+                "01088"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "12",
+        "--passive"
+    ],
+    "expect": {
+        "additional_deck": [
+            "Acute Tactility",
+            "Superior Taste",
+            "Radar Sense",
+            "Heightened Hearing",
+            "Enhanced Olfaction"
+        ],
+        "additional_deck_top_face_up": true,
+        "additional_discard": []
+    }
+}

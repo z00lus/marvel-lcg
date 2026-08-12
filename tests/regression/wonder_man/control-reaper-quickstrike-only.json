@@ -1,0 +1,45 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58026",
+    "comment": "control-reaper-quickstrike-only",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PutIntoPlay('58026')",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "40",
+        "--answer",
+        "{\"id\":0,\"targets\":[],\"resources\":[]}",
+        "--dump-asks"
+    ],
+    "expect": {
+        "attack_prompts": 1,
+        "hero_hp": 10
+    },
+    "checksum": "d007174d30e6590078674caa85e381a6f8e1b9a01ede1102c40a64d0bcfa91a5"
+}

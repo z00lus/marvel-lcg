@@ -1,0 +1,61 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "basic-attack-empties-tuck-pile",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58003",
+                "58003",
+                "58003"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PlaceThreat(c3,4)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        [
+            "--steps",
+            "40",
+            "--strict",
+            "--greedy",
+            "--avoid",
+            "Change_Form,Attack"
+        ],
+        [
+            "--steps",
+            "24",
+            "--greedy",
+            "--prefer",
+            "Attack"
+        ]
+    ],
+    "expect": {
+        "tucked": 0,
+        "enemy_hp": {
+            "Rhino": 10
+        }
+    },
+    "checksum": "81bc8c02eb3ec567c219072adc0da1754dc2b49dd0a28a3fb7feeedd184ec2ac"
+}

@@ -1,0 +1,55 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "comment": "echo-tucks-played-event",
+    "note": "Echo's Watch and Learn: after an aspect or basic event is played, tuck it under Echo instead of letting it reach the discard pile. Rhino at 11 proves Haymaker actually resolved (14 - 3) rather than being silently discarded out of the processing area unpaid, and tucked:1 proves it went under Echo rather than to the player discard pile. Neither assertion passes alone: an unresolved Haymaker still leaves Rhino at 14, and a resolved-but-untucked one still leaves tucked at 0. This is the cross-player tuck machinery the project notes flagged as the real Echo gap -- z00lus implements it as AfterPlayerPlayedCard with \"AnyPlayer\", which is why it can see another player's event at all.",
+    "cover": "60037a",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "60037a,60037b"
+            ],
+            "hand_cards": [
+                "01087",
+                "01088",
+                "01088"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "34",
+        "--strict",
+        "--greedy",
+        "--avoid",
+        "Change_Form,Attack,Thwart"
+    ],
+    "expect": {
+        "enemy_hp": {
+            "Rhino": 11
+        },
+        "tucked": 1,
+        "player_discard": [
+            "Energy",
+            "Energy"
+        ]
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "version": "0.5.9",
+    "author": "regression-suite",
+    "cover": "58001a",
+    "comment": "overpay-active-altruism-removes-5",
+    "seed": 10010001,
+    "villain": [
+        "01094"
+    ],
+    "schemes": [
+        "01097a,01097b"
+    ],
+    "encounter_deck": [],
+    "encounter_discard_pile": [],
+    "set_aside": [],
+    "expert": false,
+    "players": [
+        {
+            "identities": [
+                "58001a,58001b"
+            ],
+            "hand_cards": [
+                "58003",
+                "58003",
+                "58003"
+            ],
+            "player_deck": [],
+            "player_discard_pile": [],
+            "set_aside": []
+        }
+    ],
+    "puzzle_command": [
+        "Puzzle.ChangeForm(c1)",
+        "Puzzle.PlaceThreat(c3,6)",
+        "Puzzle.End()"
+    ],
+    "driver": [
+        "--steps",
+        "26",
+        "--strict",
+        "--prefer",
+        "Play",
+        "--avoid",
+        "Change_Form,Attack,Thwart",
+        "--overpay",
+        "2",
+        "--pay-color",
+        "Y"
+    ],
+    "expect": {
+        "main_scheme_threat": 1
+    },
+    "checksum": "44ced46af3d1b39dfd364e5b711bdd4d1d50bffd8c9fc3a5248b45c4d6da886d"
+}
