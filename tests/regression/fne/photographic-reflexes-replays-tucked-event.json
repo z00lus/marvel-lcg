@@ -2,7 +2,7 @@
     "version": "0.5.9",
     "author": "regression-suite",
     "comment": "photographic-reflexes-replays-tucked-event",
-    "note": "Echo's full signature chain, and the one card in the set that is genuinely novel. Haymaker is played for 2 (Rhino 14 -> 11) and tucked under Echo by Watch and Learn; then, holding Photographic Reflexes, the tucked Haymaker is played AGAIN out of the tuck pile at cost 0 -- its printed 2 minus the -2 the Reflexes grants -- discarding the Reflexes as the price, for 3 more damage. Rhino at 8 is the assertion: it requires both resolutions, the tuck, the replay-from-tuck-pile, and the discount, and no partial failure of that chain produces it. Note 60040a is deliberately LAST in hand: pick_payment walks the option's payment table in order and will happily spend Photographic Reflexes itself as a resource to pay for Haymaker, which burns the card and the case then silently measures nothing. Frame budget is load-bearing too -- at 36 frames this board still reads Rhino 11 with Haymaker nowhere, which looks exactly like a dead replay and is really a half-resolved read; it settles by 42.",
+    "note": "Echo's full signature chain, and the one card in the set that is genuinely novel. Haymaker is played for 2 (Rhino 14 -> 11) and tucked under Echo by Watch and Learn; then, holding Photographic Reflexes, the tucked Haymaker is played AGAIN out of the tuck pile at cost 0 -- its printed 2 minus the -2 the Reflexes grants -- discarding the Reflexes as the price, for 3 more damage. Rhino at 8 is the assertion: it requires both resolutions, the tuck, the replay-from-tuck-pile, and the discount, and no partial failure of that chain produces it. Note 60040a is deliberately LAST in hand: pick_payment walks the option's payment table in order and will happily spend Photographic Reflexes itself as a resource to pay for Haymaker, which burns the card and the case then silently measures nothing. Frame budget is load-bearing too -- at 36 frames this board still reads Rhino 11 with Haymaker nowhere, which looks exactly like a dead replay and is really a half-resolved read; it settles by 42. REGRESSION GUARD: this chain silently stopped resolving at 1df4645 (ability cost initiation atomic) and was restored at 781b5ac (restore Sidearm and Photographic Reflexes flows) -- see issue #10. It was an xfail in between; if it goes red again, that is the same regression returning.",
     "cover": "60037a",
     "seed": 10010001,
     "villain": [
@@ -54,6 +54,5 @@
             "Photographic Reflexes",
             "Haymaker"
         ]
-    },
-    "xfail": "blocked-by-issue-10: 60040 Photographic Reflexes stopped resolving at 1df4645 (make ability cost initiation atomic). The action is offered, selecting it never completes, and no error is raised. This passed at cec0701. Flip to a pass when the regression is fixed -- an XPASS here IS the fix landing."
+    }
 }

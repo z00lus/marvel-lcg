@@ -99,17 +99,69 @@ def can_bind() -> bool:
         s.close()
 
 
-def free_port(timeout: int = 25) -> None:
-    subprocess.run(f"lsof -ti TCP:{PORT} | xargs kill 2>/dev/null", shell=True)
+def port_owners() -> list[str]:
+    out = subprocess.run(f"lsof -ti TCP:{PORT}", shell=True,
+                         capture_output=True, text=True).stdout
+    return [pid for pid in out.split() if pid]
+
+
+def require_port_free(timeout: int = 90) -> str | None:
+    """Refuse to run if another *process* holds the port.
+
+    This used to `kill` and then `kill -9` whatever was listening, which is not
+    the runner's to kill: on a developer machine that is most likely an actual
+    game in progress. Report it and stop instead -- the suite only ever
+    terminates servers it started itself.
+
+    A blocked port with no owning process is a different thing entirely: a
+    socket from a just-exited run still in TIME_WAIT, with nobody to tell the
+    user to stop. That clears on its own, so wait for it rather than refusing
+    with an empty "(pid )".
+    """
+    if can_bind():
+        return None
+
+    owners = port_owners()
+    if owners:
+        return (f"port {PORT} is held by pid {', '.join(owners)}. The suite "
+                f"starts its own engine per case and will not kill a process "
+                f"it did not start. Stop that process and run again.")
+
+    for _ in range(timeout):
+        time.sleep(1)
+        if can_bind():
+            return None
+        if port_owners():
+            break
+    owners = port_owners()
+    if owners:
+        return (f"port {PORT} is held by pid {', '.join(owners)}. Stop that "
+                f"process and run again.")
+    return (f"port {PORT} is still unavailable after {timeout}s, with no "
+            f"process holding it. A socket may be lingering in TIME_WAIT; "
+            f"wait a moment and run again.")
+
+
+def wait_for_port(timeout: int = 90) -> str | None:
+    """Wait for OUR server to release the port between cases.
+
+    Measured at ~25-30s: the engine binds without SO_REUSEADDR, and the
+    websocket connections a case makes leave the port blocked well after the
+    process itself is gone. The timeout is deliberately far above that -- at 25s
+    it sat exactly on the boundary and produced an intermittent, entirely
+    misleading "engine failed to start".
+
+    Returns None when the port came free, or a reason when it did not.
+    """
     for _ in range(timeout):
         if can_bind():
-            return
+            return None
+        owners = port_owners()
+        if owners:
+            return (f"port {PORT} was taken by pid {', '.join(owners)} "
+                    f"mid-run; the suite will not kill a process it did not start")
         time.sleep(1)
-    subprocess.run(f"lsof -ti TCP:{PORT} | xargs kill -9 2>/dev/null", shell=True)
-    for _ in range(timeout):
-        if can_bind():
-            return
-        time.sleep(1)
+    return f"port {PORT} did not become bindable within {timeout}s"
 
 
 def get(path: str, timeout: int = 20) -> str:
@@ -133,10 +185,13 @@ def get(path: str, timeout: int = 20) -> str:
     return raw.decode("utf-8", "replace")
 
 
-def boot(case_json: dict, log_path: pathlib.Path) -> subprocess.Popen | None:
+def boot(case_json: dict, log_path: pathlib.Path) -> subprocess.Popen | str:
+    """Start an engine for one case. Returns the process, or a reason string."""
     global _cookie
     _cookie = None
-    free_port()
+    blocked = wait_for_port()
+    if blocked:
+        return blocked
     for stale in ("crash.json", "crash.log"):
         (ROOT / stale).unlink(missing_ok=True)
     log = open(log_path, "w")
@@ -145,10 +200,10 @@ def boot(case_json: dict, log_path: pathlib.Path) -> subprocess.Popen | None:
         if not can_bind():           # something is listening
             break
         if proc.poll() is not None:
-            return None
+            return "engine exited during startup"
         time.sleep(1)
     else:
-        return None
+        return "engine did not start listening in time"
     # The engine only builds a world once a puzzle is loaded, and `/new_puzzle`
     # reads the query string RAW — it is never percent-decoded. So the payload
     # must contain no spaces anywhere, including inside string values: compact
@@ -323,8 +378,8 @@ def run_case(path: pathlib.Path, verbose: bool) -> str:
     log_path = pathlib.Path("/tmp") / f"suite_{path.stem}.log"
 
     proc = boot(case, log_path)
-    if proc is None:
-        return f"ERROR   {path.stem}: engine failed to start"
+    if isinstance(proc, str):
+        return f"ERROR   {path.stem}: {proc}"
 
     try:
         # `driver` is either one flag list, or a list of lists run in order against
@@ -339,16 +394,23 @@ def run_case(path: pathlib.Path, verbose: bool) -> str:
                 [PY, str(ROOT / "tools" / "headless_client.py"), *phase],
                 cwd=ROOT, capture_output=True, text=True, timeout=200)
             driver_out += out.stdout + out.stderr
+        # Assertion failures and infrastructure failures are kept apart on
+        # purpose. `xfail` says "this rule is not implemented yet", which is a
+        # statement about game behaviour only. A crash or an engine error is
+        # never the expected outcome of anything, so letting `xfail` absorb one
+        # would hide a new crash inside a case that was already red -- exactly
+        # the failure this suite exists to make visible.
+        hard: list[str] = []
         engine_errors = driver_out.count("!! ENGINE ERROR")
+        if engine_errors:
+            hard.append(f"{engine_errors} engine error(s) in render frames")
+        if (ROOT / "crash.json").exists() or (ROOT / "crash.log").exists():
+            hard.append("crash artifact written")
         try:
             world = read_world()
         except Exception as exc:
             return f"ERROR   {path.stem}: could not read world ({exc})"
         fails = evaluate(expect, world, driver_out)
-        if engine_errors:
-            fails.append(f"{engine_errors} engine error(s) in render frames")
-        if (ROOT / "crash.json").exists() or (ROOT / "crash.log").exists():
-            fails.append("crash artifact written")
     finally:
         proc.terminate()
         try:
@@ -356,17 +418,23 @@ def run_case(path: pathlib.Path, verbose: bool) -> str:
         except subprocess.TimeoutExpired:
             proc.kill()
 
+    def detail_of(items: list[str]) -> str:
+        text = "\n".join(f"          {f}" for f in items)
+        if verbose:
+            text += "\n" + "\n".join(f"          | {l}"
+                                     for l in driver_out.splitlines()[-15:])
+        return text
+
+    # An infrastructure failure outranks everything, including xfail.
+    if hard:
+        return f"ERROR   {path.stem}\n{detail_of(hard)}"
     if xfail:
         if fails:
             return f"XFAIL   {path.stem}\n          known gap — {xfail}"
         return (f"XPASS   {path.stem}: expected to fail but passed — "
                 f"the gap may be fixed; promote this case\n          {xfail}")
     if fails:
-        detail = "\n".join(f"          {f}" for f in fails)
-        if verbose:
-            detail += "\n" + "\n".join(f"          | {l}"
-                                       for l in driver_out.splitlines()[-15:])
-        return f"FAIL    {path.stem}\n{detail}"
+        return f"FAIL    {path.stem}\n{detail_of(fails)}"
     return f"ok      {path.stem}"
 
 
@@ -381,6 +449,11 @@ def main() -> int:
         print(f"no cases matching {args.filter!r} in {CASES_DIR}")
         return 1
 
+    busy = require_port_free()
+    if busy:
+        print(busy)
+        return 1
+
     print(f"running {len(cases)} case(s) from {CASES_DIR.relative_to(ROOT)}\n")
     results = []
     for path in cases:
@@ -388,12 +461,15 @@ def main() -> int:
         print(line, flush=True)
         results.append(line)
 
-    bad = [r for r in results if r.startswith(("FAIL", "ERROR", "XPASS"))]
+    errors = [r for r in results if r.startswith("ERROR")]
+    bad = [r for r in results if r.startswith(("FAIL", "XPASS"))]
     xfail = [r for r in results if r.startswith("XFAIL")]
     ok = [r for r in results if r.startswith("ok")]
-    print(f"\n{len(ok)} passed, {len(xfail)} xfail, {len(bad)} failed")
-    free_port()
-    return 1 if bad else 0
+    summary = f"\n{len(ok)} passed, {len(xfail)} xfail, {len(bad)} failed"
+    if errors:
+        summary += f", {len(errors)} error"
+    print(summary)
+    return 1 if (bad or errors) else 0
 
 
 if __name__ == "__main__":
