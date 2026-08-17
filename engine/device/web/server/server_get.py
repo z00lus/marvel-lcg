@@ -165,7 +165,13 @@ class GameServerGet(GameServerBase):
                 'available': False,
                 'error': 'Game history is disabled.',
             })
-        dashboard = await TaskManager.ToThread(history.GetDashboard)
+        try:
+            dashboard = await TaskManager.ToThread(
+                history.GetDashboard,
+                request.query.get('source', 'all'),
+            )
+        except ValueError as exc:
+            return web.json_response({'error': str(exc)}, status=400)
         return web.json_response(dashboard)
 
     async def get_active_campaign(self, request: web.Request) -> web.Response:

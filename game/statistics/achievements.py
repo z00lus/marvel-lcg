@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import sqlite3
 from typing import Any, Dict, List, Tuple
 
@@ -103,7 +104,8 @@ class AchievementEvaluator:
     ) -> int:
         rows = connection.execute(
             'SELECT result, expert, scenario_key FROM games '
-            "WHERE result IN ('win', 'loss') ORDER BY id DESC LIMIT ?",
+            "WHERE result IN ('win', 'loss') "
+            'ORDER BY datetime(finished_at) DESC, id DESC LIMIT ?',
             (limit,),
         ).fetchall()
         count = 0
@@ -177,6 +179,51 @@ class AchievementEvaluator:
             )
             if cursor.rowcount:
                 unlocked.append(definition.achievement_id)
+        return unlocked
+
+    @classmethod
+    def Recalculate(
+        cls,
+        connection: sqlite3.Connection,
+        unlocked_game_id: int|None=None,
+        unlocked_at: str|None=None,
+    ) -> List[str]:
+        """Synchronize persisted unlocks with the current game history.
+
+        Physical games can be corrected or deleted, so achievements cannot be
+        append-only. Existing valid unlock timestamps are preserved while
+        unlocks that are no longer earned are removed.
+        """
+        progress = cls.Progress(connection)
+        earned = {
+            definition.achievement_id
+            for definition in ACHIEVEMENTS
+            if progress.get(definition.achievement_id, 0) >= definition.target
+        }
+        existing = {
+            str(row['achievement_id'])
+            for row in connection.execute(
+                'SELECT achievement_id FROM achievements'
+            ).fetchall()
+        }
+
+        removed = existing - earned
+        if removed:
+            placeholders = ','.join('?' for _ in removed)
+            connection.execute(
+                f'DELETE FROM achievements WHERE achievement_id IN ({placeholders})',
+                tuple(sorted(removed)),
+            )
+
+        timestamp = unlocked_at or datetime.now(timezone.utc).isoformat()
+        unlocked: List[str] = []
+        for achievement_id in sorted(earned - existing):
+            connection.execute(
+                'INSERT INTO achievements '
+                '(achievement_id, unlocked_at, unlocked_game_id) VALUES (?, ?, ?)',
+                (achievement_id, timestamp, unlocked_game_id),
+            )
+            unlocked.append(achievement_id)
         return unlocked
 
     @classmethod

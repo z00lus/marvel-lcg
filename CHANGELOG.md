@@ -27,6 +27,18 @@ The comparison baseline is upstream commit
 - Removed the duplicate `was defeated` log entry emitted for defeated schemes.
 - Added a prominent reminder that Ronin Edition is a testing and learning
   platform and is not a replacement for supporting the physical card game.
+- Replaced the standalone Statistics page with a combined **Collection &
+  Statistics** screen for tracking owned physical products, browsing game
+  history, and reviewing achievements.
+
+### Game history and achievements
+
+- Added manual logging, editing, and deletion of physical solo games.
+- Unified digital games, replay imports, and tabletop results in the same
+  SQLite history, with source filters and shared hero, villain, and matchup
+  win rates.
+- Recalculate achievement progress after a physical result is corrected or
+  removed, and order streak achievements by the actual played date.
 
 ## Version 0.6.0 — “Echo” (2026-08-11)
 

@@ -31,8 +31,9 @@ REPLAY_FOLDERS = ConfigVariables.Folders('replay_folders', ['./replays/'])
 
 
 class GameHistory:
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
     KNOWN_RESULTS = ('win', 'loss', 'unknown', 'abandoned')
+    KNOWN_SOURCES = ('digital', 'physical', 'replay_import')
 
     def __init__(self, file_path: str|None=None, replay_folders: List[str]|None=None) -> None:
         self.file_path = file_path or GAME_HISTORY_FILE.value
@@ -121,7 +122,10 @@ class GameHistory:
                     imported_from_replay INTEGER NOT NULL DEFAULT 0
                         CHECK (imported_from_replay IN (0, 1)),
                     replay_analysis_status TEXT NOT NULL DEFAULT '',
-                    replay_analysis_error TEXT NOT NULL DEFAULT ''
+                    replay_analysis_error TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT 'digital'
+                        CHECK (source IN ('digital', 'physical', 'replay_import')),
+                    notes TEXT NOT NULL DEFAULT ''
                 );
 
                 CREATE INDEX IF NOT EXISTS games_result_index
@@ -132,6 +136,8 @@ class GameHistory:
                     ON games(scenario_key, result);
                 CREATE INDEX IF NOT EXISTS games_matchup_index
                     ON games(hero_code, scenario_key, expert, result);
+                CREATE INDEX IF NOT EXISTS games_source_index
+                    ON games(source, result, id);
 
                 CREATE TABLE IF NOT EXISTS game_card_statistics (
                     game_id INTEGER NOT NULL REFERENCES games(id) ON DELETE CASCADE,
@@ -149,6 +155,12 @@ class GameHistory:
                     unlocked_at TEXT NOT NULL,
                     unlocked_game_id INTEGER REFERENCES games(id) ON DELETE SET NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS collection_products (
+                    product_key TEXT PRIMARY KEY,
+                    owned_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
                 '''
             )
             connection.execute(f'PRAGMA user_version = {self.SCHEMA_VERSION}')
@@ -164,6 +176,41 @@ class GameHistory:
                 "TEXT NOT NULL DEFAULT ''"
             )
             connection.execute('PRAGMA user_version = 2')
+            version = 2
+
+        if version < 3:
+            columns = {
+                row['name'] for row in connection.execute(
+                    'PRAGMA table_info(games)'
+                ).fetchall()
+            }
+            if 'source' not in columns:
+                connection.execute(
+                    "ALTER TABLE games ADD COLUMN source TEXT NOT NULL "
+                    "DEFAULT 'digital' CHECK (source IN "
+                    "('digital', 'physical', 'replay_import'))"
+                )
+            if 'notes' not in columns:
+                connection.execute(
+                    "ALTER TABLE games ADD COLUMN notes TEXT NOT NULL DEFAULT ''"
+                )
+            if 'imported_from_replay' in columns:
+                connection.execute(
+                    "UPDATE games SET source = 'replay_import' "
+                    'WHERE imported_from_replay = 1'
+                )
+            connection.executescript(
+                '''
+                CREATE INDEX IF NOT EXISTS games_source_index
+                    ON games(source, result, id);
+                CREATE TABLE IF NOT EXISTS collection_products (
+                    product_key TEXT PRIMARY KEY,
+                    owned_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                '''
+            )
+            connection.execute('PRAGMA user_version = 3')
 
     @staticmethod
     def NewGameId() -> str:
@@ -331,6 +378,7 @@ class GameHistory:
             'undo_count': game.session.undo_count,
             'replay_file': scene.path,
             'imported_from_replay': 0,
+            'source': 'digital',
         }
 
     def _live_card_statistics(self, game: Any) -> List[Dict[str, Any]]:
@@ -382,6 +430,7 @@ class GameHistory:
             'remaining_hit_points', 'minions_in_play', 'side_schemes_in_play',
             'undo_count', 'replay_file', 'imported_from_replay',
             'replay_analysis_status', 'replay_analysis_error',
+            'source', 'notes',
         )
         values = {
             'source_key': '',
@@ -413,12 +462,16 @@ class GameHistory:
             'imported_from_replay': 0,
             'replay_analysis_status': '',
             'replay_analysis_error': '',
+            'source': 'digital',
+            'notes': '',
             **record,
         }
         if not values['source_key']:
             raise ValueError('A game history source key is required.')
         if values['result'] not in self.KNOWN_RESULTS:
             values['result'] = 'unknown'
+        if values['source'] not in self.KNOWN_SOURCES:
+            raise ValueError('Unknown game source.')
 
         placeholders = ','.join('?' for _ in columns)
         with self._lock, self._connect() as connection:
@@ -572,6 +625,8 @@ class GameHistory:
             'imported_from_replay': 1,
             'replay_analysis_status': 'metadata' if result in ('win', 'loss') else 'pending',
             'replay_analysis_error': '',
+            'source': 'replay_import',
+            'notes': '',
         }
 
     def _existing_replay_state(self, source_key: str) -> Dict[str, str]:
@@ -644,10 +699,183 @@ class GameHistory:
     def _rate(wins: int, games: int) -> float:
         return round(wins * 100.0 / games, 1) if games else 0.0
 
-    def GetDashboard(self) -> Dict[str, Any]:
+    @staticmethod
+    def _normalize_source_filter(source: str) -> str:
+        source = str(source or 'all').strip().lower()
+        if source not in ('all', *GameHistory.KNOWN_SOURCES):
+            raise ValueError('Unknown game history source filter.')
+        return source
+
+    @staticmethod
+    def _normalize_physical_date(value: Any) -> str:
+        text = str(value or '').strip()
+        if not text:
+            return GameHistory._now()
+        try:
+            parsed = datetime.fromisoformat(text.replace('Z', '+00:00'))
+        except ValueError as exc:
+            raise ValueError('Played date is invalid.') from exc
+        if parsed.tzinfo is None:
+            parsed = parsed.astimezone()
+        return parsed.isoformat()
+
+    @staticmethod
+    def _required_text(data: Dict[str, Any], key: str, label: str, limit: int) -> str:
+        value = str(data.get(key, '')).strip()
+        if not value:
+            raise ValueError(f'{label} is required.')
+        if len(value) > limit:
+            raise ValueError(f'{label} is too long.')
+        return value
+
+    def SavePhysicalGame(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        if not self.available:
+            raise RuntimeError('Game history is unavailable.')
+        if not isinstance(data, dict):
+            raise ValueError('Expected a physical game object.')
+
+        hero_name = self._required_text(data, 'hero_name', 'Hero', 120)
+        scenario_name = self._required_text(data, 'scenario_name', 'Scenario', 160)
+        result = str(data.get('result', '')).strip().lower()
+        if result not in ('win', 'loss'):
+            raise ValueError('Result must be win or loss.')
+        rounds = self._safe_int(data.get('rounds'))
+        if rounds is not None and not 1 <= rounds <= 999:
+            raise ValueError('Rounds must be between 1 and 999.')
+        playtime_minutes = self._safe_float(data.get('playtime_minutes'))
+        if playtime_minutes is not None and not 0 <= playtime_minutes <= 100000:
+            raise ValueError('Play time is invalid.')
+        remaining_hit_points = self._safe_int(data.get('remaining_hit_points'))
+        if remaining_hit_points is not None and not 0 <= remaining_hit_points <= 999:
+            raise ValueError('Remaining hit points are invalid.')
+        clean_table = data.get('clean_table') is True
+        notes = str(data.get('notes', '')).strip()
+        if len(notes) > 4000:
+            raise ValueError('Notes are too long.')
+        deck_name = str(data.get('deck_name', '')).strip()
+        if len(deck_name) > 200:
+            raise ValueError('Deck name is too long.')
+
+        finished_at = self._normalize_physical_date(data.get('finished_at'))
+        hero_code = str(data.get('hero_code', '')).strip()[:80]
+        villain_code = str(data.get('villain_code', '')).strip()[:80]
+        scenario_key = str(data.get('scenario_key', '')).strip()
+        if not scenario_key:
+            scenario_key = self._slug(scenario_name)
+        if len(scenario_key) > 160:
+            raise ValueError('Scenario key is too long.')
+
+        record = {
+            'finished_at': finished_at,
+            'engine_version': '',
+            'rules_version': 'v18',
+            'hero_code': hero_code,
+            'hero_name': hero_name,
+            'villain_code': villain_code,
+            'villain_name': scenario_name,
+            'scenario_name': scenario_name,
+            'scenario_key': scenario_key,
+            'expert': int(bool(data.get('expert', False))),
+            'result': result,
+            'game_over_reason': '',
+            'rounds': rounds,
+            'playtime_seconds': (
+                playtime_minutes * 60 if playtime_minutes is not None else None
+            ),
+            'campaign_id': '',
+            'game_mode': 'physical',
+            'deck_name': deck_name,
+            'deck_source': 'physical',
+            'remaining_hit_points': remaining_hit_points,
+            'minions_in_play': 0 if clean_table else None,
+            'side_schemes_in_play': 0 if clean_table else None,
+            # A physical session does not have the engine's Undo command.
+            'undo_count': 0,
+            'replay_file': '',
+            'imported_from_replay': 0,
+            'source': 'physical',
+            'notes': notes,
+        }
+
+        game_id = self._safe_int(data.get('id'))
+        if game_id is None:
+            record['source_key'] = f'physical:{uuid.uuid4().hex}'
+            stored = self._store_game(record)
+            return {
+                'id': stored['id'],
+                'created': True,
+                'unlocked': stored['unlocked'],
+            }
+
+        columns = (
+            'finished_at', 'hero_code', 'hero_name', 'villain_code',
+            'villain_name', 'scenario_name', 'scenario_key', 'expert', 'result',
+            'rounds', 'playtime_seconds', 'deck_name', 'notes',
+            'remaining_hit_points', 'minions_in_play',
+            'side_schemes_in_play', 'undo_count',
+        )
+        with self._lock, self._connect() as connection:
+            cursor = connection.execute(
+                f'UPDATE games SET {", ".join(f"{column} = ?" for column in columns)} '
+                "WHERE id = ? AND source = 'physical'",
+                (*[record[column] for column in columns], game_id),
+            )
+            if not cursor.rowcount:
+                raise ValueError('Physical game was not found.')
+            unlocked = AchievementEvaluator.Recalculate(
+                connection,
+                game_id,
+                finished_at,
+            )
+        return {'id': game_id, 'created': False, 'unlocked': unlocked}
+
+    def DeletePhysicalGame(self, game_id: Any) -> Dict[str, Any]:
+        parsed_id = self._safe_int(game_id)
+        if parsed_id is None:
+            raise ValueError('Physical game id is invalid.')
+        with self._lock, self._connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM games WHERE id = ? AND source = 'physical'",
+                (parsed_id,),
+            )
+            if not cursor.rowcount:
+                raise ValueError('Physical game was not found.')
+            AchievementEvaluator.Recalculate(connection)
+        return {'deleted': True, 'id': parsed_id}
+
+    def SaveCollection(self, product_keys: Any) -> Dict[str, Any]:
+        if not isinstance(product_keys, list):
+            raise ValueError('Owned products must be a list.')
+        normalized: List[str] = []
+        for value in product_keys:
+            key = str(value).strip().lower()
+            if not key or len(key) > 80 or not re.fullmatch(r'[a-z0-9_]+', key):
+                raise ValueError('An owned product key is invalid.')
+            if key not in normalized:
+                normalized.append(key)
+        now = self._now()
+        with self._lock, self._connect() as connection:
+            existing = {
+                str(row['product_key']): str(row['owned_at'])
+                for row in connection.execute(
+                    'SELECT product_key, owned_at FROM collection_products'
+                ).fetchall()
+            }
+            connection.execute('DELETE FROM collection_products')
+            connection.executemany(
+                'INSERT INTO collection_products '
+                '(product_key, owned_at, updated_at) VALUES (?, ?, ?)',
+                [(key, existing.get(key, now), now) for key in normalized],
+            )
+        return {'owned_products': normalized}
+
+    def GetDashboard(self, source: str='all') -> Dict[str, Any]:
         if not self.available:
             return {'available': False, 'error': 'Game history is unavailable.'}
+        source = self._normalize_source_filter(source)
         with self._lock, self._connect() as connection:
+            where = '' if source == 'all' else ' WHERE source = ?'
+            parameters: tuple[Any, ...] = () if source == 'all' else (source,)
             overview_row = connection.execute(
                 'SELECT '
                 "SUM(CASE WHEN result IN ('win', 'loss') THEN 1 ELSE 0 END) completed, "
@@ -656,14 +884,15 @@ class GameHistory:
                 "SUM(CASE WHEN result = 'unknown' THEN 1 ELSE 0 END) unknown_games, "
                 "AVG(CASE WHEN result IN ('win', 'loss') THEN rounds END) average_rounds, "
                 "AVG(CASE WHEN result IN ('win', 'loss') THEN playtime_seconds END) average_playtime "
-                'FROM games'
+                f'FROM games{where}',
+                parameters,
             ).fetchone()
             completed = int(overview_row['completed'] or 0)
             wins = int(overview_row['wins'] or 0)
 
             def grouped(query: str) -> List[Dict[str, Any]]:
                 rows: List[Dict[str, Any]] = []
-                for row in connection.execute(query).fetchall():
+                for row in connection.execute(query, parameters).fetchall():
                     item = dict(row)
                     games = int(item.pop('games'))
                     item['games'] = games
@@ -677,6 +906,7 @@ class GameHistory:
                 'SELECT hero_code, MAX(hero_name) hero_name, COUNT(*) games, '
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
                 "FROM games WHERE result IN ('win', 'loss') "
+                + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY hero_code ORDER BY games DESC, hero_name'
             )
             villains = grouped(
@@ -684,6 +914,7 @@ class GameHistory:
                 'MAX(villain_name) villain_name, COUNT(*) games, '
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
                 "FROM games WHERE result IN ('win', 'loss') "
+                + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY scenario_key ORDER BY games DESC, villain_name'
             )
             matchups = grouped(
@@ -692,18 +923,31 @@ class GameHistory:
                 'COUNT(*) games, '
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
                 "FROM games WHERE result IN ('win', 'loss') "
+                + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY hero_code, scenario_key, expert '
                 'ORDER BY games DESC, hero_name, villain_name, expert'
             )
             recent = [dict(row) for row in connection.execute(
-                'SELECT id, finished_at, hero_code, hero_name, villain_code, '
+                'SELECT id, finished_at, hero_code, hero_name, villain_code, scenario_key, '
                 'villain_name, expert, result, rounds, playtime_seconds, '
                 'game_over_reason, replay_file, replay_analysis_status, '
-                'replay_analysis_error FROM games '
-                'ORDER BY datetime(finished_at) DESC, id DESC LIMIT 50'
+                'replay_analysis_error, source, deck_name, notes, '
+                'remaining_hit_points, minions_in_play, side_schemes_in_play '
+                'FROM games '
+                + ("WHERE source = ? " if source != 'all' else '') +
+                'ORDER BY datetime(finished_at) DESC, id DESC LIMIT 100',
+                parameters,
             ).fetchall()]
+            owned_products = [
+                str(row['product_key'])
+                for row in connection.execute(
+                    'SELECT product_key FROM collection_products '
+                    'ORDER BY product_key'
+                ).fetchall()
+            ]
             return {
                 'available': True,
+                'source_filter': source,
                 'overview': {
                     'completed': completed,
                     'wins': wins,
@@ -718,4 +962,5 @@ class GameHistory:
                 'matchups': matchups,
                 'recent_games': recent,
                 'achievements': AchievementEvaluator.Dashboard(connection),
+                'owned_products': owned_products,
             }

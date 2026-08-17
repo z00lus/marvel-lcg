@@ -45,6 +45,7 @@ class GameHistoryTests(unittest.TestCase):
         minions_in_play=None,
         side_schemes_in_play=None,
         undo_count=None,
+        source='digital',
     ):
         return self.history._store_game({
             'source_key': f'test:{key}',
@@ -67,6 +68,7 @@ class GameHistoryTests(unittest.TestCase):
             'side_schemes_in_play': side_schemes_in_play,
             'undo_count': undo_count,
             'imported_from_replay': 0,
+            'source': source,
         })
 
     def test_schema_v1_adds_replay_analysis_columns_without_losing_games(self):
@@ -90,7 +92,7 @@ class GameHistoryTests(unittest.TestCase):
         with history._connect() as connection:
             self.assertEqual(
                 connection.execute('PRAGMA user_version').fetchone()[0],
-                2,
+                3,
             )
             columns = {
                 row['name'] for row in connection.execute(
@@ -99,10 +101,129 @@ class GameHistoryTests(unittest.TestCase):
             }
             self.assertIn('replay_analysis_status', columns)
             self.assertIn('replay_analysis_error', columns)
+            self.assertIn('source', columns)
+            self.assertIn('notes', columns)
             self.assertEqual(
                 connection.execute('SELECT COUNT(*) FROM games').fetchone()[0],
                 1,
             )
+
+    def test_physical_game_is_in_shared_stats_and_can_be_filtered(self):
+        self.record(1, result='win')
+        physical = self.history.SavePhysicalGame({
+            'hero_code': '60026a',
+            'hero_name': 'Echo',
+            'villain_code': '01113',
+            'scenario_key': 'klaw',
+            'scenario_name': 'Klaw',
+            'expert': True,
+            'result': 'loss',
+            'finished_at': '2026-08-12T18:30:00+03:00',
+            'rounds': 7,
+            'playtime_minutes': 75,
+            'deck_name': 'Echo Justice',
+            'notes': 'Lost to Advance.',
+        })
+
+        self.assertTrue(physical['created'])
+        dashboard = self.history.GetDashboard()
+        self.assertEqual(dashboard['overview']['completed'], 2)
+        self.assertEqual(dashboard['overview']['wins'], 1)
+        self.assertEqual(dashboard['overview']['losses'], 1)
+
+        physical_only = self.history.GetDashboard('physical')
+        self.assertEqual(physical_only['overview']['completed'], 1)
+        self.assertEqual(physical_only['overview']['losses'], 1)
+        row = physical_only['recent_games'][0]
+        self.assertEqual(row['source'], 'physical')
+        self.assertEqual(row['hero_name'], 'Echo')
+        self.assertEqual(row['rounds'], 7)
+        self.assertEqual(row['playtime_seconds'], 4500)
+        self.assertEqual(row['notes'], 'Lost to Advance.')
+
+        digital_only = self.history.GetDashboard('digital')
+        self.assertEqual(digital_only['overview']['completed'], 1)
+        self.assertEqual(digital_only['overview']['wins'], 1)
+
+    def test_editing_physical_game_recalculates_achievement_progress(self):
+        game_ids = []
+        for day, (villain, code) in enumerate((
+            ('Rhino', '01094'),
+            ('Klaw', '01113'),
+            ('Ultron', '01135'),
+        ), start=1):
+            result = self.history.SavePhysicalGame({
+                'hero_code': '01001a',
+                'hero_name': 'Spider-Man',
+                'villain_code': code,
+                'scenario_key': GameHistory._slug(villain),
+                'scenario_name': villain,
+                'result': 'win',
+                'finished_at': f'2026-08-{day:02d}T12:00:00+00:00',
+            })
+            game_ids.append(result['id'])
+
+        achievement = next(
+            item for item in self.history.GetDashboard()['achievements']
+            if item['id'] == 'core_set_conqueror'
+        )
+        self.assertTrue(achievement['unlocked'])
+
+        self.history.SavePhysicalGame({
+            'id': game_ids[-1],
+            'hero_code': '01001a',
+            'hero_name': 'Spider-Man',
+            'villain_code': '01135',
+            'scenario_key': 'ultron',
+            'scenario_name': 'Ultron',
+            'result': 'loss',
+            'finished_at': '2026-08-03T12:00:00+00:00',
+        })
+        achievement = next(
+            item for item in self.history.GetDashboard()['achievements']
+            if item['id'] == 'core_set_conqueror'
+        )
+        self.assertFalse(achievement['unlocked'])
+        self.assertEqual(achievement['progress'], 2)
+
+        self.history.DeletePhysicalGame(game_ids[-1])
+        self.assertEqual(self.history.GetDashboard('physical')['overview']['completed'], 2)
+
+    def test_collection_is_stored_in_same_server_database(self):
+        result = self.history.SaveCollection(['core', 'gmw', 'core'])
+        self.assertEqual(result['owned_products'], ['core', 'gmw'])
+        self.assertEqual(
+            self.history.GetDashboard()['owned_products'],
+            ['core', 'gmw'],
+        )
+
+        result = self.history.SaveCollection(['gmw', 'mts'])
+        self.assertEqual(result['owned_products'], ['gmw', 'mts'])
+        self.assertEqual(
+            self.history.GetDashboard()['owned_products'],
+            ['gmw', 'mts'],
+        )
+
+    def test_physical_end_state_advances_applicable_achievements(self):
+        self.history.SavePhysicalGame({
+            'hero_code': '01001a',
+            'hero_name': 'Spider-Man',
+            'villain_code': '01094',
+            'scenario_key': 'rhino',
+            'scenario_name': 'Rhino',
+            'result': 'win',
+            'finished_at': '2026-08-12T12:00:00+00:00',
+            'remaining_hit_points': 1,
+            'clean_table': True,
+        })
+
+        achievements = {
+            item['id']: item
+            for item in self.history.GetDashboard()['achievements']
+        }
+        self.assertTrue(achievements['against_all_odds']['unlocked'])
+        self.assertTrue(achievements['clean_table']['unlocked'])
+        self.assertTrue(achievements['no_second_chances']['unlocked'])
 
     def test_existing_database_does_not_automatically_import_replays(self):
         replay_path = self.replay_folder / 'late-replay.json'

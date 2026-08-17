@@ -47,6 +47,10 @@ Open `http://127.0.0.1:2345/`. Use `docker compose up --build -d` to run in the 
 
 The `runtime/` bind mount preserves statistics, campaign progress, the active **Continue Game** checkpoint, and QSave/Save 1–3 files across container rebuilds. Saved replays and downloaded assets are likewise preserved by their respective bind mounts.
 
+### Collection and tabletop games
+
+Open **Collection & Stats** from the main menu to mark the physical products you own, review digital and tabletop win rates, and track achievements. Use **Log Physical Game** to add a finished physical solo game. Manually logged games can be edited or deleted; statistics and achievement progress are recalculated automatically. All of this data is stored in the same `statistics.sqlite3` database used by digital game history.
+
 #### Stopping and starting the Docker server
 
 Temporarily stop the server while keeping its container:
@@ -101,6 +105,7 @@ Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/mar
 - Solo-first **Quick Game** and **Campaign** screens with prepared-deck selection, remembered choices, and optional Expert difficulty.
 - A cohesive Ronin-themed interface with improved tablet and touch layouts, a settings screen, adjustable animation speed, and replay autosaving.
 - Reliable replay saving, browsing, downloading, loading, step controls, timeline seeking, and paused-at-start playback.
+- Unified SQLite history for digital, imported-replay, and manually logged physical games, with collection management, source filters, matchup statistics, and shared achievements.
 - Manual and daily synchronization of public MarvelCDB deck IDs into a clearly marked user-deck collection.
 - Better self-hosting through `run.sh`, Docker Compose, LAN-friendly defaults, a systemd unit, and Linux server documentation.
 

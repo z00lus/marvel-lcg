@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistics — Marvel Champions Digital: Ronin Edition</title>
+    <title>Collection &amp; Statistics — Marvel Champions Digital: Ronin Edition</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
     <link rel="stylesheet" href="/public/css/statistics.css">
 </head>
@@ -12,93 +12,192 @@
         <header class="page-header">
             <div>
                 <p class="eyebrow">RONIN ARCHIVES</p>
-                <h1>Game History</h1>
-                <p class="subtitle">Solo results, matchups, and achievements from this server.</p>
+                <h1>Collection &amp; Statistics</h1>
+                <p class="subtitle">Your physical collection and one shared record of digital and tabletop solo games.</p>
             </div>
-            <a class="back-link" href="/main">← Main menu</a>
+            <div class="header-actions">
+                <button id="log-game" class="primary-action" type="button">＋ Log Physical Game</button>
+                <a class="back-link" href="/main">← Main menu</a>
+            </div>
         </header>
+
+        <nav class="tabs" aria-label="Collection and statistics sections">
+            <button type="button" data-tab="collection">Collection</button>
+            <button type="button" data-tab="history">Game History</button>
+            <button type="button" data-tab="achievements">Achievements</button>
+        </nav>
 
         <div id="loading" class="state-panel">Reading the archives…</div>
         <div id="error" class="state-panel error" hidden></div>
 
         <div id="dashboard" hidden>
-            <section id="overview" class="overview-grid" aria-label="Overview"></section>
-
-            <section class="panel achievements-panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="eyebrow">MILESTONES</p>
-                        <h2>Achievements</h2>
-                    </div>
-                    <span id="achievement-count" class="count-badge"></span>
-                </div>
-                <div id="achievements" class="achievement-grid"></div>
-            </section>
-
-            <section class="split-grid">
-                <div class="panel">
-                    <div class="panel-heading">
+            <section id="tab-collection" class="tab-panel" data-panel="collection">
+                <section class="panel">
+                    <div class="panel-heading collection-heading">
                         <div>
-                            <p class="eyebrow">HERO RECORDS</p>
-                            <h2>Heroes</h2>
+                            <p class="eyebrow">PHYSICAL LIBRARY</p>
+                            <h2>Your collection</h2>
+                            <p class="panel-copy">Mark the products you own. The catalog stays on this server and is available from every device.</p>
+                        </div>
+                        <div class="collection-summary">
+                            <span id="collection-count" class="count-badge"></span>
+                            <button id="save-collection" class="primary-action compact" type="button" disabled>Save Collection</button>
                         </div>
                     </div>
-                    <div class="table-scroll">
-                        <table>
-                            <thead><tr><th>Hero</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
-                            <tbody id="heroes"></tbody>
-                        </table>
+                    <div class="collection-tools">
+                        <label class="search-field">
+                            <span class="sr-only">Search products</span>
+                            <input id="collection-search" type="search" placeholder="Search products…">
+                        </label>
+                        <div id="collection-filters" class="filter-buttons" aria-label="Product type"></div>
                     </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-heading">
-                        <div>
-                            <p class="eyebrow">VILLAIN RECORDS</p>
-                            <h2>Villains</h2>
-                        </div>
-                    </div>
-                    <div class="table-scroll">
-                        <table>
-                            <thead><tr><th>Villain</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
-                            <tbody id="villains"></tbody>
-                        </table>
-                    </div>
-                </div>
+                    <div id="collection-products" class="product-grid"></div>
+                </section>
             </section>
 
-            <section class="panel">
-                <div class="panel-heading">
-                    <div>
-                        <p class="eyebrow">HEAD TO HEAD</p>
-                        <h2>Matchups</h2>
-                    </div>
-                </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead><tr><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
-                        <tbody id="matchups"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-heading">
+            <section id="tab-history" class="tab-panel" data-panel="history" hidden>
+                <div class="section-toolbar">
                     <div>
                         <p class="eyebrow">MISSION LOG</p>
-                        <h2>Recent games</h2>
+                        <h2>Game History</h2>
                     </div>
-                    <span id="unknown-note" class="muted"></span>
+                    <div id="source-filters" class="filter-buttons" aria-label="Game source">
+                        <button type="button" data-source="all">All</button>
+                        <button type="button" data-source="digital">Digital</button>
+                        <button type="button" data-source="physical">Physical</button>
+                        <button type="button" data-source="replay_import">Replay imports</button>
+                    </div>
                 </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead><tr><th>Date</th><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Result</th><th>Rounds</th><th>Time</th></tr></thead>
-                        <tbody id="recent-games"></tbody>
-                    </table>
-                </div>
+
+                <section id="overview" class="overview-grid" aria-label="Overview"></section>
+
+                <section class="split-grid">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div><p class="eyebrow">HERO RECORDS</p><h2>Heroes</h2></div>
+                        </div>
+                        <div class="table-scroll">
+                            <table>
+                                <thead><tr><th>Hero</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                                <tbody id="heroes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div><p class="eyebrow">VILLAIN RECORDS</p><h2>Villains</h2></div>
+                        </div>
+                        <div class="table-scroll">
+                            <table>
+                                <thead><tr><th>Villain</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                                <tbody id="villains"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <div><p class="eyebrow">HEAD TO HEAD</p><h2>Matchups</h2></div>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead><tr><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Games</th><th>W–L</th><th>Win rate</th></tr></thead>
+                            <tbody id="matchups"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <div><p class="eyebrow">RECENT MISSIONS</p><h2>Games</h2></div>
+                        <span id="unknown-note" class="muted"></span>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead><tr><th>Date</th><th>Source</th><th>Hero</th><th>Villain</th><th>Difficulty</th><th>Result</th><th>Rounds</th><th>Time</th><th></th></tr></thead>
+                            <tbody id="recent-games"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+
+            <section id="tab-achievements" class="tab-panel" data-panel="achievements" hidden>
+                <section class="panel achievements-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">MILESTONES</p>
+                            <h2>Achievements</h2>
+                            <p class="panel-copy">Eligible digital and manually logged physical games advance the same achievement track.</p>
+                        </div>
+                        <span id="achievement-count" class="count-badge"></span>
+                    </div>
+                    <div id="achievements" class="achievement-grid"></div>
+                </section>
             </section>
         </div>
     </main>
+
+    <dialog id="physical-game-dialog" class="modal">
+        <form id="physical-game-form" method="dialog">
+            <div class="modal-heading">
+                <div>
+                    <p class="eyebrow">TABLETOP SESSION</p>
+                    <h2 id="physical-game-title">Log Physical Game</h2>
+                </div>
+                <button id="close-physical-game" class="icon-button" type="button" aria-label="Close">×</button>
+            </div>
+            <input id="physical-game-id" type="hidden">
+            <div class="form-grid">
+                <label>Hero
+                    <select id="physical-hero" required></select>
+                </label>
+                <label>Scenario
+                    <select id="physical-scenario" required></select>
+                </label>
+                <label>Difficulty
+                    <select id="physical-difficulty">
+                        <option value="standard">Standard</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </label>
+                <label>Result
+                    <select id="physical-result">
+                        <option value="win">Win</option>
+                        <option value="loss">Loss</option>
+                    </select>
+                </label>
+                <label>Played at
+                    <input id="physical-date" type="datetime-local" required>
+                </label>
+                <label>Rounds <span class="optional">optional</span>
+                    <input id="physical-rounds" type="number" min="1" max="999" inputmode="numeric">
+                </label>
+                <label>Duration in minutes <span class="optional">optional</span>
+                    <input id="physical-duration" type="number" min="0" max="100000" step="1" inputmode="numeric">
+                </label>
+                <label>Remaining hero HP <span class="optional">optional</span>
+                    <input id="physical-hit-points" type="number" min="0" max="999" inputmode="numeric">
+                </label>
+                <label>Deck name or MarvelCDB link <span class="optional">optional</span>
+                    <input id="physical-deck" type="text" maxlength="200">
+                </label>
+                <label class="check-field full-width">
+                    <input id="physical-clean-table" type="checkbox">
+                    <span>No minions or side schemes remained at the end</span>
+                </label>
+                <label class="full-width">Notes <span class="optional">optional</span>
+                    <textarea id="physical-notes" maxlength="4000" rows="4" placeholder="What worked, what went wrong, memorable turns…"></textarea>
+                </label>
+            </div>
+            <p id="physical-game-error" class="form-error" hidden></p>
+            <div class="modal-actions">
+                <button id="cancel-physical-game" class="secondary-action" type="button">Cancel</button>
+                <button id="save-physical-game" class="primary-action" type="submit">Save Game</button>
+            </div>
+        </form>
+    </dialog>
 
     <script type="module" src="/public/js/statistics_page.js"></script>
 </body>
