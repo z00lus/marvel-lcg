@@ -473,7 +473,7 @@ export class UI {
     }
 
     static updateAnimeTime() {
-        if( UI.hold_ctrl ) {
+        if( UI.hold_ctrl || Setting.disable_animations ) {
             UI.anime_time = .01
         } else {
             UI.anime_time = parseFloat(UI.anime_time_div.value)

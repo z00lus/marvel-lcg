@@ -5,6 +5,10 @@ import { MouseSync } from './mouse.js';
 const search_params = new URLSearchParams(window.location.search);
 
 export class Setting {
+    static readonly mobile_table_media = window.matchMedia(
+        '(max-width: 56.25rem), (hover: none) and (pointer: coarse) and (max-width: 80rem)'
+    )
+    static readonly disable_animations = search_params.has('disable_animations') || Setting.mobile_table_media.matches
     static is_debug = search_params.has('debug')
     static show_achievement = search_params.has('show_achievement') || Setting.is_debug
     static hide_bug_report = search_params.has('hide_bug_report')
@@ -58,10 +62,9 @@ export class Setting {
 
         Game.forced_on_player = Setting.player_id
 
-        const no_animation = search_params.has('disable_animations')
-        if( no_animation ) {
+        if( Setting.disable_animations ) {
             Setting.no_tilt = true
-            Lib.loader.loadCSS('./public/css/disable-animation.css')
+            Lib.loader.loadCSS('./public/css/disable-animation.css?ronin-mobile=1')
         }
     }
 

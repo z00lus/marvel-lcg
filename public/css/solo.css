@@ -585,17 +585,24 @@ input {
 }
 
 @media (max-width: 44rem) {
+    .solo-setup {
+        padding: 0.75rem;
+    }
+
     .page-header {
         align-items: flex-start;
         flex-direction: column-reverse;
     }
 
     .mode-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         width: 100%;
     }
 
     .mode-link {
-        flex: 1;
+        min-width: 0;
+        padding-inline: 0.4rem;
         text-align: center;
     }
 
@@ -621,18 +628,38 @@ input {
     }
 
     .choice-grid {
-        gap: 0.55rem;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.6rem;
+        padding: 0.15rem 0.1rem 0.55rem;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scroll-snap-type: inline mandatory;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(82, 184, 239, 0.7) rgba(8, 15, 23, 0.5);
     }
 
     .choice-card {
-        width: calc(50% - 0.3rem);
-        flex-basis: calc(50% - 0.3rem);
+        width: 8rem;
+        flex: 0 0 8rem;
+        padding: 0.42rem;
+        scroll-snap-align: start;
+    }
+
+    .choice-name {
+        min-height: 2.4em;
+        font-size: 0.8rem;
+    }
+
+    .selection-section,
+    .play-panel {
+        padding: 0.9rem;
     }
 }
 
 @media (max-width: 25rem) {
     .choice-card {
-        width: 100%;
-        flex-basis: 100%;
+        width: 7.5rem;
+        flex-basis: 7.5rem;
     }
 }

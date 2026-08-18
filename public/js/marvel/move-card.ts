@@ -15,6 +15,12 @@ export class MoveCard {
     static updating_area: Set<HTMLElement> = new Set()
     static updating_in_deck_cards: Set<HTMLElement> = new Set()
 
+    static refreshDimensions() {
+        MoveCard.rootStyles = getComputedStyle(document.documentElement);
+        MoveCard.cardWidth = parseFloat(MoveCard.rootStyles.getPropertyValue('--card-width'));
+        MoveCard.cardHeight = parseFloat(MoveCard.rootStyles.getPropertyValue('--card-height'));
+    }
+
     static narrowToRange(values: number[], newMin: number, newMax: number): number[] {
         const oldMin = Math.min(...values);
         const oldMax = Math.max(...values);
@@ -30,6 +36,8 @@ export class MoveCard {
 
     static resetAreaXY(parent: HTMLElement, cards_els: HTMLElement[]) {
         if (parent.classList.contains('deck')) return;
+
+        MoveCard.refreshDimensions();
 
         const shown_cards_els = cards_els.filter(x => !x.classList.contains('hide'));
         if (shown_cards_els.length === 0) return;
@@ -204,8 +212,12 @@ export class MoveCard {
         const normal_y = Number(parentStyles.getPropertyValue('--y'));
         const scheme_upgrade_y = normal_y - (MoveCard.cardHeight - MoveCard.cardWidth) * 0.5;
 
-        let sceneWidth2 = sceneWidth - MoveCard.cardWidth * 1.5;
-        if (parent.id === 'area-villain') {
+        const layoutLeft = parseFloat(parentStyles.getPropertyValue('--layout-left'));
+        const layoutWidth = parseFloat(parentStyles.getPropertyValue('--layout-width'));
+        const hasLayoutLane = Number.isFinite(layoutLeft) && Number.isFinite(layoutWidth) && layoutWidth > 0;
+
+        let sceneWidth2 = hasLayoutLane ? layoutWidth : sceneWidth - MoveCard.cardWidth * 1.5;
+        if (!hasLayoutLane && parent.id === 'area-villain') {
             sceneWidth2 *= 0.6;
         }
 
@@ -216,7 +228,9 @@ export class MoveCard {
                 all_cards_width = sceneWidth2;
                 over_screen = true;
             }
-            offset_x = Math.round((sceneWidth - all_cards_width) * 0.5);
+            offset_x = hasLayoutLane
+                ? Math.round(layoutLeft + (layoutWidth - all_cards_width) * 0.5)
+                : Math.round((sceneWidth - all_cards_width) * 0.5);
             if (offset_x.toString() !== parent.style.getPropertyValue('--x')) {
                 parent.style.setProperty('--x', offset_x.toString());
             }
@@ -391,6 +405,8 @@ export class MoveCard {
     }
 
     static doMoveFirstTime() {
+        MoveCard.refreshDimensions();
+
         document.querySelectorAll<HTMLElement>('.deck:not(.area)').forEach(parent => {
             const parentStyles = getComputedStyle(parent)
             const y = Number(parentStyles.getPropertyValue('--y'))

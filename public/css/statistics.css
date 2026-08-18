@@ -727,9 +727,17 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 42rem) {
+    .page-shell {
+        padding: 0.75rem;
+    }
+
     .page-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    h1 {
+        font-size: clamp(1.8rem, 9vw, 2.35rem);
     }
 
     .overview-grid {
@@ -748,12 +756,18 @@ tbody tr:last-child td {
     }
 
     .tabs {
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.25rem;
+        overflow: hidden;
     }
 
     .tabs button {
-        flex: 0 0 auto;
-        min-width: 8.5rem;
+        min-width: 0;
+        padding: 0.45rem 0.2rem;
+        font-size: 0.82rem;
+        line-height: 1.15;
+        white-space: normal;
     }
 
     .form-grid {
@@ -762,5 +776,44 @@ tbody tr:last-child td {
 
     .form-grid .full-width {
         grid-column: auto;
+    }
+
+    .header-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .header-actions > * {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .panel,
+    .state-panel {
+        padding: 0.9rem;
+        border-radius: 0.8rem;
+    }
+
+    .overview-card {
+        padding: 0.85rem;
+    }
+
+    .filter-buttons {
+        width: 100%;
+    }
+
+    .filter-buttons button {
+        flex: 1 1 auto;
+    }
+
+    .modal {
+        width: calc(100% - 0.75rem);
+        max-height: calc(100svh - 0.75rem);
+        border-radius: 0.8rem;
+    }
+
+    .modal-actions > * {
+        flex: 1 1 0;
     }
 }

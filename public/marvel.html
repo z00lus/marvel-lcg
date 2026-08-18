@@ -59,7 +59,8 @@
     <link rel="stylesheet" href="/public/css/marvel/canvas.css">
     <link rel="stylesheet" href="/public/css/marvel/game-over.css?ronin-ipad=2">
     <link rel="stylesheet" href="/public/css/marvel/ronin-theme.css">
-    <link rel="stylesheet" href="/public/css/marvel/tablet.css?ronin-ipad=1">
+    <link rel="stylesheet" href="/public/css/marvel/tablet.css?ronin-mobile=3">
+    <link rel="stylesheet" href="/public/css/marvel/mobile-table.css?ronin-mobile=5">
     <link rel="stylesheet" href="/public/css/marvel/click-effect.css">
     <link rel="stylesheet" href="/public/css/marvel/scrollbar.css">
     <link rel="stylesheet" href="/public/css/marvel/draggable.css">
@@ -142,7 +143,27 @@
         <div class='area area-center'   id='area-villain'></div>
         <div class='deck' id='villain-schemes'></div>
         <div class='area' id='area-play'></div>
+        <div id="mobile-zone-drawer-plane" aria-hidden="true"></div>
     </div><!-- scene --></div>
+
+    <nav id="mobile-table-toolbar" aria-label="Mobile table layout">
+        <button type="button" data-mobile-mode="board" aria-pressed="true" aria-label="Board layout" title="Board layout">
+            <i class="fa fa-th-large" aria-hidden="true"></i><span>Board</span>
+        </button>
+        <button type="button" data-mobile-mode="focus" aria-pressed="false" aria-label="Player Focus layout" title="Player Focus layout">
+            <i class="fa fa-user" aria-hidden="true"></i><span>Player Focus</span>
+        </button>
+        <button type="button" id="mobile-zones-toggle" aria-expanded="false" aria-controls="mobile-zone-picker" aria-label="Auxiliary zones" title="Auxiliary zones">
+            <i class="fa fa-folder-open" aria-hidden="true"></i><span>Zones</span>
+        </button>
+    </nav>
+
+    <section id="mobile-zone-picker" aria-label="Auxiliary zones" hidden>
+        <div id="mobile-zone-list"></div>
+        <button type="button" id="mobile-zone-close" aria-label="Close auxiliary zones">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+    </section>
 
     <iframe id="weather-background" src=""></iframe>
 
@@ -246,7 +267,7 @@
 
     <script src="/public/js/lib/vanilla-tilt.js"></script>
     <script src="/public/js/lib/click-effect.js"></script>
-    <script src="/public/js/marvel/marvel.js?replay-ui=2" type="module"></script>
+    <script src="/public/js/marvel/marvel.js?mobile-table=4" type="module"></script>
 
     <audio id="play-bgm" src="" preload="auto" controls="none" style="display: none;" loop></audio>
 

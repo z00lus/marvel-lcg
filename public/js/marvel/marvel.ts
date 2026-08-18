@@ -64,7 +64,9 @@ import { AutoActivate } from './auto_activate.js';
 import { ErrorDialog } from './error_dialog.js';
 import { Message } from './message.js';
 import { Replay } from './replay.js';
+import { MobileTable } from './mobile-table.js';
 Scene.init()
+MobileTable.init()
 
 UI.init()
 ErrorDialog.init()
