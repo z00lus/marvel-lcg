@@ -7,6 +7,18 @@
 > [!CAUTION]
 > **Please support the physical game.** Buy Marvel Champions and its expansions from Fantasy Flight Games, and support your friendly local game store whenever possible. Ronin Edition is intended as a testing, training, and learning platform—a convenient way to explore heroes, practise decks, and become familiar with the game—not as a replacement for the physical card game.
 
+## New in 0.6.1: Fear No Evil
+
+The first playable **Fear No Evil** scenario slice is now available:
+
+- **The Getaway** scenario in Standard and Expert modes.
+- **Bullseye** as its selectable underling, with all three villain stages.
+- The required **Cops** and **Drive** encounter sets.
+- **Echo** and **Daredevil** starter decks and hero integrations.
+- Clear `NEW` labels in Quick Game, with the latest scenario shown first and the correct main-scheme preview.
+
+This is an incremental integration of the expansion; additional Fear No Evil scenarios and content will follow as they are implemented and tested.
+
 ## Fork Goals
 
 This fork focuses on a simple and convenient **solo Marvel Champions experience**.
@@ -114,6 +126,8 @@ Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/mar
 Campaign support and the initial Hercules implementation were merged from the [sdolle1775 fork](https://github.com/sdolle1775/marvel-lcg). The merged campaign work covers Mutant Genesis, NeXt Evolution, Age of Apocalypse, Agents of S.H.I.E.L.D., Galaxy's Most Wanted, and The Mad Titan's Shadow, together with related campaign-state fixes. After the merge, Hercules' special decks, card scripts, UI placement, and rules behavior were corrected in this fork and covered by focused tests.
 
 The **Echo**, **Wonder Man**, and **Daredevil** hero integrations are original work created for this fork. They include starter decks, card scripts, special-deck handling where required, targeted tests, and ongoing replay-based playtesting.
+
+Fear No Evil integration has begun with **The Getaway**, the selectable **Bullseye** underling, and the **Cops** and **Drive** encounter sets. This first scenario slice includes Standard and Expert setup, focused rules tests, and replay-based solo validation.
 
 Based on the original open-source [Marvel Champions: Digital Edition](https://irefrixs.itch.io/marvel-lcg) by Irefrixs.
 

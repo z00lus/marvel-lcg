@@ -1,0 +1,34 @@
+{
+    "version": "0.6.1",
+    "name": "The Getaway",
+    "villain": [
+        "60066",
+        "60067"
+    ],
+    "expert": true,
+    "schemes": [
+        "60128a,60128b"
+    ],
+    "set_aside": [
+        "60129a,60129b"
+    ],
+    "encounters": [
+        "60130",
+        "60131",
+        "60132",
+        "60132",
+        "60133",
+        "60133"
+    ],
+    "underling_sets": [
+        "bullseye"
+    ],
+    "encounter_sets": [
+        "standard",
+        "expert"
+    ],
+    "modular_sets": [
+        "cops",
+        "drive"
+    ]
+}

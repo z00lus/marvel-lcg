@@ -88,8 +88,8 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         "HELLFIRE", "LEVIATHAN", "A.I.M", "LOW", "HIGH", "ADAPTOID", "RESCUED", "INHUMAN", "WAKANDA", "DORA MILAJE",
         "THUNDERBOLT", "BOARD MEMBER", "UNMASKED", "INHERITOR", "BIRD", "SERPENT SOCIETY", 
         "ENHANCED", 
-        "ENCHANTMENT", "SHAPESHIFT", "ENTHRALLED", "DEFIANT", "UNREGISTERED", "ATLANTIS", 
-        "DEFENDER", 
+        "ENCHANTMENT", "SHAPESHIFT", "ENTHRALLED", "DEFIANT", "UNREGISTERED", "ATLANTIS",
+        "DEFENDER", "UNDERLING", "POLICE",
     ]
 
     TRAITS_LIST: List[TRAITS] = Types.LiteralToList(TRAITS)
@@ -128,7 +128,7 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         'charm', 'crash',
         'fuel', 'stronghold', 'skill',
 
-        'rebirth', 'labor',
+        'rebirth', 'labor', 'speed',
     ]
 
     COUNTER_LIST: List[COUNTER] = Types.LiteralToList(COUNTER)
@@ -149,7 +149,8 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         "", "Absorbing Man", "Ant-Man Nemesis", "Ant-Man", "Armies of Titan", "Band Of Badoon", "Beasty Boys", "Black Order", "Black Panther Nemesis", "Black Panther", "Black Widow", "Bomb Scare", "Brotherhood Of Badoon", "Brothers Grimm", "Bulldozer", "Captain America Nemesis", "Captain America", "Captain Marvel Nemesis", "Captain Marvel", "Children of Thanos", "City in Chaos", "Collector 1", "Collector 2", "Colossus Nemesis", "Colossus", "Crime", "Crossbones", "Crossfire's Crew", "Deadpool Nemesis", "Deadpool", "Doctor Strange Nemesis", "Doctor Strange", "Down to Earth", "Drax Nemesis", "Drax", "Dystopian Nightmare", "Ebony Maw", "Enchantress", "Experimental Weapons", "Expert II", "Expert Kang", "Expert", "Fantasy", "Frost Giants", "Galactic Artifacts", "Ghost-Spider", "Goblin Gear", "Goblin Gimmicks", "Guerrilla Tactics", "Hawkeye Nemesis", "Hawkeye", "Hela", "Horror", "Hulk Nemesis", "Hulk", "Hydra Assault", "Hydra Patrol", "Infinites", "Infinity Gauntlet", "Invocation", "Iron Man Nemesis", "Iron Man", "Kang", "Klaw", "Kree Militants", "Legions of Hel", "Legions of Hydra", "Loki", "Magog", "Masters of Evil", "Menagerie Medley", "Mister Hyde", "Mojo", "Ms. Marvel", "Mutagen Formula", "Mysterio", "Nebula", "Personal Nightmare", "Piledriver", "Power Stone", "Quicksilver Nemesis", "Quicksilver", "Ransacked Armory", "Red Skull", "Rhino", "Risky Business", "Rocket Raccoon Nemesis", "Rocket Raccoon", "Ronan", "Sandman", "Scarlet Witch Nemesis", "Scarlet Witch", "Sci-Fi", "Ship Command", "Sinister Six", "Sinister Syndicate", "Sitcom", "Space Pirates", "Spectrum Nemesis", "Spectrum", "Spider-Ham Nemesis", "Spider-Ham", "Spider-Man Nemesis", "Spider-Man", "Spider-Woman Nemesis", "Spiral", "Standard II", "Standard III", "Standard", "Star-Lord Nemesis", "Star-Lord", "State of Emergency", "Storm Nemesis", "Storm", "Streets of Mayhem", "Symbiotic Strength", "Taskmaster", "Temporal", "Thanos", "The Hood", "The Tower Defense", "Thor", "Thunderball", "Ultron", "Under Attack", "Unus", "Valkyrie Nemesis", "Valkyrie", "Venom Goblin", "Venom Nemesis", "Venom", "Weapon Master", "Weather", "Western", "Whispers of Paranoia", "Wolverine Nemesis", "Wolverine", "Wrecker", "Wrecking Crew", "Zola",
         "Cyclops", "Flight", "Super Strength", "Telepathy", "Four Horsemen", 
         "Blue Moon", "Genosha", "Savage Land", "Magneto", "Shadow King", "Dreadpool", "Kree Fanatic", 
-        "Thunderbolts", "Executive Board Evidence", "Frostbite", "Iceman", "Spider-Man - Miles Morales", 
+        "Thunderbolts", "Executive Board Evidence", "Frostbite", "Iceman", "Spider-Man - Miles Morales",
+        "Bullseye", "The Getaway", "Cops", "Drive",
     ]
 
     BASIC_POWER = Literal["ATK", "THW", "REC", "SCH", "DEF"]

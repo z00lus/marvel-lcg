@@ -68,10 +68,22 @@
             <div id="scenario-list" class="choice-grid" aria-live="polite"></div>
         </section>
 
-        <section class="selection-section difficulty-section" aria-labelledby="difficulty-heading">
+        <section id="underling-section" class="selection-section underling-section" aria-labelledby="underling-heading" hidden>
             <div class="section-heading">
                 <div>
                     <span class="step-number">3</span>
+                    <h2 id="underling-heading">Underling</h2>
+                </div>
+                <span id="underling-selection" class="current-selection">Not selected</span>
+            </div>
+            <p class="load-status">Choose the villain paired with this scenario.</p>
+            <div id="underling-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="selection-section difficulty-section" aria-labelledby="difficulty-heading">
+            <div class="section-heading">
+                <div>
+                    <span id="difficulty-step-number" class="step-number">3</span>
                     <h2 id="difficulty-heading">Difficulty</h2>
                 </div>
                 <span id="difficulty-selection" class="current-selection">Standard</span>

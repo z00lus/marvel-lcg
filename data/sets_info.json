@@ -407,10 +407,11 @@
     },
     "60. Fear No Evil": {
         "name": "fne",
-        "scenarios": [],
+        "scenarios": ["the_getaway"],
         "heroes": ["daredevil", "echo"],
-        "encounters": [],
-        "max_id": "60064"
+        "underlings": ["bullseye"],
+        "encounters": ["cops", "drive"],
+        "max_id": "60190"
     },
     "90. Ronan Modular Set": {
         "name": "ron",
@@ -451,5 +452,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "ba8edd0f54a391b4ccf6745aacaaf5154bb97c2c5a3fd8ac30d68805a2f639a7"
+    "checksum": "867aa10b2ad0cc12b4a9e05674cd0060e64e11a186e307246fe4219cb99948c3"
 }

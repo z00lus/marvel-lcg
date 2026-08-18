@@ -242,6 +242,23 @@ input {
     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.55);
 }
 
+.choice-card.new-content::before {
+    content: "NEW";
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 1;
+    padding: 0.2rem 0.48rem;
+    border: 1px solid rgba(255, 236, 159, 0.9);
+    border-radius: 0.25rem;
+    background: rgba(126, 40, 31, 0.94);
+    color: #fff1b8;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.55);
+}
+
 .choice-card.user-deck:hover,
 .choice-card.user-deck.selected {
     border-color: #f0c25c;
@@ -291,6 +308,19 @@ input {
 
 .difficulty-section {
     border-color: rgba(207, 162, 91, 0.48);
+}
+
+.underling-section {
+    border-color: rgba(188, 93, 93, 0.58);
+}
+
+.underling-section .choice-card {
+    background: linear-gradient(145deg, rgba(66, 29, 33, 0.97), rgba(27, 19, 25, 0.97));
+}
+
+.underling-section .choice-card.selected {
+    border-color: #ef6960;
+    box-shadow: 0 0 1.15rem rgba(239, 75, 65, 0.38);
 }
 
 .expert-option {

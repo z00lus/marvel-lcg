@@ -7,8 +7,26 @@ type ScenarioData = {
     villain: string[];
     expert: boolean;
     schemes: string[];
+    set_aside: string[];
+    encounters: string[];
+    underling_sets?: string[];
     encounter_sets: string[];
     modular_sets: string[];
+};
+
+type UnderlingData = {
+    name: string;
+    villain: string[];
+    expert_villain: string[];
+    set_aside: string[];
+    encounters: string[];
+};
+
+type UnderlingChoice = {
+    id: string;
+    name: string;
+    imageId: string;
+    data: UnderlingData;
 };
 
 type HeroData = {
@@ -53,6 +71,10 @@ import {
 
 const scenarioStorageKey = 'marvel_lcg_solo_scenario';
 const heroStorageKey = 'marvel_lcg_solo_hero';
+const underlingStorageKey = 'marvel_lcg_solo_underling';
+const newScenarioIds = new Set(['the_getaway']);
+const newUnderlingIds = new Set(['bullseye']);
+const newHeroIds = new Set(['echo', 'daredevil']);
 
 const scenarioList = document.querySelector<HTMLElement>('#scenario-list')!;
 const heroList = document.querySelector<HTMLElement>('#hero-list')!;
@@ -65,8 +87,14 @@ const errorMessage = document.querySelector<HTMLElement>('#error-message')!;
 const expertMode = document.querySelector<HTMLInputElement>('#expert-mode')!;
 const expertModeDescription = document.querySelector<HTMLElement>('#expert-mode-description')!;
 const difficultySelection = document.querySelector<HTMLElement>('#difficulty-selection')!;
+const difficultyStepNumber = document.querySelector<HTMLElement>('#difficulty-step-number')!;
+const underlingSection = document.querySelector<HTMLElement>('#underling-section')!;
+const underlingList = document.querySelector<HTMLElement>('#underling-list')!;
+const underlingSelection = document.querySelector<HTMLElement>('#underling-selection')!;
 let selectedScenario: ScenarioChoice | null = null;
 let selectedHero: HeroChoice | null = null;
+let selectedUnderling: UnderlingChoice | null = null;
+let underlingChoices: UnderlingChoice[] = [];
 let isStarting = false;
 let heroChoices: HeroChoice[] = [];
 
@@ -98,6 +126,7 @@ function updatePlayButton(): void {
         || deckSourceController?.isBusy() === true
         || !selectedScenario
         || !selectedHero
+        || ((selectedScenario.data.underling_sets?.length ?? 0) > 0 && !selectedUnderling)
         || awaitingDeck;
 }
 
@@ -107,6 +136,65 @@ function markSelected(container: HTMLElement, selectedId: string): void {
         button.classList.toggle('selected', isSelected);
         button.setAttribute('aria-pressed', isSelected.toString());
     });
+}
+
+function selectUnderling(choice: UnderlingChoice): void {
+    selectedUnderling = choice;
+    localStorage.setItem(underlingStorageKey, choice.id);
+    underlingSelection.textContent = choice.name;
+    markSelected(underlingList, choice.id);
+    errorMessage.textContent = '';
+    updatePlayButton();
+}
+
+async function loadUnderlings(ids: string[]): Promise<void> {
+    const generation = ids.join('|');
+    selectedUnderling = null;
+    underlingChoices = [];
+    underlingList.replaceChildren();
+    underlingSelection.textContent = 'Not selected';
+    underlingSection.hidden = ids.length === 0;
+    difficultyStepNumber.textContent = ids.length ? '4' : '3';
+    if (!ids.length) {
+        updatePlayButton();
+        return;
+    }
+
+    const choices = (await Promise.all(ids.map(async (id): Promise<UnderlingChoice | null> => {
+        try {
+            const data = await fetchJson<UnderlingData>(
+                `/get_encounter_set_json?${encodeURIComponent(id)}`,
+            );
+            const imageId = getFirstCardId(data.villain ?? []);
+            if (!data.name || !imageId) {
+                return null;
+            }
+            return {id, name: data.name, imageId, data};
+        } catch (error) {
+            console.warn(`Failed to load underling ${id}`, error);
+            return null;
+        }
+    }))).filter((choice): choice is UnderlingChoice => choice !== null);
+
+    if (selectedScenario?.data.underling_sets?.join('|') !== generation) {
+        return;
+    }
+    underlingChoices = choices;
+    for (const choice of choices) {
+        underlingList.appendChild(createChoiceButton(
+            choice.id,
+            choice.name,
+            choice.imageId,
+            () => selectUnderling(choice),
+            newUnderlingIds.has(choice.id),
+        ));
+    }
+    const savedId = localStorage.getItem(underlingStorageKey);
+    const savedChoice = choices.find((choice) => choice.id === savedId) ?? choices[0];
+    if (savedChoice) {
+        selectUnderling(savedChoice);
+    }
+    updatePlayButton();
 }
 
 function selectScenario(choice: ScenarioChoice): void {
@@ -125,6 +213,7 @@ function selectScenario(choice: ScenarioChoice): void {
     expertModeDescription.textContent = hasExpertMode
         ? 'Villain stages II–III with the Expert encounter set.'
         : 'Expert setup is not available for this scenario.';
+    void loadUnderlings(choice.data.underling_sets ?? []);
     updatePlayButton();
 }
 
@@ -147,12 +236,14 @@ function createChoiceButton(
     name: string,
     imageId: string,
     onSelect: () => void,
+    isNew = false,
 ): HTMLButtonElement {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'choice-card';
     button.dataset.id = id;
     button.setAttribute('aria-pressed', 'false');
+    button.classList.toggle('new-content', isNew);
 
     const image = document.createElement('img');
     image.src = `/${imageId}`;
@@ -183,7 +274,13 @@ async function loadScenarioChoices(): Promise<ScenarioChoice[]> {
     const choices = await Promise.all(scenarioIds.map(async (id): Promise<ScenarioChoice | null> => {
         try {
             const data = await fetchJson<ScenarioData>(`/get_scenario_json?${encodeURIComponent(id)}`);
-            const imageId = getFirstCardId(data.villain?.length ? data.villain : data.schemes);
+            // Scenarios with a selectable underling have a separate villain
+            // choice below. Their scenario tile should therefore show the
+            // main scheme instead of duplicating the first underling's art.
+            const imageSource = (data.underling_sets?.length ?? 0) > 0
+                ? data.schemes
+                : (data.villain?.length ? data.villain : data.schemes);
+            const imageId = getFirstCardId(imageSource);
             if (!data.name || !imageId) {
                 return null;
             }
@@ -241,13 +338,17 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
 function renderScenarios(choices: ScenarioChoice[]): void {
     const savedId = localStorage.getItem(scenarioStorageKey);
     scenarioList.replaceChildren();
+    const orderedChoices = [...choices].sort((left, right) =>
+        Number(newScenarioIds.has(right.id)) - Number(newScenarioIds.has(left.id)),
+    );
 
-    for (const choice of choices) {
+    for (const choice of orderedChoices) {
         scenarioList.appendChild(createChoiceButton(
             choice.id,
             choice.name,
             choice.imageId,
             () => selectScenario(choice),
+            newScenarioIds.has(choice.id),
         ));
     }
 
@@ -269,6 +370,7 @@ function renderHeroes(choices: HeroChoice[]): void {
             choice.name,
             choice.imageId,
             () => selectHero(choice),
+            !choice.isUserDeck && newHeroIds.has(choice.id),
         );
         button.classList.toggle('user-deck', choice.isUserDeck);
         heroList.appendChild(button);
@@ -349,11 +451,28 @@ async function startGame(): Promise<void> {
     updatePlayButton();
 
     try {
-        const scenario = expertMode.checked && scenarioChoice.expertId
+        const loadedScenario = expertMode.checked && scenarioChoice.expertId
             ? await fetchJson<ScenarioData>(
                 `/get_scenario_json?${encodeURIComponent(scenarioChoice.expertId)}`,
             )
             : scenarioChoice.data;
+        const scenario = structuredClone(loadedScenario);
+        if ((scenario.underling_sets?.length ?? 0) > 0) {
+            if (!selectedUnderling) {
+                throw new Error('No underling selected');
+            }
+            scenario.villain = expertMode.checked
+                ? selectedUnderling.data.expert_villain
+                : selectedUnderling.data.villain;
+            scenario.set_aside = [
+                ...(scenario.set_aside ?? []),
+                ...(selectedUnderling.data.set_aside ?? []),
+            ];
+            scenario.encounters = [
+                ...(scenario.encounters ?? []),
+                ...(selectedUnderling.data.encounters ?? []),
+            ];
+        }
         const encounterSetNames = Array.from(new Set([
             ...(scenario.encounter_sets ?? []),
             ...(scenario.modular_sets ?? []),

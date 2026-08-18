@@ -61675,7 +61675,312 @@
             "traits": [],
             "set_name": "Echo Nemesis",
             "text": "<b>When Revealed (Alter-Ego)</b>: If Kingpin is in play, he schemes. Otherwise, this card gains surge.\n<b>When Revealed (Hero)</b>: Deal damage to a hero equal to your hero's ATK."
+        },
+        {
+            "card_id": "60065",
+            "type": "Villain",
+            "name": "* Bullseye",
+            "subtitle": "",
+            "desc": {
+                "HP": "14*",
+                "ATK": "1*",
+                "SCH": "0*",
+                "Stage": "1"
+            },
+            "traits": ["ASSASSIN", "UNDERLING"],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed</b>: Set Adamantium-Laced Spine aside, out of play.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
+        },
+        {
+            "card_id": "60066",
+            "type": "Villain",
+            "name": "* Bullseye",
+            "subtitle": "",
+            "desc": {
+                "HP": "16*",
+                "ATK": "2*",
+                "SCH": "1*",
+                "Stage": "2"
+            },
+            "traits": ["ASSASSIN", "UNDERLING"],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed</b>: Find Adamantium-Laced Spine and attach it to Bullseye.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
+        },
+        {
+            "card_id": "60067",
+            "type": "Villain",
+            "name": "* Bullseye",
+            "subtitle": "",
+            "desc": {
+                "HP": "18*",
+                "ATK": "3*",
+                "SCH": "1*",
+                "Stage": "3"
+            },
+            "traits": ["ASSASSIN", "UNDERLING"],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed</b>: Find Deranged Bloodlust and reveal it.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
+        },
+        {
+            "card_id": "60068a",
+            "type": "Attachment",
+            "name": "Adamantium-Laced Spine",
+            "subtitle": "",
+            "desc": {"Permanent": "1"},
+            "traits": ["TECH"],
+            "set_name": "Bullseye",
+            "text": "Permanent. Attach to Bullseye.\n<b>Forced Interrupt</b>: When Bullseye would take any amount of damage, prevent all but 3 of that damage. Place the prevented damage here. If there is 6 or more damage here, flip this card."
+        },
+        {
+            "card_id": "60068b",
+            "type": "Attachment",
+            "name": "Damaged Spine",
+            "subtitle": "",
+            "desc": {"Permanent": "1"},
+            "traits": ["TECH"],
+            "set_name": "Bullseye",
+            "text": "Permanent. Attach to Bullseye.\n<b>Forced Response</b>: After Bullseye schemes, remove 3 damage from this card. If there is no damage here, flip this card.\n<hr />\n[star] <b>Boost</b>: Place 1 damage on this card."
+        },
+        {
+            "card_id": "60069",
+            "type": "Attachment",
+            "name": "Raise the Stakes",
+            "subtitle": "",
+            "desc": {"Boost": "3"},
+            "traits": ["CONDITION"],
+            "set_name": "Bullseye",
+            "text": "Attach to Bullseye.\n[star] <b>Forced Interrupt</b>: When Bullseye attacks, give him 1 additional boost card for this activation. If this attack defeats a friendly character, remove that character and this card from the game. Otherwise, shuffle this card into the encounter deck."
+        },
+        {
+            "card_id": "60070",
+            "type": "Attachment",
+            "name": "Deadly Sai",
+            "subtitle": "",
+            "desc": {"ATK+": "2", "Boost": "2"},
+            "traits": ["WEAPON"],
+            "set_name": "Bullseye",
+            "text": "Attach to Bullseye. Bullseye's attacks lose ranged and gain piercing.\n<b>Hero Response</b>: After your hero defends against an attack from Bullseye, spend 2 different resources → discard this card."
+        },
+        {
+            "card_id": "60071",
+            "type": "Attachment",
+            "name": "Incessant Pursuit",
+            "subtitle": "",
+            "desc": {"Boost": "1"},
+            "traits": ["CONDITION"],
+            "set_name": "Bullseye",
+            "text": "Attach to an ally without a copy of Incessant Pursuit attached. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When the villain would attack you, he attacks the attached ally instead and gains overkill for that attack. If this attack defeats that ally, remove it from the game."
+        },
+        {
+            "card_id": "60072",
+            "type": "Minion",
+            "name": "* Lady Bullseye",
+            "subtitle": "",
+            "desc": {"HP": "6", "ATK": "1*", "SCH": "2", "Boost": "3", "Villainous": "1"},
+            "traits": ["ASSASSIN", "HAND"],
+            "set_name": "Bullseye",
+            "text": "Villainous.\n[star] <b>Forced Interrupt</b>: When resolving boost cards during Lady Bullseye's attack, if it is undefended, give her 1 additional boost card for this activation."
+        },
+        {
+            "card_id": "60073",
+            "type": "SideScheme",
+            "name": "Deranged Bloodlust",
+            "subtitle": "",
+            "desc": {"StartingThreat": "4", "Amplify": "1"},
+            "traits": [],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed</b>: Place additional threat here equal to Bullseye's stage number.\n<hr />\n[star] <b>Boost</b>: After this activation ends, reveal this card."
+        },
+        {
+            "card_id": "60074",
+            "type": "Treachery",
+            "name": "Everything Is a Weapon",
+            "subtitle": "",
+            "desc": {"Boost": "1"},
+            "traits": [],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed (Alter-Ego)</b>: Take 2 indirect damage.\n<b>When Revealed (Hero)</b>: Choose to either have Bullseye activate against you or remove an ally you control from the game.\n<hr />\n[star] <b>Boost</b>: If Bullseye is attacking, give him 1 additional boost card for this activation and this attack gains piercing."
+        },
+        {
+            "card_id": "60075",
+            "type": "Treachery",
+            "name": "Unerring Desire",
+            "subtitle": "",
+            "desc": {"Boost": "4"},
+            "traits": [],
+            "set_name": "Bullseye",
+            "text": "<b>When Revealed</b>: Give this card to the villain as a facedown boost card for their next activation or remove a PERSONA support you control from the game.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains overkill."
+        },
+        {
+            "card_id": "60128a",
+            "type": "MainScheme",
+            "name": "The Getaway",
+            "subtitle": "",
+            "desc": {"Stage": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "<b>Setup</b>: Place 1 speed counter here (2 instead if playing on expert mode). Attach Out Front to the villain."
+        },
+        {
+            "card_id": "60128b",
+            "type": "MainScheme",
+            "name": "The Getaway",
+            "subtitle": "",
+            "desc": {"StartingThreat": "2*", "TargetThreat": "9*", "EscalationThreat": "2*", "Stage": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "<b>Forced Interrupt</b>: At the end of the round, if there is threat here, place 1 speed counter here. Then, if Alongside is in play, flip it. Otherwise, place 1 additional speed counter here.\n<b>If this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60129a",
+            "type": "Attachment",
+            "name": "Out Front",
+            "subtitle": "",
+            "desc": {"Permanent": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "Permanent. Attach to the villain. If there is no threat on the main scheme, flip this card. The villain's attacks gain ranged.\n<b>Forced Interrupt</b>: When the villain would be dealt any amount of damage, remove that amount of threat from the main scheme instead, ignoring crisis."
+        },
+        {
+            "card_id": "60129b",
+            "type": "Attachment",
+            "name": "Alongside",
+            "subtitle": "",
+            "desc": {"Permanent": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "Permanent. Attach to the villain.\n<b>When Revealed</b>: Each player takes 1 indirect damage. Deal 2 damage per player to the villain."
+        },
+        {
+            "card_id": "60130",
+            "type": "Minion",
+            "name": "Escort Vehicle",
+            "subtitle": "",
+            "desc": {"HP": "5", "ATK": "2", "SCH": "2", "Boost": "3", "Guard": "1", "Patrol": "1"},
+            "traits": ["VEHICLE"],
+            "set_name": "The Getaway",
+            "text": "Guard. Patrol.\nAt 3 speed counters, Escort Vehicle gains toughness. At 6, it gains quickstrike. At 9, it gains surge."
+        },
+        {
+            "card_id": "60131",
+            "type": "SideScheme",
+            "name": "Jackknifed Tanker Truck",
+            "subtitle": "",
+            "desc": {"StartingThreat": "2", "Hinder": "1*", "Crisis": "1", "Boost": "2"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "Hinder 1 per player. Crisis. The villain cannot be dealt damage."
+        },
+        {
+            "card_id": "60132",
+            "type": "Treachery",
+            "name": "Burning Rubber",
+            "subtitle": "",
+            "desc": {"Boost": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "<b>When Revealed</b>: For each speed counter on the main scheme, choose to either spend 1 resource of any type or place 1 threat on the main scheme."
+        },
+        {
+            "card_id": "60133",
+            "type": "Treachery",
+            "name": "Pedestrians!",
+            "subtitle": "",
+            "desc": {"Boost": "1"},
+            "traits": [],
+            "set_name": "The Getaway",
+            "text": "<b>When Revealed</b>: For each speed counter on the main scheme, choose to either exhaust a character you control or take 1 indirect damage."
+        },
+        {
+            "card_id": "60182",
+            "type": "Minion",
+            "name": "Cop",
+            "subtitle": "",
+            "desc": {"HP": "3", "ATK": "2", "SCH": "0*", "Quickstrike": "1", "Vulnerable": "1"},
+            "traits": ["POLICE"],
+            "set_name": "Cops",
+            "text": "Quickstrike. Vulnerable.\n[star] <b>Forced Interrupt</b>: When Cop would scheme, he attacks the villain instead.\n<b>When Defeated</b>: Place 2 threat on the main scheme."
+        },
+        {
+            "card_id": "60183",
+            "type": "Minion",
+            "name": "Crooked Cop",
+            "subtitle": "",
+            "desc": {"HP": "4", "ATK": "2", "SCH": "1", "Quickstrike": "1", "Vulnerable": "1"},
+            "traits": ["CRIMINAL", "POLICE"],
+            "set_name": "Cops",
+            "text": "Quickstrike. Vulnerable.\n<b>When Defeated</b>: The player who defeated this minion deals themself 1 facedown encounter card.\n<hr />\n[star] <b>Boost</b>: Take 2 indirect damage."
+        },
+        {
+            "card_id": "60184",
+            "type": "Obligation",
+            "name": "Wanted",
+            "subtitle": "",
+            "desc": {"Hazard": "1", "Boost": "2", "GiveTo": ""},
+            "traits": [],
+            "set_name": "Cops",
+            "text": "<b>Hero Action</b>: Discard cards from the encounter deck until a POLICE minion is discarded. Put that minion into play engaged with you, then discard Wanted."
+        },
+        {
+            "card_id": "60185",
+            "type": "SideScheme",
+            "name": "Police Cordon",
+            "subtitle": "",
+            "desc": {"StartingThreat": "3", "Hinder": "1*", "Boost": "3"},
+            "traits": [],
+            "set_name": "Cops",
+            "text": "Hinder 1 per player. Each POLICE minion gains guard and patrol.\n<b>When Revealed</b>: Search the encounter deck and discard pile for a POLICE minion and reveal it. Shuffle the encounter deck."
+        },
+        {
+            "card_id": "60186",
+            "type": "Attachment",
+            "name": "Sports Car",
+            "subtitle": "",
+            "desc": {"ATK+": "1", "Boost": "2"},
+            "traits": ["VEHICLE"],
+            "set_name": "Drive",
+            "text": "Attach to the enemy with the highest ATK without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 4 or more damage here, discard this card."
+        },
+        {
+            "card_id": "60187",
+            "type": "Attachment",
+            "name": "Motorcycle",
+            "subtitle": "",
+            "desc": {"SCH+": "1", "Boost": "1"},
+            "traits": ["VEHICLE"],
+            "set_name": "Drive",
+            "text": "Attach to the enemy with the highest SCH without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 3 or more damage here, discard this card."
+        },
+        {
+            "card_id": "60188",
+            "type": "Attachment",
+            "name": "Utility Van",
+            "subtitle": "",
+            "desc": {"Boost": "1"},
+            "traits": ["VEHICLE"],
+            "set_name": "Drive",
+            "text": "Attach to the enemy with the fewest remaining hit points without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 6 or more damage here, discard this card."
+        },
+        {
+            "card_id": "60189",
+            "type": "SideScheme",
+            "name": "Traffic Jam",
+            "subtitle": "",
+            "desc": {"StartingThreat": "2", "Hinder": "2*", "Crisis": "1", "Boost": "3"},
+            "traits": [],
+            "set_name": "Drive",
+            "text": "Hinder 2 per player. Crisis.\n<b>Forced Interrupt</b>: When threat would be placed on or removed from a character with a VEHICLE attachment, place it on or remove it from this scheme instead."
+        },
+        {
+            "card_id": "60190",
+            "type": "Treachery",
+            "name": "Carjacking",
+            "subtitle": "",
+            "desc": {"Boost": "2"},
+            "traits": [],
+            "set_name": "Drive",
+            "text": "<b>When Revealed</b>: Discard cards from the encounter deck until a VEHICLE attachment is discarded, then reveal it. If your identity has no VEHICLE attachment, you may spend 3 resources of the same type to attach that card to your identity instead."
         }
     ],
-    "checksum": "9e9dd1ae3251f05b674dd0c8183741bf24acd65a2a5f56a851c9bffe6d5a5583"
+    "checksum": "dd0668e7c7399b6cdd0b15b071ced7e9a597c84e8a8f7e7d8d24e66dc0061b66"
 }
