@@ -72,8 +72,8 @@ import {
 const scenarioStorageKey = 'marvel_lcg_solo_scenario';
 const heroStorageKey = 'marvel_lcg_solo_hero';
 const underlingStorageKey = 'marvel_lcg_solo_underling';
-const newScenarioIds = new Set(['the_getaway']);
-const newUnderlingIds = new Set(['bullseye']);
+const newScenarioIds = new Set(['protection_racket', 'the_raft_breakout', 'art_museum_heist', 'the_getaway', 'stop_the_presses']);
+const newUnderlingIds = new Set(['bullseye', 'electro', 'purple_man']);
 const newHeroIds = new Set(['echo', 'daredevil']);
 
 const scenarioList = document.querySelector<HTMLElement>('#scenario-list')!;

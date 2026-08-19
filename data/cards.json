@@ -60601,6 +60601,34 @@
     ],
     "fne": [
         {
+            "card_id": "deceived_minion",
+            "pic_id": "player",
+            "type": "Minion",
+            "name": "Deceived Minion",
+            "subtitle": "",
+            "desc": {
+                "HP": "0"
+            },
+            "traits": [
+                "DECEIVED"
+            ],
+            "set_name": ""
+        },
+        {
+            "card_id": "influenced_minion",
+            "pic_id": "player",
+            "type": "Minion",
+            "name": "Influenced Minion",
+            "subtitle": "",
+            "desc": {
+                "HP": "0"
+            },
+            "traits": [
+                "INFLUENCED"
+            ],
+            "set_name": ""
+        },
+        {
             "card_id": "60001a",
             "type": "Hero",
             "name": "* Daredevil",
@@ -61687,7 +61715,10 @@
                 "SCH": "0*",
                 "Stage": "1"
             },
-            "traits": ["ASSASSIN", "UNDERLING"],
+            "traits": [
+                "ASSASSIN",
+                "UNDERLING"
+            ],
             "set_name": "Bullseye",
             "text": "<b>When Revealed</b>: Set Adamantium-Laced Spine aside, out of play.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
         },
@@ -61702,7 +61733,10 @@
                 "SCH": "1*",
                 "Stage": "2"
             },
-            "traits": ["ASSASSIN", "UNDERLING"],
+            "traits": [
+                "ASSASSIN",
+                "UNDERLING"
+            ],
             "set_name": "Bullseye",
             "text": "<b>When Revealed</b>: Find Adamantium-Laced Spine and attach it to Bullseye.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
         },
@@ -61717,7 +61751,10 @@
                 "SCH": "1*",
                 "Stage": "3"
             },
-            "traits": ["ASSASSIN", "UNDERLING"],
+            "traits": [
+                "ASSASSIN",
+                "UNDERLING"
+            ],
             "set_name": "Bullseye",
             "text": "<b>When Revealed</b>: Find Deranged Bloodlust and reveal it.\n[star] <b>Forced Interrupt</b>: When Bullseye activates, each boost card in this activation gains 1 boost icon. If this activation is an attack, it gains ranged."
         },
@@ -61726,8 +61763,12 @@
             "type": "Attachment",
             "name": "Adamantium-Laced Spine",
             "subtitle": "",
-            "desc": {"Permanent": "1"},
-            "traits": ["TECH"],
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [
+                "TECH"
+            ],
             "set_name": "Bullseye",
             "text": "Permanent. Attach to Bullseye.\n<b>Forced Interrupt</b>: When Bullseye would take any amount of damage, prevent all but 3 of that damage. Place the prevented damage here. If there is 6 or more damage here, flip this card."
         },
@@ -61736,8 +61777,12 @@
             "type": "Attachment",
             "name": "Damaged Spine",
             "subtitle": "",
-            "desc": {"Permanent": "1"},
-            "traits": ["TECH"],
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [
+                "TECH"
+            ],
             "set_name": "Bullseye",
             "text": "Permanent. Attach to Bullseye.\n<b>Forced Response</b>: After Bullseye schemes, remove 3 damage from this card. If there is no damage here, flip this card.\n<hr />\n[star] <b>Boost</b>: Place 1 damage on this card."
         },
@@ -61746,8 +61791,12 @@
             "type": "Attachment",
             "name": "Raise the Stakes",
             "subtitle": "",
-            "desc": {"Boost": "3"},
-            "traits": ["CONDITION"],
+            "desc": {
+                "Boost": "3"
+            },
+            "traits": [
+                "CONDITION"
+            ],
             "set_name": "Bullseye",
             "text": "Attach to Bullseye.\n[star] <b>Forced Interrupt</b>: When Bullseye attacks, give him 1 additional boost card for this activation. If this attack defeats a friendly character, remove that character and this card from the game. Otherwise, shuffle this card into the encounter deck."
         },
@@ -61756,18 +61805,27 @@
             "type": "Attachment",
             "name": "Deadly Sai",
             "subtitle": "",
-            "desc": {"ATK+": "2", "Boost": "2"},
-            "traits": ["WEAPON"],
+            "desc": {
+                "ATK+": "2",
+                "Boost": "2"
+            },
+            "traits": [
+                "WEAPON"
+            ],
             "set_name": "Bullseye",
-            "text": "Attach to Bullseye. Bullseye's attacks lose ranged and gain piercing.\n<b>Hero Response</b>: After your hero defends against an attack from Bullseye, spend 2 different resources → discard this card."
+            "text": "Attach to Bullseye. Bullseye's attacks lose ranged and gain piercing.\n<b>Hero Response</b>: After your hero defends against an attack from Bullseye, spend 2 different resources \u2192 discard this card."
         },
         {
             "card_id": "60071",
             "type": "Attachment",
             "name": "Incessant Pursuit",
             "subtitle": "",
-            "desc": {"Boost": "1"},
-            "traits": ["CONDITION"],
+            "desc": {
+                "Boost": "1"
+            },
+            "traits": [
+                "CONDITION"
+            ],
             "set_name": "Bullseye",
             "text": "Attach to an ally without a copy of Incessant Pursuit attached. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When the villain would attack you, he attacks the attached ally instead and gains overkill for that attack. If this attack defeats that ally, remove it from the game."
         },
@@ -61776,8 +61834,17 @@
             "type": "Minion",
             "name": "* Lady Bullseye",
             "subtitle": "",
-            "desc": {"HP": "6", "ATK": "1*", "SCH": "2", "Boost": "3", "Villainous": "1"},
-            "traits": ["ASSASSIN", "HAND"],
+            "desc": {
+                "HP": "6",
+                "ATK": "1*",
+                "SCH": "2",
+                "Boost": "3",
+                "Villainous": "1"
+            },
+            "traits": [
+                "ASSASSIN",
+                "HAND"
+            ],
             "set_name": "Bullseye",
             "text": "Villainous.\n[star] <b>Forced Interrupt</b>: When resolving boost cards during Lady Bullseye's attack, if it is undefended, give her 1 additional boost card for this activation."
         },
@@ -61786,7 +61853,10 @@
             "type": "SideScheme",
             "name": "Deranged Bloodlust",
             "subtitle": "",
-            "desc": {"StartingThreat": "4", "Amplify": "1"},
+            "desc": {
+                "StartingThreat": "4",
+                "Amplify": "1"
+            },
             "traits": [],
             "set_name": "Bullseye",
             "text": "<b>When Revealed</b>: Place additional threat here equal to Bullseye's stage number.\n<hr />\n[star] <b>Boost</b>: After this activation ends, reveal this card."
@@ -61796,7 +61866,9 @@
             "type": "Treachery",
             "name": "Everything Is a Weapon",
             "subtitle": "",
-            "desc": {"Boost": "1"},
+            "desc": {
+                "Boost": "1"
+            },
             "traits": [],
             "set_name": "Bullseye",
             "text": "<b>When Revealed (Alter-Ego)</b>: Take 2 indirect damage.\n<b>When Revealed (Hero)</b>: Choose to either have Bullseye activate against you or remove an ally you control from the game.\n<hr />\n[star] <b>Boost</b>: If Bullseye is attacking, give him 1 additional boost card for this activation and this attack gains piercing."
@@ -61806,17 +61878,382 @@
             "type": "Treachery",
             "name": "Unerring Desire",
             "subtitle": "",
-            "desc": {"Boost": "4"},
+            "desc": {
+                "Boost": "4"
+            },
             "traits": [],
             "set_name": "Bullseye",
             "text": "<b>When Revealed</b>: Give this card to the villain as a facedown boost card for their next activation or remove a PERSONA support you control from the game.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains overkill."
+        },
+        {
+            "card_id": "60076",
+            "type": "Villain",
+            "name": "* Electro",
+            "subtitle": "",
+            "desc": {
+                "HP": "15*",
+                "ATK": "1",
+                "SCH": "1*",
+                "Stage": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Electro",
+            "text": "<b>When Revealed</b>: Find Electric Charge, attach it to Electro, and place 2[per_player] charge counters on it.\n[star] <b>Forced Response</b>: After Electro schemes, place 1 charge counter on Electric Charge."
+        },
+        {
+            "card_id": "60077",
+            "type": "Villain",
+            "name": "* Electro",
+            "subtitle": "",
+            "desc": {
+                "HP": "17*",
+                "ATK": "2",
+                "SCH": "1*",
+                "Stage": "2"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Electro",
+            "text": "<b>When Revealed</b>: Find Electric Charge, attach it to Electro, and place 2[per_player] charge counters on it.\n[star] <b>Forced Response</b>: After Electro schemes, place 1 charge counter on Electric Charge."
+        },
+        {
+            "card_id": "60078",
+            "type": "Villain",
+            "name": "* Electro",
+            "subtitle": "",
+            "desc": {
+                "HP": "20*",
+                "ATK": "2",
+                "SCH": "2*",
+                "Stage": "3",
+                "Amplify": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Electro",
+            "text": "<b>When Revealed</b>: Place 3[per_player] charge counters on Electric Charge.\n[star] <b>Forced Response</b>: After Electro schemes, place 2 charge counters on Electric Charge."
+        },
+        {
+            "card_id": "60079",
+            "type": "Attachment",
+            "name": "Electric Charge",
+            "subtitle": "",
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Electro",
+            "text": "Permanent. Attach to Electro.\n[star] <b>Forced Interrupt</b>: When Electro attacks, remove 1 charge counter from here \u2192 give Electro 1 additional boost card for this attack. This attack gains overkill.\n<b>Hero Action</b>: Spend an [energy] resource or 2 resources of any type \u2192 remove 1 charge counter from here."
+        },
+        {
+            "card_id": "60080",
+            "type": "Attachment",
+            "name": "Drained of Power",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,drain",
+                "Boost": "2"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Electro",
+            "text": "Uses (3 drain counters). Attach to your identity.\n<b>When Revealed</b>: Exhaust each upgrade you control.\n<b>Forced Interrupt</b>: When an upgrade you control would ready, you may spend an [energy] resource or 2 resources of any type. If you do, remove 1 drain counter from here. Otherwise, that upgrade does not ready."
+        },
+        {
+            "card_id": "60081",
+            "type": "Minion",
+            "name": "* Whiplash",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "2",
+                "SCH": "2",
+                "Boost": "3"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Electro",
+            "text": "[star] <b>Forced Interrupt</b>: When Whiplash is attacked, remove 1 charge counter from Electric Charge \u2192 discard the top card of the encounter deck. Deal 1 damage to the attacker for each boost icon on the discarded card."
+        },
+        {
+            "card_id": "60082",
+            "type": "SideScheme",
+            "name": "Charging Up",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "6",
+                "Hazard": "1",
+                "Boost": "3"
+            },
+            "traits": [],
+            "set_name": "Electro",
+            "text": "<b>When Defeated</b>: Place 3 charge counters on Electric Charge."
+        },
+        {
+            "card_id": "60083",
+            "type": "Treachery",
+            "name": "Chain Lightning",
+            "subtitle": "",
+            "desc": {
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Electro",
+            "text": "<b>When Revealed</b>: For each character you control, choose one:\n\u2022 Exhaust that character.\n\u2022 Deal 1 damage to that character (3 damage instead if there are any charge counters on Electric Charge). Remove 1 charge counter from Electric Charge."
+        },
+        {
+            "card_id": "60084",
+            "type": "Treachery",
+            "name": "Energy Overload",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Electro",
+            "text": "If you have no cards with a printed [energy] resource in your hand, this card gains surge. Otherwise, for each card with a printed [energy] resource in your hand, choose one:\n\u2022 Discard that card.\n\u2022 Stun a character you control."
+        },
+        {
+            "card_id": "60085",
+            "type": "Treachery",
+            "name": "Shocking Revelation",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Electro",
+            "text": "<b>When Revealed</b>: Discard the top card of your deck for each card you control. For each card discarded this way with a printed [energy] resource, choose to either take 1 indirect damage or place 1 charge counter on Electric Charge."
+        },
+        {
+            "card_id": "60097",
+            "type": "Villain",
+            "name": "* Purple Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "13*",
+                "ATK": "0*",
+                "SCH": "1*",
+                "Stage": "1"
+            },
+            "traits": [
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Purple Man",
+            "text": "Each INFLUENCED minion gains guard.\nEach boost card from the Purple Man encounter set gains: \"[star] Boost: After this activation, deal this card to yourself as a facedown encounter card.\""
+        },
+        {
+            "card_id": "60098",
+            "type": "Villain",
+            "name": "* Purple Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "15*",
+                "ATK": "1*",
+                "SCH": "2*",
+                "Stage": "2"
+            },
+            "traits": [
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Purple Man",
+            "text": "Each INFLUENCED minion gains guard and villainous.\nEach boost card from the Purple Man encounter set gains: \"[star] Boost: After this activation, deal this card to yourself as a facedown encounter card.\""
+        },
+        {
+            "card_id": "60099",
+            "type": "Villain",
+            "name": "* Purple Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "17*",
+                "ATK": "1*",
+                "SCH": "3*",
+                "Stage": "3"
+            },
+            "traits": [
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Purple Man",
+            "text": "Each INFLUENCED minion gains guard, patrol, and villainous.\nEach boost card from the Purple Man encounter set gains: \"[star] Boost: After this activation, deal this card to yourself as a facedown encounter card.\""
+        },
+        {
+            "card_id": "60100",
+            "type": "Attachment",
+            "name": "Converted",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Purple Man",
+            "text": "Treat attached ally as an INFLUENCED minion with a blank text box. Attached minion's SCH is equal to its base THW and it does not take consequential damage.\n<b>When Revealed</b>: Attach to the highest-cost ally you control and engage it. Otherwise, this card gains surge."
+        },
+        {
+            "card_id": "60101",
+            "type": "Minion",
+            "name": "Firefighter",
+            "subtitle": "",
+            "desc": {
+                "HP": "3",
+                "ATK": "1*",
+                "SCH": "1",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CIVILIAN",
+                "INFLUENCED"
+            ],
+            "set_name": "Purple Man",
+            "text": "Vulnerable. (Discard this character if it is stunned or confused.)\n[star] Firefighter's attacks gain piercing.\n<b>When Defeated</b>: Discard the highest-cost support or upgrade from play."
+        },
+        {
+            "card_id": "60102",
+            "type": "Minion",
+            "name": "Judge",
+            "subtitle": "",
+            "desc": {
+                "HP": "2",
+                "ATK": "0",
+                "SCH": "3",
+                "Boost": "2",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CIVILIAN",
+                "INFLUENCED"
+            ],
+            "set_name": "Purple Man",
+            "text": "Vulnerable. (Discard this character if it is stunned or confused.)\n<b>When Defeated</b>: Place 3 threat on the main scheme."
+        },
+        {
+            "card_id": "60103",
+            "type": "Minion",
+            "name": "Security Guard",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "2",
+                "SCH": "0",
+                "Boost": "1",
+                "Patrol": "1",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CIVILIAN",
+                "INFLUENCED"
+            ],
+            "set_name": "Purple Man",
+            "text": "Patrol. Vulnerable. (Discard this character if it is stunned or confused.)\n<b>When Defeated</b>: Discard the ally with the highest ATK (among allies) in play."
+        },
+        {
+            "card_id": "60104",
+            "type": "Minion",
+            "name": "Skater Punk",
+            "subtitle": "",
+            "desc": {
+                "HP": "2",
+                "ATK": "2",
+                "SCH": "1",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CIVILIAN",
+                "INFLUENCED"
+            ],
+            "set_name": "Purple Man",
+            "text": "Vulnerable. (Discard this character if it is stunned or confused.)\n<b>When Defeated</b>: Deal 3 damage to the defeating player's identity."
+        },
+        {
+            "card_id": "60105",
+            "type": "Obligation",
+            "name": "\"Fight.\"",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,command",
+                "GiveTo": "",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Purple Man",
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → deal 2 damage to a hero or ally."
+        },
+        {
+            "card_id": "60106",
+            "type": "Obligation",
+            "name": "\"Protect.\"",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,command",
+                "GiveTo": "",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Purple Man",
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → give the villain a tough status card."
+        },
+        {
+            "card_id": "60107",
+            "type": "Obligation",
+            "name": "\"Serve.\"",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,command",
+                "GiveTo": "",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Purple Man",
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → place 2 threat on the main scheme."
+        },
+        {
+            "card_id": "60108",
+            "type": "SideScheme",
+            "name": "Power of Suggestion",
+            "subtitle": "",
+            "desc": {
+                "Hinder": "3*",
+                "Boost": "3"
+            },
+            "traits": [],
+            "set_name": "Purple Man",
+            "text": "Hinder 3[per_player].\nEach minion gains the INFLUENCED trait."
+        },
+        {
+            "card_id": "60109",
+            "type": "Treachery",
+            "name": "Sway the Masses",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Purple Man",
+            "text": "<b>When Revealed</b>: Choose an INFLUENCED minion from the encounter discard pile and reveal it. Otherwise, this card gains surge."
         },
         {
             "card_id": "60128a",
             "type": "MainScheme",
             "name": "The Getaway",
             "subtitle": "",
-            "desc": {"Stage": "1"},
+            "desc": {
+                "Stage": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "<b>Setup</b>: Place 1 speed counter here (2 instead if playing on expert mode). Attach Out Front to the villain."
@@ -61826,7 +62263,12 @@
             "type": "MainScheme",
             "name": "The Getaway",
             "subtitle": "",
-            "desc": {"StartingThreat": "2*", "TargetThreat": "9*", "EscalationThreat": "2*", "Stage": "1"},
+            "desc": {
+                "StartingThreat": "2*",
+                "TargetThreat": "9*",
+                "EscalationThreat": "2*",
+                "Stage": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "<b>Forced Interrupt</b>: At the end of the round, if there is threat here, place 1 speed counter here. Then, if Alongside is in play, flip it. Otherwise, place 1 additional speed counter here.\n<b>If this stage is completed, the players lose the game.</b>"
@@ -61836,7 +62278,9 @@
             "type": "Attachment",
             "name": "Out Front",
             "subtitle": "",
-            "desc": {"Permanent": "1"},
+            "desc": {
+                "Permanent": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "Permanent. Attach to the villain. If there is no threat on the main scheme, flip this card. The villain's attacks gain ranged.\n<b>Forced Interrupt</b>: When the villain would be dealt any amount of damage, remove that amount of threat from the main scheme instead, ignoring crisis."
@@ -61846,7 +62290,9 @@
             "type": "Attachment",
             "name": "Alongside",
             "subtitle": "",
-            "desc": {"Permanent": "1"},
+            "desc": {
+                "Permanent": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "Permanent. Attach to the villain.\n<b>When Revealed</b>: Each player takes 1 indirect damage. Deal 2 damage per player to the villain."
@@ -61856,8 +62302,17 @@
             "type": "Minion",
             "name": "Escort Vehicle",
             "subtitle": "",
-            "desc": {"HP": "5", "ATK": "2", "SCH": "2", "Boost": "3", "Guard": "1", "Patrol": "1"},
-            "traits": ["VEHICLE"],
+            "desc": {
+                "HP": "5",
+                "ATK": "2",
+                "SCH": "2",
+                "Boost": "3",
+                "Guard": "1",
+                "Patrol": "1"
+            },
+            "traits": [
+                "VEHICLE"
+            ],
             "set_name": "The Getaway",
             "text": "Guard. Patrol.\nAt 3 speed counters, Escort Vehicle gains toughness. At 6, it gains quickstrike. At 9, it gains surge."
         },
@@ -61866,7 +62321,12 @@
             "type": "SideScheme",
             "name": "Jackknifed Tanker Truck",
             "subtitle": "",
-            "desc": {"StartingThreat": "2", "Hinder": "1*", "Crisis": "1", "Boost": "2"},
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "1*",
+                "Crisis": "1",
+                "Boost": "2"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "Hinder 1 per player. Crisis. The villain cannot be dealt damage."
@@ -61876,7 +62336,9 @@
             "type": "Treachery",
             "name": "Burning Rubber",
             "subtitle": "",
-            "desc": {"Boost": "1"},
+            "desc": {
+                "Boost": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "<b>When Revealed</b>: For each speed counter on the main scheme, choose to either spend 1 resource of any type or place 1 threat on the main scheme."
@@ -61886,18 +62348,280 @@
             "type": "Treachery",
             "name": "Pedestrians!",
             "subtitle": "",
-            "desc": {"Boost": "1"},
+            "desc": {
+                "Boost": "1"
+            },
             "traits": [],
             "set_name": "The Getaway",
             "text": "<b>When Revealed</b>: For each speed counter on the main scheme, choose to either exhaust a character you control or take 1 indirect damage."
+        },
+        {
+            "card_id": "60134a",
+            "type": "MainScheme",
+            "name": "Protection Racket",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Contents</b>: Chosen UNDERLING villain and villain set, Protection Racket set, Standard set, and the Disasters and Tracksuit Mafia modular sets.\n<b>Setup</b>: Each player chooses a single Protection Racket main scheme (at random in expert mode), places it in their play area, and flips it to side 1B. Set each unused Protection Racket main scheme aside, out of play."
+        },
+        {
+            "card_id": "60134b",
+            "type": "MainScheme",
+            "name": "Battle in the Bodega",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "0",
+                "EscalationThreat": "1*",
+                "TargetThreat": "10*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Forced Response</b>: After a character in this play area is attacked, deal 1 damage to the attacker and place 1 threat here. (Limit once per phase in standard mode.)\n<b>If any main scheme is completed or any player is eliminated, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60135a",
+            "type": "MainScheme",
+            "name": "Protection Racket",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Setup</b>: Choose a Protection Racket main scheme (at random in expert mode) and set the unused main schemes aside, out of play."
+        },
+        {
+            "card_id": "60135b",
+            "type": "MainScheme",
+            "name": "Bull in a China Shop",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "0",
+                "EscalationThreat": "1*",
+                "TargetThreat": "10*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Forced Interrupt</b>: When excess damage is dealt to an ally in this play area (an ally or minion in expert mode), place threat here equal to the excess damage.\n<b>If any main scheme is completed or any player is eliminated, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60136a",
+            "type": "MainScheme",
+            "name": "Protection Racket",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Setup</b>: Choose a Protection Racket main scheme (at random in expert mode) and set the unused main schemes aside, out of play."
+        },
+        {
+            "card_id": "60136b",
+            "type": "MainScheme",
+            "name": "Hung Out to Dry",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "0",
+                "EscalationThreat": "1*",
+                "TargetThreat": "10*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Forced Response</b>: After a character enters play in this play area, deal 1 damage to it and place 1 threat here.\n<b>If any main scheme is completed or any player is eliminated, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60137a",
+            "type": "MainScheme",
+            "name": "Protection Racket",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Setup</b>: Choose a Protection Racket main scheme (at random in expert mode) and set the unused main schemes aside, out of play."
+        },
+        {
+            "card_id": "60137b",
+            "type": "MainScheme",
+            "name": "Pawn Shop Showdown",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "0",
+                "EscalationThreat": "1*",
+                "TargetThreat": "10*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "Reduce the cost of the first upgrade played into this play area each round by 1.\n<b>Forced Response</b>: After an attachment or upgrade enters play in this play area, place 1 threat here.\n<b>If any main scheme is completed or any player is eliminated, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60138a",
+            "type": "MainScheme",
+            "name": "Protection Racket",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Setup</b>: Choose a Protection Racket main scheme (at random in expert mode) and set the unused main schemes aside, out of play."
+        },
+        {
+            "card_id": "60138b",
+            "type": "MainScheme",
+            "name": "A Slice of the Pizza Dough",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "0",
+                "EscalationThreat": "1*",
+                "TargetThreat": "10*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "<b>Forced Response</b>: After a character in this play area defeats another character or side scheme (in any play area), heal 1 damage from the defeating character and place 1 threat here.\n<b>If any main scheme is completed or any player is eliminated, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60139",
+            "type": "Ally",
+            "name": "Shop Proprietor",
+            "subtitle": "",
+            "desc": {
+                "HP": "3",
+                "ATK": "1**",
+                "THW": "1**",
+                "Class": "Encounter"
+            },
+            "traits": [
+                "CIVILIAN"
+            ],
+            "set_name": "Protection Racket",
+            "text": "<b>When Revealed</b>: Put Shop Proprietor into play under your control. This card gains surge.\n<b>Forced Interrupt</b>: When Shop Proprietor leaves play, place 4 threat on the main scheme in your play area."
+        },
+        {
+            "card_id": "60140",
+            "type": "Minion",
+            "name": "Man-Bull",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "4*",
+                "SCH": "2",
+                "Boost": "2*"
+            },
+            "traits": [
+                "BRUTE"
+            ],
+            "set_name": "Protection Racket",
+            "text": "[star] <b>Forced Response</b>: After Man-Bull attacks, place threat on the main scheme in your play area equal to the excess damage dealt by that attack.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, after it resolves place threat on the main scheme in your play area equal to the excess damage dealt by that attack."
+        },
+        {
+            "card_id": "60141",
+            "type": "Treachery",
+            "name": "Change of Venue",
+            "subtitle": "",
+            "desc": {
+                "Surge": "1",
+                "Boost": "2*"
+            },
+            "traits": [],
+            "set_name": "Protection Racket",
+            "text": "Surge.\n<b>When Revealed</b>: Swap the main scheme in your play area with a random set-aside Protection Racket main scheme. Transfer all threat from the original scheme to the new scheme.\n<hr />\n[star] <b>Boost</b>: Resolve this card's When Revealed ability."
+        },
+        {
+            "card_id": "60177",
+            "type": "Environment",
+            "name": "Mystic Incursion",
+            "subtitle": "",
+            "desc": {
+                "Uses": "2,civilian"
+            },
+            "traits": [
+                "DISASTER"
+            ],
+            "set_name": "Disasters",
+            "text": "Uses (2 civilian counters).\n<b>Hero Action</b>: Spend 2 [mental] resources or exhaust a character you control \u2192 remove 1 civilian counter here (2 instead if you exhausted a MYSTIC character)."
+        },
+        {
+            "card_id": "60178",
+            "type": "Environment",
+            "name": "Sinking Ferry",
+            "subtitle": "",
+            "desc": {
+                "Uses": "2,civilian"
+            },
+            "traits": [
+                "DISASTER"
+            ],
+            "set_name": "Disasters",
+            "text": "Uses (2 civilian counters).\n<b>Hero Action</b>: Spend 2 [energy] resources or exhaust a character you control \u2192 remove 1 civilian counter here (2 instead if you exhausted an AERIAL character)."
+        },
+        {
+            "card_id": "60179",
+            "type": "Environment",
+            "name": "Towering Inferno",
+            "subtitle": "",
+            "desc": {
+                "Uses": "2,civilian"
+            },
+            "traits": [
+                "DISASTER"
+            ],
+            "set_name": "Disasters",
+            "text": "Uses (2 civilian counters).\n<b>Hero Action</b>: Spend 2 [physical] resources or exhaust a character you control \u2192 remove 1 civilian counter here (2 instead if you exhausted a character with a tough status card)."
+        },
+        {
+            "card_id": "60180",
+            "type": "SideScheme",
+            "name": "Collapsing Bridge",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "1*",
+                "Hinder": "2*",
+                "Crisis": "1",
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Disasters",
+            "text": "Hinder 2 per player. Crisis.\n<b>Forced Response</b>: After any amount of threat is removed from Collapsing Bridge, place 1 threat on it."
+        },
+        {
+            "card_id": "60181",
+            "type": "Treachery",
+            "name": "Bystanders in Peril",
+            "subtitle": "",
+            "desc": {
+                "Peril": "1",
+                "Boost": "2*"
+            },
+            "traits": [],
+            "set_name": "Disasters",
+            "text": "Peril.\n<b>When Revealed</b>: Place 1 civilian counter on a DISASTER environment. If you cannot, search the encounter deck and discard pile for a DISASTER environment and reveal it. Shuffle the encounter deck.\n<hr />\n[star] <b>Boost</b>: Place 1 civilian counter on a DISASTER environment."
         },
         {
             "card_id": "60182",
             "type": "Minion",
             "name": "Cop",
             "subtitle": "",
-            "desc": {"HP": "3", "ATK": "2", "SCH": "0*", "Quickstrike": "1", "Vulnerable": "1"},
-            "traits": ["POLICE"],
+            "desc": {
+                "HP": "3",
+                "ATK": "2",
+                "SCH": "0*",
+                "Quickstrike": "1",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "POLICE"
+            ],
             "set_name": "Cops",
             "text": "Quickstrike. Vulnerable.\n[star] <b>Forced Interrupt</b>: When Cop would scheme, he attacks the villain instead.\n<b>When Defeated</b>: Place 2 threat on the main scheme."
         },
@@ -61906,8 +62630,17 @@
             "type": "Minion",
             "name": "Crooked Cop",
             "subtitle": "",
-            "desc": {"HP": "4", "ATK": "2", "SCH": "1", "Quickstrike": "1", "Vulnerable": "1"},
-            "traits": ["CRIMINAL", "POLICE"],
+            "desc": {
+                "HP": "4",
+                "ATK": "2",
+                "SCH": "1",
+                "Quickstrike": "1",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "POLICE"
+            ],
             "set_name": "Cops",
             "text": "Quickstrike. Vulnerable.\n<b>When Defeated</b>: The player who defeated this minion deals themself 1 facedown encounter card.\n<hr />\n[star] <b>Boost</b>: Take 2 indirect damage."
         },
@@ -61916,7 +62649,11 @@
             "type": "Obligation",
             "name": "Wanted",
             "subtitle": "",
-            "desc": {"Hazard": "1", "Boost": "2", "GiveTo": ""},
+            "desc": {
+                "Hazard": "1",
+                "Boost": "2",
+                "GiveTo": ""
+            },
             "traits": [],
             "set_name": "Cops",
             "text": "<b>Hero Action</b>: Discard cards from the encounter deck until a POLICE minion is discarded. Put that minion into play engaged with you, then discard Wanted."
@@ -61926,7 +62663,11 @@
             "type": "SideScheme",
             "name": "Police Cordon",
             "subtitle": "",
-            "desc": {"StartingThreat": "3", "Hinder": "1*", "Boost": "3"},
+            "desc": {
+                "StartingThreat": "3",
+                "Hinder": "1*",
+                "Boost": "3"
+            },
             "traits": [],
             "set_name": "Cops",
             "text": "Hinder 1 per player. Each POLICE minion gains guard and patrol.\n<b>When Revealed</b>: Search the encounter deck and discard pile for a POLICE minion and reveal it. Shuffle the encounter deck."
@@ -61936,8 +62677,13 @@
             "type": "Attachment",
             "name": "Sports Car",
             "subtitle": "",
-            "desc": {"ATK+": "1", "Boost": "2"},
-            "traits": ["VEHICLE"],
+            "desc": {
+                "ATK+": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "VEHICLE"
+            ],
             "set_name": "Drive",
             "text": "Attach to the enemy with the highest ATK without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 4 or more damage here, discard this card."
         },
@@ -61946,8 +62692,13 @@
             "type": "Attachment",
             "name": "Motorcycle",
             "subtitle": "",
-            "desc": {"SCH+": "1", "Boost": "1"},
-            "traits": ["VEHICLE"],
+            "desc": {
+                "SCH+": "1",
+                "Boost": "1"
+            },
+            "traits": [
+                "VEHICLE"
+            ],
             "set_name": "Drive",
             "text": "Attach to the enemy with the highest SCH without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 3 or more damage here, discard this card."
         },
@@ -61956,8 +62707,12 @@
             "type": "Attachment",
             "name": "Utility Van",
             "subtitle": "",
-            "desc": {"Boost": "1"},
-            "traits": ["VEHICLE"],
+            "desc": {
+                "Boost": "1"
+            },
+            "traits": [
+                "VEHICLE"
+            ],
             "set_name": "Drive",
             "text": "Attach to the enemy with the fewest remaining hit points without a VEHICLE attachment. Otherwise, this card gains surge.\n<b>Forced Interrupt</b>: When attached enemy would take damage, place it here instead. If there is 6 or more damage here, discard this card."
         },
@@ -61966,7 +62721,12 @@
             "type": "SideScheme",
             "name": "Traffic Jam",
             "subtitle": "",
-            "desc": {"StartingThreat": "2", "Hinder": "2*", "Crisis": "1", "Boost": "3"},
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "2*",
+                "Crisis": "1",
+                "Boost": "3"
+            },
             "traits": [],
             "set_name": "Drive",
             "text": "Hinder 2 per player. Crisis.\n<b>Forced Interrupt</b>: When threat would be placed on or removed from a character with a VEHICLE attachment, place it on or remove it from this scheme instead."
@@ -61976,11 +62736,679 @@
             "type": "Treachery",
             "name": "Carjacking",
             "subtitle": "",
-            "desc": {"Boost": "2"},
+            "desc": {
+                "Boost": "2"
+            },
             "traits": [],
             "set_name": "Drive",
             "text": "<b>When Revealed</b>: Discard cards from the encounter deck until a VEHICLE attachment is discarded, then reveal it. If your identity has no VEHICLE attachment, you may spend 3 resources of the same type to attach that card to your identity instead."
+        },
+        {
+            "card_id": "60121a",
+            "type": "MainScheme",
+            "name": "Art Museum Heist",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Art Museum Heist",
+            "text": "<b>Contents</b>: Chosen UNDERLING villain and villain set, Art Museum Heist set, Standard set, Cops, and The Owl.\n<b>Setup</b>: Find this encounter set's 4 ART attachments and attach 1 at random to the villain. Shuffle the other 3 into the encounter deck."
+        },
+        {
+            "card_id": "60121b",
+            "type": "MainScheme",
+            "name": "Art Museum Heist",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "1*",
+                "EscalationThreat": "1*",
+                "TargetThreat": "9*"
+            },
+            "traits": [],
+            "set_name": "Art Museum Heist",
+            "text": "X is 1 more than the number of ART attachments on the villain.\n<b>Forced Response</b>: After an enemy makes an undefended attack against an identity, attach 1 ART attachment on that identity to the villain.\n<b>If this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60122",
+            "type": "Attachment",
+            "name": "Impossible Object",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "THW+": "1",
+                "Surge": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "ART"
+            ],
+            "set_name": "Art Museum Heist",
+            "text": "Surge. Attach to the villain.\n<b>Forced Response</b>: After Impossible Object attaches to a character, confuse that character.\n<b>Hero Action</b>: Spend a [mental] resource or exhaust your hero \u2192 attach Impossible Object to your hero."
+        },
+        {
+            "card_id": "60123",
+            "type": "Attachment",
+            "name": "Inspiring Pottery",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "THW+": "1",
+                "Surge": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "ART"
+            ],
+            "set_name": "Art Museum Heist",
+            "text": "Surge. Attach to the villain. Attached character gains stalwart.\n<b>Hero Action</b>: Spend a [wild] resource or exhaust your hero \u2192 attach Inspiring Pottery to your hero."
+        },
+        {
+            "card_id": "60124",
+            "type": "Attachment",
+            "name": "Replica Shield",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "THW+": "1",
+                "Surge": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "ART"
+            ],
+            "set_name": "Art Museum Heist",
+            "text": "Surge. Attach to the villain.\n<b>Forced Response</b>: After Replica Shield attaches to a character, give that character a tough status card.\n<b>Hero Action</b>: Spend a [physical] resource or exhaust your hero \u2192 attach Replica Shield to your hero."
+        },
+        {
+            "card_id": "60125",
+            "type": "Attachment",
+            "name": "Stunning Landscape",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "THW+": "1",
+                "Surge": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "ART"
+            ],
+            "set_name": "Art Museum Heist",
+            "text": "Surge. Attach to the villain.\n<b>Forced Response</b>: After Stunning Landscape attaches to a character, stun that character.\n<b>Hero Action</b>: Spend an [energy] resource or exhaust your hero \u2192 attach Stunning Landscape to your hero."
+        },
+        {
+            "card_id": "60126",
+            "type": "Minion",
+            "name": "Art Thief",
+            "subtitle": "",
+            "desc": {
+                "HP": "3",
+                "ATK": "2",
+                "SCH": "2",
+                "Boost": "0*"
+            },
+            "traits": [
+                "THIEF"
+            ],
+            "set_name": "Art Museum Heist",
+            "text": "<b>When Revealed</b>: Search the encounter deck and discard pile for an ART attachment and attach it to the villain. If you cannot, move an ART attachment from an identity to the villain.\n<hr />\n[star] <b>Boost</b>: Move an ART attachment from an identity to the villain."
+        },
+        {
+            "card_id": "60127",
+            "type": "Treachery",
+            "name": "Tug of War",
+            "subtitle": "",
+            "desc": {
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Art Museum Heist",
+            "text": "<b>When Revealed</b>: You may spend 3 [physical] resources to move an ART attachment from the villain to an identity. Otherwise, move an ART attachment from an identity to the villain and this card gains surge."
+        },
+        {
+            "card_id": "60191",
+            "type": "Attachment",
+            "name": "Flight Serum",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "1",
+                "SCH+": "1"
+            },
+            "traits": [
+                "SUPERPOWER"
+            ],
+            "set_name": "The Owl",
+            "text": "Attach to a non-AERIAL enemy. Otherwise, this card gains surge. Attached enemy gains the AERIAL trait.\n<b>Hero Action</b>: Discard an ATTACK event from your hand \u2192 discard this card."
+        },
+        {
+            "card_id": "60192",
+            "type": "Minion",
+            "name": "* Mister Fish",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "2*",
+                "SCH": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA"
+            ],
+            "set_name": "The Owl",
+            "text": "[star] Mister Fish's attacks gain piercing and ranged.\n<b>When Revealed</b>: Mister Fish engages the player whose identity has the fewest remaining hit points."
+        },
+        {
+            "card_id": "60193",
+            "type": "Minion",
+            "name": "* The Owl",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "2*",
+                "SCH": "3",
+                "Quickstrike": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "AERIAL",
+                "CRIMINAL"
+            ],
+            "set_name": "The Owl",
+            "text": "Quickstrike.\n[star] The Owl's attacks gain piercing.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains piercing."
+        },
+        {
+            "card_id": "60194",
+            "type": "Treachery",
+            "name": "Swoop Down",
+            "subtitle": "",
+            "desc": {
+                "Boost": "3"
+            },
+            "traits": [],
+            "set_name": "The Owl",
+            "text": "<b>When Revealed (Alter-Ego)</b>: The villain and each minion engaged with you schemes. Each AERIAL enemy gets +2 SCH for this activation.\n<b>When Revealed (Hero)</b>: The villain and each minion engaged with you attacks you. Each AERIAL enemy gets +2 ATK for this activation."
+        },
+        {
+            "card_id": "60142a",
+            "type": "MainScheme",
+            "name": "The Raft Breakout",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "The Raft Breakout",
+            "text": "<b>Contents</b>: Chosen UNDERLING villain and villain set, The Raft Breakout set, Standard set, The Owl, and Tombstone.\n<b>Setup</b>: Attach Master Key to the villain. Each player discards cards from the encounter deck until they discard a PRISONER minion, then reveals that minion."
+        },
+        {
+            "card_id": "60142b",
+            "type": "MainScheme",
+            "name": "The Raft Breakout",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "2*",
+                "EscalationThreat": "1*",
+                "TargetThreat": "11*"
+            },
+            "traits": [],
+            "set_name": "The Raft Breakout",
+            "text": "Each minion gains: \u2018<b>When Defeated</b>: Remove 1 threat from this scheme. Remove 2 threat instead if that minion has the ELITE trait.\u2019\n<b>If this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60143",
+            "type": "Attachment",
+            "name": "Master Key",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "0*",
+                "Permanent": "1"
+            },
+            "traits": [
+                "ITEM"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Attach to the villain. Permanent.\n<b>Forced Response</b>: After the villain schemes against you, deal each activation boost card that is a minion to yourself as a facedown encounter card."
+        },
+        {
+            "card_id": "60144",
+            "type": "Minion",
+            "name": "* Absorbing Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1*",
+                "SCH": "1",
+                "Villainous": "1",
+                "Boost": "3"
+            },
+            "traits": [
+                "BRUTE",
+                "ELITE",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Villainous.\n<b>Forced Interrupt</b>: When Absorbing Man attacks, place the top card of your deck facedown under him. Absorbing Man gets +1 ATK for this attack for each different resource type among cards under him."
+        },
+        {
+            "card_id": "60145",
+            "type": "Minion",
+            "name": "* Baron Zemo",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1",
+                "SCH": "2",
+                "Villainous": "1",
+                "Boost": "3"
+            },
+            "traits": [
+                "ELITE",
+                "HYDRA",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Villainous. Treat each ally with threat on it as a DECEIVED minion with a blank text box. Its SCH is equal to its base THW and it does not take consequential damage.\n<b>When Revealed</b>: Place 1 threat on an ally without threat on it. That ally engages its controller."
+        },
+        {
+            "card_id": "60146",
+            "type": "Minion",
+            "name": "* Drang",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1*",
+                "SCH": "1",
+                "Villainous": "1",
+                "Boost": "3"
+            },
+            "traits": [
+                "BADOON",
+                "ELITE",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Villainous.\n<b>Forced Response</b>: After Drang attacks you, place 1 barrage counter on him. Then take indirect damage equal to the number of barrage counters on him."
+        },
+        {
+            "card_id": "60147",
+            "type": "Minion",
+            "name": "* Mysterio",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1*",
+                "SCH": "2",
+                "Villainous": "1",
+                "Boost": "3"
+            },
+            "traits": [
+                "CRIMINAL",
+                "ELITE",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Villainous.\n<b>Forced Response</b>: After Mysterio attacks you, deal each activation boost card that is a treachery to yourself as a facedown encounter card."
+        },
+        {
+            "card_id": "60148",
+            "type": "Minion",
+            "name": "* Proxima Midnight",
+            "subtitle": "",
+            "desc": {
+                "HP": "7",
+                "ATK": "2*",
+                "SCH": "1",
+                "Villainous": "1",
+                "Boost": "3"
+            },
+            "traits": [
+                "BLACK ORDER",
+                "ELITE",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Villainous.\n<b>Forced Interrupt</b>: When Proxima Midnight attacks, choose to either place 1 threat on the main scheme or give her +2 ATK for this attack."
+        },
+        {
+            "card_id": "60149",
+            "type": "Minion",
+            "name": "* Rhino",
+            "subtitle": "",
+            "desc": {
+                "HP": "7",
+                "ATK": "3*",
+                "SCH": "1",
+                "Toughness": "1",
+                "Villainous": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "BRUTE",
+                "ELITE",
+                "PRISONER"
+            ],
+            "set_name": "The Raft Breakout",
+            "text": "Toughness. Villainous. Rhino's attacks gain overkill.\n<hr />\n[star] <b>Boost</b>: Give the activating enemy a tough status card."
+        },
+        {
+            "card_id": "60150",
+            "type": "Obligation",
+            "name": "Imprisoned",
+            "subtitle": "",
+            "desc": {
+                "GiveTo": "",
+                "Boost": "0*"
+            },
+            "traits": [],
+            "set_name": "The Raft Breakout",
+            "text": "Give to the player who revealed this card. You cannot thwart, attack, or change to alter-ego form.\n<b>Hero Action</b>: Spend 3 resources of any type \u2192 discard this card.\n<b>Hero Action</b>: Exhaust characters you control with a total of 3 or more THW \u2192 discard this card.\n<hr />\n[star] <b>Boost</b>: Reveal this card."
+        },
+        {
+            "card_id": "60151a",
+            "type": "MainScheme",
+            "name": "Stop the Presses!",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Stop the Presses!",
+            "text": "<b>Contents</b>: Chosen UNDERLING villain and villain set, Stop the Presses! set, Standard set, Tombstone, and Tracksuit Mafia.\n<b>Setup</b>: Put the Daily Bugle environment into play. Each player puts a random DAILY BUGLE support from this encounter set into play under their control. Remove each remaining DAILY BUGLE support from the game."
+        },
+        {
+            "card_id": "60151b",
+            "type": "MainScheme",
+            "name": "Stop the Presses!",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1",
+                "StartingThreat": "1*",
+                "EscalationThreat": "1*",
+                "TargetThreat": "9*"
+            },
+            "traits": [],
+            "set_name": "Stop the Presses!",
+            "text": "<b>Forced Response</b>: After an enemy makes an undefended attack against you, choose:\n• Place 2 threat here (3 threat instead in expert mode).\n• Remove 1 stamina counter from a DAILY BUGLE support you control.\n<b>If a DAILY BUGLE support leaves play or this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60152",
+            "type": "Environment",
+            "name": "* Daily Bugle",
+            "subtitle": "",
+            "desc": {},
+            "traits": [],
+            "set_name": "Stop the Presses!",
+            "text": "<b>Alter-Ego Action</b>: Exhaust a DAILY BUGLE support you control → place 1 stamina counter on that support. (Any player can do this.)"
+        },
+        {
+            "card_id": "60153",
+            "type": "Support",
+            "name": "* Ben Urich",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "Uses": "3,stamina",
+                "Class": "Encounter"
+            },
+            "traits": [
+                "DAILY BUGLE",
+                "PERSONA"
+            ],
+            "set_name": "Stop the Presses!",
+            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust Ben Urich and remove 1 stamina counter from him → look at the top 2 cards of the encounter deck. You may discard 1 of those cards. Put the rest back in the same order."
+        },
+        {
+            "card_id": "60154",
+            "type": "Support",
+            "name": "* Betty Brant",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "Uses": "3,stamina",
+                "Class": "Encounter"
+            },
+            "traits": [
+                "DAILY BUGLE",
+                "PERSONA"
+            ],
+            "set_name": "Stop the Presses!",
+            "text": "Uses (3 stamina counters).\n<b>Interrupt</b>: When a boost card is turned faceup, exhaust Betty Brant and remove 1 stamina counter from her → cancel that card's boost icons and its Boost ability. Give the activating enemy another boost card for this activation."
+        },
+        {
+            "card_id": "60155",
+            "type": "Support",
+            "name": "* J. Jonah Jameson",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "Uses": "3,stamina",
+                "Class": "Encounter"
+            },
+            "traits": [
+                "DAILY BUGLE",
+                "PERSONA"
+            ],
+            "set_name": "Stop the Presses!",
+            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust J. Jonah Jameson, remove 1 stamina counter from him, and deal yourself 1 facedown encounter card → draw 2 cards."
+        },
+        {
+            "card_id": "60156",
+            "type": "Support",
+            "name": "* Robbie Robertson",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "Uses": "3,stamina",
+                "Class": "Encounter"
+            },
+            "traits": [
+                "DAILY BUGLE",
+                "PERSONA"
+            ],
+            "set_name": "Stop the Presses!",
+            "text": "Uses (3 stamina counters).\n<b>Response</b>: After a player is dealt a facedown encounter card, exhaust Robbie Robertson and remove 1 stamina counter from him → look at that encounter card. You may discard it and deal that player another facedown encounter card."
+        },
+        {
+            "card_id": "60157",
+            "type": "SideScheme",
+            "name": "Exclusive Interview",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "6",
+                "Hazard": "1"
+            },
+            "traits": [],
+            "set_name": "Stop the Presses!",
+            "text": "DAILY BUGLE supports cannot ready.\n<b>When Revealed</b>: Exhaust each DAILY BUGLE support."
+        },
+        {
+            "card_id": "60158",
+            "type": "Treachery",
+            "name": "Breaking News",
+            "subtitle": "",
+            "desc": {
+                "Boost": "0*"
+            },
+            "traits": [],
+            "set_name": "Stop the Presses!",
+            "text": "<b>When Revealed</b>: Choose:\n• Exhaust a DAILY BUGLE support (under any player's control) and remove 1 stamina counter from it.\n• Place 2 threat on the main scheme.\n<hr />\n[star] <b>Boost</b>: Exhaust a DAILY BUGLE support (under any player's control)."
+        },
+        {
+            "card_id": "60195",
+            "type": "Attachment",
+            "name": "Cold as Ice",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "2*",
+                "Boost": "2"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Tombstone",
+            "text": "Attach to the minion with the highest base hit points and give it a tough status card. Otherwise, this card gains surge.\n<b>Forced Response</b>: After attached minion schemes, confuse the first player's identity and discard this card."
+        },
+        {
+            "card_id": "60196",
+            "type": "Attachment",
+            "name": "Hard as Marble",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "2*",
+                "Boost": "2"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Tombstone",
+            "text": "Attach to the minion with the highest base hit points and give it a tough status card. Otherwise, this card gains surge.\n<b>Forced Response</b>: After attached minion attacks, stun the attacked character and discard this card."
+        },
+        {
+            "card_id": "60197",
+            "type": "Minion",
+            "name": "* Beetle",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "1",
+                "SCH": "1",
+                "Villainous": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "AERIAL",
+                "CRIMINAL"
+            ],
+            "set_name": "Tombstone",
+            "text": "Villainous.\n<b>When Revealed</b>: Search the encounter deck and discard pile for an attachment that can attach to a minion and attach it to Beetle."
+        },
+        {
+            "card_id": "60198",
+            "type": "Minion",
+            "name": "* Tombstone",
+            "subtitle": "",
+            "desc": {
+                "HP": "8",
+                "ATK": "2",
+                "SCH": "2",
+                "Quickstrike": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Tombstone",
+            "text": "Quickstrike.\n<hr />\n[star] <b>Boost</b>: Give the villain a tough status card."
+        },
+        {
+            "card_id": "60199",
+            "type": "SideScheme",
+            "name": "Hit List",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "Crisis": "1"
+            },
+            "traits": [],
+            "set_name": "Tombstone",
+            "text": "Crisis.\n<b>Forced Response</b>: After the villain phase begins, deal 3 indirect damage to the first player. For each ally defeated by this damage, remove 1 threat from Hit List."
+        },
+        {
+            "card_id": "60200",
+            "type": "Minion",
+            "name": "* Ivan Banionis",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "2",
+                "SCH": "0*",
+                "Boost": "2",
+                "Teamwork": "TRACKSUIT"
+            },
+            "traits": [
+                "CRIMINAL",
+                "TRACKSUIT"
+            ],
+            "set_name": "Tracksuit Mafia",
+            "text": "Teamwork (TRACKSUIT).\n<b>When Revealed</b>: Place 1 acceleration token on Ivan Banionis.\n[star] <b>Forced Response</b>: After Ivan Banionis schemes, place 1 acceleration token on him."
+        },
+        {
+            "card_id": "60201",
+            "type": "Minion",
+            "name": "* The Clown",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1",
+                "SCH": "0*",
+                "Boost": "2",
+                "Teamwork": "TRACKSUIT",
+                "Villainous": "1"
+            },
+            "traits": [
+                "ASSASSIN",
+                "TRACKSUIT"
+            ],
+            "set_name": "Tracksuit Mafia",
+            "text": "Teamwork (TRACKSUIT). Villainous.\n[star] <b>Forced Response</b>: After The Clown schemes, give him 1 facedown boost card."
+        },
+        {
+            "card_id": "60202",
+            "type": "Minion",
+            "name": "Tracksuit Mafioso",
+            "subtitle": "",
+            "desc": {
+                "HP": "7",
+                "ATK": "0",
+                "SCH": "3",
+                "Boost": "3",
+                "Retaliate": "2",
+                "Teamwork": "TRACKSUIT",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "TRACKSUIT"
+            ],
+            "set_name": "Tracksuit Mafia",
+            "text": "Retaliate 2. Teamwork (TRACKSUIT). Vulnerable.\n<b>When Defeated</b>: Tuck Tracksuit Mafioso beneath the Tracksuit Mafia side scheme. If that scheme is not in play, stun and confuse the character that defeated this minion."
+        },
+        {
+            "card_id": "60203",
+            "type": "Minion",
+            "name": "Tracksuit Bro",
+            "subtitle": "",
+            "desc": {
+                "HP": "3",
+                "ATK": "2",
+                "SCH": "1",
+                "Teamwork": "TRACKSUIT",
+                "Vulnerable": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "TRACKSUIT"
+            ],
+            "set_name": "Tracksuit Mafia",
+            "text": "Teamwork (TRACKSUIT). Vulnerable.\n<b>When Defeated</b>: Tuck Tracksuit Bro beneath the Tracksuit Mafia side scheme. If that scheme is not in play, shuffle this minion into the encounter deck."
+        },
+        {
+            "card_id": "60204",
+            "type": "SideScheme",
+            "name": "Tracksuit Mafia",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Tracksuit Mafia",
+            "text": "<b>When Revealed</b>: Discard cards from the encounter deck until a TRACKSUIT minion is discarded. Tuck that minion beneath this scheme.\n<b>Forced Response</b>: After a player reveals a TRACKSUIT minion from the encounter deck, that player reveals 1 minion tucked beneath this scheme."
         }
     ],
-    "checksum": "dd0668e7c7399b6cdd0b15b071ced7e9a597c84e8a8f7e7d8d24e66dc0061b66"
+    "checksum": "ab6c294802305e9ee487191b15d65ae172275c9e5ae08655542f885f58c5fd52"
 }

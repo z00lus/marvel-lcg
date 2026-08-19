@@ -407,11 +407,11 @@
     },
     "60. Fear No Evil": {
         "name": "fne",
-        "scenarios": ["the_getaway"],
+        "scenarios": ["stop_the_presses", "protection_racket", "the_raft_breakout", "art_museum_heist", "the_getaway"],
         "heroes": ["daredevil", "echo"],
-        "underlings": ["bullseye"],
-        "encounters": ["cops", "drive"],
-        "max_id": "60190"
+        "underlings": ["bullseye", "electro", "purple_man"],
+        "encounters": ["cops", "drive", "the_owl", "tombstone", "disasters", "tracksuit_mafia"],
+        "max_id": "60204"
     },
     "90. Ronan Modular Set": {
         "name": "ron",
@@ -452,5 +452,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "867aa10b2ad0cc12b4a9e05674cd0060e64e11a186e307246fe4219cb99948c3"
+    "checksum": "cad804939c313a5a1549b1c43ace031ed3d3596cb22652a2c258cd15958cc678"
 }

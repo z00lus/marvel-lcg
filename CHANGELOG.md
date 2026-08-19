@@ -15,6 +15,24 @@ The comparison baseline is upstream commit
 
 ### Rules and cards
 
+- Added **Stop the Presses!** in Standard and Expert modes, including seeded
+  Daily Bugle Persona setup, stamina management, all four Persona abilities,
+  and the required Tombstone and Tracksuit Mafia modular sets.
+- Added **Protection Racket** in Standard and Expert modes with all five main
+  scheme variants, deterministic solo setup, and the **Disasters** and
+  **Tracksuit Mafia** modular sets.
+- Added **Electro** as a selectable Fear No Evil underling for The Getaway,
+  including all three villain stages, Electric Charge, and his complete
+  encounter set in Standard and Expert games.
+- Added **Purple Man** as a selectable Fear No Evil underling across all
+  implemented mix-and-match scenarios, including INFLUENCED minions,
+  command obligations, Converted allies, and his complete encounter set.
+- Added **Art Museum Heist** in Standard and Expert modes, with deterministic
+  ART attachment setup, Bullseye/Electro/Purple Man underling selection, and
+  the complete **The Owl** encounter set.
+- Added **The Raft Breakout** in Standard and Expert modes, including Master
+  Key setup, PRISONER minions, Imprisoned, Bullseye/Electro/Purple Man
+  underling selection, and the complete **Tombstone** encounter set.
 - Corrected player-side-scheme rewards so cards such as Sidearm enter the
   proper player area instead of remaining detached on the table.
 - Corrected Photographic Reflexes resolution and exclusive thwart-target

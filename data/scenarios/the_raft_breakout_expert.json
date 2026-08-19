@@ -1,0 +1,37 @@
+{
+    "version": "0.6.1",
+    "name": "The Raft Breakout",
+    "villain": [
+        "60066",
+        "60067"
+    ],
+    "expert": true,
+    "schemes": [
+        "60142a,60142b"
+    ],
+    "set_aside": [
+        "60143"
+    ],
+    "encounters": [
+        "60144",
+        "60145",
+        "60146",
+        "60147",
+        "60148",
+        "60149",
+        "60150"
+    ],
+    "underling_sets": [
+        "bullseye",
+        "electro",
+        "purple_man"
+    ],
+    "encounter_sets": [
+        "standard",
+        "expert"
+    ],
+    "modular_sets": [
+        "the_owl",
+        "tombstone"
+    ]
+}

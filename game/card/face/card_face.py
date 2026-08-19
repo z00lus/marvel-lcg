@@ -89,7 +89,9 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         "THUNDERBOLT", "BOARD MEMBER", "UNMASKED", "INHERITOR", "BIRD", "SERPENT SOCIETY", 
         "ENHANCED", 
         "ENCHANTMENT", "SHAPESHIFT", "ENTHRALLED", "DEFIANT", "UNREGISTERED", "ATLANTIS",
-        "DEFENDER", "UNDERLING", "POLICE",
+        "DEFENDER", "UNDERLING", "POLICE", "ART", "MAGGIA", "PRISONER",
+        "DISASTER", "TRACKSUIT", "DAILY BUGLE",
+        "DECEIVED", "BADOON",
     ]
 
     TRAITS_LIST: List[TRAITS] = Types.LiteralToList(TRAITS)
@@ -128,7 +130,7 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         'charm', 'crash',
         'fuel', 'stronghold', 'skill',
 
-        'rebirth', 'labor', 'speed',
+        'rebirth', 'labor', 'speed', 'drain', 'threat', 'civilian', 'stamina',
     ]
 
     COUNTER_LIST: List[COUNTER] = Types.LiteralToList(COUNTER)
@@ -150,7 +152,9 @@ class CardFace(ModelName, ModelTrait, ModelAction, ModelOnEvent, ModelGain, Mode
         "Cyclops", "Flight", "Super Strength", "Telepathy", "Four Horsemen", 
         "Blue Moon", "Genosha", "Savage Land", "Magneto", "Shadow King", "Dreadpool", "Kree Fanatic", 
         "Thunderbolts", "Executive Board Evidence", "Frostbite", "Iceman", "Spider-Man - Miles Morales",
-        "Bullseye", "The Getaway", "Cops", "Drive",
+        "Bullseye", "Electro", "The Getaway", "Cops", "Drive", "Art Museum Heist", "The Owl",
+        "The Raft Breakout", "Tombstone", "Protection Racket", "Disasters", "Tracksuit Mafia",
+        "Stop the Presses!",
     ]
 
     BASIC_POWER = Literal["ATK", "THW", "REC", "SCH", "DEF"]

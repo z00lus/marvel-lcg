@@ -17,27 +17,56 @@ from game.message import Message
 from game.operate.faces import Faces
 from game.operate.worlds import Worlds
 from game.scene.loader import SceneLoader
+from game.world.phase import Phase
+from game.world.world import World
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CARD_IDS = [
     "60065", "60066", "60067", "60068a", "60068b",
     *[str(card_id) for card_id in range(60069, 60076)],
+    *[str(card_id) for card_id in range(60076, 60086)],
+    *[str(card_id) for card_id in range(60097, 60110)],
     "60128a", "60128b", "60129a", "60129b",
     *[str(card_id) for card_id in range(60130, 60134)],
     *[str(card_id) for card_id in range(60182, 60191)],
+    "60121a", "60121b",
+    *[str(card_id) for card_id in range(60122, 60128)],
+    *[str(card_id) for card_id in range(60191, 60195)],
+    "60142a", "60142b",
+    *[str(card_id) for card_id in range(60143, 60151)],
+    *[str(card_id) for card_id in range(60195, 60200)],
+    *[f"6013{value}{face}" for value in range(4, 9) for face in ("a", "b")],
+    *[str(card_id) for card_id in range(60139, 60142)],
+    *[str(card_id) for card_id in range(60177, 60182)],
+    *[str(card_id) for card_id in range(60200, 60205)],
 ]
 SCRIPT_MODULES = [
     *(f"cards.pack.fne.bullseye.{card_id}" for card_id in (
         "60065", "60066", "60067", "60068a", "60068b",
         *[str(value) for value in range(60069, 60076)],
     )),
+    *(f"cards.pack.fne.electro.{card_id}" for card_id in range(60076, 60086)),
+    *(f"cards.pack.fne.purple_man.{card_id}" for card_id in range(60097, 60110)),
     *(f"cards.pack.fne.the_getaway.{card_id}" for card_id in (
         "60128a", "60128b", "60129a", "60129b",
         *[str(value) for value in range(60130, 60134)],
     )),
     *(f"cards.pack.fne.cops.{card_id}" for card_id in range(60182, 60186)),
     *(f"cards.pack.fne.drive.{card_id}" for card_id in range(60186, 60191)),
+    *(f"cards.pack.fne.art_museum_heist.{card_id}" for card_id in (
+        "60121a", "60121b", *[str(value) for value in range(60122, 60128)],
+    )),
+    *(f"cards.pack.fne.the_owl.{card_id}" for card_id in range(60191, 60195)),
+    *(f"cards.pack.fne.the_raft_breakout.{card_id}" for card_id in (
+        "60142a", "60142b", *[str(value) for value in range(60143, 60151)],
+    )),
+    *(f"cards.pack.fne.tombstone.{card_id}" for card_id in range(60195, 60200)),
+    *(f"cards.pack.fne.protection_racket.6013{value}{face}"
+      for value in range(4, 9) for face in ("a", "b")),
+    *(f"cards.pack.fne.protection_racket.{card_id}" for card_id in range(60139, 60142)),
+    *(f"cards.pack.fne.disasters.{card_id}" for card_id in range(60177, 60182)),
+    *(f"cards.pack.fne.tracksuit_mafia.{card_id}" for card_id in range(60200, 60205)),
 ]
 
 
@@ -62,7 +91,10 @@ class FearNoEvilStructureTests(unittest.TestCase):
             data = json.loads(path.read_text(encoding="utf-8"))
             with self.subTest(expert=expert):
                 self.assertEqual(data["name"], "The Getaway")
-                self.assertEqual(data["underling_sets"], ["bullseye"])
+                self.assertEqual(
+                    data["underling_sets"],
+                    ["bullseye", "electro", "purple_man"],
+                )
                 self.assertEqual(data["modular_sets"], ["cops", "drive"])
                 self.assertEqual(data["expert"], expert)
                 self.assertEqual(data["villain"], ["60066", "60067"] if expert else ["60065", "60066"])
@@ -71,7 +103,10 @@ class FearNoEvilStructureTests(unittest.TestCase):
         sets_info = json.loads(
             (ROOT / "data/sets_info.json").read_text(encoding="utf-8")
         )["60. Fear No Evil"]
-        self.assertEqual(sets_info["underlings"], ["bullseye"])
+        self.assertEqual(
+            sets_info["underlings"],
+            ["bullseye", "electro", "purple_man"],
+        )
         self.assertNotIn("bullseye", sets_info["encounters"])
 
         data = json.loads(
@@ -83,6 +118,33 @@ class FearNoEvilStructureTests(unittest.TestCase):
         self.assertEqual(data["expert_villain"], ["60066", "60067"])
         self.assertEqual(data["set_aside"], ["60068a,60068b"])
         self.assertEqual(len(data["encounters"]), 10)
+
+    def test_electro_underling_data_supplies_both_difficulties(self):
+        data = json.loads(
+            (ROOT / "data/encounter_sets/electro.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(data["villain"], ["60076", "60077"])
+        self.assertEqual(data["expert_villain"], ["60077", "60078"])
+        self.assertEqual(data["set_aside"], ["60079"])
+        self.assertEqual(len(data["encounters"]), 10)
+        self.assertEqual(data["encounters"].count("60081"), 1)
+        for duplicated_id in ("60082", "60083", "60084", "60085"):
+            self.assertEqual(data["encounters"].count(duplicated_id), 2)
+
+    def test_purple_man_underling_data_supplies_both_difficulties(self):
+        data = json.loads(
+            (ROOT / "data/encounter_sets/purple_man.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(data["villain"], ["60097", "60098"])
+        self.assertEqual(data["expert_villain"], ["60098", "60099"])
+        self.assertEqual(data["set_aside"], [])
+        self.assertEqual(len(data["encounters"]), 12)
+        self.assertEqual(data["encounters"].count("60101"), 2)
+        self.assertEqual(data["encounters"].count("60109"), 2)
 
     def test_quick_game_payload_builds_a_complete_getaway_scene(self):
         scenario = json.loads(
@@ -118,6 +180,166 @@ class FearNoEvilStructureTests(unittest.TestCase):
             scene.campaign.encounter_sets,
             ["standard", "cops", "drive"],
         )
+
+    def test_electro_reaches_first_player_turn_on_standard_and_expert(self):
+        hero_json = (ROOT / "deck/starter/spider_man.json").read_text(
+            encoding="utf-8"
+        )
+
+        for expert in (False, True):
+            with self.subTest(expert=expert):
+                suffix = "_expert" if expert else ""
+                scenario = json.loads(
+                    (ROOT / f"data/scenarios/the_getaway{suffix}.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                underling = json.loads(
+                    (ROOT / "data/encounter_sets/electro.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                scenario["villain"] = underling[
+                    "expert_villain" if expert else "villain"
+                ]
+                scenario["set_aside"] += underling["set_aside"]
+                scenario["encounters"] += underling["encounters"]
+
+                scene = SceneLoader.NewFromJson(
+                    json.dumps(scenario),
+                    scenario["encounter_sets"] + scenario["modular_sets"],
+                    [hero_json],
+                    60079,
+                    [
+                        "v18_all",
+                        "disable_setup_draw_cards",
+                        "disable_resolve_mulligans",
+                    ],
+                    {},
+                )
+                manager = Mock()
+                manager.skip.is_skipping = True
+                manager.undo.GetFastUndoHandle.return_value = None
+                controller = Mock(manager=manager)
+                world = World(scene, [controller])
+                world.rule.SetRule(scene.rules, scene.is_puzzle, scene.seed)
+                world.insert = CardFactory.GenerateCard(
+                    "rule_a,rule_b",
+                    world.area_insert,
+                    world,
+                    ui_render=False,
+                ).face
+
+                statistics = Mock()
+                statistics.CanRegisterAbility.return_value = False
+                game = Mock()
+                game.controller_manager = manager
+                game.state.is_running = True
+                game.session.version.IsFirstPlayerToken.return_value = True
+                with (
+                    patch.object(
+                        Engine,
+                        "game",
+                        game,
+                        create=True,
+                    ),
+                    patch.object(
+                        Engine,
+                        "statistics",
+                        statistics,
+                        create=True,
+                    ),
+                ):
+                    world.Initialize()
+
+                self.assertFalse(world.is_game_over)
+                self.assertEqual(world.phase.state, Phase.State.InitFinished)
+                villain = world.GetScenario().GetVillain(None)
+                self.assertIsNotNone(villain)
+                self.assertEqual(villain.paper.card_id, "60077" if expert else "60076")
+                charge = villain.GetInventoryDeck().FindCard(name="Electric Charge")
+                self.assertIsNotNone(charge)
+                self.assertEqual(charge.GetCounters("charge"), 2)
+
+    def test_purple_man_reaches_first_player_turn_on_standard_and_expert(self):
+        hero_json = (ROOT / "deck/starter/spider_man.json").read_text(
+            encoding="utf-8"
+        )
+
+        for expert in (False, True):
+            with self.subTest(expert=expert):
+                suffix = "_expert" if expert else ""
+                scenario = json.loads(
+                    (ROOT / f"data/scenarios/the_getaway{suffix}.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                underling = json.loads(
+                    (ROOT / "data/encounter_sets/purple_man.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                scenario["villain"] = underling[
+                    "expert_villain" if expert else "villain"
+                ]
+                scenario["set_aside"] += underling["set_aside"]
+                scenario["encounters"] += underling["encounters"]
+
+                scene = SceneLoader.NewFromJson(
+                    json.dumps(scenario),
+                    scenario["encounter_sets"] + scenario["modular_sets"],
+                    [hero_json],
+                    60097,
+                    [
+                        "v18_all",
+                        "disable_setup_draw_cards",
+                        "disable_resolve_mulligans",
+                    ],
+                    {},
+                )
+                manager = Mock()
+                manager.skip.is_skipping = True
+                manager.undo.GetFastUndoHandle.return_value = None
+                controller = Mock(manager=manager)
+                world = World(scene, [controller])
+                world.rule.SetRule(scene.rules, scene.is_puzzle, scene.seed)
+                world.insert = CardFactory.GenerateCard(
+                    "rule_a,rule_b",
+                    world.area_insert,
+                    world,
+                    ui_render=False,
+                ).face
+
+                statistics = Mock()
+                statistics.CanRegisterAbility.return_value = False
+                game = Mock()
+                game.controller_manager = manager
+                game.state.is_running = True
+                game.session.version.IsFirstPlayerToken.return_value = True
+                with (
+                    patch.object(
+                        Engine,
+                        "game",
+                        game,
+                        create=True,
+                    ),
+                    patch.object(
+                        Engine,
+                        "statistics",
+                        statistics,
+                        create=True,
+                    ),
+                ):
+                    world.Initialize()
+
+                self.assertFalse(world.is_game_over)
+                self.assertEqual(world.phase.state, Phase.State.InitFinished)
+                villain = world.GetScenario().GetVillain(None)
+                self.assertIsNotNone(villain)
+                self.assertEqual(
+                    villain.paper.card_id,
+                    "60098" if expert else "60097",
+                )
 
     def test_every_first_slice_card_has_metadata_and_creates_a_face(self):
         world = Mock()

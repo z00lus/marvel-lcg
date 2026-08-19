@@ -1,0 +1,35 @@
+{
+    "version": "0.6.1",
+    "name": "Art Museum Heist",
+    "villain": [
+        "60066",
+        "60067"
+    ],
+    "expert": true,
+    "schemes": [
+        "60121a,60121b"
+    ],
+    "set_aside": [],
+    "encounters": [
+        "60122",
+        "60123",
+        "60124",
+        "60125",
+        "60126",
+        "60127",
+        "60127"
+    ],
+    "underling_sets": [
+        "bullseye",
+        "electro",
+        "purple_man"
+    ],
+    "encounter_sets": [
+        "standard",
+        "expert"
+    ],
+    "modular_sets": [
+        "cops",
+        "the_owl"
+    ]
+}

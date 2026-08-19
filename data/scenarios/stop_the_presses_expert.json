@@ -1,0 +1,37 @@
+{
+    "version": "0.6.1",
+    "name": "Stop the Presses!",
+    "villain": [
+        "60066",
+        "60067"
+    ],
+    "expert": true,
+    "schemes": [
+        "60151a,60151b"
+    ],
+    "set_aside": [
+        "60152",
+        "60153",
+        "60154",
+        "60155",
+        "60156"
+    ],
+    "encounters": [
+        "60157",
+        "60158",
+        "60158"
+    ],
+    "underling_sets": [
+        "bullseye",
+        "electro",
+        "purple_man"
+    ],
+    "encounter_sets": [
+        "standard",
+        "expert"
+    ],
+    "modular_sets": [
+        "tombstone",
+        "tracksuit_mafia"
+    ]
+}

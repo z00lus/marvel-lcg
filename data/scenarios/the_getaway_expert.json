@@ -21,7 +21,9 @@
         "60133"
     ],
     "underling_sets": [
-        "bullseye"
+        "bullseye",
+        "electro",
+        "purple_man"
     ],
     "encounter_sets": [
         "standard",
