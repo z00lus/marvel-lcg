@@ -1,49 +1,97 @@
 {
     "1. Core Set": {
         "name": "core",
-        "scenarios": ["rhino", "klaw", "ultron"],
-        "heroes": ["spider_man", "captain_marvel", "she_hulk", "iron_man", "black_panther"],
-        "encounters": ["bomb_scare", "masters_of_evil", "under_attack",  "legions_of_hydra", "the_doomsday_chair", "standard", "expert"],
+        "scenarios": [
+            "rhino",
+            "klaw",
+            "ultron"
+        ],
+        "heroes": [
+            "spider_man",
+            "captain_marvel",
+            "she_hulk",
+            "iron_man",
+            "black_panther"
+        ],
+        "encounters": [
+            "bomb_scare",
+            "masters_of_evil",
+            "under_attack",
+            "legions_of_hydra",
+            "the_doomsday_chair",
+            "standard",
+            "expert"
+        ],
         "max_id": "01193"
     },
     "2. The Green Goblin": {
         "name": "gob",
-        "scenarios": ["risky_business", "mutagen_formula"],
+        "scenarios": [
+            "risky_business",
+            "mutagen_formula"
+        ],
         "heroes": [],
-        "encounters": ["goblin_gimmicks", "a_mess_of_things", "power_drain", "running_interference"],
+        "encounters": [
+            "goblin_gimmicks",
+            "a_mess_of_things",
+            "power_drain",
+            "running_interference"
+        ],
         "max_id": "02049"
     },
     "3. Captain America": {
         "name": "cap",
         "scenarios": [],
-        "heroes": ["captain_america"],
+        "heroes": [
+            "captain_america"
+        ],
         "encounters": [],
         "max_id": "03034"
     },
     "4. The Rise of Red Skull": {
         "name": "trors",
-        "scenarios": ["crossbones", "absorbing_man", "taskmaster", "zola", "red_skull"],
-        "heroes": ["hawkeye", "spider_woman"],
-        "encounters": ["experimental_weapons", "hydra_assault",  "weapon_master", "hydra_patrol"],
+        "scenarios": [
+            "crossbones",
+            "absorbing_man",
+            "taskmaster",
+            "zola",
+            "red_skull"
+        ],
+        "heroes": [
+            "hawkeye",
+            "spider_woman"
+        ],
+        "encounters": [
+            "experimental_weapons",
+            "hydra_assault",
+            "weapon_master",
+            "hydra_patrol"
+        ],
         "max_id": "04166"
     },
     "5. Ms. Marvel": {
         "name": "msm",
         "scenarios": [],
-        "heroes": ["ms_marvel"],
+        "heroes": [
+            "ms_marvel"
+        ],
         "encounters": [],
         "max_id": "05033"
     },
     "6. Thor": {
         "name": "thor",
         "scenarios": [],
-        "heroes": ["thor"],
+        "heroes": [
+            "thor"
+        ],
         "encounters": [],
         "max_id": "06034"
     },
     "7. The Wrecking Crew": {
         "name": "twc",
-        "scenarios": ["the_wrecking_crew"],
+        "scenarios": [
+            "the_wrecking_crew"
+        ],
         "heroes": [],
         "encounters": [],
         "max_id": "07059"
@@ -51,373 +99,717 @@
     "8. Black Widow": {
         "name": "bkw",
         "scenarios": [],
-        "heroes": ["black_widow"],
+        "heroes": [
+            "black_widow"
+        ],
         "encounters": [],
         "max_id": "08033"
     },
     "9. Doctor Strange": {
         "name": "drs",
         "scenarios": [],
-        "heroes": ["doctor_strange"],
+        "heroes": [
+            "doctor_strange"
+        ],
         "encounters": [],
         "max_id": "09039"
     },
     "10. Hulk": {
         "name": "hlk",
         "scenarios": [],
-        "heroes": ["hulk"],
+        "heroes": [
+            "hulk"
+        ],
         "encounters": [],
         "max_id": "10032"
     },
     "11. The Once and Future Kang": {
         "name": "toafk",
-        "scenarios": ["the_once_and_future_kang"],
+        "scenarios": [
+            "the_once_and_future_kang"
+        ],
         "heroes": [],
-        "encounters": ["temporal", "anachronauts", "master_of_time"],
+        "encounters": [
+            "temporal",
+            "anachronauts",
+            "master_of_time"
+        ],
         "max_id": "11051"
     },
     "12. Ant-Man": {
         "name": "ant",
         "scenarios": [],
-        "heroes": ["ant_man"],
+        "heroes": [
+            "ant_man"
+        ],
         "encounters": [],
         "max_id": "12033"
     },
     "13. Wasp": {
         "name": "wsp",
         "scenarios": [],
-        "heroes": ["wasp"],
+        "heroes": [
+            "wasp"
+        ],
         "encounters": [],
         "max_id": "13034"
     },
     "14. Quicksilver": {
         "name": "qsv",
         "scenarios": [],
-        "heroes": ["quicksilver"],
+        "heroes": [
+            "quicksilver"
+        ],
         "encounters": [],
         "max_id": "14032"
     },
     "15. Scarlet Witch": {
         "name": "scw",
         "scenarios": [],
-        "heroes": ["scarlet_witch"],
+        "heroes": [
+            "scarlet_witch"
+        ],
         "encounters": [],
         "max_id": "15031"
     },
     "16. Galaxy's Most Wanted": {
         "name": "gmw",
-        "scenarios": ["brotherhood_of_badoon", "infiltrate_the_museum", "escape_the_museum", "nebula", "ronan"],
-        "heroes": ["groot", "rocket_raccoon"],
-        "encounters": ["band_of_badoon", "galactic_artifacts", "kree_militants", "menagerie_medley", "space_pirates", "ship_command", "power_stone", "badoon_headhunter"],
+        "scenarios": [
+            "brotherhood_of_badoon",
+            "infiltrate_the_museum",
+            "escape_the_museum",
+            "nebula",
+            "ronan"
+        ],
+        "heroes": [
+            "groot",
+            "rocket_raccoon"
+        ],
+        "encounters": [
+            "band_of_badoon",
+            "galactic_artifacts",
+            "kree_militants",
+            "menagerie_medley",
+            "space_pirates",
+            "ship_command",
+            "power_stone",
+            "badoon_headhunter"
+        ],
         "max_id": "16187"
     },
     "17. Star-Lord": {
         "name": "stld",
         "scenarios": [],
-        "heroes": ["star_lord"],
+        "heroes": [
+            "star_lord"
+        ],
         "encounters": [],
         "max_id": "17031"
     },
     "18. Gamora": {
         "name": "gam",
         "scenarios": [],
-        "heroes": ["gamora"],
+        "heroes": [
+            "gamora"
+        ],
         "encounters": [],
         "max_id": "18032"
     },
     "19. Drax": {
         "name": "drax",
         "scenarios": [],
-        "heroes": ["drax"],
+        "heroes": [
+            "drax"
+        ],
         "encounters": [],
         "max_id": "19033"
     },
     "20. Venom": {
         "name": "vnm",
         "scenarios": [],
-        "heroes": ["venom"],
+        "heroes": [
+            "venom"
+        ],
         "encounters": [],
         "max_id": "20029"
     },
     "21. The Mad Titan's Shadow": {
         "name": "mts",
-        "scenarios": ["ebony_maw", "the_tower_defense", "thanos", "hela", "loki"],
-        "heroes": ["spectrum", "adam_warlock"],
-        "encounters": ["black_order", "armies_of_titan", "children_of_thanos", "infinity_gauntlet", "legions_of_hel", "frost_giants", "enchantress"],
+        "scenarios": [
+            "ebony_maw",
+            "the_tower_defense",
+            "thanos",
+            "hela",
+            "loki"
+        ],
+        "heroes": [
+            "spectrum",
+            "adam_warlock"
+        ],
+        "encounters": [
+            "black_order",
+            "armies_of_titan",
+            "children_of_thanos",
+            "infinity_gauntlet",
+            "legions_of_hel",
+            "frost_giants",
+            "enchantress"
+        ],
         "max_id": "21193"
     },
     "22. Nebula": {
         "name": "nebu",
         "scenarios": [],
-        "heroes": ["nebula"],
+        "heroes": [
+            "nebula"
+        ],
         "encounters": [],
         "max_id": "22035"
     },
     "23. War Machine": {
         "name": "warm",
         "scenarios": [],
-        "heroes": ["war_machine"],
+        "heroes": [
+            "war_machine"
+        ],
         "encounters": [],
         "max_id": "23035"
     },
     "24. The Hood": {
         "name": "hood",
-        "scenarios": ["the_hood"],
+        "scenarios": [
+            "the_hood"
+        ],
         "heroes": [],
-        "encounters": ["beasty_boys", "brothers_grimm", "crossfires_crew", "mister_hyde", "ransacked_armory", "sinister_syndicate", "standard_ii", "expert_ii", "state_of_emergency", "streets_of_mayhem", "wrecking_crew"],
+        "encounters": [
+            "beasty_boys",
+            "brothers_grimm",
+            "crossfires_crew",
+            "mister_hyde",
+            "ransacked_armory",
+            "sinister_syndicate",
+            "standard_ii",
+            "expert_ii",
+            "state_of_emergency",
+            "streets_of_mayhem",
+            "wrecking_crew"
+        ],
         "max_id": "24070"
     },
     "25. Valkyrie": {
         "name": "valk",
         "scenarios": [],
-        "heroes": ["valkyrie"],
+        "heroes": [
+            "valkyrie"
+        ],
         "encounters": [],
         "max_id": "25036"
     },
     "26. Vision": {
         "name": "vision",
         "scenarios": [],
-        "heroes": ["vision"],
+        "heroes": [
+            "vision"
+        ],
         "encounters": [],
         "max_id": "26036"
     },
     "27. Sinister Motives": {
         "name": "sm",
-        "scenarios": ["sandman", "venom", "mysterio", "sinister_six", "venom_goblin"],
-        "heroes": ["ghost_spider", "spider_man_miles_morales"],
-        "encounters": ["city_in_chaos", "down_to_earth", "goblin_gear", "guerrilla_tactics", "osborn_tech", "personal_nightmare", "sinister_assault", "symbiotic_strength", "whispers_of_paranoia"],
+        "scenarios": [
+            "sandman",
+            "venom",
+            "mysterio",
+            "sinister_six",
+            "venom_goblin"
+        ],
+        "heroes": [
+            "ghost_spider",
+            "spider_man_miles_morales"
+        ],
+        "encounters": [
+            "city_in_chaos",
+            "down_to_earth",
+            "goblin_gear",
+            "guerrilla_tactics",
+            "osborn_tech",
+            "personal_nightmare",
+            "sinister_assault",
+            "symbiotic_strength",
+            "whispers_of_paranoia"
+        ],
         "max_id": "27191"
     },
     "28. Nova": {
         "name": "nova",
         "scenarios": [],
-        "heroes": ["nova"],
-        "encounters": ["armadillo"],
+        "heroes": [
+            "nova"
+        ],
+        "encounters": [
+            "armadillo"
+        ],
         "max_id": "28032"
     },
     "29. Ironheart": {
         "name": "ironheart",
         "scenarios": [],
-        "heroes": ["ironheart"],
-        "encounters": ["zzzax"],
+        "heroes": [
+            "ironheart"
+        ],
+        "encounters": [
+            "zzzax"
+        ],
         "max_id": "29040"
     },
     "30. Spider-Ham": {
         "name": "spiderham",
         "scenarios": [],
-        "heroes": ["spider_ham"],
-        "encounters": ["the_inheritors"],
+        "heroes": [
+            "spider_ham"
+        ],
+        "encounters": [
+            "the_inheritors"
+        ],
         "max_id": "30038"
     },
     "31. SP//dr": {
         "name": "spdr",
         "scenarios": [],
-        "heroes": ["sp_dr"],
-        "encounters": ["iron_spiders_sinister_six"],
+        "heroes": [
+            "sp_dr"
+        ],
+        "encounters": [
+            "iron_spiders_sinister_six"
+        ],
         "max_id": "31037"
     },
     "32. Mutant Genesis": {
         "name": "mut_gen",
-        "scenarios": ["sabretooth", "project_wideawake", "master_mold", "mansion_attack", "magneto"],
-        "heroes": ["colossus", "shadowcat"],
-        "encounters": ["brotherhood", "mystique", "zero_tolerance", "sentinels", "acolytes", "future_past"],
+        "scenarios": [
+            "sabretooth",
+            "project_wideawake",
+            "master_mold",
+            "mansion_attack",
+            "magneto"
+        ],
+        "heroes": [
+            "colossus",
+            "shadowcat"
+        ],
+        "encounters": [
+            "brotherhood",
+            "mystique",
+            "zero_tolerance",
+            "sentinels",
+            "acolytes",
+            "future_past"
+        ],
         "max_id": "32195"
     },
     "33. Cyclops": {
         "name": "cyclops",
         "scenarios": [],
-        "heroes": ["cyclops"],
+        "heroes": [
+            "cyclops"
+        ],
         "encounters": [],
         "max_id": "33035"
     },
     "34. Phoenix": {
         "name": "phoenix",
         "scenarios": [],
-        "heroes": ["phoenix"],
+        "heroes": [
+            "phoenix"
+        ],
         "encounters": [],
         "max_id": "34035"
     },
     "35. Wolverine": {
         "name": "wolv",
         "scenarios": [],
-        "heroes": ["wolverine"],
-        "encounters": ["deathstrike"],
+        "heroes": [
+            "wolverine"
+        ],
+        "encounters": [
+            "deathstrike"
+        ],
         "max_id": "35037"
     },
     "36. Storm": {
         "name": "storm",
         "scenarios": [],
-        "heroes": ["storm"],
-        "encounters": ["shadow_king"],
+        "heroes": [
+            "storm"
+        ],
+        "encounters": [
+            "shadow_king"
+        ],
         "max_id": "36039"
     },
     "37. Gambit": {
         "name": "gambit",
         "scenarios": [],
-        "heroes": ["gambit"],
-        "encounters": ["exodus"],
+        "heroes": [
+            "gambit"
+        ],
+        "encounters": [
+            "exodus"
+        ],
         "max_id": "37035"
     },
     "38. Rogue": {
         "name": "rogue",
         "scenarios": [],
-        "heroes": ["rogue"],
-        "encounters": ["reavers"],
+        "heroes": [
+            "rogue"
+        ],
+        "encounters": [
+            "reavers"
+        ],
         "max_id": "38035"
     },
     "39. Mojo Mania": {
         "name": "mojo",
-        "scenarios": ["magog", "spiral", "mojo"],
+        "scenarios": [
+            "magog",
+            "spiral",
+            "mojo"
+        ],
         "heroes": [],
-        "encounters": ["crime", "fantasy", "horror", "sci_fi", "sitcom", "western", "longshot"],
+        "encounters": [
+            "crime",
+            "fantasy",
+            "horror",
+            "sci_fi",
+            "sitcom",
+            "western",
+            "longshot"
+        ],
         "max_id": "39071"
     },
     "40. NeXt Evolution": {
         "name": "next_evol",
-        "scenarios": ["morlock_siege", "on_the_run", "juggernaut", "mister_sinister", "stryfe"],
-        "heroes": ["cable", "domino"],
-        "encounters": ["mutant_slayers", "military_grade", "nasty_boys", "hope_summers", "black_tom_cassidy", "flight", "super_strength", "extreme_measures", "telepathy", "mutant_insurrection"],
+        "scenarios": [
+            "morlock_siege",
+            "on_the_run",
+            "juggernaut",
+            "mister_sinister",
+            "stryfe"
+        ],
+        "heroes": [
+            "cable",
+            "domino"
+        ],
+        "encounters": [
+            "mutant_slayers",
+            "military_grade",
+            "nasty_boys",
+            "hope_summers",
+            "black_tom_cassidy",
+            "flight",
+            "super_strength",
+            "extreme_measures",
+            "telepathy",
+            "mutant_insurrection"
+        ],
         "max_id": "40204"
     },
     "41. Psylocke": {
         "name": "psylocke",
         "scenarios": [],
-        "heroes": ["psylocke"],
+        "heroes": [
+            "psylocke"
+        ],
         "encounters": [],
         "max_id": "41033"
     },
     "42. Angel": {
         "name": "angel",
         "scenarios": [],
-        "heroes": ["angel"],
+        "heroes": [
+            "angel"
+        ],
         "encounters": [],
         "max_id": "42032"
     },
     "43. X-23": {
         "name": "x23",
         "scenarios": [],
-        "heroes": ["x_23"],
+        "heroes": [
+            "x_23"
+        ],
         "encounters": [],
         "max_id": "43040"
     },
     "44. Deadpool": {
         "name": "deadpool",
         "scenarios": [],
-        "heroes": ["deadpool"],
-        "encounters": ["dreadpool"],
+        "heroes": [
+            "deadpool"
+        ],
+        "encounters": [
+            "dreadpool"
+        ],
         "max_id": "44058"
     },
     "45. Age of Apocalypse": {
         "name": "aoa",
-        "scenarios": ["unus", "four_horsemen", "apocalypse", "dark_beast", "en_sabah_nur"],
-        "heroes": ["bishop", "magik"],
-        "encounters": ["infinites", "dystopian_nightmare", "standard_iii", "hounds", "dark_riders", "savage_land", "genosha", "blue_moon", "celestial_tech", "clan_akkaba", "age_of_apocalypse", "mission", "prelates"],
+        "scenarios": [
+            "unus",
+            "four_horsemen",
+            "apocalypse",
+            "dark_beast",
+            "en_sabah_nur"
+        ],
+        "heroes": [
+            "bishop",
+            "magik"
+        ],
+        "encounters": [
+            "infinites",
+            "dystopian_nightmare",
+            "standard_iii",
+            "hounds",
+            "dark_riders",
+            "savage_land",
+            "genosha",
+            "blue_moon",
+            "celestial_tech",
+            "clan_akkaba",
+            "age_of_apocalypse",
+            "mission",
+            "prelates"
+        ],
         "max_id": "45186"
     },
     "46. Iceman": {
         "name": "iceman",
         "scenarios": [],
-        "heroes": ["iceman"],
-        "encounters": ["sauron"],
+        "heroes": [
+            "iceman"
+        ],
+        "encounters": [
+            "sauron"
+        ],
         "max_id": "46032"
     },
     "47. Jubilee": {
         "name": "jubilee",
         "scenarios": [],
-        "heroes": ["jubilee"],
-        "encounters": ["arcade"],
+        "heroes": [
+            "jubilee"
+        ],
+        "encounters": [
+            "arcade"
+        ],
         "max_id": "47034"
     },
     "48. Nightcrawler": {
         "name": "ncrawler",
         "scenarios": [],
-        "heroes": ["nightcrawler"],
-        "encounters": ["crazy_gang"],
+        "heroes": [
+            "nightcrawler"
+        ],
+        "encounters": [
+            "crazy_gang"
+        ],
         "max_id": "48038"
     },
     "49. Magneto": {
         "name": "magneto",
         "scenarios": [],
-        "heroes": ["magneto"],
-        "encounters": ["hellfire"],
+        "heroes": [
+            "magneto"
+        ],
+        "encounters": [
+            "hellfire"
+        ],
         "max_id": "49042"
     },
     "50. Agents of S.H.I.E.L.D.": {
         "name": "aos",
-        "scenarios": ["black_widow", "batroc", "modok", "thunderbolts", "baron_zemo"],
-        "heroes": ["maria_hill", "nick_fury"],
-        "encounters": ["aim_abduction", "aim_science", "batrocs_brigade", "scientist_supreme", "gravitational_pull", "hard_sound", "pale_little_spider", "power_of_the_atom", "supersonic", "the_leaper", "shield", "shield_executive_board", "executive_board_evidence", "executive_board_evidence_wiretap", "executive_board_evidence_authority", "executive_board_evidence_blackmail", "executive_board_evidence_ideology", "executive_board_evidence_medical_records", "executive_board_evidence_money", "executive_board_evidence_security_clearance", "executive_board_evidence_security_scanner", "executive_board_evidence_travel" ],
+        "scenarios": [
+            "black_widow",
+            "batroc",
+            "modok",
+            "thunderbolts",
+            "baron_zemo"
+        ],
+        "heroes": [
+            "maria_hill",
+            "nick_fury"
+        ],
+        "encounters": [
+            "aim_abduction",
+            "aim_science",
+            "batrocs_brigade",
+            "scientist_supreme",
+            "gravitational_pull",
+            "hard_sound",
+            "pale_little_spider",
+            "power_of_the_atom",
+            "supersonic",
+            "the_leaper",
+            "shield",
+            "shield_executive_board",
+            "executive_board_evidence",
+            "executive_board_evidence_wiretap",
+            "executive_board_evidence_authority",
+            "executive_board_evidence_blackmail",
+            "executive_board_evidence_ideology",
+            "executive_board_evidence_medical_records",
+            "executive_board_evidence_money",
+            "executive_board_evidence_security_clearance",
+            "executive_board_evidence_security_scanner",
+            "executive_board_evidence_travel"
+        ],
         "max_id": "50193"
     },
     "51. Black Panther": {
         "name": "bp",
         "scenarios": [],
-        "heroes": ["black_panther_shuri"],
-        "encounters": ["extreme_risk"],
+        "heroes": [
+            "black_panther_shuri"
+        ],
+        "encounters": [
+            "extreme_risk"
+        ],
         "max_id": "51042"
     },
     "52. Silk": {
         "name": "silk",
         "scenarios": [],
-        "heroes": ["silk"],
-        "encounters": ["growing_strong"],
+        "heroes": [
+            "silk"
+        ],
+        "encounters": [
+            "growing_strong"
+        ],
         "max_id": "52038"
     },
     "53. Falcon": {
         "name": "falcon",
         "scenarios": [],
-        "heroes": ["falcon"],
-        "encounters": ["techno"],
+        "heroes": [
+            "falcon"
+        ],
+        "encounters": [
+            "techno"
+        ],
         "max_id": "53042"
     },
     "54. Winter Soldier": {
         "name": "winter",
         "scenarios": [],
-        "heroes": ["winter_soldier"],
-        "encounters": ["whiteout"],
+        "heroes": [
+            "winter_soldier"
+        ],
+        "encounters": [
+            "whiteout"
+        ],
         "max_id": "54037"
     },
     "55. Trickster Takeover": {
         "name": "tt",
-        "scenarios": ["enchantress", "god_of_lies"],
+        "scenarios": [
+            "enchantress",
+            "god_of_lies"
+        ],
         "heroes": [],
-        "encounters": ["trickster_magic"],
+        "encounters": [
+            "trickster_magic"
+        ],
         "max_id": "55066"
     },
     "56. Civil War": {
         "name": "cw",
-        "scenarios": ["iron_man", "captain_marvel", "captain_america", "spider_woman"],
-        "heroes": ["tigra", "hulkling"],
-        "encounters": ["mighty_avengers", "the_initiative", "maria_hill", "dangerous_recruits", "cape_killer", "martial_law", "heroes_for_hire", "paladin", "new_avengers", "secret_avengers", "namor", "atlanteans", "spider_man", "defenders", "hells_kitchen", "cloak_dagger"],
+        "scenarios": [
+            "iron_man",
+            "captain_marvel",
+            "captain_america",
+            "spider_woman"
+        ],
+        "heroes": [
+            "tigra",
+            "hulkling"
+        ],
+        "encounters": [
+            "mighty_avengers",
+            "the_initiative",
+            "maria_hill",
+            "dangerous_recruits",
+            "cape_killer",
+            "martial_law",
+            "heroes_for_hire",
+            "paladin",
+            "new_avengers",
+            "secret_avengers",
+            "namor",
+            "atlanteans",
+            "spider_man",
+            "defenders",
+            "hells_kitchen",
+            "cloak_dagger"
+        ],
         "max_id": "56214"
     },
     "58. Wonder Man": {
         "name": "wonder_man",
         "scenarios": [],
-        "heroes": ["wonder_man"],
+        "heroes": [
+            "wonder_man"
+        ],
         "encounters": [],
         "max_id": "58034"
     },
     "59. Hercules": {
         "name": "hercules",
         "scenarios": [],
-        "heroes": ["hercules"],
+        "heroes": [
+            "hercules"
+        ],
         "encounters": [],
         "max_id": "59034"
     },
     "60. Fear No Evil": {
         "name": "fne",
-        "scenarios": ["stop_the_presses", "protection_racket", "the_raft_breakout", "art_museum_heist", "the_getaway"],
-        "heroes": ["daredevil", "echo"],
-        "underlings": ["bullseye", "electro", "purple_man"],
-        "encounters": ["cops", "drive", "the_owl", "tombstone", "disasters", "tracksuit_mafia"],
+        "scenarios": [
+            "kingpin",
+            "stop_the_presses",
+            "protection_racket",
+            "the_raft_breakout",
+            "art_museum_heist",
+            "the_getaway"
+        ],
+        "heroes": [
+            "daredevil",
+            "echo"
+        ],
+        "underlings": [
+            "bullseye",
+            "electro",
+            "hammerhead",
+            "purple_man",
+            "typhoid_mary"
+        ],
+        "encounters": [
+            "cops",
+            "drive",
+            "the_owl",
+            "tombstone",
+            "disasters",
+            "tracksuit_mafia"
+        ],
         "max_id": "60204"
     },
     "90. Ronan Modular Set": {
         "name": "ron",
         "scenarios": [],
         "heroes": [],
-        "encounters": ["kree_fanatic"],
+        "encounters": [
+            "kree_fanatic"
+        ],
         "max_id": "90005"
     },
     "Weekly Challenges": {
@@ -452,5 +844,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "cad804939c313a5a1549b1c43ace031ed3d3596cb22652a2c258cd15958cc678"
+    "checksum": "fc79fde880677a08885456ccb7db3a2c81f9104f3da2d423b6323c7b2b338708"
 }

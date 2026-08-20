@@ -9,7 +9,9 @@
 
 ## New in 0.6.1: Fear No Evil
 
-Five playable **Fear No Evil** scenario slices are now available in Quick Game:
+The complete solo Quick Game scenario line from **Fear No Evil** is now
+available: five interchangeable-underling scenarios plus the fixed Kingpin
+finale.
 
 - **Stop the Presses!** in Standard and Expert modes, with deterministic
   Daily Bugle Persona setup, all four stamina-powered Persona supports, and
@@ -22,15 +24,20 @@ Five playable **Fear No Evil** scenario slices are now available in Quick Game:
 - **The Raft Breakout** in Standard and Expert modes, including **Master Key**,
   PRISONER setup, the required **Tombstone** encounter set, and all currently
   implemented underling choices.
-- **Bullseye**, **Electro**, and **Purple Man** as selectable underlings, each
-  with all three villain stages and full encounter sets. Purple Man includes
-  his INFLUENCED minions, command obligations, and ally-control effects.
+- **Kingpin** in Standard and Expert modes, including his two-sided villain
+  stages, nemesis/UNDERLING setup, Public Support, and the required
+  **Tombstone** and **Tracksuit Mafia** sets without the Standard set.
+- **Bullseye**, **Electro**, **Hammerhead**, **Purple Man**, and **Typhoid
+  Mary** as selectable underlings, each with Standard and Expert stage pairs
+  and a complete encounter set. Typhoid Mary includes her two-sided villain,
+  Disturbed Psyche, and Mary Walker/Establish Trust state cycle.
 - The required **Cops** and **Drive** encounter sets.
 - **Echo** and **Daredevil** starter decks and hero integrations.
 - Clear `NEW` labels for the new scenarios, heroes, and underlings in Quick
   Game, with new scenarios shown first and the correct main-scheme previews.
 
-This is an incremental integration of the expansion; additional Fear No Evil scenarios and content will follow as they are implemented and tested.
+All scenario scripts and setup paths have focused automated coverage. Manual
+solo replay validation remains ongoing for the newly completed encounters.
 
 ## Fork Goals
 
@@ -140,13 +147,14 @@ Campaign support and the initial Hercules implementation were merged from the [s
 
 The **Echo**, **Wonder Man**, and **Daredevil** hero integrations are original work created for this fork. They include starter decks, card scripts, special-deck handling where required, targeted tests, and ongoing replay-based playtesting.
 
-Fear No Evil integration currently includes **Stop the Presses!**,
-**Protection Racket**, **The Getaway**, **Art Museum Heist**, and **The Raft
-Breakout**; the selectable **Bullseye**, **Electro**, and **Purple Man**
-underlings; and the **Cops**, **Drive**, **The Owl**, **Tombstone**,
-**Disasters**, and **Tracksuit Mafia** encounter sets. These scenario slices
-include Standard and Expert setup plus focused rules and setup tests. Manual
-solo replay validation continues as each new slice becomes playable.
+Fear No Evil integration includes **Stop the Presses!**, **Protection
+Racket**, **The Getaway**, **Art Museum Heist**, **The Raft Breakout**, and the
+fixed **Kingpin** finale; all five selectable underlings (**Bullseye**,
+**Electro**, **Hammerhead**, **Purple Man**, and **Typhoid Mary**); and the
+**Cops**, **Drive**, **The Owl**, **Tombstone**, **Disasters**, and **Tracksuit
+Mafia** encounter sets. Standard and Expert setup, card loading, and focused
+rules behavior are covered by automated tests; manual replay playtesting of
+the newest encounters is ongoing.
 
 Based on the original open-source [Marvel Champions: Digital Edition](https://irefrixs.itch.io/marvel-lcg) by Irefrixs.
 

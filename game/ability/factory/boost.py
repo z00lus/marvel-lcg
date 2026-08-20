@@ -110,6 +110,24 @@ class AbilityFactoryBoost:
             is_local=which_enemy == "This"
         )
 
+    @staticmethod
+    def WhenEnemyWouldBeGivenBoostCard(ability_type: 'AbilityType',
+                                       which_enemy: CardType,
+                                       operation: OperationType[Message.WhenEnemyWouldBeGivenBoostCard],
+                                       *,
+                                       conditions: ConditionsType[Message.WhenEnemyWouldBeGivenBoostCard]=[],
+                                       ) -> 'Ability':
+        def check_which_enemy(effect: 'Effect', message: Message.WhenEnemyWouldBeGivenBoostCard) -> bool:
+            return Condition.CheckWhichCard(which_enemy, message.trigger, effect)
+
+        return Ability(
+            ability_type,
+            Message.WhenEnemyWouldBeGivenBoostCard,
+            [check_which_enemy, *conditions],
+            operation,
+            is_local=which_enemy == "This",
+        )
+
     ################################################################################
     #
     @staticmethod
@@ -319,4 +337,3 @@ class AbilityFactoryBoost:
             conditions,
             operation,
         )
-

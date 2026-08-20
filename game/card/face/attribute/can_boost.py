@@ -22,10 +22,22 @@ class CanBoost(CardFace):
         from game.card.face.card_type import Minion
         from game.card.face.base import Villain
 
+        would_message = Message.WhenEnemyWouldBeGivenBoostCard(
+            self.card.CastTo(Minion|Villain),
+            face,
+            by_effect,
+            would_atk_message,
+        )
+        would_message.Send()
+        if would_message.is_be_instead:
+            return False
+
         face.card.visible.Update()
-        self.components.boostable.GiveBoostCard(face, by_effect)
+        if not self.components.boostable.GiveBoostCard(face, by_effect):
+            return False
         message = Message.AfterEnemyGivenBoostCard(self.card.CastTo(Minion|Villain), face, by_effect, would_atk_message)
         message.Send()
+        return True
 
     def ResolveBoostCards(self, message: 'Message.WhenUnitBeingAttack|Message.WhenSchemeBeingScheme', call_back: Callable[['CardFace', int], None]) -> None:
         from game.message import Message
@@ -82,4 +94,3 @@ class CanBoost(CardFace):
                 return
         assert self.components.boostable.GetDeck().GetSize() == 0, f"{self.components.boostable.GetDeck().Get()=}"
         return
-

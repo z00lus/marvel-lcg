@@ -13,6 +13,7 @@ from cards.database import CardsDB
 from engine.lib.json import Json
 from engine.lib.version import Ver
 from game.card.factory import CardFactory
+from game.card.face.attribute.can_boost import CanBoost
 from game.message import Message
 from game.operate.faces import Faces
 from game.operate.worlds import Worlds
@@ -22,11 +23,21 @@ from game.world.world import World
 
 
 ROOT = Path(__file__).resolve().parents[1]
+UNDERLING_IDS = [
+    "bullseye",
+    "electro",
+    "hammerhead",
+    "purple_man",
+    "typhoid_mary",
+]
 CARD_IDS = [
     "60065", "60066", "60067", "60068a", "60068b",
     *[str(card_id) for card_id in range(60069, 60076)],
     *[str(card_id) for card_id in range(60076, 60086)],
+    *[str(card_id) for card_id in range(60086, 60097)],
     *[str(card_id) for card_id in range(60097, 60110)],
+    "60110a", "60110b", "60111a", "60111b", "60112", "60113a", "60113b",
+    *[str(card_id) for card_id in range(60114, 60121)],
     "60128a", "60128b", "60129a", "60129b",
     *[str(card_id) for card_id in range(60130, 60134)],
     *[str(card_id) for card_id in range(60182, 60191)],
@@ -40,6 +51,9 @@ CARD_IDS = [
     *[str(card_id) for card_id in range(60139, 60142)],
     *[str(card_id) for card_id in range(60177, 60182)],
     *[str(card_id) for card_id in range(60200, 60205)],
+    "60159a", "60159b", "60160a", "60160b",
+    "60161a", "60161b", "60162a", "60162b", "60163a", "60163b",
+    *[str(card_id) for card_id in range(60164, 60177)],
 ]
 SCRIPT_MODULES = [
     *(f"cards.pack.fne.bullseye.{card_id}" for card_id in (
@@ -47,7 +61,12 @@ SCRIPT_MODULES = [
         *[str(value) for value in range(60069, 60076)],
     )),
     *(f"cards.pack.fne.electro.{card_id}" for card_id in range(60076, 60086)),
+    *(f"cards.pack.fne.hammerhead.{card_id}" for card_id in range(60086, 60097)),
     *(f"cards.pack.fne.purple_man.{card_id}" for card_id in range(60097, 60110)),
+    *(f"cards.pack.fne.typhoid_mary.{card_id}" for card_id in (
+        "60110a", "60110b", "60111a", "60111b", "60112", "60113a", "60113b",
+        *[str(value) for value in range(60114, 60121)],
+    )),
     *(f"cards.pack.fne.the_getaway.{card_id}" for card_id in (
         "60128a", "60128b", "60129a", "60129b",
         *[str(value) for value in range(60130, 60134)],
@@ -67,6 +86,11 @@ SCRIPT_MODULES = [
     *(f"cards.pack.fne.protection_racket.{card_id}" for card_id in range(60139, 60142)),
     *(f"cards.pack.fne.disasters.{card_id}" for card_id in range(60177, 60182)),
     *(f"cards.pack.fne.tracksuit_mafia.{card_id}" for card_id in range(60200, 60205)),
+    *(f"cards.pack.fne.kingpin.{card_id}" for card_id in (
+        "60159a", "60159b", "60160a", "60160b",
+        "60161a", "60161b", "60162a", "60162b", "60163a", "60163b",
+        *[str(value) for value in range(60164, 60177)],
+    )),
 ]
 
 
@@ -77,6 +101,49 @@ class FearNoEvilStructureTests(unittest.TestCase):
         Ver.Initialize()
         if not CardsDB.papers:
             CardsDB.Initialize()
+
+    def initialize_world(self, scenario: dict, seed: int) -> World:
+        hero_json = (ROOT / "deck/starter/spider_man.json").read_text(
+            encoding="utf-8"
+        )
+        scene = SceneLoader.NewFromJson(
+            json.dumps(scenario),
+            scenario["encounter_sets"] + scenario["modular_sets"],
+            [hero_json],
+            seed,
+            [
+                "v18_all",
+                "disable_setup_draw_cards",
+                "disable_resolve_mulligans",
+            ],
+            {},
+        )
+        with patch.object(Build, "release", False):
+            manager = Mock()
+            manager.skip.is_skipping = True
+            manager.undo.GetFastUndoHandle.return_value = None
+            controller = Mock(manager=manager)
+            world = World(scene, [controller])
+            world.rule.SetRule(scene.rules, scene.is_puzzle, scene.seed)
+            world.insert = CardFactory.GenerateCard(
+                "rule_a,rule_b",
+                world.area_insert,
+                world,
+                ui_render=False,
+            ).face
+
+            statistics = Mock()
+            statistics.CanRegisterAbility.return_value = False
+            game = Mock()
+            game.controller_manager = manager
+            game.state.is_running = True
+            game.session.version.IsFirstPlayerToken.return_value = True
+            with (
+                patch.object(Engine, "game", game, create=True),
+                patch.object(Engine, "statistics", statistics, create=True),
+            ):
+                world.Initialize()
+        return world
 
     def test_data_checksums_are_current(self):
         for path in (ROOT / "data/cards.json", ROOT / "data/sets_info.json"):
@@ -93,7 +160,7 @@ class FearNoEvilStructureTests(unittest.TestCase):
                 self.assertEqual(data["name"], "The Getaway")
                 self.assertEqual(
                     data["underling_sets"],
-                    ["bullseye", "electro", "purple_man"],
+                    UNDERLING_IDS,
                 )
                 self.assertEqual(data["modular_sets"], ["cops", "drive"])
                 self.assertEqual(data["expert"], expert)
@@ -105,7 +172,7 @@ class FearNoEvilStructureTests(unittest.TestCase):
         )["60. Fear No Evil"]
         self.assertEqual(
             sets_info["underlings"],
-            ["bullseye", "electro", "purple_man"],
+            UNDERLING_IDS,
         )
         self.assertNotIn("bullseye", sets_info["encounters"])
 
@@ -145,6 +212,83 @@ class FearNoEvilStructureTests(unittest.TestCase):
         self.assertEqual(len(data["encounters"]), 12)
         self.assertEqual(data["encounters"].count("60101"), 2)
         self.assertEqual(data["encounters"].count("60109"), 2)
+
+    def test_hammerhead_underling_data_supplies_both_difficulties(self):
+        data = json.loads(
+            (ROOT / "data/encounter_sets/hammerhead.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(data["villain"], ["60086", "60087"])
+        self.assertEqual(data["expert_villain"], ["60087", "60088"])
+        self.assertEqual(data["set_aside"], [])
+        self.assertEqual(len(data["encounters"]), 11)
+        for duplicated_id in ("60092", "60093", "60096"):
+            self.assertEqual(data["encounters"].count(duplicated_id), 2)
+
+    def test_typhoid_mary_underling_data_supplies_both_difficulties(self):
+        data = json.loads(
+            (ROOT / "data/encounter_sets/typhoid_mary.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(data["villain"], ["60110a,60110b"])
+        self.assertEqual(data["expert_villain"], ["60111a,60111b"])
+        self.assertEqual(data["set_aside"], [])
+        self.assertEqual(len(data["encounters"]), 13)
+        self.assertEqual(data["encounters"].count("60115"), 2)
+        self.assertEqual(data["encounters"].count("60118"), 2)
+        self.assertEqual(data["encounters"].count("60120"), 3)
+
+    def test_all_mix_and_match_scenarios_offer_every_underling(self):
+        for scenario_id in (
+            "the_getaway",
+            "art_museum_heist",
+            "the_raft_breakout",
+            "protection_racket",
+            "stop_the_presses",
+        ):
+            for expert in (False, True):
+                suffix = "_expert" if expert else ""
+                data = json.loads(
+                    (ROOT / f"data/scenarios/{scenario_id}{suffix}.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                with self.subTest(scenario=scenario_id, expert=expert):
+                    self.assertEqual(data["underling_sets"], UNDERLING_IDS)
+
+    def test_kingpin_scenario_uses_fixed_stage_pairs_and_required_sets(self):
+        sets_info = json.loads(
+            (ROOT / "data/sets_info.json").read_text(encoding="utf-8")
+        )["60. Fear No Evil"]
+        self.assertIn("kingpin", sets_info["scenarios"])
+
+        for expert in (False, True):
+            suffix = "_expert" if expert else ""
+            data = json.loads(
+                (ROOT / f"data/scenarios/kingpin{suffix}.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            with self.subTest(expert=expert):
+                self.assertEqual(data["name"], "Kingpin")
+                self.assertEqual(data["expert"], expert)
+                self.assertEqual(
+                    data["villain"],
+                    ["60160a,60160b"] if expert else ["60159a,60159b"],
+                )
+                self.assertEqual(
+                    data["schemes"],
+                    ["60161a,60161b", "60162a,60162b"],
+                )
+                self.assertEqual(data["set_aside"], ["60163a,60163b"])
+                self.assertEqual(data["encounter_sets"], [])
+                self.assertEqual(
+                    data["modular_sets"],
+                    ["tombstone", "tracksuit_mafia"],
+                )
+                self.assertEqual(len(data["encounters"]), 17)
 
     def test_quick_game_payload_builds_a_complete_getaway_scene(self):
         scenario = json.loads(
@@ -341,6 +485,64 @@ class FearNoEvilStructureTests(unittest.TestCase):
                     "60098" if expert else "60097",
                 )
 
+    def test_remaining_underlings_reach_first_player_turn_on_both_difficulties(self):
+        cases = (
+            ("hammerhead", ("60086",), ("60087",), 60086),
+            ("typhoid_mary", ("60110a", "60110b"), ("60111a", "60111b"), 60110),
+        )
+        for underling_id, standard_stage, expert_stage, seed in cases:
+            underling = json.loads(
+                (ROOT / f"data/encounter_sets/{underling_id}.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            for expert in (False, True):
+                suffix = "_expert" if expert else ""
+                scenario = json.loads(
+                    (ROOT / f"data/scenarios/the_getaway{suffix}.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                scenario["villain"] = underling[
+                    "expert_villain" if expert else "villain"
+                ]
+                scenario["set_aside"] += underling.get("set_aside", [])
+                scenario["encounters"] += underling["encounters"]
+
+                with self.subTest(underling=underling_id, expert=expert):
+                    world = self.initialize_world(scenario, seed + int(expert))
+                    self.assertFalse(world.is_game_over)
+                    self.assertEqual(world.phase.state, Phase.State.InitFinished)
+                    villain = world.GetScenario().GetVillain(None)
+                    self.assertIsNotNone(villain)
+                    self.assertIn(
+                        villain.paper.card_id,
+                        expert_stage if expert else standard_stage,
+                    )
+
+    def test_kingpin_reaches_first_player_turn_on_standard_and_expert(self):
+        for expert in (False, True):
+            suffix = "_expert" if expert else ""
+            scenario = json.loads(
+                (ROOT / f"data/scenarios/kingpin{suffix}.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            with self.subTest(expert=expert):
+                world = self.initialize_world(scenario, 60159 + int(expert))
+                self.assertFalse(world.is_game_over)
+                self.assertEqual(world.phase.state, Phase.State.InitFinished)
+                villain = world.GetScenario().GetVillain(None)
+                self.assertIsNotNone(villain)
+                self.assertEqual(
+                    villain.paper.card_id,
+                    "60160a" if expert else "60159a",
+                )
+                public_support = world.area_environment.FindCard(
+                    name="Public Support"
+                )
+                self.assertIsNotNone(public_support)
+
     def test_every_first_slice_card_has_metadata_and_creates_a_face(self):
         world = Mock()
         world.GetPlayerNumIcon.return_value = 1
@@ -360,6 +562,110 @@ class FearNoEvilStructureTests(unittest.TestCase):
 
 
 class FearNoEvilCardBehaviorTests(unittest.TestCase):
+
+    def test_replaced_boost_card_stays_available_and_is_not_attached(self):
+        enemy = Mock()
+        enemy.card.CastTo.return_value = Mock()
+        enemy.components.boostable.GiveBoostCard.return_value = True
+        boost_card = Mock()
+        effect = Mock()
+        would_message = Mock(is_be_instead=True)
+
+        with patch.object(
+            Message,
+            "WhenEnemyWouldBeGivenBoostCard",
+            return_value=would_message,
+        ):
+            given = CanBoost.GiveBoostCard(enemy, boost_card, effect)
+
+        self.assertFalse(given)
+        would_message.Send.assert_called_once_with()
+        boost_card.card.visible.Update.assert_not_called()
+        enemy.components.boostable.GiveBoostCard.assert_not_called()
+
+    def test_public_support_replaces_boost_with_support_counter(self):
+        module = importlib.import_module("cards.pack.fne.kingpin.60163b")
+        ability = next(
+            ability for ability in module.GetAbilities()
+            if ability.when is Message.WhenEnemyWouldBeGivenBoostCard
+        )
+        support = Mock()
+        support.GetCounters.return_value = 2
+        effect = Mock()
+        effect.this = support
+        effect.this.CastTo.return_value = support
+        message = Mock()
+
+        with (
+            patch.object(Worlds, "ConvertPerPlayerIconToInt", return_value=1),
+            patch.object(Faces, "RemoveCountersOn") as remove,
+        ):
+            self.assertTrue(ability.conditions[-1](effect, message))
+            ability.operation(effect, message)
+
+        message.SetBeInstead.assert_called_once_with(effect)
+        remove.assert_called_once_with([support], 1, "support", effect)
+
+    def test_hammerhead_headbutt_stuns_then_damages_stunned_target(self):
+        module = importlib.import_module("cards.pack.fne.hammerhead.60088")
+        ability = module.GetAbilities()[0]
+        hammerhead = Mock()
+        effect = Mock()
+        effect.this.CastTo.return_value = hammerhead
+        fresh_target = Mock()
+        fresh_target.IsStunned.return_value = False
+        stunned_target = Mock()
+        stunned_target.IsStunned.return_value = True
+        message = Mock(attacked_targets=[fresh_target, stunned_target])
+
+        with patch.object(Faces, "GiveStatus") as give_status:
+            ability.operation(effect, message)
+
+        give_status.assert_called_once_with([fresh_target], "Stunned", effect)
+        hammerhead.DealDamage.assert_called_once_with(
+            [stunned_target], 2, effect
+        )
+
+    def test_typhoid_mary_defeat_is_replaced_and_advances_psyche(self):
+        module = importlib.import_module("cards.pack.fne.typhoid_mary")
+        ability = module.MaryDefeatReplacement("13*")
+        villain = Mock()
+        psyche = Mock()
+        psyche.GetCounters.return_value = 1
+        effect = Mock()
+        message = Mock()
+        message.trigger.CastTo.return_value = villain
+
+        with (
+            patch.object(Worlds, "FindCardOnField", return_value=psyche),
+            patch.object(Faces, "PlaceCountersOn") as place,
+            patch.object(module, "CheckDisturbedPsycheVictory") as check_victory,
+        ):
+            ability.operation(effect, message)
+
+        message.SetBeInstead.assert_called_once_with(effect)
+        place.assert_called_once_with([psyche], 1, "damage", effect)
+        villain.ResetHealth.assert_called_once_with(effect, "13*")
+        check_victory.assert_called_once_with(effect)
+
+    def test_spot_redirects_alternating_attack_damage_to_attacker(self):
+        module = importlib.import_module("cards.pack.fne.kingpin.60171")
+        ability = next(
+            ability for ability in module.GetAbilities()
+            if ability.when is Message.WhenUnitWouldTakeDamage
+        )
+        spot = Mock()
+        spot.GetCounters.return_value = 1
+        attacker = Mock()
+        effect = Mock()
+        effect.this.CastTo.return_value = spot
+        message = Mock(attacker=attacker)
+
+        with patch.object(Faces, "RemoveCountersOn") as remove:
+            ability.operation(effect, message)
+
+        remove.assert_called_once_with([spot], 1, "spot", effect)
+        message.ChangeDealtToTarget.assert_called_once_with(attacker, effect)
 
     def test_bullseye_spine_caps_each_damage_instance_at_three(self):
         module = importlib.import_module("cards.pack.fne.bullseye.60068a")

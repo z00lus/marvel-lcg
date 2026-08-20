@@ -148,7 +148,7 @@ class ProtectionRacketScenarioTests(unittest.TestCase):
                 self.assertEqual(scenario["schemes"], expected_schemes)
                 self.assertEqual(
                     scenario["underling_sets"],
-                    ["bullseye", "electro", "purple_man"],
+                    ["bullseye", "electro", "hammerhead", "purple_man", "typhoid_mary"],
                 )
                 self.assertEqual(
                     scenario["modular_sets"],

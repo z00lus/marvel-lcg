@@ -23,7 +23,9 @@
     "underling_sets": [
         "bullseye",
         "electro",
-        "purple_man"
+        "hammerhead",
+        "purple_man",
+        "typhoid_mary"
     ],
     "encounter_sets": [
         "standard",

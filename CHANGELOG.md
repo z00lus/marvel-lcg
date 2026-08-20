@@ -27,12 +27,26 @@ The comparison baseline is upstream commit
 - Added **Purple Man** as a selectable Fear No Evil underling across all
   implemented mix-and-match scenarios, including INFLUENCED minions,
   command obligations, Converted allies, and his complete encounter set.
+- Added **Hammerhead** as a selectable underling with all three villain
+  stages, status-driven Headbutt behavior, Chameleon, and the full Maggia
+  encounter set.
+- Added **Typhoid Mary** as a selectable underling with her two-sided villain
+  stages, Disturbed Psyche victory track, Mary Walker/Establish Trust cycle,
+  and complete encounter set.
+- Added the fixed **Kingpin** finale in Standard and Expert modes, including
+  nemesis/UNDERLING setup, the two-stage main scheme, Public Support, and the
+  complete Kingpin encounter set.
+- Extended all five mix-and-match scenarios to offer every Fear No Evil
+  underling, with the new choices and Kingpin marked clearly in Quick Game.
 - Added **Art Museum Heist** in Standard and Expert modes, with deterministic
-  ART attachment setup, Bullseye/Electro/Purple Man underling selection, and
+  ART attachment setup, all five underling choices, and
   the complete **The Owl** encounter set.
 - Added **The Raft Breakout** in Standard and Expert modes, including Master
-  Key setup, PRISONER minions, Imprisoned, Bullseye/Electro/Purple Man
-  underling selection, and the complete **Tombstone** encounter set.
+  Key setup, PRISONER minions, Imprisoned, all five underling choices, and the
+  complete **Tombstone** encounter set.
+- Added an explicit pre-attachment timing message for facedown boost cards so
+  effects such as Public Support can replace the boost without consuming or
+  misplacing the top encounter card.
 - Corrected player-side-scheme rewards so cards such as Sidearm enter the
   proper player area instead of remaining detached on the table.
 - Corrected Photographic Reflexes resolution and exclusive thwart-target

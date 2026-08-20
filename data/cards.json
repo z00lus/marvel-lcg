@@ -62037,6 +62037,192 @@
             "text": "<b>When Revealed</b>: Discard the top card of your deck for each card you control. For each card discarded this way with a printed [energy] resource, choose to either take 1 indirect damage or place 1 charge counter on Electric Charge."
         },
         {
+            "card_id": "60086",
+            "type": "Villain",
+            "name": "* Hammerhead",
+            "subtitle": "",
+            "desc": {
+                "HP": "14*",
+                "ATK": "1*",
+                "SCH": "2",
+                "Stage": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA",
+                "UNDERLING"
+            ],
+            "set_name": "Hammerhead",
+            "text": "[star] <b>Forced Response</b>: After Hammerhead attacks and damages a character, stun that character. If that character is already stunned, deal 1 damage to it instead."
+        },
+        {
+            "card_id": "60087",
+            "type": "Villain",
+            "name": "* Hammerhead",
+            "subtitle": "",
+            "desc": {
+                "HP": "15*",
+                "ATK": "2*",
+                "SCH": "2",
+                "Stage": "2",
+                "Toughness": "1",
+                "Retaliate": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA",
+                "UNDERLING"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Toughness. Retaliate 1.\n[star] <b>Forced Response</b>: After Hammerhead attacks and damages a character, stun that character. If that character is already stunned, deal 1 damage to it instead."
+        },
+        {
+            "card_id": "60088",
+            "type": "Villain",
+            "name": "* Hammerhead",
+            "subtitle": "",
+            "desc": {
+                "HP": "16*",
+                "ATK": "3*",
+                "SCH": "3",
+                "Stage": "3",
+                "Toughness": "1",
+                "Retaliate": "2"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA",
+                "UNDERLING"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Toughness. Retaliate 2.\n[star] <b>Forced Response</b>: After Hammerhead attacks and damages a character, stun that character. If that character is already stunned, deal 2 damage to it instead."
+        },
+        {
+            "card_id": "60089",
+            "type": "Attachment",
+            "name": "Energy Gatling Gun",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "TECH",
+                "WEAPON"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Attach to Hammerhead.\nHammerhead gets +1 ATK.\n<b>Forced Response</b>: After Hammerhead attacks a character, if that character was not defeated, discard this card \u2192 Hammerhead attacks that character again."
+        },
+        {
+            "card_id": "60090",
+            "type": "Attachment",
+            "name": "Hardheaded",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "Boost": "1*"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Attach to Hammerhead.\nHammerhead gets +1 SCH and gains stalwart.\n<b>Hero Action</b>: Spend an [energy], [mental], and [physical] resource \u2192 discard this card.\n<hr />\n[star] <b>Boost</b>: Give the activating enemy a tough status card."
+        },
+        {
+            "card_id": "60091",
+            "type": "Minion",
+            "name": "* Chameleon",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "1",
+                "SCH": "1*",
+                "Boost": "3"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Chameleon gets +X SCH, where X is the highest THW among characters in play.\n<b>When Revealed</b>: Chameleon schemes."
+        },
+        {
+            "card_id": "60092",
+            "type": "Minion",
+            "name": "Maggia Enforcers",
+            "subtitle": "",
+            "desc": {
+                "HP": "3",
+                "ATK": "2",
+                "SCH": "0*",
+                "Guard": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Guard.\nMaggia Enforcers' SCH is equal to the number of MAGGIA enemies in play (including itself)."
+        },
+        {
+            "card_id": "60093",
+            "type": "Minion",
+            "name": "Maggia Underboss",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "1*",
+                "SCH": "1*",
+                "Villainous": "1",
+                "Boost": "2"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MAGGIA"
+            ],
+            "set_name": "Hammerhead",
+            "text": "Villainous.\n[star] <b>Forced Interrupt</b>: When Maggia Underboss activates against you, if your identity is stunned, give it 1 additional boost card for this activation."
+        },
+        {
+            "card_id": "60094",
+            "type": "SideScheme",
+            "name": "Consolidate Power",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "6",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Hammerhead",
+            "text": "<b>Forced Response</b>: After a minion is defeated, give that minion to the villain as a facedown boost card."
+        },
+        {
+            "card_id": "60095",
+            "type": "SideScheme",
+            "name": "Power Struggle",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "5",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Hammerhead",
+            "text": "<b>When Revealed</b>: Defeat the minion with the fewest remaining hit points. Discard cards from the encounter deck until a minion is discarded, then reveal that minion."
+        },
+        {
+            "card_id": "60096",
+            "type": "Treachery",
+            "name": "\"Head First!\"",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Hammerhead",
+            "text": "<b>When Revealed</b> (Alter-Ego): This card gains surge.\n<b>When Revealed</b> (Hero): Hammerhead attacks you. If your identity is stunned, Hammerhead gets +2 ATK and this attack gains overkill."
+        },
+        {
             "card_id": "60097",
             "type": "Villain",
             "name": "* Purple Man",
@@ -62191,7 +62377,7 @@
             },
             "traits": [],
             "set_name": "Purple Man",
-            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → deal 2 damage to a hero or ally."
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it \u2192 deal 2 damage to a hero or ally."
         },
         {
             "card_id": "60106",
@@ -62205,7 +62391,7 @@
             },
             "traits": [],
             "set_name": "Purple Man",
-            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → give the villain a tough status card."
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it \u2192 give the villain a tough status card."
         },
         {
             "card_id": "60107",
@@ -62219,7 +62405,7 @@
             },
             "traits": [],
             "set_name": "Purple Man",
-            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it → place 2 threat on the main scheme."
+            "text": "Uses (3 command counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 command counter from it \u2192 place 2 threat on the main scheme."
         },
         {
             "card_id": "60108",
@@ -62245,6 +62431,224 @@
             "traits": [],
             "set_name": "Purple Man",
             "text": "<b>When Revealed</b>: Choose an INFLUENCED minion from the encounter discard pile and reveal it. Otherwise, this card gains surge."
+        },
+        {
+            "card_id": "60110a",
+            "type": "Villain",
+            "name": "* Typhoid Mary",
+            "subtitle": "",
+            "desc": {
+                "HP": "10*",
+                "ATK": "1",
+                "SCH": "2",
+                "Stage": "1"
+            },
+            "traits": [
+                "MUTANT",
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "[star] <b>Forced Interrupt</b>: When Typhoid Mary would be defeated, place 1 damage counter on Disturbed Psyche instead, then reset her hit points to 10 per player."
+        },
+        {
+            "card_id": "60110b",
+            "type": "Villain",
+            "name": "* Bloody Mary",
+            "subtitle": "",
+            "desc": {
+                "HP": "10*",
+                "ATK": "2",
+                "SCH": "1",
+                "Stage": "1"
+            },
+            "traits": [
+                "MUTANT",
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "[star] <b>Forced Interrupt</b>: When Bloody Mary would be defeated, place 1 damage counter on Disturbed Psyche instead, then reset her hit points to 10 per player."
+        },
+        {
+            "card_id": "60111a",
+            "type": "Villain",
+            "name": "* Typhoid Mary",
+            "subtitle": "",
+            "desc": {
+                "HP": "13*",
+                "ATK": "1",
+                "SCH": "3",
+                "Stage": "2",
+                "Toughness": "1"
+            },
+            "traits": [
+                "MUTANT",
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "Toughness.\n[star] <b>Forced Interrupt</b>: When Typhoid Mary would be defeated, place 1 damage counter on Disturbed Psyche instead, then reset her hit points to 13 per player."
+        },
+        {
+            "card_id": "60111b",
+            "type": "Villain",
+            "name": "* Bloody Mary",
+            "subtitle": "",
+            "desc": {
+                "HP": "13*",
+                "ATK": "3",
+                "SCH": "1",
+                "Stage": "2"
+            },
+            "traits": [
+                "MUTANT",
+                "PSIONIC",
+                "UNDERLING"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "<b>When Revealed</b>: Deal 1 damage to each identity.\n[star] <b>Forced Interrupt</b>: When Bloody Mary would be defeated, place 1 damage counter on Disturbed Psyche instead, then reset her hit points to 13 per player."
+        },
+        {
+            "card_id": "60112",
+            "type": "Environment",
+            "name": "Disturbed Psyche",
+            "subtitle": "",
+            "desc": {
+                "Permanent": "1",
+                "Setup": "1"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "Permanent.\n<b>Setup</b>: Put the villain into play with a random side faceup and reveal it.\n<b>Forced Interrupt</b>: When the villain phase ends, flip the villain.\nIf there are 3 or more damage counters here, the players win the game."
+        },
+        {
+            "card_id": "60113a",
+            "type": "SideScheme",
+            "name": "Establish Trust",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "8*",
+                "Permanent": "1",
+                "Setup": "1"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "Permanent. Setup.\nExpert Mode Only: This scheme gains hinder 3 per player.\n<b>When Defeated</b>: Place 1 threat counter on Disturbed Psyche, then flip this card."
+        },
+        {
+            "card_id": "60113b",
+            "type": "Attachment",
+            "name": "* Mary Walker",
+            "subtitle": "",
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [
+                "PERSONA"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "Permanent. Attach to the villain.\nThe villain cannot activate.\n<b>Forced Response</b>: After the villain takes any amount of damage or after the round ends, flip this card."
+        },
+        {
+            "card_id": "60114",
+            "type": "Attachment",
+            "name": "Telekinesis",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "2",
+                "Boost": "0*"
+            },
+            "traits": [
+                "PSIONIC",
+                "SUPERPOWER"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "Attach to the villain. The villain gets +2 SCH.\n<b>Hero Action</b>: Spend 2 [mental] resources \u2192 discard this card.\n<hr />\n[star] <b>Boost</b>: If Typhoid Mary is activating, take 3 indirect damage and exhaust each character damaged this way."
+        },
+        {
+            "card_id": "60115",
+            "type": "Treachery",
+            "name": "Psionic Slash",
+            "subtitle": "",
+            "desc": {
+                "Boost": "0*"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "<b>When Revealed</b>: If Mary Walker is in play, flip it to its Establish Trust side and reveal that side. The villain schemes.\n<hr />\n[star] <b>Boost</b>: If Typhoid Mary is activating, deal 3 damage to an ally you control."
+        },
+        {
+            "card_id": "60116",
+            "type": "Treachery",
+            "name": "Psi Nova",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2*"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "<b>When Revealed</b>: Deal 1 damage to each character you control. Stun your identity.\n<hr />\n[star] <b>Boost</b>: If Typhoid Mary is activating, stun your identity."
+        },
+        {
+            "card_id": "60117",
+            "type": "Attachment",
+            "name": "Assembled Armor",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "2",
+                "Boost": "0*"
+            },
+            "traits": [
+                "ARMOR"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "Attach to the villain. The villain gets +2 ATK.\n<b>Forced Interrupt</b>: When the villain would take damage, place that damage here instead. Discard this card if it has 5 damage counters (8 in expert mode).\n<hr />\n[star] <b>Boost</b>: If Bloody Mary is activating, confuse your identity."
+        },
+        {
+            "card_id": "60118",
+            "type": "Treachery",
+            "name": "Hail of Blades",
+            "subtitle": "",
+            "desc": {
+                "Boost": "0*"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "<b>When Revealed</b>: If Mary Walker is in play, flip it to its Establish Trust side and reveal that side. The villain attacks you, even if you are in alter-ego form.\n<hr />\n[star] <b>Boost</b>: If Bloody Mary is activating, take 2 damage."
+        },
+        {
+            "card_id": "60119",
+            "type": "Treachery",
+            "name": "Scavenged Bulwark",
+            "subtitle": "",
+            "desc": {
+                "Surge": "1",
+                "Boost": "2*"
+            },
+            "traits": [],
+            "set_name": "Typhoid Mary",
+            "text": "Surge.\n<b>When Revealed</b>: Give the villain a tough status card.\n<hr />\n[star] <b>Boost</b>: If Bloody Mary is activating, give it a tough status card."
+        },
+        {
+            "card_id": "60120",
+            "type": "Minion",
+            "name": "Hand Lookout",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "2",
+                "SCH": "0",
+                "Guard": "1",
+                "Toughness": "1",
+                "Boost": "1*"
+            },
+            "traits": [
+                "HAND",
+                "NINJA"
+            ],
+            "set_name": "Typhoid Mary",
+            "text": "Guard. Toughness.\n[star] <b>Boost</b>: Give the activating enemy 1 additional boost card for this activation."
         },
         {
             "card_id": "60128a",
@@ -63132,7 +63536,7 @@
             },
             "traits": [],
             "set_name": "Stop the Presses!",
-            "text": "<b>Forced Response</b>: After an enemy makes an undefended attack against you, choose:\n• Place 2 threat here (3 threat instead in expert mode).\n• Remove 1 stamina counter from a DAILY BUGLE support you control.\n<b>If a DAILY BUGLE support leaves play or this stage is completed, the players lose the game.</b>"
+            "text": "<b>Forced Response</b>: After an enemy makes an undefended attack against you, choose:\n\u2022 Place 2 threat here (3 threat instead in expert mode).\n\u2022 Remove 1 stamina counter from a DAILY BUGLE support you control.\n<b>If a DAILY BUGLE support leaves play or this stage is completed, the players lose the game.</b>"
         },
         {
             "card_id": "60152",
@@ -63142,7 +63546,7 @@
             "desc": {},
             "traits": [],
             "set_name": "Stop the Presses!",
-            "text": "<b>Alter-Ego Action</b>: Exhaust a DAILY BUGLE support you control → place 1 stamina counter on that support. (Any player can do this.)"
+            "text": "<b>Alter-Ego Action</b>: Exhaust a DAILY BUGLE support you control \u2192 place 1 stamina counter on that support. (Any player can do this.)"
         },
         {
             "card_id": "60153",
@@ -63159,7 +63563,7 @@
                 "PERSONA"
             ],
             "set_name": "Stop the Presses!",
-            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust Ben Urich and remove 1 stamina counter from him → look at the top 2 cards of the encounter deck. You may discard 1 of those cards. Put the rest back in the same order."
+            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust Ben Urich and remove 1 stamina counter from him \u2192 look at the top 2 cards of the encounter deck. You may discard 1 of those cards. Put the rest back in the same order."
         },
         {
             "card_id": "60154",
@@ -63176,7 +63580,7 @@
                 "PERSONA"
             ],
             "set_name": "Stop the Presses!",
-            "text": "Uses (3 stamina counters).\n<b>Interrupt</b>: When a boost card is turned faceup, exhaust Betty Brant and remove 1 stamina counter from her → cancel that card's boost icons and its Boost ability. Give the activating enemy another boost card for this activation."
+            "text": "Uses (3 stamina counters).\n<b>Interrupt</b>: When a boost card is turned faceup, exhaust Betty Brant and remove 1 stamina counter from her \u2192 cancel that card's boost icons and its Boost ability. Give the activating enemy another boost card for this activation."
         },
         {
             "card_id": "60155",
@@ -63193,7 +63597,7 @@
                 "PERSONA"
             ],
             "set_name": "Stop the Presses!",
-            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust J. Jonah Jameson, remove 1 stamina counter from him, and deal yourself 1 facedown encounter card → draw 2 cards."
+            "text": "Uses (3 stamina counters).\n<b>Action</b>: Exhaust J. Jonah Jameson, remove 1 stamina counter from him, and deal yourself 1 facedown encounter card \u2192 draw 2 cards."
         },
         {
             "card_id": "60156",
@@ -63210,7 +63614,7 @@
                 "PERSONA"
             ],
             "set_name": "Stop the Presses!",
-            "text": "Uses (3 stamina counters).\n<b>Response</b>: After a player is dealt a facedown encounter card, exhaust Robbie Robertson and remove 1 stamina counter from him → look at that encounter card. You may discard it and deal that player another facedown encounter card."
+            "text": "Uses (3 stamina counters).\n<b>Response</b>: After a player is dealt a facedown encounter card, exhaust Robbie Robertson and remove 1 stamina counter from him \u2192 look at that encounter card. You may discard it and deal that player another facedown encounter card."
         },
         {
             "card_id": "60157",
@@ -63235,7 +63639,357 @@
             },
             "traits": [],
             "set_name": "Stop the Presses!",
-            "text": "<b>When Revealed</b>: Choose:\n• Exhaust a DAILY BUGLE support (under any player's control) and remove 1 stamina counter from it.\n• Place 2 threat on the main scheme.\n<hr />\n[star] <b>Boost</b>: Exhaust a DAILY BUGLE support (under any player's control)."
+            "text": "<b>When Revealed</b>: Choose:\n\u2022 Exhaust a DAILY BUGLE support (under any player's control) and remove 1 stamina counter from it.\n\u2022 Place 2 threat on the main scheme.\n<hr />\n[star] <b>Boost</b>: Exhaust a DAILY BUGLE support (under any player's control)."
+        },
+        {
+            "card_id": "60159a",
+            "type": "Villain",
+            "name": "* Kingpin",
+            "subtitle": "",
+            "desc": {
+                "HP": "25*",
+                "ATK": "0*",
+                "SCH": "2",
+                "Stage": "1",
+                "Stalwart": "1"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Kingpin",
+            "text": "Stalwart. Kingpin cannot be dealt damage and upgrades cannot be attached to him.\n[star] <b>Forced Interrupt</b>: When Kingpin would attack you, he schemes instead."
+        },
+        {
+            "card_id": "60159b",
+            "type": "Villain",
+            "name": "* Kingpin",
+            "subtitle": "",
+            "desc": {
+                "HP": "25*",
+                "ATK": "2*",
+                "SCH": "2*",
+                "Stage": "1",
+                "Steady": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MARTIAL ARTIST"
+            ],
+            "set_name": "Kingpin",
+            "text": "Steady.\n[star] <b>Forced Interrupt</b>: When Kingpin activates against you, if you are not engaged with a minion, give him 1 additional boost card for this activation."
+        },
+        {
+            "card_id": "60160a",
+            "type": "Villain",
+            "name": "* Kingpin",
+            "subtitle": "",
+            "desc": {
+                "HP": "28*",
+                "ATK": "0*",
+                "SCH": "3",
+                "Stage": "2",
+                "Stalwart": "1"
+            },
+            "traits": [
+                "CRIMINAL"
+            ],
+            "set_name": "Kingpin",
+            "text": "Stalwart. Kingpin cannot be dealt damage and upgrades cannot be attached to him.\n[star] <b>Forced Interrupt</b>: When Kingpin would attack you, he schemes instead."
+        },
+        {
+            "card_id": "60160b",
+            "type": "Villain",
+            "name": "* Kingpin",
+            "subtitle": "",
+            "desc": {
+                "HP": "28*",
+                "ATK": "3*",
+                "SCH": "3*",
+                "Stage": "2",
+                "Steady": "1"
+            },
+            "traits": [
+                "CRIMINAL",
+                "MARTIAL ARTIST"
+            ],
+            "set_name": "Kingpin",
+            "text": "Steady.\n[star] <b>Forced Interrupt</b>: When Kingpin activates against you, if you are not engaged with a minion, give him 1 additional boost card for this activation. If this activation is an attack, it gains overkill."
+        },
+        {
+            "card_id": "60161a",
+            "type": "MainScheme",
+            "name": "The King's Gambit",
+            "subtitle": "",
+            "desc": {
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>Contents</b>: Kingpin (A1). (Kingpin (B1) instead for expert mode). Kingpin encounter set. Two modular encounter sets (Tombstone and Tracksuit Mafia).\n<b>Setup</b>: Each player reveals their set-aside nemesis minion. Each player whose nemesis minion shares a title with a character in play instead removes their nemesis minion from the game, then finds an UNDERLING minion that is not in play and reveals it."
+        },
+        {
+            "card_id": "60161b",
+            "type": "MainScheme",
+            "name": "The King's Gambit",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "TargetThreat": "11*",
+                "EscalationThreat": "1*",
+                "Stage": "1"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>When Revealed</b>: Put Public Support into play, low support side faceup.\n<b>Hero Action</b>: Remove 5 threat from here (4 instead in expert mode) \u2192 shuffle the encounter discard pile into the encounter deck, discard cards until a minion is discarded, then reveal it.\n<b>If this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60162a",
+            "type": "MainScheme",
+            "name": "Endgame",
+            "subtitle": "",
+            "desc": {
+                "Stage": "2"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>When Revealed</b>: Each player finds their nemesis minion and reveals it. Each player whose nemesis minion did not enter play this way finds an UNDERLING minion that is not in play and reveals it. In expert mode, the first player finds and reveals the Organized Crime side scheme."
+        },
+        {
+            "card_id": "60162b",
+            "type": "MainScheme",
+            "name": "Endgame",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "0*",
+                "TargetThreat": "7*",
+                "EscalationThreat": "1*",
+                "Stage": "2"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "Each minion gains guard.\n<b>If this stage is completed, the players lose the game.</b>"
+        },
+        {
+            "card_id": "60163a",
+            "type": "Environment",
+            "name": "Public Support",
+            "subtitle": "Low Support",
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "Permanent.\n<b>Forced Response</b>: After a minion is defeated, place 1 support counter here.\n<b>Forced Interrupt</b>: When the villain phase begins, if there are at least 2 support counters per player here, flip Kingpin, advance the main scheme to stage 2A, then flip this card."
+        },
+        {
+            "card_id": "60163b",
+            "type": "Environment",
+            "name": "Public Support",
+            "subtitle": "High Support",
+            "desc": {
+                "Permanent": "1"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "Permanent.\n<b>Forced Interrupt</b>: When an enemy would be given a facedown boost card, remove 1 support counter per player from here instead.\n<b>Forced Response</b>: After a minion is defeated, place 1 support counter here."
+        },
+        {
+            "card_id": "60164",
+            "type": "Attachment",
+            "name": "Bear Hug",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,grip",
+                "Boost": "2"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Kingpin",
+            "text": "If Kingpin has the MARTIAL ARTIST trait, attach to your hero. Otherwise, this card gains surge.\nUses (3 grip counters). You cannot change to alter-ego form.\n<b>Forced Interrupt</b>: When your hero would thwart or attack, remove 1 grip counter from here instead."
+        },
+        {
+            "card_id": "60165",
+            "type": "Attachment",
+            "name": "* James Wesley",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "PERSONA"
+            ],
+            "set_name": "Kingpin",
+            "text": "Attach to Kingpin and give him 1 facedown boost card. Kingpin gets +1 SCH.\n<b>Hero Action</b>: Discard a THWART event from your hand \u2192 discard this card, then Kingpin schemes.\n<hr />\n[star] <b>Boost</b>: Attach this card to Kingpin."
+        },
+        {
+            "card_id": "60166",
+            "type": "Attachment",
+            "name": "* Kingpin's Cane",
+            "subtitle": "",
+            "desc": {
+                "ATK+": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "WEAPON"
+            ],
+            "set_name": "Kingpin",
+            "text": "Attach to Kingpin and stun your identity. Kingpin gets +1 ATK.\n<b>Forced Response</b>: After Kingpin attacks and damages a hero, stun that hero. If that hero is stunned this way, discard this card.\n<hr />\n[star] <b>Boost</b>: Stun your identity. If it was already stunned, take 1 damage."
+        },
+        {
+            "card_id": "60167",
+            "type": "Attachment",
+            "name": "Mountain of Muscle",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Kingpin",
+            "text": "If Kingpin has the MARTIAL ARTIST trait, attach to him. Otherwise, this card gains surge.\nKingpin gains retaliate 1.\n<b>Forced Interrupt</b>: When Kingpin would take any amount of damage, place that damage here instead. Discard this card if it has 8 or more damage counters."
+        },
+        {
+            "card_id": "60168",
+            "type": "Attachment",
+            "name": "* Vanessa Fisk",
+            "subtitle": "",
+            "desc": {
+                "SCH+": "1",
+                "Boost": "0*"
+            },
+            "traits": [
+                "PERSONA"
+            ],
+            "set_name": "Kingpin",
+            "text": "Attach to Kingpin and confuse your identity. Kingpin gets +1 SCH.\n<b>Hero Action</b>: Discard an ATTACK event from your hand \u2192 discard this card, then Kingpin attacks you.\n<hr />\n[star] <b>Boost</b>: Confuse your identity. If it was already confused, place 1 threat on the main scheme."
+        },
+        {
+            "card_id": "60169",
+            "type": "Minion",
+            "name": "* Black Cat",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1",
+                "SCH": "1",
+                "Villainous": "1"
+            },
+            "traits": [
+                "THIEF",
+                "UNDERLING"
+            ],
+            "set_name": "Kingpin",
+            "text": "Villainous. While there are 4 threat counters here, treat Black Cat as an ally under your control that takes 2 consequential damage after she attacks or thwarts.\n<b>Hero Action</b>: Spend a [mental] resource \u2192 place 1 threat counter here. If there are 4 threat counters here, take control of Black Cat as an ally."
+        },
+        {
+            "card_id": "60170",
+            "type": "Minion",
+            "name": "* Diamondback",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "1*",
+                "SCH": "1",
+                "Villainous": "1",
+                "Boost": "2*"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Kingpin",
+            "text": "Villainous.\n[star] <b>Forced Interrupt</b>: When Diamondback attacks you, take 1 damage.\n<hr />\n[star] <b>Boost</b>: Take 1 damage."
+        },
+        {
+            "card_id": "60171",
+            "type": "Minion",
+            "name": "* Spot",
+            "subtitle": "",
+            "desc": {
+                "HP": "5",
+                "ATK": "2",
+                "SCH": "2",
+                "Boost": "3"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Kingpin",
+            "text": "Spot enters play with 1 spot counter.\n<b>Forced Interrupt</b>: When Spot would be dealt damage from an attack, if there is a spot counter here, remove it and deal that damage to the attacker instead. Otherwise, place 1 spot counter here."
+        },
+        {
+            "card_id": "60172",
+            "type": "Minion",
+            "name": "* Stilt-Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "4",
+                "ATK": "1*",
+                "SCH": "1*",
+                "Boost": "3"
+            },
+            "traits": [
+                "CRIMINAL",
+                "UNDERLING"
+            ],
+            "set_name": "Kingpin",
+            "text": "Stilt-Man enters play with 2 stilt counters. He gets +1 SCH and +1 ATK for each stilt counter here.\n<b>Forced Interrupt</b>: When Stilt-Man would take any amount of damage, remove 1 stilt counter from here instead."
+        },
+        {
+            "card_id": "60173",
+            "type": "SideScheme",
+            "name": "Kingpin's Influence",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2*",
+                "Hazard": "1",
+                "Boost": "3"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>When Defeated</b>: The defeating player places 3 threat on their nemesis side scheme. If that scheme is not in play, search for and reveal it instead."
+        },
+        {
+            "card_id": "60174",
+            "type": "SideScheme",
+            "name": "Organized Crime",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "3*",
+                "Boost": "2"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "Each minion gets +2 hit points."
+        },
+        {
+            "card_id": "60175",
+            "type": "Treachery",
+            "name": "Bag of Tricks",
+            "subtitle": "",
+            "desc": {
+                "Boost": "0*"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>When Revealed</b>: Reveal a random card from your set-aside nemesis set. If no card is revealed this way, this card gains surge.\n<hr />\n[star] <b>Boost</b>: Give this character a random card from your set-aside nemesis set as an additional boost card."
+        },
+        {
+            "card_id": "60176",
+            "type": "Treachery",
+            "name": "Unrelenting Hate",
+            "subtitle": "",
+            "desc": {
+                "Boost": "1*"
+            },
+            "traits": [],
+            "set_name": "Kingpin",
+            "text": "<b>When Revealed</b>: Your nemesis minion activates against you. If your nemesis minion is not in play, find it and reveal it. If you cannot find it, find an UNDERLING minion that is not in play and reveal it.\n<hr />\n[star] <b>Boost</b>: If this activation is an attack, it gains overkill."
         },
         {
             "card_id": "60195",
@@ -63410,5 +64164,5 @@
             "text": "<b>When Revealed</b>: Discard cards from the encounter deck until a TRACKSUIT minion is discarded. Tuck that minion beneath this scheme.\n<b>Forced Response</b>: After a player reveals a TRACKSUIT minion from the encounter deck, that player reveals 1 minion tucked beneath this scheme."
         }
     ],
-    "checksum": "ab6c294802305e9ee487191b15d65ae172275c9e5ae08655542f885f58c5fd52"
+    "checksum": "adaac5610944f6edbbb4026004023af76f681bbf3cd06beebb70b53165b196ee"
 }

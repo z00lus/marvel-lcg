@@ -62,6 +62,13 @@ class SenderEnemy:
         def engaged_player(self) -> 'Player':
             return self.player
 
+    class WhenEnemyWouldBeGivenBoostCard(TriggerUnitMessage, CanBeInstead):
+        def __init__(self, unit: 'Minion|Villain', boost_card: 'CardFace', by_effect: 'Effect', would_message: 'Message.WhenUnitWouldAttack|Message.WhenUnitWouldScheme|None') -> None:
+            self.boost_card: Final = boost_card
+            self.by_effect: Final = by_effect
+            self.would_message: Final = would_message
+            super().__init__(trigger=unit)
+
     class AfterEnemyGivenBoostCard(TriggerUnitMessage, AttackerNoneOldMessage):
         def __init__(self, unit: 'Minion|Villain', boost_card: 'CardFace', by_effect: 'Effect', would_message: 'Message.WhenUnitWouldAttack|Message.WhenUnitWouldScheme|None') -> None:
             from game.message import Message

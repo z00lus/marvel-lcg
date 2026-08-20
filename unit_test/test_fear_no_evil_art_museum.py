@@ -109,7 +109,7 @@ class ArtMuseumScenarioTests(unittest.TestCase):
             with self.subTest(expert=expert):
                 self.assertEqual(
                     scenario["underling_sets"],
-                    ["bullseye", "electro", "purple_man"],
+                    ["bullseye", "electro", "hammerhead", "purple_man", "typhoid_mary"],
                 )
                 self.assertEqual(scenario["modular_sets"], ["cops", "the_owl"])
                 self.assertEqual(scenario["encounters"].count("60127"), 2)
