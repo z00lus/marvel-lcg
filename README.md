@@ -39,6 +39,17 @@ finale.
 All scenario scripts and setup paths have focused automated coverage. Manual
 solo replay validation remains ongoing for the newly completed encounters.
 
+Other additions in this release include:
+
+- **Jessica Jones**, her starter deck, nemesis set, and focused rules tests.
+  Cards whose published art is unavailable are rendered as readable text-only
+  cards instead of blank placeholders.
+- An optional **1–5 star rating** for both the hero and scenario at the end of
+  a game. Ratings are stored with the shared game history for future rankings.
+- A **Proxy** tool that creates print-ready A4 PDFs for complete hero decks or
+  scenarios whose physical products are explicitly marked as out of print in
+  the local product catalog.
+
 ## Fork Goals
 
 This fork focuses on a simple and convenient **solo Marvel Champions experience**.
@@ -82,6 +93,14 @@ The `runtime/` bind mount preserves statistics, campaign progress, the active **
 ### Collection and tabletop games
 
 Open **Collection & Stats** from the main menu to mark the physical products you own, review digital and tabletop win rates, and track achievements. Use **Log Physical Game** to add a finished physical solo game. Manually logged games can be edited or deleted; statistics and achievement progress are recalculated automatically. All of this data is stored in the same `statistics.sqlite3` database used by digital game history.
+
+### Out-of-print proxy sets
+
+Open **Proxy** from the main menu to create printable A4 sheets for a complete
+hero deck or scenario. The menu deliberately lists only products marked as
+officially out of print in `data/sets_info.json`; the restriction is also
+enforced by the server. Generated files are downloaded by the browser and kept
+server-side in the ignored `proxy-output/` directory.
 
 #### Stopping and starting the Docker server
 
@@ -138,14 +157,17 @@ Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/mar
 - A cohesive Ronin-themed interface with improved tablet and touch layouts, a settings screen, adjustable animation speed, and replay autosaving.
 - Reliable replay saving, browsing, downloading, loading, step controls, timeline seeking, and paused-at-start playback.
 - Unified SQLite history for digital, imported-replay, and manually logged physical games, with collection management, source filters, matchup statistics, and shared achievements.
+- Optional post-game hero and scenario ratings stored alongside the shared game history.
 - Manual and daily synchronization of public MarvelCDB deck IDs into a clearly marked user-deck collection.
+- Print-ready A4 proxy generation for complete hero decks and scenarios from products explicitly catalogued as out of print.
+- Readable text-only card rendering when a card is implemented but published art is unavailable.
 - Better self-hosting through `run.sh`, Docker Compose, LAN-friendly defaults, a systemd unit, and Linux server documentation.
 
 ### Community integrations and new heroes
 
 Campaign support and the initial Hercules implementation were merged from the [sdolle1775 fork](https://github.com/sdolle1775/marvel-lcg). The merged campaign work covers Mutant Genesis, NeXt Evolution, Age of Apocalypse, Agents of S.H.I.E.L.D., Galaxy's Most Wanted, and The Mad Titan's Shadow, together with related campaign-state fixes. After the merge, Hercules' special decks, card scripts, UI placement, and rules behavior were corrected in this fork and covered by focused tests.
 
-The **Echo**, **Wonder Man**, and **Daredevil** hero integrations are original work created for this fork. They include starter decks, card scripts, special-deck handling where required, targeted tests, and ongoing replay-based playtesting.
+The **Echo**, **Wonder Man**, **Daredevil**, and **Jessica Jones** hero integrations are original work created for this fork. They include starter decks, card scripts, special-deck handling where required, targeted tests, and ongoing replay-based playtesting.
 
 Fear No Evil integration includes **Stop the Presses!**, **Protection
 Racket**, **The Getaway**, **Art Museum Heist**, **The Raft Breakout**, and the
