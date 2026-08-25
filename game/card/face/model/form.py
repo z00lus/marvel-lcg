@@ -31,6 +31,13 @@ class ModelForm(ModelBase):
                 # to_form.FlipTo(by_effect, card_face=to_form)
                 # to_form.PutIntoPlay(player, by_effect, under_control=True)
                 # to_form.SetHealth(health, by_effect)
+
+            # Identity form can be part of a dynamic permission to play a
+            # tucked card.  Do not retain the result calculated for the old
+            # form after the identity flips.
+            for face in to_form.GetPlacedCardArea().GetAll():
+                face.card.can_state.is_like_in_hand = None
+
             after_message = Message.AfterUnitChangeForm(to_form, None, by_effect, would_message)
             after_message.Send()
             end_message = Message.AfterUnitChangeFormEnd(to_form, by_effect, after_message)

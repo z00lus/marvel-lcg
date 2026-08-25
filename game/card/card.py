@@ -608,6 +608,20 @@ class Card(Object):
         self.area.Remove(self)
         into_area.Insert(index, self, target_game_area)
 
+        # Play permissions for cards tucked under an identity may depend on
+        # the contents of that player's hand (for example, Echo's
+        # Photographic Reflexes).  A cached result must not survive a draw,
+        # return-to-hand, or payment from hand.
+        hand_owners = {
+            area.GetOwner()
+            for area in (from_area, into_area)
+            if area.flags.is_in_hand and isinstance(area.GetOwner(), Player)
+        }
+        for player in hand_owners:
+            identity = player.GetIdentity()
+            for face in identity.GetPlacedCardArea().GetAll():
+                face.card.can_state.is_like_in_hand = None
+
         if from_area.flags.is_in_play and not into_area.flags.is_in_play:
             self.RevertControl()
 

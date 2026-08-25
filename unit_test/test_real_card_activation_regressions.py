@@ -266,6 +266,116 @@ class RealCardActivationRegressionTests(unittest.TestCase):
         self.assertIs(haymaker.card.area, player.discard_pile)
         self.assertEqual(rhino.health, initial_rhino_health - 3)
 
+    def test_photographic_reflexes_refreshes_cached_tucked_event_playability(self):
+        world, player, echo = self.MakeWorld(
+            hero_name="Echo",
+            identity_card_id="60037a,60037b",
+        )
+        army_of_one = CardFactory.GenerateCard(
+            "60048",
+            echo.GetPlacedCardArea(),
+            world,
+            ui_render=False,
+        ).face
+        other_tucked_event = CardFactory.GenerateCard(
+            "01087",
+            echo.GetPlacedCardArea(),
+            world,
+            ui_render=False,
+        ).face
+        CardFactory.GenerateCard(
+            "60039",
+            player.allies,
+            world,
+            ui_render=False,
+        )
+        photographic_reflexes = CardFactory.GenerateCard(
+            "60040a",
+            player.discard_pile,
+            world,
+            ui_render=False,
+        ).face
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+        engine_game_patch = patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        )
+        engine_game_patch.start()
+        self.addCleanup(engine_game_patch.stop)
+
+        # This is the stale state from the reported quicksave: Army of One was
+        # inspected before Photographic Reflexes entered Echo's hand.
+        self.assertFalse(army_of_one.card.IsLikeInHand())
+        self.assertFalse(army_of_one.card.can_state.is_like_in_hand)
+
+        self.assertTrue(photographic_reflexes.card.MoveToArea(
+            player.hand_cards,
+            GameRule(echo),
+        ))
+        self.assertIsNone(army_of_one.card.can_state.is_like_in_hand)
+        self.assertTrue(army_of_one.card.IsLikeInHand())
+        self.assertTrue(other_tucked_event.card.IsLikeInHand())
+
+        alter_ego = echo.GetAlterEgoFace()
+        self.assertTrue(echo.ChangeToFace(alter_ego, GameRule(echo)))
+        self.assertIsNone(army_of_one.card.can_state.is_like_in_hand)
+        self.assertFalse(army_of_one.card.IsLikeInHand())
+        with patch.object(
+            player,
+            "ChoiceAndSpellEffect",
+            return_value=(None, False),
+        ):
+            self.assertTrue(alter_ego.ChangeToFace(echo, GameRule(alter_ego)))
+        self.assertIsNone(army_of_one.card.can_state.is_like_in_hand)
+        self.assertTrue(army_of_one.card.IsLikeInHand())
+
+        self.assertTrue(echo.card.Exhaust(GameRule(echo)))
+        play_effect = next(
+            candidate for candidate in army_of_one.effect.global_effects
+            if candidate.ability.is_play
+        )
+        turn_message = Message.WhenPlayerInTurn(player, 1)
+        available = EventManager.FilterAvailableEffects(
+            turn_message,
+            [play_effect],
+            player,
+            world,
+            None,
+        )
+
+        self.assertEqual(available, [play_effect])
+        self.assertEqual(
+            play_effect.checker.cost_for_different_target.GetCost(None).val,
+            0,
+        )
+
+        def resolve_optional(effects, message, priority, forced=False):
+            self.assertIsInstance(message, Message.WhenPlayerWouldPlayCard)
+            spend_effect = effects[0]
+            self.assertTrue(player.ResolveEffect(spend_effect, message))
+            return spend_effect, False
+
+        with patch.object(
+            player,
+            "ChoiceAndSpellEffect",
+            side_effect=resolve_optional,
+        ), patch.object(
+            player,
+            "AskChooseFace",
+            return_value=photographic_reflexes,
+        ):
+            self.assertTrue(player.ResolveEffect(play_effect, turn_message))
+
+        self.assertTrue(echo.card.IsReady())
+        self.assertIs(photographic_reflexes.card.area, player.discard_pile)
+        self.assertIs(army_of_one.card.area, player.discard_pile)
+        self.assertIsNone(other_tucked_event.card.can_state.is_like_in_hand)
+        self.assertFalse(other_tucked_event.card.IsLikeInHand())
+
     def test_failed_play_initiation_clears_declared_source_area(self):
         world, player, _ = self.MakeWorld()
         haymaker = CardFactory.GenerateCard(
