@@ -1,0 +1,84 @@
+.proxy-setup {
+    max-width: 92rem;
+}
+
+.eyebrow {
+    color: #e8bd62 !important;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+}
+
+.oop-notice {
+    margin-bottom: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(231, 176, 79, 0.72);
+    border-left: 0.38rem solid #e8b84a;
+    border-radius: 0.75rem;
+    background:
+        linear-gradient(135deg, rgba(76, 49, 20, 0.94), rgba(32, 25, 24, 0.94));
+    box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.36);
+}
+
+.oop-notice strong {
+    color: #ffe39a;
+    font-size: 1.05rem;
+}
+
+.oop-notice p {
+    margin: 0.35rem 0 0;
+    color: #e3d6bc;
+    line-height: 1.45;
+}
+
+.proxy-kind-nav button {
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.proxy-explanation,
+.print-note {
+    margin: 0.25rem 0 1rem;
+    color: #aebbc6;
+    line-height: 1.45;
+}
+
+.proxy-download-panel {
+    border-color: rgba(232, 184, 74, 0.52);
+}
+
+.proxy-download-panel .play-button {
+    border-color: #edc461;
+    background: linear-gradient(0deg, #9d6819 0%, #d49a2c 100%);
+    box-shadow: 0 0.55rem 1.2rem rgba(144, 91, 18, 0.4);
+}
+
+.proxy-download-panel .play-button:disabled {
+    border-color: #606b75;
+    background: #3f4a53;
+    box-shadow: none;
+}
+
+.print-note {
+    margin: 0;
+    text-align: center;
+}
+
+.result-message {
+    min-height: 1.25em;
+    margin: 0;
+    color: #91e6b9;
+    line-height: 1.45;
+    text-align: center;
+}
+
+@media (max-width: 42rem) {
+    .proxy-kind-nav {
+        width: 100%;
+    }
+
+    .proxy-kind-nav .mode-link {
+        flex: 1;
+    }
+}

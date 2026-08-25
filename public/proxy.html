@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Sets</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
+    <link rel="stylesheet" href="/public/css/solo.css">
+    <link rel="stylesheet" href="/public/css/proxy.css">
+</head>
+<body>
+    <main class="solo-setup proxy-setup">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">RONIN WORKSHOP</p>
+                <h1>Proxy Sets</h1>
+                <p>Create print-ready A4 sheets with poker-size cards and cut lines.</p>
+            </div>
+            <a class="back-link" href="/main">← Main menu</a>
+        </header>
+
+        <aside class="oop-notice" aria-label="Out of print notice">
+            <strong>For officially out-of-print products</strong>
+            <p>
+                Use this tool when content is no longer available through normal retail
+                channels. Please support Fantasy Flight Games and your local game store
+                whenever an official copy is available.
+            </p>
+        </aside>
+
+        <nav class="mode-nav proxy-kind-nav" aria-label="Proxy content type">
+            <button id="hero-kind" class="mode-link active" type="button" aria-pressed="true">
+                Hero deck
+            </button>
+            <button id="scenario-kind" class="mode-link" type="button" aria-pressed="false">
+                Scenario
+            </button>
+        </nav>
+
+        <section id="hero-section" class="selection-section" aria-labelledby="hero-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">1</span>
+                    <h2 id="hero-heading">Hero deck</h2>
+                </div>
+                <span id="hero-selection" class="current-selection">Not selected</span>
+            </div>
+            <p class="proxy-explanation">
+                Includes the identity, signature cards, selected player deck,
+                obligation, nemesis set, and setup cards.
+            </p>
+            <p id="hero-status" class="load-status">Loading hero decks…</p>
+            <div id="hero-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="scenario-section" class="selection-section" aria-labelledby="scenario-heading" hidden>
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">1</span>
+                    <h2 id="scenario-heading">Scenario</h2>
+                </div>
+                <span id="scenario-selection" class="current-selection">Not selected</span>
+            </div>
+            <p class="proxy-explanation">
+                Includes available Standard and Expert villain stages, required encounter
+                sets, the recommended modular set, and every alternate card face.
+            </p>
+            <p id="scenario-status" class="load-status">Loading scenarios…</p>
+            <div id="scenario-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="underling-section" class="selection-section underling-section" aria-labelledby="underling-heading" hidden>
+            <div class="section-heading">
+                <div>
+                    <span class="step-number">2</span>
+                    <h2 id="underling-heading">Underling</h2>
+                </div>
+                <span id="underling-selection" class="current-selection">Not selected</span>
+            </div>
+            <p class="load-status">Choose the villain to include in this scenario set.</p>
+            <div id="underling-list" class="choice-grid" aria-live="polite"></div>
+        </section>
+
+        <footer class="play-panel proxy-download-panel">
+            <p class="print-note">
+                A4 · 300 DPI · 63.5 × 88.9 mm cards · 3 × 3 cards per page.<br>
+                Double-sided cards are printed as separate faces for back-to-back sleeving.
+            </p>
+            <p id="error-message" class="error-message" role="alert"></p>
+            <button id="download-button" class="play-button" type="button" disabled>
+                Download PDF
+            </button>
+            <p id="result-message" class="result-message" aria-live="polite"></p>
+        </footer>
+    </main>
+
+    <script type="module" src="/public/js/proxy.js"></script>
+</body>
+</html>

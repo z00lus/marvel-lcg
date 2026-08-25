@@ -26,6 +26,7 @@
     },
     "2. The Green Goblin": {
         "name": "gob",
+        "out_of_print": true,
         "scenarios": [
             "risky_business",
             "mutagen_formula"
@@ -41,6 +42,7 @@
     },
     "3. Captain America": {
         "name": "cap",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "captain_america"
@@ -50,6 +52,7 @@
     },
     "4. The Rise of Red Skull": {
         "name": "trors",
+        "out_of_print": true,
         "scenarios": [
             "crossbones",
             "absorbing_man",
@@ -80,6 +83,7 @@
     },
     "6. Thor": {
         "name": "thor",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "thor"
@@ -89,6 +93,7 @@
     },
     "7. The Wrecking Crew": {
         "name": "twc",
+        "out_of_print": true,
         "scenarios": [
             "the_wrecking_crew"
         ],
@@ -98,6 +103,7 @@
     },
     "8. Black Widow": {
         "name": "bkw",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "black_widow"
@@ -107,6 +113,7 @@
     },
     "9. Doctor Strange": {
         "name": "drs",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "doctor_strange"
@@ -116,6 +123,7 @@
     },
     "10. Hulk": {
         "name": "hlk",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "hulk"
@@ -147,6 +155,7 @@
     },
     "13. Wasp": {
         "name": "wsp",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "wasp"
@@ -156,6 +165,7 @@
     },
     "14. Quicksilver": {
         "name": "qsv",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "quicksilver"
@@ -165,6 +175,7 @@
     },
     "15. Scarlet Witch": {
         "name": "scw",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "scarlet_witch"
@@ -174,6 +185,7 @@
     },
     "16. Galaxy's Most Wanted": {
         "name": "gmw",
+        "out_of_print": true,
         "scenarios": [
             "brotherhood_of_badoon",
             "infiltrate_the_museum",
@@ -199,6 +211,7 @@
     },
     "17. Star-Lord": {
         "name": "stld",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "star_lord"
@@ -208,6 +221,7 @@
     },
     "18. Gamora": {
         "name": "gam",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "gamora"
@@ -217,6 +231,7 @@
     },
     "19. Drax": {
         "name": "drax",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "drax"
@@ -235,6 +250,7 @@
     },
     "21. The Mad Titan's Shadow": {
         "name": "mts",
+        "out_of_print": true,
         "scenarios": [
             "ebony_maw",
             "the_tower_defense",
@@ -259,6 +275,7 @@
     },
     "22. Nebula": {
         "name": "nebu",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "nebula"
@@ -268,6 +285,7 @@
     },
     "23. War Machine": {
         "name": "warm",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "war_machine"
@@ -277,6 +295,7 @@
     },
     "24. The Hood": {
         "name": "hood",
+        "out_of_print": true,
         "scenarios": [
             "the_hood"
         ],
@@ -298,6 +317,7 @@
     },
     "25. Valkyrie": {
         "name": "valk",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "valkyrie"
@@ -307,6 +327,7 @@
     },
     "26. Vision": {
         "name": "vision",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "vision"
@@ -316,6 +337,7 @@
     },
     "27. Sinister Motives": {
         "name": "sm",
+        "out_of_print": true,
         "scenarios": [
             "sandman",
             "venom",
@@ -342,6 +364,7 @@
     },
     "28. Nova": {
         "name": "nova",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "nova"
@@ -353,6 +376,7 @@
     },
     "29. Ironheart": {
         "name": "ironheart",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "ironheart"
@@ -364,6 +388,7 @@
     },
     "30. Spider-Ham": {
         "name": "spiderham",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "spider_ham"
@@ -375,6 +400,7 @@
     },
     "31. SP//dr": {
         "name": "spdr",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "sp_dr"
@@ -386,6 +412,7 @@
     },
     "32. Mutant Genesis": {
         "name": "mut_gen",
+        "out_of_print": true,
         "scenarios": [
             "sabretooth",
             "project_wideawake",
@@ -409,6 +436,7 @@
     },
     "33. Cyclops": {
         "name": "cyclops",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "cyclops"
@@ -418,6 +446,7 @@
     },
     "34. Phoenix": {
         "name": "phoenix",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "phoenix"
@@ -427,6 +456,7 @@
     },
     "35. Wolverine": {
         "name": "wolv",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "wolverine"
@@ -438,6 +468,7 @@
     },
     "36. Storm": {
         "name": "storm",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "storm"
@@ -449,6 +480,7 @@
     },
     "37. Gambit": {
         "name": "gambit",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "gambit"
@@ -460,6 +492,7 @@
     },
     "38. Rogue": {
         "name": "rogue",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "rogue"
@@ -471,6 +504,7 @@
     },
     "39. Mojo Mania": {
         "name": "mojo",
+        "out_of_print": true,
         "scenarios": [
             "magog",
             "spiral",
@@ -490,6 +524,7 @@
     },
     "40. NeXt Evolution": {
         "name": "next_evol",
+        "out_of_print": true,
         "scenarios": [
             "morlock_siege",
             "on_the_run",
@@ -517,6 +552,7 @@
     },
     "41. Psylocke": {
         "name": "psylocke",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "psylocke"
@@ -535,6 +571,7 @@
     },
     "43. X-23": {
         "name": "x23",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "x_23"
@@ -544,6 +581,7 @@
     },
     "44. Deadpool": {
         "name": "deadpool",
+        "out_of_print": true,
         "scenarios": [],
         "heroes": [
             "deadpool"
@@ -844,5 +882,5 @@
         "heroes": [],
         "encounters": []
     },
-    "checksum": "fc79fde880677a08885456ccb7db3a2c81f9104f3da2d423b6323c7b2b338708"
+    "checksum": "932caf9f9d28792b38ac1851e6a8d8dec6f0be89a2f5f7b7773e818af39af90f"
 }

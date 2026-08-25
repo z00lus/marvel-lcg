@@ -19,6 +19,7 @@
 /deck/user-decks/
 /deck/campaign-decks/
 /replays/
+/proxy-output/
 /tasks/
 /rules/
 /.coverage
