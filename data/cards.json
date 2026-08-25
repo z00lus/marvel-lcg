@@ -64164,5 +64164,370 @@
             "text": "<b>When Revealed</b>: Discard cards from the encounter deck until a TRACKSUIT minion is discarded. Tuck that minion beneath this scheme.\n<b>Forced Response</b>: After a player reveals a TRACKSUIT minion from the encounter deck, that player reveals 1 minion tucked beneath this scheme."
         }
     ],
-    "checksum": "adaac5610944f6edbbb4026004023af76f681bbf3cd06beebb70b53165b196ee"
+    "jj": [
+        {
+            "card_id": "61001a",
+            "type": "Hero",
+            "name": "* Jessica Jones",
+            "subtitle": "",
+            "desc": {
+                "HP": "11",
+                "ATK": "2*",
+                "THW": "3*",
+                "DEF": "1*",
+                "HS": "5"
+            },
+            "traits": [
+                "DEFENDER"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "[star] <i>Gather Evidence</i> \u2014 <b>Response</b>: After you use a basic power, place 1 evidence counter on Alias Investigations."
+        },
+        {
+            "card_id": "61001b",
+            "type": "AlterEgo",
+            "name": "* Jessica Jones",
+            "subtitle": "",
+            "desc": {
+                "HP": "11",
+                "REC": "4",
+                "HS": "6"
+            },
+            "traits": [
+                "CIVILIAN"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<i>Incognito Mode</i> \u2014 <b>Action</b>: Change to hero form. You cannot change back to alter-ego form this phase.\n<b>Setup</b>: Put the Alias Investigations support into play."
+        },
+        {
+            "card_id": "61002",
+            "type": "Support",
+            "name": "Alias Investigations",
+            "subtitle": "",
+            "desc": {
+                "RES": "B",
+                "Class": "Hero",
+                "Permanent": "1",
+                "MaxPerDeck": "1"
+            },
+            "traits": [
+                "LOCATION"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "Permanent.\n<b>Response</b>: After a side scheme is defeated, exhaust this card \u2192 place 2 evidence counters here. Then, you may remove evidence counters from here equal to the villain's remaining hit points to defeat the villain's current stage."
+        },
+        {
+            "card_id": "61003",
+            "type": "Ally",
+            "name": "* Luke Cage",
+            "subtitle": "",
+            "desc": {
+                "Cost": "3",
+                "HP": "3",
+                "ATK": "2**",
+                "THW": "2**",
+                "RES": "W",
+                "Class": "Hero",
+                "Toughness": "1",
+                "MaxPerDeck": "1"
+            },
+            "traits": [
+                "DEFENDER"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "Toughness.\n<b>Action</b>: Exhaust Luke Cage and deal 1 damage to him \u2192 give him a tough status card."
+        },
+        {
+            "card_id": "61004",
+            "type": "Event",
+            "name": "\"Big Mistake\"",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ATTACK"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Hero Action</b> <i>(attack)</i>: Deal 3 damage to an enemy. You may remove 1 evidence counter from Alias Investigations to deal 2 additional damage and for this attack to gain either overkill or piercing."
+        },
+        {
+            "card_id": "61005",
+            "type": "Event",
+            "name": "Breakthrough",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones",
+            "text": "<b>Response</b>: After an evidence counter is placed on Alias Investigations, ready your identity. Shuffle this card into your deck."
+        },
+        {
+            "card_id": "61006",
+            "type": "Event",
+            "name": "Snooping Around",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "THWART"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Alter-Ego Action</b> <i>(thwart)</i>: Remove 4 threat from a scheme and place 2 evidence counters on Alias Investigations. Discard the top card of the encounter deck. If that card is a minion or side scheme, reveal it."
+        },
+        {
+            "card_id": "61007",
+            "type": "PlayerSideScheme",
+            "name": "Piecing It All Together",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "StartingThreat": "6",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones",
+            "text": "This scheme does not count against the player side scheme limit.\n<b>When Defeated</b>: The defeating player draws 3 cards."
+        },
+        {
+            "card_id": "61008",
+            "type": "Support",
+            "name": "Calling in Favors",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones",
+            "text": "<b>Alter-Ego Action</b>: Remove 2 evidence counters from Alias Investigations and exhaust Calling in Favors \u2192 search your deck for an ally and play it as if it were in your hand, reducing its resource cost by 2. <i>(Shuffle.)</i>"
+        },
+        {
+            "card_id": "61009",
+            "type": "Upgrade",
+            "name": "4K Digital Camcorder",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Alter-Ego Action</b>: Exhaust this card and choose a non-[[ELITE]] minion. Remove X evidence counters from Alias Investigations, where X is equal to 2 less than that minion's remaining hit points \u2192 discard that minion."
+        },
+        {
+            "card_id": "61010",
+            "type": "Upgrade",
+            "name": "Circumstantial Evidence",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Response</b>: After an enemy is defeated, exhaust Circumstantial Evidence \u2192 place 1 evidence counter on Alias Investigations."
+        },
+        {
+            "card_id": "61011",
+            "type": "Upgrade",
+            "name": "Leather Jacket",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "ITEM"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "Jessica Jones gets +2 DEF.\n<b>Response</b>: After you defend, place 1 evidence counter on Alias Investigations."
+        },
+        {
+            "card_id": "61012",
+            "type": "Upgrade",
+            "name": "\"Now I'm Ticked Off!\"",
+            "subtitle": "",
+            "desc": {
+                "Cost": "2",
+                "RES": "R",
+                "Class": "Hero"
+            },
+            "traits": [
+                "CONDITION"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Forced Response</b> <i>(attack)</i>: After the villain activates against a player, if you are in alter-ego form, change to hero form. Deal 5 damage to the villain and each minion engaged with that player. Discard this card."
+        },
+        {
+            "card_id": "61013",
+            "type": "Upgrade",
+            "name": "Reluctant Flier",
+            "subtitle": "",
+            "desc": {
+                "Cost": "1",
+                "RES": "Y",
+                "Class": "Hero"
+            },
+            "traits": [
+                "AERIAL",
+                "PREPARATION"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Hero Interrupt</b> <i>(defense)</i>: When you would take at least 3 damage from an attack, discard this card \u2192 prevent all of that attack's damage. Take 1 damage."
+        },
+        {
+            "card_id": "61014",
+            "type": "Upgrade",
+            "name": "Stakeout",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "Class": "Hero"
+            },
+            "traits": [
+                "TACTIC"
+            ],
+            "set_name": "Jessica Jones",
+            "text": "<b>Action</b>: If this card is in your play area, attach it to a non-permanent encounter side scheme.\n<b>Interrupt</b>: When a character thwarts attached scheme, that thwart removes 2 additional threat. If that thwart defeats attached scheme, place 2 evidence counters on Alias Investigations."
+        },
+        {
+            "card_id": "61028",
+            "type": "PlayerSideScheme",
+            "name": "Second Chance",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "B",
+                "StartingThreat": "3*",
+                "Class": "Basic",
+                "Victory": "0"
+            },
+            "traits": [],
+            "set_name": "",
+            "text": "Victory 0.\n<b>When Defeated</b>: Each player may shuffle all of their identity-specific cards from their discard pile into their deck."
+        },
+        {
+            "card_id": "61030",
+            "type": "Obligation",
+            "name": "Work-Life Balance",
+            "subtitle": "",
+            "desc": {
+                "Boost": "2",
+                "GiveTo": "Jessica Jones"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones",
+            "text": "<b><i>Give to the Jessica Jones player.</i></b>\nAs an additional cost to change forms, discard 1 card from your hand.\n<b>Alter-Ego Action</b>: Choose:\n\u2022 Remove an ally you control from the game \u2192 remove this card from the game.\n\u2022 Confuse your identity \u2192 discard this card."
+        },
+        {
+            "card_id": "61031",
+            "type": "Minion",
+            "name": "* Purple Man",
+            "subtitle": "",
+            "desc": {
+                "HP": "6",
+                "ATK": "0*",
+                "SCH": "0*",
+                "Boost": "3",
+                "Nemesis": "Jessica Jones"
+            },
+            "traits": [
+                "PSIONIC"
+            ],
+            "set_name": "Jessica Jones Nemesis",
+            "text": "[star] Purple Man's SCH is equal to the highest SCH or THW among characters in play. His ATK is equal to the highest ATK among characters in play."
+        },
+        {
+            "card_id": "61032",
+            "type": "SideScheme",
+            "name": "Indomitable Will",
+            "subtitle": "",
+            "desc": {
+                "StartingThreat": "2",
+                "Hinder": "3*",
+                "Boost": "1"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones Nemesis",
+            "text": "Hinder 3[per_hero].\n<b>When Revealed</b>: Place 2 pheromone counters on each Suggestion obligation in play.\n<b>Forced Response</b>: After a Suggestion obligation enters play, place 2 <i>(additional)</i> pheromone counters on it."
+        },
+        {
+            "card_id": "61033a",
+            "type": "Obligation",
+            "name": "Suggestion ([energy])",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,pheromone",
+                "Boost": "2",
+                "GiveTo": "Jessica Jones"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones Nemesis",
+            "text": "Uses (3 pheromone counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 pheromone counter from it \u2192 choose to either play a card that has a printed [energy] resource icon <i>(paying its costs)</i> or add 2 threat to the main scheme."
+        },
+        {
+            "card_id": "61033b",
+            "type": "Obligation",
+            "name": "Suggestion ([mental])",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,pheromone",
+                "Boost": "2",
+                "GiveTo": "Jessica Jones"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones Nemesis",
+            "text": "Uses (3 pheromone counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 pheromone counter from it \u2192 choose to either play a card that has a printed [mental] resource icon <i>(paying its costs)</i> or add 2 threat to the main scheme."
+        },
+        {
+            "card_id": "61033c",
+            "type": "Obligation",
+            "name": "Suggestion ([physical])",
+            "subtitle": "",
+            "desc": {
+                "Uses": "3,pheromone",
+                "Boost": "2",
+                "GiveTo": "Jessica Jones"
+            },
+            "traits": [],
+            "set_name": "Jessica Jones Nemesis",
+            "text": "Uses (3 pheromone counters).\n<b>Forced Action</b>: Exhaust this card and remove 1 pheromone counter from it \u2192 choose to either play a card that has a printed [physical] resource icon <i>(paying its costs)</i> or add 2 threat to the main scheme."
+        },
+        {
+            "card_id": "61039",
+            "type": "PlayerSideScheme",
+            "name": "Lay Low",
+            "subtitle": "",
+            "desc": {
+                "Cost": "0",
+                "RES": "Y",
+                "StartingThreat": "3*",
+                "Class": "Protection",
+                "Victory": "0"
+            },
+            "traits": [],
+            "set_name": "",
+            "text": "Victory 0.\n<b>When Defeated</b>: Each player may change to alter-ego form. Heal damage from each alter-ego equal to its REC."
+        }
+    ],
+    "checksum": "857fb74defe8ad22cb19f2d0b83e5bd194b85017c4c8f4b9fd01fa15ed74f4c8"
 }

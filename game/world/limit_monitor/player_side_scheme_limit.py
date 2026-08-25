@@ -9,6 +9,11 @@ class PlayerSideSchemeLimit:
     def __init__(self, world: 'World') -> None:
         self.world = world
 
+    @staticmethod
+    def CountsTowardLimit(face: 'CardFace') -> bool:
+        return not face.paper.IsFromSet("Next Evolution Campaign") and \
+            face.paper.card_id != "61007"
+
     def CheckLimit(self) -> bool:
         from game.operate.faces import Faces
         from game.effect.rule import GameRule
@@ -32,7 +37,7 @@ class PlayerSideSchemeLimit:
             faces = [
                 x for x in world.area_schemes_side.Get(True)
                 if PlayerSideScheme.IsType(x) and
-                not x.paper.IsFromSet("Next Evolution Campaign")
+                PlayerSideSchemeLimit.CountsTowardLimit(x)
             ]
             exceed_num = len(faces) - limit_num
 
