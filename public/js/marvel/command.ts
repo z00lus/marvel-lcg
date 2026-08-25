@@ -37,6 +37,22 @@ export class Command {
         return path
     }
 
+    static async saveGameRatings(ratings: {
+        hero_rating?: number|null,
+        scenario_rating?: number|null,
+    }): Promise<{hero_rating: number|null, scenario_rating: number|null}> {
+        const response = await fetch('/game_ratings/save', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(ratings),
+        })
+        const data = await response.json()
+        if( !response.ok ) {
+            throw new Error(data.error || `Rating save failed: ${response.status}`)
+        }
+        return data
+    }
+
     static async uploadSave(save_type: "Bug"|"Crash"|"Share", comment: string="") {
         if( Command.newWindow && !Command.newWindow.closed ) {
             Command.newWindow.close()

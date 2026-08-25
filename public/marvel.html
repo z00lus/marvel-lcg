@@ -261,6 +261,18 @@
             <div id="game-over-message">
                 <div id="game-over-text" class="message-text"></div>
                 <div id="game-over-text-2"></div>
+                <section id="game-over-ratings" aria-label="Optional game ratings" hidden>
+                    <div class="game-over-rating-heading">How was this game?</div>
+                    <div class="game-over-rating-row">
+                        <span>Scenario</span>
+                        <div class="game-over-rating-stars" data-rating-kind="scenario" role="group" aria-label="Scenario rating"></div>
+                    </div>
+                    <div class="game-over-rating-row">
+                        <span>Hero experience</span>
+                        <div class="game-over-rating-stars" data-rating-kind="hero" role="group" aria-label="Hero experience rating"></div>
+                    </div>
+                    <div id="game-over-rating-status">Optional · 1–5 stars</div>
+                </section>
                 <div id="session-statistics-container">
                     <table id="session-statistics"></table>
                 </div>

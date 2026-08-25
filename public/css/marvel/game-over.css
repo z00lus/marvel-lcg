@@ -88,6 +88,95 @@
     font-style: italic;
 }
 
+#game-over-ratings {
+    width: min(32rem, calc(100vw - 12rem));
+    margin-top: 0.8rem;
+    padding: 0.55rem 0.9rem;
+    color: #dce8f2;
+    border: 1px solid rgba(143, 190, 224, 0.35);
+    border-radius: 0.6rem;
+    background: rgba(7, 14, 23, 0.72);
+    box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.3);
+}
+
+.game-over-rating-heading {
+    margin-bottom: 0.25rem;
+    color: #f4d37b;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.game-over-rating-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    align-items: center;
+    min-height: 1.9rem;
+    gap: 0.5rem;
+}
+
+.game-over-rating-row > span {
+    color: #b9c9d6;
+    font-size: 0.9rem;
+}
+
+.game-over-rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+.game-over-rating-stars button {
+    min-width: 2rem;
+    padding: 0;
+    border: 0;
+    color: #788693;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.65rem;
+    line-height: 1;
+    text-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.7);
+}
+
+.game-over-rating-stars button.selected {
+    color: #f2c94c;
+}
+
+.game-over-rating-stars button:hover,
+.game-over-rating-stars button:focus-visible {
+    color: #ffe29a;
+    outline: none;
+    transform: scale(1.12);
+}
+
+#game-over-rating-status {
+    min-height: 1rem;
+    margin-top: 0.2rem;
+    color: #8fa6b8;
+    font-size: 0.72rem;
+    text-align: center;
+}
+
+@media (max-width: 700px), (max-height: 600px) {
+    #game-over-ratings {
+        width: min(27rem, calc(100vw - 11rem));
+        margin-top: 0.4rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    .game-over-rating-row {
+        grid-template-columns: 7.5rem 1fr;
+        min-height: 1.6rem;
+    }
+
+    .game-over-rating-stars button {
+        min-width: 1.7rem;
+        font-size: 1.4rem;
+    }
+}
+
 @keyframes overlay-move-once {
     0% {
         transform: translateX(100%);

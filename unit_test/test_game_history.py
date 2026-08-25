@@ -92,7 +92,7 @@ class GameHistoryTests(unittest.TestCase):
         with history._connect() as connection:
             self.assertEqual(
                 connection.execute('PRAGMA user_version').fetchone()[0],
-                3,
+                4,
             )
             columns = {
                 row['name'] for row in connection.execute(
@@ -103,6 +103,8 @@ class GameHistoryTests(unittest.TestCase):
             self.assertIn('replay_analysis_error', columns)
             self.assertIn('source', columns)
             self.assertIn('notes', columns)
+            self.assertIn('hero_rating', columns)
+            self.assertIn('scenario_rating', columns)
             self.assertEqual(
                 connection.execute('SELECT COUNT(*) FROM games').fetchone()[0],
                 1,
@@ -272,6 +274,99 @@ class GameHistoryTests(unittest.TestCase):
         self.assertEqual(rhino['games'], 2)
         self.assertEqual(rhino['win_rate'], 50.0)
         self.assertEqual(len(dashboard['matchups']), 2)
+
+    def test_optional_game_ratings_are_validated_saved_and_aggregated(self):
+        self.record(1, result='win')
+        self.record(2, result='loss')
+
+        first = self.history.SaveGameRatings('test:1', {
+            'hero_rating': 5,
+            'scenario_rating': 4,
+        })
+        second = self.history.SaveGameRatings('test:2', {
+            'hero_rating': 3,
+            'scenario_rating': 5,
+        })
+
+        self.assertEqual(first['hero_rating'], 5)
+        self.assertEqual(first['scenario_rating'], 4)
+        self.assertEqual(second['hero_rating'], 3)
+        dashboard = self.history.GetDashboard()
+        self.assertEqual(dashboard['heroes'][0]['average_rating'], 4.0)
+        self.assertEqual(dashboard['heroes'][0]['rating_count'], 2)
+        self.assertEqual(dashboard['villains'][0]['average_rating'], 4.5)
+        self.assertEqual(dashboard['villains'][0]['rating_count'], 2)
+        self.assertEqual(dashboard['recent_games'][0]['hero_rating'], 3)
+        self.assertEqual(dashboard['recent_games'][0]['scenario_rating'], 5)
+
+        with self.assertRaisesRegex(ValueError, '1 to 5'):
+            self.history.SaveGameRatings('test:1', {'hero_rating': 6})
+        with self.assertRaisesRegex(ValueError, 'Choose'):
+            self.history.SaveGameRatings('test:1', {})
+
+    def test_rating_fields_can_be_updated_independently(self):
+        self.record(1)
+        self.history.SaveGameRatings('test:1', {'scenario_rating': 4})
+        updated = self.history.SaveGameRatings('test:1', {'hero_rating': 2})
+
+        self.assertEqual(updated['scenario_rating'], 4)
+        self.assertEqual(updated['hero_rating'], 2)
+
+    def test_current_completed_game_is_recorded_before_its_rating(self):
+        metadata = {'statistics_eligible': True, 'game_id': 'current-game'}
+        scene = SimpleNamespace(
+            GetMetadataBool=lambda key: bool(metadata.get(key, False)),
+            GetMetadataStr=lambda key: str(metadata.get(key, '')),
+            GetMetadataInt=lambda key: 0,
+            SetMetadataStr=lambda key, value: metadata.__setitem__(key, value),
+            is_puzzle=False,
+            players=[SimpleNamespace(
+                hero=['01001a,01001b'],
+                name='Spider-Man',
+                metadata={},
+            )],
+            campaign=SimpleNamespace(
+                villain=['01094'],
+                schemes=[],
+                name='Rhino',
+                expert=False,
+                campaign_id='',
+            ),
+            rules=['v18_all'],
+            version='0.6.1.0',
+            seed=123,
+            playtime=0,
+            path='',
+        )
+        world = SimpleNamespace(
+            is_game_over=True,
+            game_over=SimpleNamespace(
+                is_game_exit_or_undo=False,
+                players_won=True,
+                reason='Players Won',
+            ),
+            round_id=4,
+            object_manager=SimpleNamespace(card_dict={}),
+        )
+        game = SimpleNamespace(
+            scene=scene,
+            world=world,
+            session=SimpleNamespace(
+                scene=scene,
+                statistics=SimpleNamespace(dic={}),
+                start_time=0,
+                undo_count=0,
+            ),
+            controller_manager=SimpleNamespace(
+                replay=SimpleNamespace(is_replay=False),
+            ),
+        )
+
+        saved = self.history.SaveCurrentGameRatings(game, {'scenario_rating': 5})
+
+        self.assertTrue(saved['saved'])
+        self.assertEqual(saved['scenario_rating'], 5)
+        self.assertEqual(self.history.GetDashboard()['overview']['wins'], 1)
 
     def test_game_and_card_statistics_are_inserted_only_once(self):
         record = {

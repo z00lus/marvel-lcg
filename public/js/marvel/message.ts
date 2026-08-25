@@ -16,6 +16,67 @@ export class Message {
     private static saveReplayButton: HTMLButtonElement
     private static replaySavePromise: Promise<string>|null = null
     private static autoSaveAttempted = false
+    private static ratingPanel: HTMLElement
+    private static ratingStatus: HTMLElement
+    private static ratings: {hero: number|null, scenario: number|null} = {
+        hero: null,
+        scenario: null,
+    }
+    private static ratingSavePromise: Promise<void> = Promise.resolve()
+
+    private static renderRating(kind: 'hero'|'scenario') {
+        const stars = Message.ratingPanel.querySelectorAll<HTMLButtonElement>(
+            `[data-rating-kind="${kind}"] button`
+        )
+        stars.forEach((button) => {
+            const selected = Number(button.dataset.value) <= (Message.ratings[kind] || 0)
+            button.classList.toggle('selected', selected)
+            button.textContent = selected ? '★' : '☆'
+            button.setAttribute('aria-pressed', String(selected))
+        })
+    }
+
+    private static selectRating(kind: 'hero'|'scenario', value: number) {
+        const previous = Message.ratings[kind]
+        Message.ratings[kind] = value
+        Message.renderRating(kind)
+        Message.ratingStatus.textContent = 'Saving…'
+
+        Message.ratingSavePromise = Message.ratingSavePromise
+            .catch(() => {})
+            .then(async () => {
+                try {
+                    await Command.saveGameRatings({[`${kind}_rating`]: value})
+                    Message.ratingStatus.textContent = 'Saved · ratings can be changed anytime on this screen'
+                } catch( error ) {
+                    if( Message.ratings[kind] === value ) {
+                        Message.ratings[kind] = previous
+                        Message.renderRating(kind)
+                    }
+                    Message.ratingStatus.textContent = 'Could not save the rating'
+                    console.error(error)
+                }
+            })
+    }
+
+    private static initRatings() {
+        Message.ratingPanel = document.getElementById('game-over-ratings')!
+        Message.ratingStatus = document.getElementById('game-over-rating-status')!
+        const groups = Message.ratingPanel.querySelectorAll<HTMLElement>('.game-over-rating-stars')
+        groups.forEach((group) => {
+            const kind = group.dataset.ratingKind as 'hero'|'scenario'
+            for( let value = 1; value <= 5; value++ ) {
+                const button = document.createElement('button')
+                button.type = 'button'
+                button.dataset.value = String(value)
+                button.textContent = '☆'
+                button.setAttribute('aria-label', `Rate ${kind} ${value} out of 5`)
+                button.setAttribute('aria-pressed', 'false')
+                button.addEventListener('click', () => Message.selectRating(kind, value))
+                group.appendChild(button)
+            }
+        })
+    }
 
     private static async saveReplay(automatic: boolean) {
         if( Message.replaySavePromise ) {
@@ -61,6 +122,7 @@ export class Message {
         Message.end_messageElement = document.getElementById('game-over-text')!;
         Message.end_messageElementText = document.getElementById('game-over-text-2')!;
         const game_over_buttons = document.getElementById('game-over-buttons')!;
+        Message.initRatings()
 
         Message.saveReplayButton = document.createElement('button');
         Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
@@ -110,6 +172,11 @@ export class Message {
         Message.game_over_div.classList.remove('active');
         Message.autoSaveAttempted = false
         Message.replaySavePromise = null
+        Message.ratings = {hero: null, scenario: null}
+        Message.renderRating('hero')
+        Message.renderRating('scenario')
+        Message.ratingStatus.textContent = 'Optional · 1–5 stars'
+        Message.ratingPanel.hidden = true
     }
 
     static showGameOverMessage(text: string) {
@@ -131,6 +198,7 @@ export class Message {
             Message.saveReplayButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Save replay';
         }
         Message.end_messageElementText.textContent = text
+        Message.ratingPanel.hidden = Setting.replay_mode
         Message.autoSaveReplay()
     }
 

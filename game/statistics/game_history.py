@@ -31,7 +31,7 @@ REPLAY_FOLDERS = ConfigVariables.Folders('replay_folders', ['./replays/'])
 
 
 class GameHistory:
-    SCHEMA_VERSION = 3
+    SCHEMA_VERSION = 4
     KNOWN_RESULTS = ('win', 'loss', 'unknown', 'abandoned')
     KNOWN_SOURCES = ('digital', 'physical', 'replay_import')
 
@@ -125,7 +125,9 @@ class GameHistory:
                     replay_analysis_error TEXT NOT NULL DEFAULT '',
                     source TEXT NOT NULL DEFAULT 'digital'
                         CHECK (source IN ('digital', 'physical', 'replay_import')),
-                    notes TEXT NOT NULL DEFAULT ''
+                    notes TEXT NOT NULL DEFAULT '',
+                    hero_rating INTEGER CHECK (hero_rating BETWEEN 1 AND 5),
+                    scenario_rating INTEGER CHECK (scenario_rating BETWEEN 1 AND 5)
                 );
 
                 CREATE INDEX IF NOT EXISTS games_result_index
@@ -211,6 +213,25 @@ class GameHistory:
                 '''
             )
             connection.execute('PRAGMA user_version = 3')
+            version = 3
+
+        if version < 4:
+            columns = {
+                row['name'] for row in connection.execute(
+                    'PRAGMA table_info(games)'
+                ).fetchall()
+            }
+            if 'hero_rating' not in columns:
+                connection.execute(
+                    'ALTER TABLE games ADD COLUMN hero_rating INTEGER '
+                    'CHECK (hero_rating BETWEEN 1 AND 5)'
+                )
+            if 'scenario_rating' not in columns:
+                connection.execute(
+                    'ALTER TABLE games ADD COLUMN scenario_rating INTEGER '
+                    'CHECK (scenario_rating BETWEEN 1 AND 5)'
+                )
+            connection.execute('PRAGMA user_version = 4')
 
     @staticmethod
     def NewGameId() -> str:
@@ -430,7 +451,7 @@ class GameHistory:
             'remaining_hit_points', 'minions_in_play', 'side_schemes_in_play',
             'undo_count', 'replay_file', 'imported_from_replay',
             'replay_analysis_status', 'replay_analysis_error',
-            'source', 'notes',
+            'source', 'notes', 'hero_rating', 'scenario_rating',
         )
         values = {
             'source_key': '',
@@ -464,6 +485,8 @@ class GameHistory:
             'replay_analysis_error': '',
             'source': 'digital',
             'notes': '',
+            'hero_rating': None,
+            'scenario_rating': None,
             **record,
         }
         if not values['source_key']:
@@ -869,6 +892,72 @@ class GameHistory:
             )
         return {'owned_products': normalized}
 
+    @staticmethod
+    def _rating_value(data: Dict[str, Any], key: str) -> int|None:
+        value = data[key]
+        if value is None:
+            return None
+        if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 5:
+            raise ValueError('Ratings must be whole numbers from 1 to 5.')
+        return value
+
+    def SaveGameRatings(self, source_key: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        if not self.available:
+            raise RuntimeError('Game history is unavailable.')
+        if not isinstance(data, dict):
+            raise ValueError('Expected a game rating object.')
+
+        allowed = ('hero_rating', 'scenario_rating')
+        ratings = {
+            key: self._rating_value(data, key)
+            for key in allowed
+            if key in data
+        }
+        if not ratings:
+            raise ValueError('Choose a hero or scenario rating to save.')
+
+        with self._lock, self._connect() as connection:
+            cursor = connection.execute(
+                f'UPDATE games SET {", ".join(f"{key} = ?" for key in ratings)} '
+                "WHERE source_key = ? AND source = 'digital' "
+                "AND result IN ('win', 'loss')",
+                (*ratings.values(), source_key),
+            )
+            if not cursor.rowcount:
+                raise ValueError('The completed digital game was not found.')
+            row = connection.execute(
+                'SELECT hero_rating, scenario_rating FROM games WHERE source_key = ?',
+                (source_key,),
+            ).fetchone()
+        assert row is not None
+        return {
+            'saved': True,
+            'hero_rating': row['hero_rating'],
+            'scenario_rating': row['scenario_rating'],
+        }
+
+    def SaveCurrentGameRatings(self, game: Any, data: Dict[str, Any]) -> Dict[str, Any]:
+        world = game.world
+        scene = game.session.scene
+        if not world or not scene or not world.is_game_over:
+            raise ValueError('There is no completed game to rate.')
+        if world.game_over.is_game_exit_or_undo:
+            raise ValueError('Only a completed game can be rated.')
+        if game.controller_manager.replay.is_replay or scene.is_puzzle:
+            raise ValueError('Replay and puzzle sessions cannot be rated.')
+        if not scene.GetMetadataBool('statistics_eligible'):
+            raise ValueError('This game is not eligible for statistics.')
+
+        source_key = f'game:{self.EnsureSceneGameId(scene)}'
+        with self._lock, self._connect() as connection:
+            exists = connection.execute(
+                'SELECT 1 FROM games WHERE source_key = ?',
+                (source_key,),
+            ).fetchone() is not None
+        if not exists:
+            self._store_game(self._live_record(game), self._live_card_statistics(game))
+        return self.SaveGameRatings(source_key, data)
+
     def GetDashboard(self, source: str='all') -> Dict[str, Any]:
         if not self.available:
             return {'available': False, 'error': 'Game history is unavailable.'}
@@ -904,7 +993,9 @@ class GameHistory:
 
             heroes = grouped(
                 'SELECT hero_code, MAX(hero_name) hero_name, COUNT(*) games, '
-                "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
+                "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins, "
+                'ROUND(AVG(hero_rating), 2) average_rating, '
+                'COUNT(hero_rating) rating_count '
                 "FROM games WHERE result IN ('win', 'loss') "
                 + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY hero_code ORDER BY games DESC, hero_name'
@@ -912,7 +1003,9 @@ class GameHistory:
             villains = grouped(
                 'SELECT MAX(villain_code) villain_code, '
                 'MAX(villain_name) villain_name, COUNT(*) games, '
-                "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
+                "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins, "
+                'ROUND(AVG(scenario_rating), 2) average_rating, '
+                'COUNT(scenario_rating) rating_count '
                 "FROM games WHERE result IN ('win', 'loss') "
                 + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY scenario_key ORDER BY games DESC, villain_name'
@@ -932,7 +1025,8 @@ class GameHistory:
                 'villain_name, expert, result, rounds, playtime_seconds, '
                 'game_over_reason, replay_file, replay_analysis_status, '
                 'replay_analysis_error, source, deck_name, notes, '
-                'remaining_hit_points, minions_in_play, side_schemes_in_play '
+                'remaining_hit_points, minions_in_play, side_schemes_in_play, '
+                'hero_rating, scenario_rating '
                 'FROM games '
                 + ("WHERE source = ? " if source != 'all' else '') +
                 'ORDER BY datetime(finished_at) DESC, id DESC LIMIT 100',
