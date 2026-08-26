@@ -17,7 +17,7 @@ METADATA_KEY_LIST = Literal[
 ]
 
 METADATA_KEY_BOOL = Literal[
-    "is_puzzle", "statistics_eligible"
+    "is_puzzle", "statistics_eligible", "statistics_excluded"
 ]
 
 METADATA_KEY_INT = Literal[

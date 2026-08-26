@@ -41,6 +41,7 @@ class Game:
         self.statistics = statistics
         self.game_history = game_history
         self.active_session_enabled = False
+        self.statistics_excluded = False
         self.campaign_progress = CampaignProgressStore()
 
     @property
@@ -53,7 +54,9 @@ class Game:
         return self.session.scene
 
     def UpdatePauseStatistics(self, is_testing: bool):
-        if self.scene.is_puzzle:
+        if self.statistics_excluded or self.scene.GetMetadataBool('statistics_excluded'):
+            pause = True
+        elif self.scene.is_puzzle:
             pause = True
         elif self.session.cheat:
             pause = True
@@ -199,7 +202,24 @@ class Game:
             Log.FailedTrace(CATEGORY_NAME, exc, no_take_as_error=True)
             return False
 
-    def ContinueActiveSession(self) -> Literal["live", "loaded"]|None:
+    def ExcludeCurrentGameFromStatistics(self) -> None:
+        self.statistics_excluded = True
+        if self.session.scene:
+            self.session.scene.SetMetadataBool('statistics_excluded', True)
+        # A live browser session may already have changed the legacy aggregate
+        # counters before an MCP client takes over. Restore the last persisted
+        # baseline so those partial changes cannot leak into a later normal
+        # game's statistics save.
+        self.statistics.Reset()
+        self.statistics.SetPause(True)
+
+    def ContinueActiveSession(
+        self,
+        *,
+        record_statistics: bool=True,
+    ) -> Literal["live", "loaded"]|None:
+        if not record_statistics:
+            self.ExcludeCurrentGameFromStatistics()
         if self.HasLiveActiveSession():
             return "live"
         if not FileManager.IsFile(self.active_session_file):
@@ -232,6 +252,8 @@ class Game:
             new_game.campaign_log = dict(
                 prepared_progress['campaign']['campaignLog'],
             )
+
+        self.statistics_excluded = not getattr(new_game, 'record_statistics', True)
 
         if self.world:
             self.world.game_over.SetExit()

@@ -24,6 +24,10 @@ class DeviceManager:
 
         self.asking_players: List[int] = [] # 0,1,2,3
         self.ask_options: Dict[int, AskOptionPayload] = {}
+        # A monotonically increasing identifier for each player's prompt.  It
+        # lets non-UI clients reject a command prepared for an older decision
+        # window instead of accidentally applying it to the next one.
+        self.ask_revisions: List[int] = [0] * 4
 
         self.notify = SynchronizationNotifier()
 
@@ -84,6 +88,7 @@ class DeviceManager:
 
         self.notify.RefreshExitWait()
         self.ask_options[player_id] = data
+        self.ask_revisions[player_id] += 1
         self.asking_players.append(player_id)
         self.notify.has_client_input = False
 
@@ -137,4 +142,3 @@ class DeviceManager:
         self.timer.start_time = None
         self.notify.has_client_input = False
         Log.DebugSilent("SYNC", f"WaitSync end")
-

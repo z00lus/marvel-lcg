@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck Viewer — Marvel Champions Digital: Ronin Edition</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
+    <link rel="stylesheet" href="/public/css/solo.css">
+    <link rel="stylesheet" href="/public/css/deck-viewer.css">
+</head>
+<body>
+    <main class="solo-setup deck-viewer">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">RONIN ARCHIVES</p>
+                <h1>Deck Viewer</h1>
+                <p>Inspect every card in a starter or locally saved deck.</p>
+            </div>
+            <a class="back-link" href="/main">← Main menu</a>
+        </header>
+
+        <section class="selection-section deck-picker" aria-labelledby="deck-picker-heading">
+            <div class="deck-picker-heading">
+                <div>
+                    <span class="step-number">1</span>
+                    <h2 id="deck-picker-heading">Choose a deck</h2>
+                </div>
+                <span id="deck-source-badge" class="deck-source-badge" hidden></span>
+            </div>
+            <label class="deck-select-label" for="deck-select">Local deck</label>
+            <select id="deck-select" disabled>
+                <option>Loading decks…</option>
+            </select>
+            <p id="deck-status" class="load-status" aria-live="polite"></p>
+        </section>
+
+        <section id="deck-summary" class="deck-summary" hidden>
+            <img id="identity-image" alt="">
+            <div class="deck-summary-content">
+                <p id="deck-hero" class="summary-kicker"></p>
+                <h2 id="deck-name"></h2>
+                <p id="deck-count" class="deck-count"></p>
+                <div id="deck-aspects" class="deck-aspects" aria-label="Deck aspects"></div>
+                <div class="deck-share-row">
+                    <button id="share-deck" class="share-deck-button" type="button">
+                        Share Deck
+                    </button>
+                    <span id="share-status" class="share-status" aria-live="polite"></span>
+                </div>
+            </div>
+        </section>
+
+        <div id="deck-content" hidden>
+            <section class="card-section" aria-labelledby="identity-heading">
+                <div class="card-section-heading">
+                    <div>
+                        <p class="section-kicker">IDENTITY</p>
+                        <h2 id="identity-heading">Hero</h2>
+                    </div>
+                </div>
+                <div id="identity-cards" class="card-grid"></div>
+            </section>
+
+            <section class="card-section" aria-labelledby="signature-heading">
+                <div class="card-section-heading">
+                    <div>
+                        <p class="section-kicker">HERO KIT</p>
+                        <h2 id="signature-heading">Signature cards</h2>
+                    </div>
+                    <span id="signature-count" class="section-count"></span>
+                </div>
+                <div id="signature-cards" class="card-grid"></div>
+            </section>
+
+            <section class="card-section" aria-labelledby="player-heading">
+                <div class="card-section-heading">
+                    <div>
+                        <p class="section-kicker">DECKBUILDING</p>
+                        <h2 id="player-heading">Aspect &amp; basic cards</h2>
+                    </div>
+                    <span id="player-count" class="section-count"></span>
+                </div>
+                <div id="player-cards" class="card-grid"></div>
+            </section>
+
+            <details id="encounter-section" class="card-section related-section">
+                <summary>
+                    <span>
+                        <span class="section-kicker">REFERENCE</span>
+                        Obligation, nemesis &amp; set-aside cards
+                    </span>
+                    <span id="encounter-count" class="section-count"></span>
+                </summary>
+                <p class="related-note">These cards belong to the hero package but do not count toward the constructed deck size.</p>
+                <div id="encounter-cards" class="card-grid"></div>
+            </details>
+        </div>
+    </main>
+
+    <dialog id="card-preview" aria-label="Card preview">
+        <button id="preview-close" class="preview-close" type="button" aria-label="Close preview">×</button>
+        <img id="preview-image" alt="">
+        <div class="preview-caption">
+            <strong id="preview-name"></strong>
+            <span id="preview-meta"></span>
+        </div>
+        <button id="preview-flip" class="preview-flip" type="button" hidden>Flip card</button>
+    </dialog>
+
+    <script type="module" src="/public/js/deck_viewer.js"></script>
+</body>
+</html>

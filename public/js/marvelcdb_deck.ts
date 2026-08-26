@@ -119,6 +119,7 @@ export type DeckSourceController = {
 export function createDeckSourceController(options: {
     onChange: () => void;
     onResolved: (deck: MarvelCdbDeckData) => string | null;
+    onSourceChanged?: (source: 'precon' | 'marvelcdb') => void;
 }): DeckSourceController {
     const sourceInputs = document.querySelectorAll<HTMLInputElement>('input[name="deck-source"]');
     const panel = document.querySelector<HTMLElement>('#marvelcdb-panel')!;
@@ -143,6 +144,7 @@ export function createDeckSourceController(options: {
         if (next === 'precon') {
             clear();
         }
+        options.onSourceChanged?.(next);
         options.onChange();
     }
 

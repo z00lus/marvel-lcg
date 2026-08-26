@@ -242,6 +242,10 @@ input {
     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.55);
 }
 
+.choice-card.resolved-marvelcdb-deck::before {
+    content: "MARVELCDB";
+}
+
 .choice-card.new-content::before {
     content: "NEW";
     position: absolute;

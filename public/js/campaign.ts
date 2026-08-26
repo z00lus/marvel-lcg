@@ -11,7 +11,6 @@ import {
 import {
     DeckSourceController,
     createDeckSourceController,
-    getDeckHeroCode,
     refreshCampaignDeck,
     saveCampaignDeck,
 } from './marvelcdb_deck.js';
@@ -45,6 +44,7 @@ type HeroChoice = {
     imageId: string;
     data: HeroData;
     isUserDeck: boolean;
+    isResolvedMarvelCdb?: boolean;
 };
 
 type CampaignChoice = {
@@ -99,6 +99,7 @@ let selectedScenarioIndex = 0;
 let resumedCampaign: SavedCampaign | null = null;
 let isStarting = false;
 let selectionRequest = 0;
+let heroBeforeMarvelCdb: HeroChoice | null = null;
 
 let deckSourceController: DeckSourceController | null = null;
 
@@ -271,8 +272,12 @@ function selectHero(
     keepMarvelCdbDeck = false,
     remember = true,
 ): void {
+    if (!keepMarvelCdbDeck) {
+        removeResolvedMarvelCdbChoice();
+        heroBeforeMarvelCdb = null;
+    }
     selectedHero = choice;
-    if (remember) {
+    if (remember && !choice.isResolvedMarvelCdb) {
         localStorage.setItem(heroStorageKey, choice.id);
     }
     heroSelection.textContent = choice.name;
@@ -283,6 +288,64 @@ function selectHero(
     }
     updateRefreshButton();
     updatePlayButton();
+}
+
+function removeResolvedMarvelCdbChoice(): void {
+    heroChoices = heroChoices.filter((choice) => !choice.isResolvedMarvelCdb);
+    heroList.querySelector('.resolved-marvelcdb-deck')?.remove();
+}
+
+function selectResolvedMarvelCdbDeck(deck: HeroData): string {
+    if (selectedHero && !selectedHero.isResolvedMarvelCdb) {
+        heroBeforeMarvelCdb = selectedHero;
+    }
+    removeResolvedMarvelCdbChoice();
+
+    const metadata = deck.metadata ?? {};
+    const marvelCdbId = metadata.marvelcdb_id ?? 'loaded';
+    const marvelCdbKind = metadata.marvelcdb_kind ?? 'deck';
+    const choice: HeroChoice = {
+        id: `marvelcdb-${marvelCdbKind}-${marvelCdbId}`,
+        name: deck.deck_name ?? deck.name,
+        imageId: getFirstCardId(deck.hero ?? []),
+        data: deck,
+        isUserDeck: true,
+        isResolvedMarvelCdb: true,
+    };
+    heroChoices.unshift(choice);
+
+    const button = createChoiceButton(
+        choice.id,
+        choice.name,
+        choice.imageId,
+        () => selectHero(choice, true),
+    );
+    button.classList.add('user-deck', 'resolved-marvelcdb-deck');
+    heroList.prepend(button);
+    selectHero(choice, true);
+    button.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+    return `Loaded and selected ${choice.name}.`;
+}
+
+function leaveMarvelCdbMode(): void {
+    if (!selectedHero?.isResolvedMarvelCdb) {
+        removeResolvedMarvelCdbChoice();
+        heroBeforeMarvelCdb = null;
+        return;
+    }
+
+    const previous = heroBeforeMarvelCdb;
+    removeResolvedMarvelCdbChoice();
+    heroBeforeMarvelCdb = null;
+    if (previous) {
+        selectHero(previous, true, false);
+    } else {
+        selectedHero = null;
+        heroSelection.textContent = 'Not selected';
+        markSelected(heroList, '');
+        updateRefreshButton();
+        updatePlayButton();
+    }
 }
 
 function renderScenario(choice: ScenarioChoice, definition: CampaignDefinition): void {
@@ -469,19 +532,11 @@ async function refreshSelectedCampaignDeck(): Promise<void> {
 async function initialize(): Promise<void> {
     deckSourceController = createDeckSourceController({
         onChange: updatePlayButton,
-        onResolved: (deck) => {
-            const heroCode = getDeckHeroCode(deck);
-            const match = heroChoices.find((choice) =>
-                getFirstCardId(choice.data.hero ?? []).toLowerCase() === heroCode);
-            if (match && match.id !== selectedHero?.id) {
-                selectHero(match, true);
-                // The hero grid is long; a switch off-screen would look like
-                // nothing happened.
-                heroList.querySelector(`[data-id="${CSS.escape(match.id)}"]`)
-                    ?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
-                return `Switched to ${match.data.name}`;
+        onResolved: selectResolvedMarvelCdbDeck,
+        onSourceChanged: (source) => {
+            if (source === 'precon') {
+                leaveMarvelCdbMode();
             }
-            return null;
         },
     });
     marvelCdbUpdate.addEventListener('click', () => void refreshSelectedCampaignDeck());

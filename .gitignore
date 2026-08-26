@@ -18,6 +18,7 @@
 /deck/*.json
 /deck/user-decks/
 /deck/campaign-decks/
+/deckbuilding/
 /replays/
 /proxy-output/
 /tasks/

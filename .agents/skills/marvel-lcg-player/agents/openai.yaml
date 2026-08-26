@@ -1,0 +1,4 @@
+interface:
+  display_name: "Marvel LCG Player"
+  short_description: "Play Ronin Edition headlessly through its MCP server"
+  default_prompt: "Play or test a solo Marvel Champions game through the headless engine API."

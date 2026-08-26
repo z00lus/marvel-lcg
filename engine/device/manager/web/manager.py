@@ -23,6 +23,12 @@ class WebDeviceManager(DeviceManager):
         super().__init__()
 
         self.client_manager = ClientManager()
+        # Headless agents use the same Controller input contract as the web UI,
+        # but do not need a browser or a WebSocket.  While attached they count
+        # as a connected, immediately-synchronised client; decisions still pass
+        # through DeviceManager.WhenInput and all normal engine validation.
+        self.headless_players: Set[int] = set()
+        self.headless_log_offsets: Dict[int, int] = {}
         self.httpds : List[GameServer] = []
         self.marvelcdb_deck_sync = MarvelCdbDeckSync()
 
@@ -112,7 +118,26 @@ class WebDeviceManager(DeviceManager):
         self.client_manager.RemoveAll()
         Log.Debug(CATEGORY_NAME, "Kill Connects")
 
+    def AttachHeadlessPlayer(self, player_id: int) -> None:
+        if player_id < 0 or player_id >= len(self.controllers):
+            raise ValueError(f"Player {player_id} is not available")
+        if player_id not in self.headless_players:
+            from engine.log import Log
+            self.headless_log_offsets[player_id] = len(Log.all_log_text)
+        self.headless_players.add(player_id)
+        self.notify.connect.NotifyAll()
+        self.notify.sync.NotifyAll()
+
+    def DetachHeadlessPlayer(self, player_id: int) -> None:
+        self.headless_players.discard(player_id)
+        self.headless_log_offsets.pop(player_id, None)
+
+    def IsHeadlessPlayer(self, player_id: int) -> bool:
+        return player_id in self.headless_players
+
     def CheckSync(self, device: 'Device') -> bool:
+        if self.IsHeadlessPlayer(device.player_id):
+            return True
         # num = 1 if Game.run.controller_manager.replay.is_replay else Game.run.controller_manager.total_players
         # All players are eliminate
         if not device.is_connected:
@@ -144,6 +169,8 @@ class WebDeviceManager(DeviceManager):
             self.notify.sync.NotifyAll()
 
     def CheckConnect(self, player_id: int) -> bool:
+        if self.IsHeadlessPlayer(player_id):
+            return True
         def check_client_synced():
             if self.client_manager.GetClients(player_id) == []:
                 return False

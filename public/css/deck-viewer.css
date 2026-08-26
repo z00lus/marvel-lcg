@@ -1,0 +1,398 @@
+.deck-viewer {
+    max-width: 96rem;
+}
+
+.eyebrow,
+.section-kicker,
+.summary-kicker {
+    margin: 0 0 0.35rem;
+    color: #e8bd62 !important;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+}
+
+.deck-picker {
+    border-color: rgba(232, 184, 74, 0.48);
+}
+
+.deck-picker-heading,
+.card-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.deck-picker-heading > div {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.deck-picker h2,
+.card-section h2,
+.deck-summary h2 {
+    margin: 0;
+}
+
+.deck-select-label {
+    display: block;
+    margin: 1rem 0 0.45rem;
+    color: #aebbc6;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+#deck-select {
+    width: min(42rem, 100%);
+    min-height: 3rem;
+    padding: 0.65rem 2.8rem 0.65rem 0.85rem;
+    border: 1px solid rgba(143, 190, 224, 0.55);
+    border-radius: 0.5rem;
+    background: #111d28;
+    color: #f4f7f9;
+    font: inherit;
+}
+
+#deck-select:focus-visible {
+    outline: 3px solid #e8bd62;
+    outline-offset: 2px;
+}
+
+.deck-source-badge,
+.section-count,
+.deck-aspects span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.8rem;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid rgba(232, 184, 74, 0.58);
+    border-radius: 999px;
+    background: rgba(73, 47, 86, 0.88);
+    color: #ffe7a3;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.deck-summary {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+    margin-bottom: 1rem;
+    padding: clamp(1rem, 2.5vw, 1.6rem);
+    border: 1px solid rgba(232, 184, 74, 0.58);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at 8% 15%, rgba(232, 184, 74, 0.19), transparent 30%),
+        rgba(10, 18, 28, 0.9);
+    box-shadow: 0 1.1rem 2.8rem rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(8px);
+}
+
+.deck-summary[hidden] {
+    display: none;
+}
+
+.deck-summary > img {
+    width: 100%;
+    aspect-ratio: 0.714;
+    border: 1px solid rgba(255, 236, 159, 0.78);
+    border-radius: 0.7rem;
+    object-fit: fill;
+    box-shadow: 0 0.8rem 1.5rem rgba(0, 0, 0, 0.5);
+}
+
+.deck-summary h2 {
+    color: #fff;
+    font-size: clamp(1.5rem, 3vw, 2.35rem);
+}
+
+.deck-count {
+    margin: 0.6rem 0;
+    color: #b9c5cf;
+    line-height: 1.45;
+}
+
+.deck-aspects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.deck-share-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.share-deck-button {
+    min-height: 2.7rem;
+    padding: 0.65rem 1.15rem;
+    border: 1px solid #edc461;
+    border-radius: 0.4rem;
+    background: linear-gradient(0deg, #9d6819 0%, #d49a2c 100%);
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+    box-shadow: 0 0.55rem 1.2rem rgba(144, 91, 18, 0.4);
+}
+
+.share-deck-button:hover:not(:disabled) {
+    filter: brightness(1.12);
+}
+
+.share-deck-button:disabled {
+    cursor: wait;
+    filter: grayscale(0.7);
+}
+
+.share-status {
+    color: #9de2bd;
+    font-size: 0.85rem;
+}
+
+.deck-aspects span {
+    border-color: rgba(82, 184, 239, 0.5);
+    background: rgba(19, 62, 87, 0.85);
+    color: #a9e4ff;
+}
+
+.card-section {
+    margin-bottom: 1rem;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid rgba(143, 190, 224, 0.38);
+    border-radius: 1rem;
+    background: rgba(10, 18, 28, 0.88);
+    box-shadow: 0 1.1rem 2.8rem rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(8px);
+}
+
+.card-section-heading {
+    margin-bottom: 1rem;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.9rem;
+}
+
+.card-tile {
+    position: relative;
+    min-width: 0;
+    padding: 0.55rem;
+    border: 1px solid rgba(143, 190, 224, 0.3);
+    border-radius: 0.75rem;
+    background: linear-gradient(145deg, rgba(32, 47, 61, 0.98), rgba(14, 23, 33, 0.98));
+    color: #eef3f7;
+    cursor: zoom-in;
+    font: inherit;
+    text-align: left;
+    box-shadow: 0 0.55rem 1.25rem rgba(0, 0, 0, 0.34);
+    transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.card-tile:hover {
+    border-color: rgba(82, 184, 239, 0.8);
+    transform: translateY(-3px);
+    box-shadow: 0 0.9rem 1.5rem rgba(0, 0, 0, 0.5);
+}
+
+.card-tile:focus-visible {
+    outline: 3px solid #e8bd62;
+    outline-offset: 2px;
+}
+
+.card-tile img {
+    width: 100%;
+    aspect-ratio: 0.714;
+    display: block;
+    border: 1px solid rgba(225, 238, 248, 0.48);
+    border-radius: 0.5rem;
+    background: #87939f;
+    object-fit: fill;
+}
+
+.card-quantity {
+    position: absolute;
+    top: 0.95rem;
+    right: 0.95rem;
+    min-width: 2.2rem;
+    padding: 0.3rem 0.48rem;
+    border: 1px solid rgba(255, 239, 180, 0.85);
+    border-radius: 999px;
+    background: rgba(31, 20, 10, 0.92);
+    color: #ffe18a;
+    font-weight: 900;
+    text-align: center;
+    box-shadow: 0 0.25rem 0.7rem rgba(0, 0, 0, 0.7);
+}
+
+.card-name {
+    display: block;
+    margin-top: 0.6rem;
+    overflow-wrap: anywhere;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.card-meta {
+    display: block;
+    margin-top: 0.25rem;
+    color: #9fb0bd;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.card-product {
+    min-height: 2.4em;
+    display: grid;
+    place-items: center;
+    margin-top: 0.45rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid rgba(232, 184, 74, 0.25);
+    color: #e8bd62;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.035em;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.related-section summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #f0f3f6;
+    cursor: pointer;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.related-section summary::marker {
+    color: #e8bd62;
+}
+
+.related-note {
+    margin: 0.8rem 0 1rem;
+    color: #aebbc6;
+}
+
+#card-preview {
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100svh - 2rem);
+    padding: 1rem;
+    border: 1px solid rgba(232, 184, 74, 0.72);
+    border-radius: 1rem;
+    background: rgba(8, 15, 23, 0.98);
+    color: #eef3f7;
+    box-shadow: 0 1.5rem 5rem #000;
+}
+
+#card-preview::backdrop {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+#preview-image {
+    width: min(24rem, 100%);
+    max-height: calc(100svh - 9rem);
+    display: block;
+    margin: 0 auto;
+    border-radius: 1rem;
+    object-fit: contain;
+}
+
+.preview-close {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    z-index: 1;
+    width: 2.6rem;
+    height: 2.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    background: rgba(9, 16, 24, 0.92);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.preview-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.7rem;
+    color: #fff;
+}
+
+.preview-caption span {
+    color: #9fb0bd;
+    text-align: right;
+}
+
+.preview-flip {
+    width: 100%;
+    min-height: 2.6rem;
+    margin-top: 0.7rem;
+    border: 1px solid #52b8ef;
+    border-radius: 0.4rem;
+    background: #087eb9;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+@media (max-width: 42rem) {
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .deck-summary {
+        grid-template-columns: 6.5rem minmax(0, 1fr);
+    }
+
+    .share-deck-button {
+        width: 100%;
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+    }
+
+    .card-tile {
+        padding: 0.4rem;
+    }
+
+    .preview-caption {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .preview-caption span {
+        text-align: left;
+    }
+}
+
+@media (max-width: 25rem) {
+    .deck-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .deck-summary > img {
+        width: 7rem;
+    }
+}

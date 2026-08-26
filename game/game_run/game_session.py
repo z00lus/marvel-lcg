@@ -44,6 +44,8 @@ class GameSession:
     def NewGame(self, new_game: 'NewGameDescriptor') -> None:
         from game.scene.loader import SceneLoader
         scene = SceneLoader.NewFromJson(new_game.campaign_json, new_game.encounter_set_names, new_game.hero_json, new_game.seed, new_game.rules, new_game.campaign_log)
+        if not new_game.record_statistics:
+            scene.SetMetadataBool('statistics_excluded', True)
         self.undo_count = 0
         self.SetScene(scene, 'New')
         assert self.scene
@@ -278,6 +280,8 @@ class GameSession:
             if scene:
                 from game.scene.loader import LoaderHelper
                 LoaderHelper.EnsureSupportedReplay(scene)
+                if scene.GetMetadataBool('statistics_excluded'):
+                    self.game.statistics_excluded = True
                 self.LoadScene(scene, skip_to, state, break_on)
                 Notify.Command(f"Load: {file_path}")
 

@@ -13,4 +13,5 @@ class NewGameDescriptor:
     rules: List[str]
     campaign_log: Dict[str, str]
     campaign_progress: Dict[str, Any] = field(default_factory=lambda: {})
+    record_statistics: bool = True
     # custom_script: str = field(default="")

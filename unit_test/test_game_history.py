@@ -46,6 +46,7 @@ class GameHistoryTests(unittest.TestCase):
         side_schemes_in_play=None,
         undo_count=None,
         source='digital',
+        is_service=False,
     ):
         return self.history._store_game({
             'source_key': f'test:{key}',
@@ -69,6 +70,7 @@ class GameHistoryTests(unittest.TestCase):
             'undo_count': undo_count,
             'imported_from_replay': 0,
             'source': source,
+            'is_service': int(is_service),
         })
 
     def test_schema_v1_adds_replay_analysis_columns_without_losing_games(self):
@@ -92,7 +94,7 @@ class GameHistoryTests(unittest.TestCase):
         with history._connect() as connection:
             self.assertEqual(
                 connection.execute('PRAGMA user_version').fetchone()[0],
-                4,
+                5,
             )
             columns = {
                 row['name'] for row in connection.execute(
@@ -105,6 +107,7 @@ class GameHistoryTests(unittest.TestCase):
             self.assertIn('notes', columns)
             self.assertIn('hero_rating', columns)
             self.assertIn('scenario_rating', columns)
+            self.assertIn('is_service', columns)
             self.assertEqual(
                 connection.execute('SELECT COUNT(*) FROM games').fetchone()[0],
                 1,
@@ -274,6 +277,35 @@ class GameHistoryTests(unittest.TestCase):
         self.assertEqual(rhino['games'], 2)
         self.assertEqual(rhino['win_rate'], 50.0)
         self.assertEqual(len(dashboard['matchups']), 2)
+
+    def test_service_games_stay_in_database_but_not_user_history_or_stats(self):
+        self.record(1, result='win')
+        service = self.record(
+            2,
+            villain='Klaw',
+            villain_code='01113',
+            result='win',
+            is_service=True,
+        )
+
+        dashboard = self.history.GetDashboard()
+
+        self.assertEqual(dashboard['overview']['completed'], 1)
+        self.assertEqual(dashboard['overview']['wins'], 1)
+        self.assertEqual(dashboard['overview']['losses'], 0)
+        self.assertEqual(len(dashboard['recent_games']), 1)
+        self.assertEqual(dashboard['recent_games'][0]['villain_name'], 'Rhino')
+        core_progress = next(
+            item['progress'] for item in dashboard['achievements']
+            if item['id'] == 'core_set_conqueror'
+        )
+        self.assertEqual(core_progress, 1)
+        with self.history._connect() as connection:
+            row = connection.execute(
+                'SELECT is_service FROM games WHERE id = ?',
+                (service['id'],),
+            ).fetchone()
+            self.assertEqual(row['is_service'], 1)
 
     def test_optional_game_ratings_are_validated_saved_and_aggregated(self):
         self.record(1, result='win')
@@ -561,7 +593,8 @@ class GameHistoryTests(unittest.TestCase):
         multiplayer = {**base, 'players': base['players'] * 2}
         puzzle = {**base, 'puzzle': ['Puzzle.CreateHandCards()']}
         ineligible = {**base, 'metadata': {'statistics_eligible': False}}
-        for index, replay in enumerate((multiplayer, puzzle, ineligible)):
+        mcp_game = {**base, 'metadata': {'statistics_excluded': True}}
+        for index, replay in enumerate((multiplayer, puzzle, ineligible, mcp_game)):
             (self.replay_folder / f'skip-{index}.json').write_text(
                 json.dumps(replay),
                 encoding='utf-8',
@@ -606,6 +639,15 @@ class GameHistoryTests(unittest.TestCase):
         self.assertEqual(scene.GetMetadataInt('remaining_hit_points'), 1)
         self.assertEqual(scene.GetMetadataInt('undo_count'), 2)
         self.assertTrue(scene.GetMetadataBool('statistics_eligible'))
+
+        game.statistics_excluded = True
+        GameHistory.CaptureOutcomeMetadata(
+            game,
+            True,
+            'The Final Stage of the Villain was Defeated',
+        )
+        self.assertFalse(scene.GetMetadataBool('statistics_eligible'))
+        self.assertTrue(scene.GetMetadataBool('statistics_excluded'))
 
         GameHistory.ResetSceneOutcome(scene)
         self.assertEqual(scene.GetMetadataStr('game_id'), '')

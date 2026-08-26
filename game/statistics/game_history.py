@@ -31,7 +31,7 @@ REPLAY_FOLDERS = ConfigVariables.Folders('replay_folders', ['./replays/'])
 
 
 class GameHistory:
-    SCHEMA_VERSION = 4
+    SCHEMA_VERSION = 5
     KNOWN_RESULTS = ('win', 'loss', 'unknown', 'abandoned')
     KNOWN_SOURCES = ('digital', 'physical', 'replay_import')
 
@@ -127,7 +127,9 @@ class GameHistory:
                         CHECK (source IN ('digital', 'physical', 'replay_import')),
                     notes TEXT NOT NULL DEFAULT '',
                     hero_rating INTEGER CHECK (hero_rating BETWEEN 1 AND 5),
-                    scenario_rating INTEGER CHECK (scenario_rating BETWEEN 1 AND 5)
+                    scenario_rating INTEGER CHECK (scenario_rating BETWEEN 1 AND 5),
+                    is_service INTEGER NOT NULL DEFAULT 0
+                        CHECK (is_service IN (0, 1))
                 );
 
                 CREATE INDEX IF NOT EXISTS games_result_index
@@ -232,6 +234,20 @@ class GameHistory:
                     'CHECK (scenario_rating BETWEEN 1 AND 5)'
                 )
             connection.execute('PRAGMA user_version = 4')
+            version = 4
+
+        if version < 5:
+            columns = {
+                row['name'] for row in connection.execute(
+                    'PRAGMA table_info(games)'
+                ).fetchall()
+            }
+            if 'is_service' not in columns:
+                connection.execute(
+                    'ALTER TABLE games ADD COLUMN is_service INTEGER '
+                    'NOT NULL DEFAULT 0 CHECK (is_service IN (0, 1))'
+                )
+            connection.execute('PRAGMA user_version = 5')
 
     @staticmethod
     def NewGameId() -> str:
@@ -319,6 +335,8 @@ class GameHistory:
         world = game.world
         if not world:
             return
+        if getattr(game, 'statistics_excluded', False):
+            scene.SetMetadataBool('statistics_excluded', True)
         scene.SetMetadataStr('game_result', 'win' if players_won else 'loss')
         scene.SetMetadataStr('game_over_reason', reason)
         scene.SetMetadataBool(
@@ -342,6 +360,11 @@ class GameHistory:
     @staticmethod
     def IsEligibleLiveGame(game: Any) -> bool:
         if not game.world or not game.session.scene:
+            return False
+        if (
+            getattr(game, 'statistics_excluded', False)
+            or game.scene.GetMetadataBool('statistics_excluded')
+        ):
             return False
         if len(game.world.const_players) != 1:
             return False
@@ -452,6 +475,7 @@ class GameHistory:
             'undo_count', 'replay_file', 'imported_from_replay',
             'replay_analysis_status', 'replay_analysis_error',
             'source', 'notes', 'hero_rating', 'scenario_rating',
+            'is_service',
         )
         values = {
             'source_key': '',
@@ -487,6 +511,7 @@ class GameHistory:
             'notes': '',
             'hero_rating': None,
             'scenario_rating': None,
+            'is_service': 0,
             **record,
         }
         if not values['source_key']:
@@ -598,7 +623,10 @@ class GameHistory:
             raise ValueError('Only solo replays are imported into game history.')
         if raw.get('puzzle') or metadata.get('is_puzzle'):
             raise ValueError('Puzzle replays are not game history.')
-        if metadata.get('statistics_eligible') is False:
+        if (
+            metadata.get('statistics_eligible') is False
+            or metadata.get('statistics_excluded') is True
+        ):
             raise ValueError('Replay is marked as ineligible for statistics.')
         if '-debug' in os.path.basename(file_path).lower():
             raise ValueError('Debug replays are not game history.')
@@ -920,7 +948,7 @@ class GameHistory:
             cursor = connection.execute(
                 f'UPDATE games SET {", ".join(f"{key} = ?" for key in ratings)} '
                 "WHERE source_key = ? AND source = 'digital' "
-                "AND result IN ('win', 'loss')",
+                "AND result IN ('win', 'loss') AND is_service = 0",
                 (*ratings.values(), source_key),
             )
             if not cursor.rowcount:
@@ -963,7 +991,9 @@ class GameHistory:
             return {'available': False, 'error': 'Game history is unavailable.'}
         source = self._normalize_source_filter(source)
         with self._lock, self._connect() as connection:
-            where = '' if source == 'all' else ' WHERE source = ?'
+            where = ' WHERE is_service = 0'
+            if source != 'all':
+                where += ' AND source = ?'
             parameters: tuple[Any, ...] = () if source == 'all' else (source,)
             overview_row = connection.execute(
                 'SELECT '
@@ -996,7 +1026,7 @@ class GameHistory:
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins, "
                 'ROUND(AVG(hero_rating), 2) average_rating, '
                 'COUNT(hero_rating) rating_count '
-                "FROM games WHERE result IN ('win', 'loss') "
+                "FROM games WHERE is_service = 0 AND result IN ('win', 'loss') "
                 + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY hero_code ORDER BY games DESC, hero_name'
             )
@@ -1006,7 +1036,7 @@ class GameHistory:
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins, "
                 'ROUND(AVG(scenario_rating), 2) average_rating, '
                 'COUNT(scenario_rating) rating_count '
-                "FROM games WHERE result IN ('win', 'loss') "
+                "FROM games WHERE is_service = 0 AND result IN ('win', 'loss') "
                 + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY scenario_key ORDER BY games DESC, villain_name'
             )
@@ -1015,7 +1045,7 @@ class GameHistory:
                 'MAX(villain_code) villain_code, MAX(villain_name) villain_name, expert, '
                 'COUNT(*) games, '
                 "SUM(CASE WHEN result = 'win' THEN 1 ELSE 0 END) wins "
-                "FROM games WHERE result IN ('win', 'loss') "
+                "FROM games WHERE is_service = 0 AND result IN ('win', 'loss') "
                 + ("AND source = ? " if source != 'all' else '') +
                 'GROUP BY hero_code, scenario_key, expert '
                 'ORDER BY games DESC, hero_name, villain_name, expert'
@@ -1027,8 +1057,8 @@ class GameHistory:
                 'replay_analysis_error, source, deck_name, notes, '
                 'remaining_hit_points, minions_in_play, side_schemes_in_play, '
                 'hero_rating, scenario_rating '
-                'FROM games '
-                + ("WHERE source = ? " if source != 'all' else '') +
+                'FROM games WHERE is_service = 0 '
+                + ("AND source = ? " if source != 'all' else '') +
                 'ORDER BY datetime(finished_at) DESC, id DESC LIMIT 100',
                 parameters,
             ).fetchall()]

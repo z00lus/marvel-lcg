@@ -34,6 +34,7 @@ type HeroData = {
     deck_name?: string;
     hero: string[];
     player_deck: string[];
+    metadata?: Record<string, string>;
 };
 
 type ScenarioChoice = {
@@ -50,6 +51,7 @@ type HeroChoice = {
     imageId: string;
     data: HeroData;
     isUserDeck: boolean;
+    isResolvedMarvelCdb?: boolean;
 };
 
 type SoloGamePayload = {
@@ -66,7 +68,6 @@ type SoloGamePayload = {
 import {
     DeckSourceController,
     createDeckSourceController,
-    getDeckHeroCode,
 } from './marvelcdb_deck.js';
 
 const scenarioStorageKey = 'marvel_lcg_solo_scenario';
@@ -97,6 +98,7 @@ let selectedUnderling: UnderlingChoice | null = null;
 let underlingChoices: UnderlingChoice[] = [];
 let isStarting = false;
 let heroChoices: HeroChoice[] = [];
+let heroBeforeMarvelCdb: HeroChoice | null = null;
 
 // The precon is the deck that ships with the hero; a MarvelCDB deck replaces
 // only the player deck, so the hero choice stays the source of truth for the
@@ -218,8 +220,14 @@ function selectScenario(choice: ScenarioChoice): void {
 }
 
 function selectHero(choice: HeroChoice, keepMarvelCdbDeck = false): void {
+    if (!keepMarvelCdbDeck) {
+        removeResolvedMarvelCdbChoice();
+        heroBeforeMarvelCdb = null;
+    }
     selectedHero = choice;
-    localStorage.setItem(heroStorageKey, choice.id);
+    if (!choice.isResolvedMarvelCdb) {
+        localStorage.setItem(heroStorageKey, choice.id);
+    }
     heroSelection.textContent = choice.name;
     markSelected(heroList, choice.id);
     errorMessage.textContent = '';
@@ -229,6 +237,63 @@ function selectHero(choice: HeroChoice, keepMarvelCdbDeck = false): void {
         deckSourceController?.clear();
     }
     updatePlayButton();
+}
+
+function removeResolvedMarvelCdbChoice(): void {
+    heroChoices = heroChoices.filter((choice) => !choice.isResolvedMarvelCdb);
+    heroList.querySelector('.resolved-marvelcdb-deck')?.remove();
+}
+
+function selectResolvedMarvelCdbDeck(deck: HeroData): string {
+    if (selectedHero && !selectedHero.isResolvedMarvelCdb) {
+        heroBeforeMarvelCdb = selectedHero;
+    }
+    removeResolvedMarvelCdbChoice();
+
+    const metadata = deck.metadata ?? {};
+    const marvelCdbId = metadata.marvelcdb_id ?? 'loaded';
+    const marvelCdbKind = metadata.marvelcdb_kind ?? 'deck';
+    const choice: HeroChoice = {
+        id: `marvelcdb-${marvelCdbKind}-${marvelCdbId}`,
+        name: deck.deck_name ?? deck.name,
+        imageId: getFirstCardId(deck.hero ?? []),
+        data: deck,
+        isUserDeck: true,
+        isResolvedMarvelCdb: true,
+    };
+    heroChoices.unshift(choice);
+
+    const button = createChoiceButton(
+        choice.id,
+        choice.name,
+        choice.imageId,
+        () => selectHero(choice, true),
+    );
+    button.classList.add('user-deck', 'resolved-marvelcdb-deck');
+    heroList.prepend(button);
+    selectHero(choice, true);
+    button.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+    return `Loaded and selected ${choice.name}.`;
+}
+
+function leaveMarvelCdbMode(): void {
+    if (!selectedHero?.isResolvedMarvelCdb) {
+        removeResolvedMarvelCdbChoice();
+        heroBeforeMarvelCdb = null;
+        return;
+    }
+
+    const previous = heroBeforeMarvelCdb;
+    removeResolvedMarvelCdbChoice();
+    heroBeforeMarvelCdb = null;
+    if (previous) {
+        selectHero(previous, true);
+    } else {
+        selectedHero = null;
+        heroSelection.textContent = 'Not selected';
+        markSelected(heroList, '');
+        updatePlayButton();
+    }
 }
 
 function createChoiceButton(
@@ -386,21 +451,11 @@ function renderHeroes(choices: HeroChoice[]): void {
 async function initialize(): Promise<void> {
     deckSourceController = createDeckSourceController({
         onChange: updatePlayButton,
-        onResolved: (deck) => {
-            // The deck names its own hero, so a mismatch with the current
-            // selection is corrected rather than rejected.
-            const heroCode = getDeckHeroCode(deck);
-            const match = heroChoices.find((choice) =>
-                getFirstCardId(choice.data.hero ?? []).toLowerCase() === heroCode);
-            if (match && match.id !== selectedHero?.id) {
-                selectHero(match, true);
-                // The hero grid is long; a switch off-screen would look like
-                // nothing happened.
-                heroList.querySelector(`[data-id="${CSS.escape(match.id)}"]`)
-                    ?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
-                return `Switched to ${match.data.name}`;
+        onResolved: selectResolvedMarvelCdbDeck,
+        onSourceChanged: (source) => {
+            if (source === 'precon') {
+                leaveMarvelCdbMode();
             }
-            return null;
         },
     });
 

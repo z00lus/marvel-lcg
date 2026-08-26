@@ -147,7 +147,10 @@ class GameServerGet(GameServerBase):
         from cards.database import CardsDB
         name = request.rel_url.query_string
         paper = CardsDB.FindCardPaper(name)
-        return web.json_response(paper)
+        return web.Response(
+            text=Json.Dumps(paper),
+            content_type='application/json',
+        )
 
     async def get_completion_rate(self, request: web.Request) -> web.Response:
         return web.Response(text=str(self.game.statistics.completion_rate))

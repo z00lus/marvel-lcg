@@ -81,6 +81,24 @@ class ActiveSessionTests(unittest.TestCase):
         game.session.Load.assert_not_called()
         game.controller_manager.OnNewGame.assert_not_called()
 
+    def test_headless_continue_excludes_the_whole_live_game_from_statistics(self):
+        game = self.make_game()
+        game.statistics = Mock()
+        game.statistics_excluded = False
+        game.session.scene.SetMetadataBool = Mock()
+
+        self.assertEqual(
+            game.ContinueActiveSession(record_statistics=False),
+            'live',
+        )
+
+        self.assertTrue(game.statistics_excluded)
+        game.session.scene.SetMetadataBool.assert_called_once_with(
+            'statistics_excluded', True,
+        )
+        game.statistics.Reset.assert_called_once_with()
+        game.statistics.SetPause.assert_called_once_with(True)
+
     def test_continue_restores_all_saved_choices_as_a_normal_game(self):
         game = self.make_game(running=False)
         Path(game.active_session_file).write_text('saved session', encoding='utf-8')

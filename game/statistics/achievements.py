@@ -85,7 +85,8 @@ class AchievementEvaluator:
         placeholders = ','.join('?' for _ in scenario_keys)
         query = (
             'SELECT COUNT(DISTINCT scenario_key) FROM games '
-            f'WHERE result = ? AND scenario_key IN ({placeholders})'
+            f'WHERE is_service = 0 AND result = ? '
+            f'AND scenario_key IN ({placeholders})'
         )
         parameters: List[Any] = ['win', *scenario_keys]
         if expert is not None:
@@ -104,7 +105,7 @@ class AchievementEvaluator:
     ) -> int:
         rows = connection.execute(
             'SELECT result, expert, scenario_key FROM games '
-            "WHERE result IN ('win', 'loss') "
+            "WHERE is_service = 0 AND result IN ('win', 'loss') "
             'ORDER BY datetime(finished_at) DESC, id DESC LIMIT ?',
             (limit,),
         ).fetchall()
@@ -142,21 +143,22 @@ class AchievementEvaluator:
         row = connection.execute(
             'SELECT MAX(villains) FROM ('
             'SELECT COUNT(DISTINCT scenario_key) AS villains FROM games '
-            "WHERE result = 'win' GROUP BY hero_code"
+            "WHERE is_service = 0 AND result = 'win' GROUP BY hero_code"
             ')'
         ).fetchone()
         progress['hero_mastery'] = int(row[0] or 0)
 
         progress['against_all_odds'] = int(bool(connection.execute(
-            "SELECT 1 FROM games WHERE result = 'win' "
+            "SELECT 1 FROM games WHERE is_service = 0 AND result = 'win' "
             'AND remaining_hit_points = 1 LIMIT 1'
         ).fetchone()))
         progress['clean_table'] = int(bool(connection.execute(
-            "SELECT 1 FROM games WHERE result = 'win' "
+            "SELECT 1 FROM games WHERE is_service = 0 AND result = 'win' "
             'AND minions_in_play = 0 AND side_schemes_in_play = 0 LIMIT 1'
         ).fetchone()))
         progress['no_second_chances'] = int(bool(connection.execute(
-            "SELECT 1 FROM games WHERE result = 'win' AND undo_count = 0 LIMIT 1"
+            "SELECT 1 FROM games WHERE is_service = 0 AND result = 'win' "
+            "AND undo_count = 0 LIMIT 1"
         ).fetchone()))
         return progress
 

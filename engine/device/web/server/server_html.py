@@ -11,6 +11,7 @@ class GameServerHTML(GameServerBase):
 
         self.AddHtmlSecurity('/main', './public/main.html')
         self.AddHtmlSecurity('/deck', './public/deck.html')
+        self.AddHtmlSecurity('/deck-viewer', './public/deck-viewer.html')
         self.AddHtmlSecurity('/cards', './public/cards.html')
         self.AddHtmlSecurity('/solo', './public/solo.html')
         self.AddHtmlSecurity('/campaign', './public/campaign.html')

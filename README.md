@@ -90,6 +90,29 @@ Open `http://127.0.0.1:2345/`. Use `docker compose up --build -d` to run in the 
 
 The `runtime/` bind mount preserves statistics, campaign progress, the active **Continue Game** checkpoint, and QSave/Save 1–3 files across container rebuilds. Saved replays and downloaded assets are likewise preserved by their respective bind mounts.
 
+### Headless AI player
+
+The repository includes a Codex skill and MCP server that can play and test
+solo games directly through the engine without a browser or WebSocket client.
+Codex discovers the repository-scoped `marvel-lcg-player` skill automatically
+when opened in this repository. Register its MCP server once with:
+
+```bash
+python3 tools/install_marvel_lcg_codex.py
+```
+
+For a game server running on another machine on the same trusted network:
+
+```bash
+python3 tools/install_marvel_lcg_codex.py \
+  --server-url http://SERVER_IP:2345
+```
+
+Restart Codex after registration, start the game server, and invoke
+`$marvel-lcg-player` or ask Codex to play or test a solo game. See
+[Headless MCP player](docs/headless_mcp.md) for the tool contract, behavior,
+and safety notes.
+
 ### Collection and tabletop games
 
 Open **Collection & Stats** from the main menu to mark the physical products you own, review digital and tabletop win rates, and track achievements. Use **Log Physical Game** to add a finished physical solo game. Manually logged games can be edited or deleted; statistics and achievement progress are recalculated automatically. All of this data is stored in the same `statistics.sqlite3` database used by digital game history.
