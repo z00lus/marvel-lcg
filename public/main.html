@@ -39,117 +39,48 @@
 
         .custom-btn {
             width: 145px;
-            height: 40px;
+            min-height: 2.7rem;
             color: #fff;
-            padding: 10px 25px;
-            font-family: 'Lato', sans-serif;
-            font-weight: 500;
-            background: transparent;
+            padding: 0.65rem 1rem;
+            border: 1px solid #52b8ef;
+            border-radius: 0.4rem;
+            background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+            font-family: Arial, sans-serif;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            display: inline-block;
-            box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-            7px 7px 20px 0px rgba(0,0,0,.1),
-            4px 4px 5px 0px rgba(0,0,0,.1);
+            transition: filter 120ms ease, transform 120ms ease, border-color 120ms ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0.45rem 1rem rgba(0, 0, 0, 0.32);
             outline: none;
-        }
-        /* 3 */
-        .btn-3 {
-            background: rgb(0, 172, 238);
-            background: linear-gradient(0deg, rgba(0, 172, 238, 1) 0%, rgba(2, 126, 251, 1) 100%);
-            width: 145px;
-            height: 40px;
-            line-height: 42px;
-            padding: 0;
-            border: none;
-
         }
 
         .btn-3 span {
-            position: relative;
             display: block;
             width: 100%;
-            height: 100%;
         }
 
-        .btn-3:before,
-        .btn-3:after {
-            position: absolute;
-            content: "";
-            right: 0;
-            top: 0;
-            background: rgba(2, 126, 251, 1);
-            transition: all 0.3s ease;
+        .custom-btn:hover:not(:disabled) {
+            border-color: #b5e8ff;
+            filter: brightness(1.12);
+            transform: translateY(-1px);
         }
 
-        .btn-3:before {
-            height: 0%;
-            width: 2px;
+        .custom-btn:active:not(:disabled) {
+            transform: translateY(1px);
         }
 
-        .btn-3:after {
-            width: 0%;
-            height: 2px;
-        }
-
-        .btn-3:hover {
-            background: transparent;
-            box-shadow: none;
-        }
-
-        .btn-3:hover:before {
-            height: 100%;
-        }
-
-        .btn-3:hover:after {
-            width: 100%;
-        }
-
-        .btn-3 span:hover {
-            color: rgba(2, 126, 251, 1);
-        }
-
-        .btn-3 span:before,
-        .btn-3 span:after {
-            position: absolute;
-            content: "";
-            left: 0;
-            bottom: 0;
-            background: rgba(2, 126, 251, 1);
-            transition: all 0.3s ease;
-        }
-
-        .btn-3 span:before {
-            width: 2px;
-            height: 0%;
-        }
-
-        .btn-3 span:after {
-            width: 0%;
-            height: 2px;
-        }
-
-        .btn-3 span:hover:before {
-            height: 100%;
-        }
-
-        .btn-3 span:hover:after {
-            width: 100%;
+        .custom-btn:focus-visible {
+            outline: 3px solid #e8bd62;
+            outline-offset: 2px;
         }
 
         button:disabled {
             filter: grayscale(1);
             transition: none;
             cursor: not-allowed;
-        }
-        
-        button:disabled span:before,
-        button:disabled span:after,
-        button:disabled:before,
-        button:disabled:after {
-            transition: none;
-            /* content: unset; */
+            opacity: 0.58;
         }
 
         #version {
@@ -157,7 +88,8 @@
         }
 
         .wild-mode {
-            background: rgb(161, 129, 0);
+            border-color: #f0ca6b;
+            background: linear-gradient(0deg, #996515 0%, #c6922a 100%);
         }
 
         .based-on {
@@ -189,7 +121,7 @@
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 5px;
+                gap: 0.45rem;
             }
         </style>
 

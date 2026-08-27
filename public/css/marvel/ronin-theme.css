@@ -86,3 +86,267 @@ body {
     background: rgba(10, 18, 28, 0.92);
     box-shadow: 0 0.6rem 1.4rem rgba(0, 0, 0, 0.4);
 }
+
+/* Shared Ronin controls --------------------------------------------------- */
+
+#option-buttons {
+    gap: calc(0.45 * var(--font-size-out));
+    padding: calc(0.65 * var(--font-size-out));
+    border: 1px solid rgba(143, 190, 224, 0.42);
+    background: rgba(8, 17, 27, 0.9);
+    box-shadow: 0 1rem 2.8rem rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(10px);
+}
+
+#option-buttons > .button,
+.side-bar > .button,
+#history .button,
+#contextMenu button,
+#error-occurred button {
+    border: 1px solid rgba(82, 184, 239, 0.72);
+    border-radius: 0.35rem;
+    background: linear-gradient(180deg, rgba(27, 57, 77, 0.98), rgba(11, 28, 41, 0.98));
+    color: #eef9ff;
+    box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    transition: filter 120ms ease, transform 120ms ease, border-color 120ms ease;
+}
+
+#option-buttons > .button:hover:not(:disabled):not(.disable),
+.side-bar > .button:hover:not(:disabled),
+#history .button:hover:not(:disabled),
+#contextMenu button:hover:not(:disabled),
+#error-occurred button:hover:not(:disabled) {
+    border-color: #8bdcff;
+    background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+    color: #fff;
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+#option-buttons > .button:active:not(:disabled):not(.disable),
+.side-bar > .button:active:not(:disabled),
+#history .button:active:not(:disabled),
+#contextMenu button:active:not(:disabled),
+#error-occurred button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+#option-buttons > .button:focus-visible,
+.side-bar > .button:focus-visible,
+#history .button:focus-visible,
+#contextMenu button:focus-visible,
+#error-occurred button:focus-visible,
+#btn-ok:focus-visible,
+#btn-end:focus-visible,
+#replay-controls button:focus-visible {
+    outline: 3px solid #e8bd62;
+    outline-offset: 2px;
+}
+
+#option-buttons > .button.clicked,
+.side-bar > .button.clicked,
+#history .button.clicked {
+    border-color: #8bdcff;
+    background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+    color: #fff;
+    box-shadow: 0 0 1rem rgba(32, 185, 255, 0.38);
+}
+
+/* Keep the table clickable while an action is waiting for a card target.
+   This also protects long-lived browser tabs that still have an older cached
+   copy of the effect controller without target-selection-active. */
+body:has(.card.highlight-targets) #option-buttons:has(> .button.clicked) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+body:has(.card.highlight-targets) #option-buttons:has(> .button.clicked) > .button {
+    pointer-events: none;
+}
+
+#option-buttons > .button.disable,
+#option-buttons > .button:disabled,
+.side-bar > .button:disabled,
+#history .button:disabled,
+#error-occurred button:disabled {
+    border-color: rgba(111, 135, 152, 0.48);
+    background: rgba(31, 48, 62, 0.78) !important;
+    color: #8294a2 !important;
+    box-shadow: none;
+    filter: grayscale(0.7);
+    opacity: 0.62;
+}
+
+#ex-buttons {
+    border: 1px solid rgba(143, 190, 224, 0.38);
+    background: rgba(8, 17, 27, 0.9);
+    box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(9px);
+}
+
+#contextMenu {
+    border-color: rgba(143, 190, 224, 0.45);
+    border-radius: 0.35rem;
+    background: rgba(8, 17, 27, 0.96);
+    box-shadow: 0 0.7rem 1.8rem rgba(0, 0, 0, 0.5);
+}
+
+#btn-ok,
+#btn-end {
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    border-radius: calc(0.45 * var(--font-size));
+    color: #fff;
+    box-shadow: 0 calc(0.2 * var(--font-size)) rgba(0, 0, 0, 0.48),
+        0 0.55rem 1.1rem rgba(0, 0, 0, 0.35);
+    transition: filter 120ms ease, transform 120ms ease;
+}
+
+#btn-ok.ok {
+    border-color: #70c696;
+    background: linear-gradient(0deg, #174b38 0%, #247653 100%);
+}
+
+#btn-ok.overpay {
+    border-color: #f5d276;
+    background: linear-gradient(0deg, #996515 0%, #c6922a 100%);
+}
+
+#btn-end {
+    border-color: #cf6f82;
+    background: linear-gradient(0deg, #501927 0%, #7d293b 100%);
+}
+
+#btn-end.action {
+    border-color: #70c5e7;
+    background: linear-gradient(0deg, #0b4e72 0%, #087da9 100%);
+}
+
+#btn-end.response_interrupt {
+    border-color: #d8a957;
+    background: linear-gradient(0deg, #4d1926 0%, #79293a 100%);
+    color: #f3d28e;
+}
+
+#btn-end.response_interrupt.ex_effect {
+    border-color: #d97e8d;
+    background: linear-gradient(0deg, #541b29 0%, #873044 100%);
+    color: #f8e7eb;
+}
+
+#btn-end.defense {
+    border-color: #83b97d;
+    background: linear-gradient(0deg, #4d1926 0%, #76293a 100%);
+    color: #caeec4;
+}
+
+#btn-ok:hover:not(:disabled),
+#btn-end:hover:not(:disabled) {
+    color: #fff;
+    filter: brightness(1.12);
+}
+
+#btn-end.response_interrupt:hover:not(:disabled) {
+    color: #ffe0a1;
+}
+
+#btn-end.defense:hover:not(:disabled) {
+    color: #ddf7d8;
+}
+
+#replay-controls {
+    border-color: rgba(143, 190, 224, 0.45);
+    background: rgba(8, 17, 27, 0.92);
+}
+
+#replay-controls button {
+    border-color: rgba(82, 184, 239, 0.58);
+    background: linear-gradient(180deg, rgba(27, 57, 77, 0.98), rgba(11, 28, 41, 0.98));
+}
+
+#replay-controls button:hover:not(:disabled),
+#replay-controls button:focus-visible,
+#replay-play-pause {
+    border-color: #8bdcff;
+    background: linear-gradient(0deg, #007fca 0%, #029eef 100%) !important;
+}
+
+/* A narrower logical table keeps a 16:9 desktop capture focused on the game
+   instead of pinning decks and schemes to the outer edge of the video. Card
+   size remains height-driven, while Scene centers the compact table in the
+   available viewport. Touch layouts keep their dedicated coordinates. */
+@media (hover: hover) and (pointer: fine) and (min-width: 1200px) and (min-aspect-ratio: 3 / 2) {
+    :root {
+        --scene-width: 1600;
+    }
+
+    #image-preview-div-left {
+        left: 10vw;
+    }
+
+    #image-preview-div-right {
+        right: 10vw;
+    }
+
+    .deck.player-0,
+    .deck.player-1,
+    .deck.player-2,
+    .deck.player-3,
+    #player-all-dealt-encounter-cards,
+    .dealt-encounter-cards.player-0,
+    .dealt-encounter-cards.player-1,
+    .dealt-encounter-cards.player-2,
+    .dealt-encounter-cards.player-3,
+    #encounter-discard-pile-0,
+    #encounter-deck-0 {
+        --x: 80;
+    }
+
+    .additional-deck.player-0,
+    .additional-deck.player-1,
+    .additional-deck.player-2,
+    .additional-deck.player-3,
+    .additional-discard-pile.player-0,
+    .additional-discard-pile.player-1,
+    .additional-discard-pile.player-2,
+    .additional-discard-pile.player-3,
+    #encounter-discard-pile-1,
+    #encounter-deck-1 {
+        --x: 230;
+    }
+
+    .player-special-deck.special-deck-0,
+    #encounter-discard-pile-2,
+    #encounter-deck-2 {
+        --x: 380;
+    }
+
+    .player-special-deck.special-deck-1,
+    #encounter-discard-pile-3,
+    #encounter-deck-3 {
+        --x: 530;
+    }
+
+    #area-schemes-main,
+    #area-schemes-side {
+        --x: 1580;
+    }
+
+    #victory-display {
+        --x: 1000;
+    }
+
+    #area-removed,
+    #removed-pool {
+        --x: 1150;
+    }
+
+    #nemesis-pool {
+        --x: 1300;
+    }
+
+    #area-advanced {
+        --x: 1450;
+    }
+}

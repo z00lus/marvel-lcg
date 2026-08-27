@@ -224,26 +224,38 @@ body:not(.game-over) #game-over-close {
 
 #game-over-buttons button {
     padding: 0.3rem 0.3rem;
-    border-radius: 0.2rem;
+    border-radius: 0.4rem;
     font-size: 1rem;
+    font-weight: 700;
     margin-left: 0.5rem;
     cursor: pointer;
     width: 8rem;
     height: 2rem;
-    border: none;
+    border: 1px solid rgba(82, 184, 239, 0.72);
+    background: linear-gradient(180deg, rgba(27, 57, 77, 0.98), rgba(11, 28, 41, 0.98));
     color: white;
+    box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.32);
+    transition: filter 120ms ease, transform 120ms ease, border-color 120ms ease;
 }
 
 #game-over-buttons button.save-replay {
-    background-color: tomato;
+    border-color: #f0ca6b;
+    background: linear-gradient(0deg, #996515 0%, #c6922a 100%);
 }
 
 #game-over-buttons button.share-replay {
-    background-color: darkgreen;
+    border-color: #79d39a;
+    background: linear-gradient(0deg, #126332 0%, #198645 100%);
 }
 
 #game-over-buttons button.try-again {
-    background-color: #2563eb;
+    border-color: #7dd3fc;
+    background: linear-gradient(0deg, #007fca 0%, #029eef 100%);
+}
+
+#game-over-buttons button.main-menu {
+    border-color: rgba(143, 190, 224, 0.62);
+    background: linear-gradient(180deg, rgba(42, 64, 82, 0.98), rgba(20, 38, 52, 0.98));
 }
 
 #game-over-buttons button:disabled {
@@ -252,10 +264,19 @@ body:not(.game-over) #game-over-close {
 }
 
 #game-over-buttons button:hover {
-    color: black;
-    /* background-color: gray; */
-    background-color: darkgray;
-    /* filter: drop-shadow(1px 2px 3px white); */
+    border-color: #b5e8ff;
+    color: white;
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+#game-over-buttons button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+#game-over-buttons button:focus-visible {
+    outline: 3px solid #e8bd62;
+    outline-offset: 2px;
 }
 
 #game-over-close {

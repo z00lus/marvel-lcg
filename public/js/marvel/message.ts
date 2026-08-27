@@ -163,7 +163,15 @@ export class Message {
             }
         });
 
+        const buttonMainMenu = document.createElement('button');
+        buttonMainMenu.innerHTML = '<i class="fa fa-home" aria-hidden="true"></i> Main menu';
+        buttonMainMenu.classList.add('main-menu');
+        buttonMainMenu.addEventListener('click', function() {
+            window.location.assign('/');
+        });
+
         game_over_buttons.appendChild(Message.retryButton);
+        game_over_buttons.appendChild(buttonMainMenu);
         game_over_buttons.appendChild(buttonShare);
         game_over_buttons.appendChild(Message.saveReplayButton);
     }
