@@ -1,6 +1,6 @@
 # Marvel Champions Digital: Ronin Edition Changelog
 
-> Current development version: 0.6.1 — “Echo”
+> Current release version: 0.6.1 — “Echo”
 
 This document records the user-visible and development changes made in this
 fork after it diverged from the original
@@ -11,7 +11,7 @@ The comparison baseline is upstream commit
 (`master`, 2026-07-31). Version 0.6.0 is the first release carrying the
 **Ronin Edition** name and the **Echo** codename.
 
-## Version 0.6.1 — “Echo” (Unreleased)
+## Version 0.6.1 — “Echo” (2026-08-28)
 
 ### Rules and cards
 
@@ -51,6 +51,18 @@ The comparison baseline is upstream commit
   proper player area instead of remaining detached on the table.
 - Corrected Photographic Reflexes resolution and exclusive thwart-target
   restrictions such as Hope Summers being limited to Stryfe's Grasp.
+- Added **Jessica Jones** with her identity cards, obligation, nemesis set,
+  starter deck, and the additional cards required by her integration.
+- Added readable text-only card images for implemented cards whose published
+  artwork is unavailable, including title, type, cost, resources, traits,
+  statistics, and rules text.
+- Refreshed the availability of events tucked beneath Echo after the game
+  state changes, so cards such as Army of One can be played at the correct
+  time through Photographic Reflexes.
+- Corrected reported Fear No Evil interactions: Contingency Planning now
+  recognises printed attachment targets, Daredevil has his printed THW 2,
+  Superior Taste follows the Rules Reference definition of “you”, and Raised
+  by the Kingpin tracks the player who received the obligation.
 
 ### Interface
 
@@ -62,6 +74,18 @@ The comparison baseline is upstream commit
 - Replaced the standalone Statistics page with a combined **Collection &
   Statistics** screen for tracking owned physical products, browsing game
   history, and reviewing achievements.
+- Added a **Proxy** screen that produces print-ready A4 PDFs with cut lines for
+  hero decks and scenarios belonging to catalogued out-of-print products.
+  Eligibility is enforced on both the browser and server sides.
+- Added a **Deck Viewer** for inspecting local and synced decks, showing each
+  card's source product, and exporting a compact shareable PNG deck grid.
+- Organised Quick Game heroes alphabetically within custom-deck and preconstructed
+  groups, and grouped scenarios visually by expansion or scenario pack.
+- Restyled the main menu and in-game controls, added a return-to-menu action to
+  the game-over screen, and compacted the desktop table for clearer recording
+  and play.
+- Corrected fallback image caching so newly available card art can replace a
+  previously generated placeholder after restart.
 
 ### Game history and achievements
 
@@ -71,6 +95,17 @@ The comparison baseline is upstream commit
   win rates.
 - Recalculate achievement progress after a physical result is corrected or
   removed, and order streak achievements by the actual played date.
+- Added optional independent 1–5 star ratings for the hero and scenario after
+  a completed game, with ratings stored alongside the game-history record.
+
+### Automation and regression coverage
+
+- Added an authenticated headless solo-play API, a local MCP bridge, and a
+  repository-scoped Codex skill for running complete games without the browser
+  UI. Agent-run games retain replays but are excluded from personal history,
+  statistics, ratings, and achievements.
+- Added a real-engine puzzle regression suite covering 20 compact rules and
+  card-interaction cases, with isolated server lifecycle and cleanup.
 
 ## Version 0.6.0 — “Echo” (2026-08-11)
 
