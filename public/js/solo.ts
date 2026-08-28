@@ -1,5 +1,7 @@
 type SetInfo = {
+    name?: string;
     scenarios: string[];
+    heroes?: string[];
 };
 
 type ScenarioData = {
@@ -43,6 +45,7 @@ type ScenarioChoice = {
     imageId: string;
     data: ScenarioData;
     expertId: string | null;
+    productLabel: string;
 };
 
 type HeroChoice = {
@@ -111,6 +114,25 @@ function getFileName(path: string): string {
 
 function getFirstCardId(cardIds: string[]): string {
     return cardIds[0]?.split(',')[0] ?? '';
+}
+
+function getProductLabel(label: string, info: SetInfo): string {
+    const match = label.match(/^(\d+)\.\s*(.+)$/);
+    const order = match ? Number(match[1]) : 0;
+    const productName = match?.[2] ?? label;
+    const hasHeroes = (info.heroes?.length ?? 0) > 0;
+    const hasScenarios = (info.scenarios?.length ?? 0) > 0;
+
+    if (order === 1 || info.name === 'core') {
+        return productName;
+    }
+    if (hasHeroes && hasScenarios) {
+        return `${productName} · Expansion`;
+    }
+    if (hasScenarios) {
+        return `${productName} · Scenario Pack`;
+    }
+    return productName;
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -329,12 +351,18 @@ async function loadScenarioChoices(): Promise<ScenarioChoice[]> {
         fetchJson<string[]>('/list_scenarios?'),
     ]);
     const availableIds = new Set(availablePaths.map(getFileName));
-    const scenarioIds = Array.from(new Set(
-        Object.entries(sets)
-            .filter(([setName]) => /^\d+\./.test(setName))
-            .flatMap(([, set]) => set.scenarios ?? [])
-            .filter((id) => availableIds.has(id)),
-    ));
+    const scenarioCatalog = new Map<string, string>();
+    for (const [setName, set] of Object.entries(sets)) {
+        if (!/^\d+\./.test(setName)) {
+            continue;
+        }
+        for (const id of set.scenarios ?? []) {
+            if (availableIds.has(id) && !scenarioCatalog.has(id)) {
+                scenarioCatalog.set(id, getProductLabel(setName, set));
+            }
+        }
+    }
+    const scenarioIds = Array.from(scenarioCatalog.keys());
 
     const choices = await Promise.all(scenarioIds.map(async (id): Promise<ScenarioChoice | null> => {
         try {
@@ -356,6 +384,7 @@ async function loadScenarioChoices(): Promise<ScenarioChoice[]> {
                 imageId,
                 data,
                 expertId: availableIds.has(expertId) ? expertId : null,
+                productLabel: scenarioCatalog.get(id)!,
             };
         } catch (error) {
             console.warn(`Failed to load scenario ${id}`, error);
@@ -397,7 +426,20 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
         }
     }));
 
-    return choices.filter((choice): choice is HeroChoice => choice !== null);
+    return choices
+        .filter((choice): choice is HeroChoice => choice !== null)
+        .sort((left, right) => {
+            const groupComparison = Number(left.isUserDeck) - Number(right.isUserDeck);
+            if (groupComparison !== 0) {
+                return -groupComparison;
+            }
+            const leftName = left.data.deck_name ?? left.data.name;
+            const rightName = right.data.deck_name ?? right.data.name;
+            return leftName.localeCompare(rightName, undefined, {
+                sensitivity: 'base',
+                numeric: true,
+            }) || left.id.localeCompare(right.id);
+        });
 }
 
 function renderScenarios(choices: ScenarioChoice[]): void {
@@ -408,13 +450,18 @@ function renderScenarios(choices: ScenarioChoice[]): void {
     );
 
     for (const choice of orderedChoices) {
-        scenarioList.appendChild(createChoiceButton(
+        const button = createChoiceButton(
             choice.id,
             choice.name,
             choice.imageId,
             () => selectScenario(choice),
             newScenarioIds.has(choice.id),
-        ));
+        );
+        const product = document.createElement('span');
+        product.className = 'scenario-product-label';
+        product.textContent = choice.productLabel;
+        button.appendChild(product);
+        scenarioList.appendChild(button);
     }
 
     const savedChoice = choices.find((choice) => choice.id === savedId);
