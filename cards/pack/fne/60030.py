@@ -3,16 +3,31 @@ from . import *
 # Contingency Planning
 
 
+def CanAttachToMinionOrSideScheme(effect: 'Effect', face: 'CardFace') -> bool:
+    Unused(effect)
+
+    if not Upgrade.IsType(face):
+        return False
+
+    for ability in face.ability.Find(func_name="Play"):
+        if not ability.selectors or not ability.selectors[0]:
+            continue
+
+        target_type = ability.selectors[0].selector_filter.finder.card_type
+        if target_type is None:
+            continue
+
+        try:
+            if issubclass(Minion, target_type) or \
+                issubclass(SchemeSide2, target_type):
+                return True
+        except TypeError:
+            continue
+
+    return False
+
+
 def GetAbilities() -> Sequence['Ability']:
-
-    def can_attach_to_minion_or_side_scheme(effect: 'Effect', face: 'CardFace') -> bool:
-        targets = [*Worlds.GetSideSchemes(effect), *Worlds.GetOnFieldEnemies(effect)]
-        return any(
-            (Minion.IsType(target) or SchemeSide2.IsType(target)) and
-            face.CanAttachTo(target)
-            for target in targets
-        )
-
     def contingency_planning(effect: 'Effect', message: 'Message.WhenPlayerInTurn') -> None:
         this = effect.this.CastTo(Upgrade)
         this.TuckCardUnderHere(effect.targets[0], effect)
@@ -28,7 +43,7 @@ def GetAbilities() -> Sequence['Ability']:
                     effect.this.GetPlacedCardArea().GetSize() == 0
             ],
         ).SetTarget(
-            CardFinder(card_type=Upgrade, check_effect_fn=can_attach_to_minion_or_side_scheme),
+            CardFinder(card_type=Upgrade, check_effect_fn=CanAttachToMinionOrSideScheme),
             from_where=["YourHandCards"],
         ),
     ]

@@ -60636,7 +60636,7 @@
             "desc": {
                 "HP": "10",
                 "ATK": "2",
-                "THW": "1",
+                "THW": "2",
                 "DEF": "2",
                 "HS": "5"
             },
@@ -64529,5 +64529,5 @@
             "text": "Victory 0.\n<b>When Defeated</b>: Each player may change to alter-ego form. Heal damage from each alter-ego equal to its REC."
         }
     ],
-    "checksum": "857fb74defe8ad22cb19f2d0b83e5bd194b85017c4c8f4b9fd01fa15ed74f4c8"
+    "checksum": "cb64087b9ee00eb6781f5567ec07e7fa7039cef3cded344c2c18eb565382272a"
 }

@@ -73,6 +73,13 @@ class DaredevilScriptLoadTests(TestCase):
 
         self.assertEqual(CardsDB.FindCardPaper("60025").pic_id, "26034")
 
+    def test_daredevil_has_two_printed_thwart(self):
+        Ver.Initialize()
+        if not CardsDB.papers:
+            CardsDB.Initialize()
+
+        self.assertEqual(CardsDB.FindCardPaper("60001a").desc["THW"], "2")
+
 
 class SenseDeckTests(TestCase):
 
@@ -198,6 +205,78 @@ class SenseDeckTests(TestCase):
 
 
 class DaredevilAbilityTests(TestCase):
+
+    def test_contingency_planning_accepts_chance_encounter_without_a_target_in_play(self):
+        Ver.Initialize()
+        if not CardsDB.papers:
+            CardsDB.Initialize()
+
+        world = Mock()
+        world.GetPlayerNumIcon.return_value = 1
+        chance_encounter = CardFactory.CreateFace(
+            CardsDB.FindCardPaper("60025"),
+            world,
+        )
+        identity_upgrade = CardFactory.CreateFace(
+            CardsDB.FindCardPaper("60017"),
+            world,
+        )
+        module = importlib.import_module("cards.pack.fne.60030")
+        action = next(
+            ability for ability in module.GetAbilities()
+            if ability.flags.is_action
+        )
+        finder = action.selectors[0].selector_filter.finder
+        effect = Mock()
+
+        self.assertTrue(finder.Check(chance_encounter, effect))
+        self.assertFalse(finder.Check(identity_upgrade, effect))
+
+    def test_superior_taste_treats_you_as_your_identity(self):
+        module = importlib.import_module("cards.pack.fne.daredevil.60006")
+        factory_module = importlib.import_module("game.ability.factory.scheme")
+        response = next(
+            ability for ability in module.GetAbilities()
+            if ability.when.__name__ == "AfterSchemeRemoveThreat"
+        )
+        effect = Mock()
+        source = Mock()
+        message = Mock()
+        message.would_remove_message.by_face = source
+
+        with patch.object(
+            factory_module.Condition,
+            "CheckWhichCard",
+            return_value=True,
+        ) as check_card:
+            self.assertTrue(response.conditions[1](effect, message))
+
+        check_card.assert_called_once_with("YourIdentity", source, effect)
+
+    def test_enhanced_olfaction_interrupt_is_available_when_owner_defeats_attached_scheme(self):
+        module = importlib.import_module("cards.pack.fne.daredevil.60003")
+        factory_module = importlib.import_module("game.ability.factory.defeated")
+        interrupt = next(
+            ability for ability in module.GetAbilities()
+            if ability.when.__name__ == "WhenSchemeBeDefeated"
+        )
+        owner = Mock()
+        effect = Mock()
+        effect.this.GetOwnerPlayer.return_value = owner
+        effect.ability.type.flags.is_when_defeated = False
+        message = Mock(defeating_player=owner)
+
+        with patch.object(
+            factory_module.Condition,
+            "CheckWhichCard",
+            return_value=True,
+        ) as check_card:
+            self.assertTrue(all(
+                condition(effect, message)
+                for condition in interrupt.conditions
+            ))
+
+        check_card.assert_called_once_with("AttachedScheme", message.trigger, effect)
 
     def test_know_your_enemy_rechecks_crisis_before_each_threat_removal(self):
         module = importlib.import_module("cards.pack.fne.60023")

@@ -127,7 +127,7 @@ class AbilityFactoryScheme:
                                 which_scheme: CardType,
                                 operation: OperationType[Message.AfterSchemeRemoveThreat],
                                 *,
-                                by_who: CardType=None,
+                                by_who: CardType|Literal["You"]=None,
                                 by_thwart: 'bool|Message.WhenUnitWouldThwart|None'=None,
                                 last_threat: bool|None=None,
                                 conditions: ConditionsType[Message.AfterSchemeRemoveThreat]=[],
@@ -140,7 +140,12 @@ class AbilityFactoryScheme:
         def check_by_who(effect: 'Effect', message: 'Message.AfterSchemeRemoveThreat') -> bool:
             if by_who == None:
                 return True
-            return Condition.CheckWhichCard(by_who, message.would_remove_message.by_face, effect)
+            you_rule = Condition.GetYouRule(by_who, identity=True)
+            return Condition.CheckWhichCard(
+                you_rule,
+                message.would_remove_message.by_face,
+                effect,
+            )
 
         def check_by_thwart(effect: 'Effect', message: 'Message.AfterSchemeRemoveThreat') -> bool:
             if by_thwart == None:
@@ -548,4 +553,3 @@ class AbilityFactoryScheme:
             operation,
             is_local=True
         )
-

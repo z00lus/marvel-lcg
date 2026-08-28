@@ -43,3 +43,38 @@ class DaredevilAllyDiscountTests(TestCase):
             cost_effect.is_unregister = True
             cleanup_ability.operation(Mock(), played_message)
             unregister.assert_called_once_with([cost_effect])
+
+
+class RaisedByTheKingpinTests(TestCase):
+
+    def test_ongoing_effects_use_the_player_given_the_obligation(self):
+        module = importlib.import_module("cards.pack.fne.echo.60060")
+        abilities = module.GetAbilities()
+        maya = Mock()
+        obligation = Mock()
+        obligation.GetGaveToPlayer.return_value = maya
+        effect = Mock()
+        effect.this.CastTo.return_value = obligation
+        message = Mock()
+        message.by_effect.GetInitiator.return_value = maya
+
+        for ability in abilities[1:]:
+            with self.subTest(event=ability.when.__name__):
+                self.assertTrue(ability.conditions[-1](effect, message))
+
+        obligation.GetGaveToPlayer.assert_called()
+        effect.this.GetControlByPlayer.assert_not_called()
+
+    def test_other_players_do_not_advance_or_bypass_the_obligation(self):
+        module = importlib.import_module("cards.pack.fne.echo.60060")
+        abilities = module.GetAbilities()
+        obligation = Mock()
+        obligation.GetGaveToPlayer.return_value = Mock(name="Maya")
+        effect = Mock()
+        effect.this.CastTo.return_value = obligation
+        message = Mock()
+        message.by_effect.GetInitiator.return_value = Mock(name="Other player")
+
+        for ability in abilities[1:]:
+            with self.subTest(event=ability.when.__name__):
+                self.assertFalse(ability.conditions[-1](effect, message))

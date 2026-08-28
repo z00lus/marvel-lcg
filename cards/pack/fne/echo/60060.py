@@ -5,6 +5,10 @@ from . import *
 
 def GetAbilities() -> Sequence['Ability']:
 
+    def is_maya_player(effect: 'Effect', message: 'Message2') -> bool:
+        player = effect.this.CastTo(Obligation).GetGaveToPlayer()
+        return message.by_effect.GetInitiator() == player
+
     def raised_by_the_kingpin(effect: 'Effect', message: 'Message.WhenObligationGiveToPlayer') -> None:
         PutKingpinIntoPlay(effect, message.GetGaveToPlayer())
 
@@ -22,8 +26,7 @@ def GetAbilities() -> Sequence['Ability']:
             AbilityType.NonKeyword,
             CardFinder(name="Kingpin"),
             conditions=[
-                lambda effect, message:
-                    message.by_effect.GetInitiator() == effect.this.GetControlByPlayer()
+                is_maya_player,
             ],
         ),
         AbilityFactory.AfterSchemeRemoveThreat(
@@ -32,8 +35,7 @@ def GetAbilities() -> Sequence['Ability']:
             place_thwarted_threat,
             by_thwart=True,
             conditions=[
-                lambda effect, message:
-                    message.by_effect.GetInitiator() == effect.this.GetControlByPlayer()
+                is_maya_player,
             ],
         ),
     ]
