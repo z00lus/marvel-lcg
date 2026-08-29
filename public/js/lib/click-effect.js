@@ -44,4 +44,3 @@ function applyCursorRippleEffect(e) {
         document.body.removeChild(ripple);
     };
 }
-
