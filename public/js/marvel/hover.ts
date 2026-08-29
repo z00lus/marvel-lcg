@@ -7,6 +7,7 @@ import { convertScenePosToWindowPos, Scene } from './scene.js'
 import { ClassName } from './class_name.js'
 import { CardAnimation } from './card_animation.js'
 import { Button } from './buttons.js'
+import { cardImageIdFromUrl, withCardImageRevision } from '../card_image_url.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -249,12 +250,13 @@ export class HoverCard{
     }
 
     static set2(card_div: HTMLElement, bg_image: string) {
-        const card_id = /url\((.*?)\)$/.exec(bg_image)![1].replace(/"/g, '')
+        const image_url = /url\((.*?)\)$/.exec(bg_image)![1].replace(/"/g, '')
+        const card_id = cardImageIdFromUrl(image_url)
 
-        HoverCard.set3(card_div, card_id)
+        HoverCard.set3(card_div, card_id, image_url)
     }
 
-    static set3(card_div: HTMLElement, card_id: string) {
+    static set3(card_div: HTMLElement, card_id: string, image_url=withCardImageRevision(card_id)) {
         let rotate_times = ""
         let debug_text = ""
         let is_new = false
@@ -280,7 +282,7 @@ export class HoverCard{
             text = Lib.game.cleanResText(text)
             type = card.card_type
         }
-        HoverCard.show(`url("${card_id}")`, name, type, text, rotate_times, debug_text, is_new)
+        HoverCard.show(`url("${image_url}")`, name, type, text, rotate_times, debug_text, is_new)
     }
 
     static set(card_div: HTMLElement|null, is_log=false, forced_bg_image='') {
@@ -333,7 +335,7 @@ export class HoverCard{
     }
 
     static showLogImage(object_id: number, bg_image: string) {
-        bg_image = `url("${bg_image}")`
+        bg_image = `url("${withCardImageRevision(bg_image)}")`
         // console.log(bg_image)
         const card_div = Cards.getDiv(object_id)!
         HoverCard.set(card_div, true, bg_image)

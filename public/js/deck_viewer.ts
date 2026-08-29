@@ -1,4 +1,4 @@
-export {};
+import { withCardImageRevision } from './card_image_url.js';
 
 type DeckData = {
     name: string;
@@ -259,7 +259,7 @@ function loadCardImage(cardId: string): Promise<HTMLImageElement> {
         image.decoding = 'async';
         image.onload = () => resolve(image);
         image.onerror = () => reject(new Error(`Could not load card image ${cardId}`));
-        image.src = `/${cardId}`;
+        image.src = withCardImageRevision(`/${cardId}`);
     });
 }
 
@@ -365,7 +365,7 @@ async function createShareImage(): Promise<void> {
 function openPreview(entry: CardEntry): void {
     previewFaces = entry.cardIds;
     previewFaceIndex = 0;
-    previewImage.src = `/${previewFaces[0]}`;
+    previewImage.src = withCardImageRevision(`/${previewFaces[0]}`);
     previewImage.alt = entry.paper.name;
     previewName.textContent = entry.paper.name;
     previewMeta.textContent = `${cardMeta(entry.paper)} · ${cardProduct(entry.paper)}`;
@@ -380,7 +380,7 @@ function createCardTile(entry: CardEntry): HTMLButtonElement {
     tile.title = `Preview ${entry.paper.name}`;
 
     const image = document.createElement('img');
-    image.src = `/${entry.cardId}`;
+    image.src = withCardImageRevision(`/${entry.cardId}`);
     image.alt = entry.paper.name;
     image.loading = 'lazy';
 
@@ -442,7 +442,9 @@ async function showDeck(choice: DeckChoice): Promise<void> {
         renderEntries(encounterCards, relatedCards);
 
         const identity = identities[0];
-        identityImage.src = identity ? `/${identity.cardId}` : '/player';
+        identityImage.src = identity
+            ? withCardImageRevision(`/${identity.cardId}`)
+            : '/player';
         identityImage.alt = choice.data.name;
         deckHero.textContent = choice.data.name;
         deckName.textContent = choice.data.deck_name ?? `${choice.data.name} Starter Deck`;
@@ -499,7 +501,7 @@ preview.addEventListener('click', (event) => {
 });
 previewFlip.addEventListener('click', () => {
     previewFaceIndex = (previewFaceIndex + 1) % previewFaces.length;
-    previewImage.src = `/${previewFaces[previewFaceIndex]}`;
+    previewImage.src = withCardImageRevision(`/${previewFaces[previewFaceIndex]}`);
 });
 
 async function initialize(): Promise<void> {

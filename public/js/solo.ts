@@ -72,6 +72,7 @@ import {
     DeckSourceController,
     createDeckSourceController,
 } from './marvelcdb_deck.js';
+import { withCardImageRevision } from './card_image_url.js';
 
 const scenarioStorageKey = 'marvel_lcg_solo_scenario';
 const heroStorageKey = 'marvel_lcg_solo_hero';
@@ -333,7 +334,7 @@ function createChoiceButton(
     button.classList.toggle('new-content', isNew);
 
     const image = document.createElement('img');
-    image.src = `/${imageId}`;
+    image.src = withCardImageRevision(`/${imageId}`);
     image.alt = '';
 
     const title = document.createElement('span');

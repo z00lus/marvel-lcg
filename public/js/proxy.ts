@@ -1,4 +1,4 @@
-export {};
+import { withCardImageRevision } from './card_image_url.js';
 
 type SetInfo = {
     scenarios: string[];
@@ -121,7 +121,7 @@ function createChoiceButton(
     button.classList.toggle('user-deck', options.isUserDeck === true);
 
     const image = document.createElement('img');
-    image.src = `/${imageId}`;
+    image.src = withCardImageRevision(`/${imageId}`);
     image.alt = '';
 
     const title = document.createElement('span');

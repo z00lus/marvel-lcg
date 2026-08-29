@@ -14,6 +14,7 @@ import {
     refreshCampaignDeck,
     saveCampaignDeck,
 } from './marvelcdb_deck.js';
+import { withCardImageRevision } from './card_image_url.js';
 
 type ScenarioData = {
     name: string;
@@ -217,7 +218,7 @@ function createChoiceButton(
     button.setAttribute('aria-pressed', 'false');
 
     const image = document.createElement('img');
-    image.src = `/${imageId}`;
+    image.src = withCardImageRevision(`/${imageId}`);
     image.alt = '';
 
     const title = document.createElement('span');
@@ -354,7 +355,7 @@ function renderScenario(choice: ScenarioChoice, definition: CampaignDefinition):
     scenarioPreview.replaceChildren();
 
     const image = document.createElement('img');
-    image.src = `/${choice.imageId}`;
+    image.src = withCardImageRevision(`/${choice.imageId}`);
     image.alt = '';
 
     const details = document.createElement('div');

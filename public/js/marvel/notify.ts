@@ -1,6 +1,7 @@
 import { Setting } from './settings.js'
 // @ts-ignore
 import { Notifications } from '../lib/notifications.js'
+import { withCardImageRevision } from '../card_image_url.js'
 
 export class Notify {
 
@@ -96,7 +97,8 @@ export class Notify {
         //     text = "Defeated"
         // }
 
-        let notify_text = `<img class='statistics-notify-img' style='--bg-image-true: url("${card_id}")'></img>  ${text} x${count}`
+        const image_url = withCardImageRevision(card_id)
+        let notify_text = `<img class='statistics-notify-img' style='--bg-image-true: url("${image_url}")'></img>  ${text} x${count}`
 
         Notify.showStatisticsText(notify_text)
     }

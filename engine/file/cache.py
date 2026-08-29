@@ -15,6 +15,25 @@ BREAK_WHEN_LOAD_ONLINE_IMAGE = ConfigVariables.Bool('break_when_load_online_imag
 
 STATUS_TEXTURES = frozenset({"tough", "stunned", "confused"})
 
+# Cerebro names these identity sides after their printed A/B faces, while the
+# engine and MarvelCDB consistently use "a" for hero and "b" for alter-ego.
+# Keep this source-specific: local images and every other image server already
+# use the engine's card ids.
+CEREBRO_REVERSED_IDENTITY_BASE_IDS = frozenset({
+    "16001",  # Groot
+    "16029",  # Rocket Raccoon
+    "32001",  # Colossus
+    "32030",  # Shadowcat
+    "33001",  # Cyclops
+    "34001",  # Phoenix
+    "35001",  # Wolverine
+    "36001",  # Storm
+    "37001",  # Gambit
+    "38001",  # Rogue
+})
+
+CEREBRO_SIDE_CACHE_REVISION = "ronin-side-v1"
+
 class Cache:
 
     cache: Dict[str, bytes] = {}
@@ -29,6 +48,24 @@ class Cache:
         Cache.cache[card_id] = data
 
     @staticmethod
+    def _GetSourceCardId(site: str, card_id: str) -> str:
+        if "cerebrodatastorage.blob.core.windows.net" not in site.lower():
+            return card_id
+        if len(card_id) != 6 or card_id[:-1] not in CEREBRO_REVERSED_IDENTITY_BASE_IDS:
+            return card_id
+        if card_id[-1] == "a":
+            return f"{card_id[:-1]}b"
+        if card_id[-1] == "b":
+            return f"{card_id[:-1]}a"
+        return card_id
+
+    @staticmethod
+    def _GetPersistentCacheName(card_id: str) -> str:
+        if len(card_id) == 6 and card_id[:-1] in CEREBRO_REVERSED_IDENTITY_BASE_IDS:
+            return f"{card_id}.{CEREBRO_SIDE_CACHE_REVISION}"
+        return card_id
+
+    @staticmethod
     def LoadImage(card_id: str) -> bytes:
         # if url in ['enthralled_minion', 'minion', 'ultron_facedown_drone']:
         #     url = 'player'
@@ -40,7 +77,8 @@ class Cache:
         assert card_id != "", f"{card_id=}"
         file_name = card_id
 
-        check_folders = IMAGE_FOLDERS.value + [TEXTURE_FOLDER.value] + [CACHE_FOLDER.value]
+        local_folders = IMAGE_FOLDERS.value + [TEXTURE_FOLDER.value]
+        persistent_cache_name = Cache._GetPersistentCacheName(file_name)
 
         def try_load_image_data(image_data: bytes):
             # Status artwork is already authored in its final landscape
@@ -63,8 +101,8 @@ class Cache:
                         return try_load_image_data(file.Read())
             return None
 
-        def try_load_image_name(name: str) -> bytes|None:
-            for cache_folder in check_folders:
+        def try_load_image_name(name: str, folders: Sequence[str]) -> bytes|None:
+            for cache_folder in folders:
                 file_paths: List[str] = []
                 file_paths.append(f"{cache_folder}/{name}")
                 for file_path in file_paths:
@@ -73,7 +111,15 @@ class Cache:
                         return image_data
             return None
 
-        image_data = try_load_image_name(file_name)
+        # User-provided images use the engine's canonical ids and always win.
+        image_data = try_load_image_name(file_name, local_folders)
+        if not image_data:
+            # A revised key deliberately bypasses pre-fix Cerebro files that
+            # may already be present under the old canonical cache name.
+            image_data = try_load_image_name(
+                persistent_cache_name,
+                [CACHE_FOLDER.value],
+            )
         if image_data:
             Cache.SetCache(file_name, image_data)
             return image_data
@@ -110,9 +156,10 @@ class Cache:
             # "https://marvelcdb.com/bundles/cards/${card_id}.png",
 
             for site in IMAGE_SERVERS.value:
+                source_card_id = Cache._GetSourceCardId(site, card_id)
                 full_url = site
-                full_url = full_url.replace('{card_id}', card_id)
-                full_url = full_url.replace('{card_id:U}', card_id.upper())
+                full_url = full_url.replace('{card_id}', source_card_id)
+                full_url = full_url.replace('{card_id:U}', source_card_id.upper())
 
                 try:
                     Log.DebugInfo(CATEGORY_NAME, f"Downloading from {full_url}")
@@ -136,7 +183,7 @@ class Cache:
                     Log.DebugInfo(CATEGORY_NAME, f"Downloaded: {file_name}")
                     data = response.content
                     # Save the image to the cache
-                    save_to_file(file_name, ext_name, data)
+                    save_to_file(persistent_cache_name, ext_name, data)
                     # Get the image data from the response
                     image_data = try_load_image_data(data)
                     Cache.SetCache(file_name, image_data)

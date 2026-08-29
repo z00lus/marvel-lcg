@@ -3,6 +3,7 @@
 
 import { Card } from './card_info.js';
 import { copyToClipboard } from '../lib/clipboard.js'
+import { withCardImageRevision } from '../card_image_url.js'
 
 export class CardPreview {
     private lastClickCardDiv: HTMLElement | null = null;
@@ -128,7 +129,7 @@ export class CardPreview {
         const cardId = cardDiv.getAttribute('data-card-id') as string;
         const cardName = this.constCardDict[cardId].name;
         this.lastClickCardDiv = cardDiv;
-        this.previewImg.src = cardId;
+        this.previewImg.src = withCardImageRevision(cardId);
         const fullLinkId = this.constCardDict[cardId].full_link_id;
         const index = `${this.getDivIndex(cardDiv) + 1}/${cardDiv.parentNode?.children.length}`;
 

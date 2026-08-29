@@ -11,6 +11,7 @@ import { ClassName } from './class_name.js'
 import { copyToClipboard } from '../lib/clipboard.js'
 import { AutoActivate } from './auto_activate.js'
 import { CardAnimation } from './card_animation.js'
+import { withCardImageRevision } from '../card_image_url.js'
 
 function delete_all_data(card_div: HTMLElement) {
     let last_child = card_div.querySelector('.info') as HTMLElement
@@ -713,11 +714,13 @@ class CardRender {
         Lib.game.removeTypeClasses(card_div)
         Lib.game.addTypeClass(card_div, card.card_type, card.name)
 
-        if( card_div.style.getPropertyValue('--bg-image-true') != `url("${pic_id}")` ) {
-            card_div.style.setProperty('--bg-image-true', `url("${pic_id}")`)
+        const front_image_url = withCardImageRevision(pic_id)
+        const back_image_url = withCardImageRevision(card.down_card_id)
+        if( card_div.style.getPropertyValue('--bg-image-true') != `url("${front_image_url}")` ) {
+            card_div.style.setProperty('--bg-image-true', `url("${front_image_url}")`)
         }
-        if( card_div.style.getPropertyValue('--bg-image-false') != `url("${card.down_card_id}")` ) {
-            card_div.style.setProperty('--bg-image-false', `url("${card.down_card_id}")`)
+        if( card_div.style.getPropertyValue('--bg-image-false') != `url("${back_image_url}")` ) {
+            card_div.style.setProperty('--bg-image-false', `url("${back_image_url}")`)
         }
 
         let is_facedown = card_div.classList.contains(ClassName.facedown)
