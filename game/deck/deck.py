@@ -455,6 +455,7 @@ class Deck2(Generic[TC], Object):
         found_face = None
 
         other_discard_faces: List['CardFace'] = []
+        old_shuffle_with_discard_count = self.shuffle_with_discard_count
         max_repeat_times = 10000
         while self.GetSize() > 0:
             assert max_repeat_times > 0, "Discard-until did not find a matching card"
@@ -466,6 +467,13 @@ class Deck2(Generic[TC], Object):
                 break
             else:
                 other_discard_faces.append(face)
+
+            # Rules Reference 1.8, Player Deck / Encounter Deck: when a
+            # discard effect empties a deck, the deck resets as normal, but
+            # the discard effect does not continue through the newly
+            # shuffled deck.
+            if self.shuffle_with_discard_count != old_shuffle_with_discard_count:
+                break
 
         moved_faces = other_discard_faces + [found_face] if found_face else []
         from game.message import Message

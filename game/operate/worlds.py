@@ -587,7 +587,7 @@ class Worlds:
         num = Worlds.ConvertPerPlayerIconToInt(num, by_effect)
         # RR 1.8 finishes the current encounter-deck effect after an empty
         # deck is reset. Discarding several cards is one such effect.
-        faces = deck.DiscardCardsInternal(num, by_effect, continue_after_shuffle=True, each_time=each_time)
+        faces = deck.DiscardCardsInternal(num, by_effect, continue_after_shuffle=False, each_time=each_time)
         return faces
 
     @staticmethod

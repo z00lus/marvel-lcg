@@ -90,7 +90,7 @@ class V18EncounterResetTests(unittest.TestCase):
 
         self.assertEqual(result, [first, second])
 
-    def test_discard_encounter_cards_requests_continue_after_reset(self):
+    def test_discard_encounter_cards_requests_stop_after_reset(self):
         deck = Mock()
         deck.DiscardCardsInternal.return_value = []
         effect = Mock()
@@ -102,27 +102,28 @@ class V18EncounterResetTests(unittest.TestCase):
         deck.DiscardCardsInternal.assert_called_once_with(
             3,
             effect,
-            continue_after_shuffle=True,
+            continue_after_shuffle=False,
             each_time=None,
         )
 
-    def test_discard_until_continues_into_reset_encounter_deck(self):
+    def test_discard_until_stops_after_deck_reset_without_match(self):
         first = Mock()
-        second = Mock()
-        deck = _PopDeck([first])
+        last = Mock()
+        reset_card = Mock()
+        deck = _PopDeck([first, last])
 
         def discard_first(effect):
             deck.faces.remove(first)
-            deck.shuffle_with_discard_count += 1
-            deck.faces.append(second)
 
-        def discard_second(effect):
-            deck.faces.remove(second)
+        def discard_last(effect):
+            deck.faces.remove(last)
+            deck.shuffle_with_discard_count += 1
+            deck.faces.append(reset_card)
 
         first.DiscardInternal.side_effect = discard_first
-        second.DiscardInternal.side_effect = discard_second
+        last.DiscardInternal.side_effect = discard_last
         finder = Mock()
-        finder.Check.side_effect = [False, True]
+        finder.Check.return_value = False
         moved_message = Mock()
 
         with patch('game.card.card_finder.CardFinder', return_value=finder), \
@@ -138,8 +139,44 @@ class V18EncounterResetTests(unittest.TestCase):
                 card_type='CardFace',
             )
 
-        self.assertIs(found, second)
-        self.assertEqual(discarded, [first])
+        self.assertIsNone(found)
+        self.assertEqual(discarded, [first, last])
+        self.assertEqual(deck.faces, [reset_card])
+        reset_card.DiscardInternal.assert_not_called()
+        self.assertEqual(finder.Check.call_count, 2)
+        moved_message.Send.assert_called_once()
+
+    def test_discard_until_keeps_match_that_emptied_deck(self):
+        matching_last_card = Mock()
+        reset_card = Mock()
+        deck = _PopDeck([matching_last_card])
+
+        def discard_matching_card(effect):
+            deck.faces.remove(matching_last_card)
+            deck.shuffle_with_discard_count += 1
+            deck.faces.append(reset_card)
+
+        matching_last_card.DiscardInternal.side_effect = discard_matching_card
+        finder = Mock()
+        finder.Check.return_value = True
+        moved_message = Mock()
+
+        with patch('game.card.card_finder.CardFinder', return_value=finder), \
+             patch(
+                 'game.message.Message.AfterCardsMoved',
+                 return_value=moved_message,
+             ):
+            found, discarded = Deck2.DiscardUntil(
+                deck,
+                object(),
+                name=None,
+                trait=None,
+                card_type='CardFace',
+            )
+
+        self.assertIs(found, matching_last_card)
+        self.assertEqual(discarded, [])
+        reset_card.DiscardInternal.assert_not_called()
         moved_message.Send.assert_called_once()
 
 
