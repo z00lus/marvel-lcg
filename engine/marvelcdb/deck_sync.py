@@ -243,7 +243,16 @@ class MarvelCdbDeckSync:
     @classmethod
     def _template_hero_codes(cls, template: Dict[str, Any]) -> set[str]:
         hero_codes: set[str] = set()
-        for card in template.get('hero', []) + template.get('hero_deck', []):
+        # MarvelCDB includes hero-specific set-aside cards in `slots` for deck
+        # validation even though they are not part of the shuffled player
+        # deck. The engine creates those cards through the hero's setup
+        # instructions, so importing them again would produce duplicate cards.
+        fixed_cards = (
+            template.get('hero', [])
+            + template.get('hero_deck', [])
+            + template.get('set_aside', [])
+        )
+        for card in fixed_cards:
             faces = cls._card_faces(card)
             hero_codes.update(faces)
 

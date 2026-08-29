@@ -94,6 +94,38 @@ class TestMarvelCdbDeckSync(unittest.TestCase):
 
         self.assertEqual(converted['player_deck'], ['01051', '01051'])
 
+    def test_shadowcat_forms_stay_set_aside_when_marvelcdb_lists_both_faces(self):
+        template = {
+            **SPIDER_MAN_TEMPLATE,
+            'name': 'Shadowcat',
+            'hero': ['32030a,32030b'],
+            'set_aside': ['32031a,32031b'],
+        }
+        remote = create_remote_deck()
+        remote['hero_code'] = '32030a'
+        remote['slots'] = {
+            '32031a': 1,
+            '32031b': 1,
+            '01051': 2,
+        }
+
+        converted = MarvelCdbDeckSync.ConvertDeck(remote, template)
+
+        self.assertEqual(converted['set_aside'], ['32031a,32031b'])
+        self.assertEqual(converted['player_deck'], ['01051', '01051'])
+
+    def test_unsuffixed_double_sided_set_aside_code_is_also_excluded(self):
+        template = {
+            **SPIDER_MAN_TEMPLATE,
+            'set_aside': ['26002a,26002b'],
+        }
+        remote = create_remote_deck()
+        remote['slots'] = {'26002': 1, '01051': 2}
+
+        converted = MarvelCdbDeckSync.ConvertDeck(remote, template)
+
+        self.assertEqual(converted['player_deck'], ['01051', '01051'])
+
     def test_sync_writes_engine_deck_and_persists_schedule(self):
         with tempfile.TemporaryDirectory() as temp_folder:
             starter_folder = os.path.join(temp_folder, 'starter')
