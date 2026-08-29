@@ -148,6 +148,61 @@ class AttachmentPutIntoPlayTests(unittest.TestCase):
         self.assertTrue(sidearm.card.state.is_attached)
         self.assertNotIn(sidearm, player.area_processing.Get())
 
+    def test_specialized_training_puts_chosen_linked_upgrade_into_play(self):
+        world, player = self.MakeWorld()
+        identity = player.GetIdentity()
+        scheme = CardFactory.GenerateCard(
+            "43021",
+            world.area_schemes_side,
+            world,
+            ui_render=False,
+        ).face
+        front_line_specialist = next(
+            face for face in world.aside_deck.Get()
+            if face.paper.card_id == "43036"
+        )
+        effect = next(
+            candidate for candidate in scheme.effect.GetAll()
+            if candidate.ability.when is Message.WhenSchemeBeDefeated
+        )
+        effect.context.initiator = player
+
+        def choose_specialization(selector, search_effect):
+            legal_targets = list(selector.GetAllLegalTargets(search_effect))
+            self.assertIn(front_line_specialist, legal_targets)
+            target_range = selector.GetTargetRange(search_effect, legal_targets)
+            self.assertIsNotNone(target_range)
+            self.assertTrue(selector.AfterSelectTargets(
+                search_effect,
+                [front_line_specialist],
+                target_range,
+            ))
+            return [front_line_specialist]
+
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+        with patch.object(
+            player,
+            "AskChooseSelect",
+            side_effect=choose_specialization,
+        ), patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ):
+            effect.ability.operation(effect, object())
+
+        self.assertTrue(front_line_specialist.card.state.is_attached)
+        self.assertIs(front_line_specialist.GetBindFace(), identity)
+        self.assertIs(
+            front_line_specialist.card.area,
+            identity.GetInventoryDeck(),
+        )
+        self.assertTrue(front_line_specialist.IsInPlay())
+        self.assertNotIn(front_line_specialist, world.aside_deck.Get())
+
 
 if __name__ == "__main__":
     unittest.main()

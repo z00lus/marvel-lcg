@@ -654,6 +654,13 @@ class EventManager:
                 #     effect.initiator = asked_player
                 if asked_player != None:
                     effect.context.initiator = asked_player
+                elif isinstance(message, Message.WhenCardPutIntoPlay) and \
+                    effect.this == message.trigger:
+                    # The entering card resolves its local put-into-play
+                    # abilities for the player whose play area it is entering.
+                    # This matters for linked cards, which can still physically
+                    # be in the scenario's set-aside area at this point.
+                    effect.context.initiator = message.GetToPlayer()
                 else:
                     effect.context.initiator = effect.this.GetControlByOrOwner()
 
