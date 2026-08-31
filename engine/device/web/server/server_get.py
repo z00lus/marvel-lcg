@@ -20,6 +20,7 @@ SCENARIOS_FOLDERS       = ConfigVariables.Folders('scenarios_folders')
 CUSTOM_SCENARIOS_FOLDER = ConfigVariables.Folder('custom_scenario_folder')
 PUZZLE_FOLDER           = ConfigVariables.Folder('puzzle_folder')
 PUZZLE_TEST_FOLDER      = ConfigVariables.Folder('puzzle_test_folder')
+SHOW_PROXY_MENU         = ConfigVariables.Bool('show_proxy_menu', False)
 
 class GameServerGet(GameServerBase):
 
@@ -211,6 +212,11 @@ class GameServerGet(GameServerBase):
     async def get_max_timeout(self, request: web.Request) -> web.Response:
         return web.Response(text=str(self.device_manager.timer.max_timeout))
 
+    async def get_ui_config(self, request: web.Request) -> web.Response:
+        return web.json_response({
+            'show_proxy_menu': SHOW_PROXY_MENU.value,
+        })
+
     async def get_puzzle_json(self, request: web.Request) -> web.Response:
         path = request.rel_url.query_string
         file = FileManager.FindJsonPath("Puzzle", path)
@@ -277,6 +283,7 @@ class GameServerGet(GameServerBase):
         self.AddAwaitGetSecurity('/get_active_campaign', self.get_active_campaign)
         self.AddAwaitGetSecurity('/get_play_scene_name', self.get_play_scene_name)
         self.AddAwaitGetSecurity('/get_max_timeout', self.get_max_timeout)
+        self.AddAwaitGetSecurity('/get_ui_config', self.get_ui_config)
         self.AddAwaitGetSecurity('/get_puzzle_json', self.get_puzzle_json)
         self.AddAwaitGetSecurity('/get_replay_json', self.get_replay_json)
         self.AddAwaitGetSecurity('/download_replay', self.download_replay)

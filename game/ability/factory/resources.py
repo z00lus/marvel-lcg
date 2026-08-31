@@ -138,6 +138,33 @@ class AbilityFactoryResources:
                 return True
             return effect.this != message.paying_for_effect.this
 
+        def check_no_required_cost_reservation_conflict(
+            effect: 'Effect',
+            message: 'Message.CheckPlayerCanPayCost',
+        ) -> bool:
+            """A single card cannot satisfy the same additional cost twice.
+
+            For example, Rogue Vessel requires exhausting the Milano.  The
+            Milano's resource ability also exhausts it, so that resource must
+            not be offered while paying for Rogue Vessel.
+            """
+            def get_required_reservations(for_effect: 'Effect') -> Set[Tuple[str, int]]:
+                cost_func = getattr(for_effect, "cost_func", None)
+                get_all = getattr(cost_func, "GetAll", None)
+                if not get_all:
+                    return set()
+                return {
+                    (kind, id(target))
+                    for cost in get_all()
+                    for kind, target in cost.GetRequiredReservations(for_effect)
+                }
+
+            paying_reservations = get_required_reservations(message.paying_for_effect)
+            if not paying_reservations:
+                return True
+            resource_reservations = get_required_reservations(effect)
+            return paying_reservations.isdisjoint(resource_reservations)
+
         # def check_can_pay(effect: 'Effect', message: 'Send.CheckPlayerCanPayingResources') -> None:
         #     res = resources_fn(effect, message)
         #     if res != 0 and effect.HasCostTargets():
@@ -196,6 +223,7 @@ class AbilityFactoryResources:
             Message.CheckPlayerCanPayCost,
             [
                 check_cannot_generate_self,
+                check_no_required_cost_reservation_conflict,
                 check_generate_resources_type,
                 check_is_not_the_target,
                 check_spend_this_only_in_hero_form,

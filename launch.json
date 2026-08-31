@@ -10,6 +10,7 @@
     "campaign_progress_file": "save_campaign_progress.json",
     "statistics": true,
     "show_image_text": true,
+    "show_proxy_menu": false,
 
     "image_servers": [
         "https://cerebrodatastorage.blob.core.windows.net/cerebro-cards/official/{card_id:U}.jpg",

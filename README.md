@@ -46,9 +46,6 @@ Other additions in this release include:
   cards instead of blank placeholders.
 - An optional **1–5 star rating** for both the hero and scenario at the end of
   a game. Ratings are stored with the shared game history for future rankings.
-- A **Proxy** tool that creates print-ready A4 PDFs for complete hero decks or
-  scenarios whose physical products are explicitly marked as out of print in
-  the local product catalog.
 
 ## Fork Goals
 
@@ -117,14 +114,6 @@ and safety notes.
 
 Open **Collection & Stats** from the main menu to mark the physical products you own, review digital and tabletop win rates, and track achievements. Use **Log Physical Game** to add a finished physical solo game. Manually logged games can be edited or deleted; statistics and achievement progress are recalculated automatically. All of this data is stored in the same `statistics.sqlite3` database used by digital game history.
 
-### Out-of-print proxy sets
-
-Open **Proxy** from the main menu to create printable A4 sheets for a complete
-hero deck or scenario. The menu deliberately lists only products marked as
-officially out of print in `data/sets_info.json`; the restriction is also
-enforced by the server. Generated files are downloaded by the browser and kept
-server-side in the ignored `proxy-output/` directory.
-
 #### Stopping and starting the Docker server
 
 Temporarily stop the server while keeping its container:
@@ -182,7 +171,6 @@ Compared with the original [irefrixs/marvel-lcg](https://github.com/irefrixs/mar
 - Unified SQLite history for digital, imported-replay, and manually logged physical games, with collection management, source filters, matchup statistics, and shared achievements.
 - Optional post-game hero and scenario ratings stored alongside the shared game history.
 - Manual and daily synchronization of public MarvelCDB deck IDs into a clearly marked user-deck collection.
-- Print-ready A4 proxy generation for complete hero decks and scenarios from products explicitly catalogued as out of print.
 - Readable text-only card rendering when a card is implemented but published art is unavailable.
 - Better self-hosting through `run.sh`, Docker Compose, LAN-friendly defaults, a systemd unit, and Linux server documentation.
 

@@ -156,6 +156,30 @@ class CostFunc:
             """Return mutually-exclusive state claimed by this cost."""
             return []
 
+        def GetRequiredReservations(self, effect: 'Effect') -> List[Tuple[str, 'CardFace']]:
+            """Return reservations every legal payment of this cost must use.
+
+            This is the non-mutating counterpart to `GetPreparedReservations`.
+            It is used while building resource-payment choices, before the
+            player has formally initiated the ability and selected its costs.
+            """
+            return []
+
+        def GetRequiredTargets(self, effect: 'Effect') -> List['CardFace']:
+            """Return targets that cannot be avoided when paying this cost."""
+            if self.check_fn and self.check_fn(effect):
+                return []
+            if not self.selector:
+                return []
+
+            targets = list(self.selector.GetAllLegalTargets(effect, just_check=True))
+            target_range = self.selector.GetTargetRange(effect, targets)
+            if target_range == None or target_range[0] == 0:
+                return []
+            if len(targets) != target_range[0]:
+                return []
+            return targets
+
         def GetPreparedConsumptions(self) -> List[Tuple[str, 'CardFace', str, int, int]]:
             """Return additive state consumed by this cost.
 
@@ -319,6 +343,10 @@ class CostFunc:
         @override
         def GetPreparedReservations(self) -> List[Tuple[str, 'CardFace']]:
             return [("ready", target) for target in self.cost_legal_targets]
+
+        @override
+        def GetRequiredReservations(self, effect: 'Effect') -> List[Tuple[str, 'CardFace']]:
+            return [("ready", target) for target in self.GetRequiredTargets(effect)]
 
     # class Choose2(Base):
     #     def __init__(self, traits: List["CardFace.TRAITS"],

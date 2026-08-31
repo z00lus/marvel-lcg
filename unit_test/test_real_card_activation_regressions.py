@@ -465,6 +465,75 @@ class RealCardActivationRegressionTests(unittest.TestCase):
         self.assertIs(milano.card.GetOwner(), player)
         self.assertIs(milano.GetControlBy(), player)
 
+    def test_rogue_vessel_does_not_offer_milano_for_its_own_exhaust_cost(self):
+        world, player, _ = self.MakeWorld()
+        milano = CardFactory.GenerateCard(
+            "16142",
+            player.supports,
+            world,
+            ui_render=False,
+        ).face
+        rogue_vessel = CardFactory.GenerateCard(
+            "16143",
+            world.area_environment,
+            world,
+            ui_render=False,
+        ).face
+        energy = CardFactory.GenerateCard(
+            "01088",
+            player.hand_cards,
+            world,
+            ui_render=False,
+        ).face
+        effect = next(
+            candidate for candidate in rogue_vessel.effect.global_effects
+            if candidate.ability.flags.is_action
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+        with patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ):
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [effect],
+                player,
+                world,
+                None,
+            )
+
+        self.assertEqual(available, [effect])
+        payment_effects = effect.checker.cost_for_different_target.GetAllPayEffects()
+        payment_sources = [payment_effect.this for payment_effect in payment_effects]
+        self.assertNotIn(milano, payment_sources)
+        self.assertIn(energy, payment_sources)
+        energy_payment = next(
+            payment_effect for payment_effect in payment_effects
+            if payment_effect.this == energy
+        )
+
+        # A stale or forged client submission must fail before either the
+        # Milano or a second payment card is consumed.
+        effect.context.paid_this_res_effects = [
+            milano.effect.Find(func_name="DoGenerateResources")[0],
+            energy_payment,
+        ]
+        with patch.object(
+            player,
+            "AskChooseFaces",
+            return_value=[milano],
+        ):
+            self.assertFalse(effect.checker.CheckBeforeActive(player))
+
+        self.assertTrue(milano.card.IsReady())
+        self.assertIs(energy.card.area, player.hand_cards)
+        self.assertIs(rogue_vessel.card.area, world.area_environment)
+
     def test_star_lord_discount_pays_for_declared_player_card_only(self):
         world, player, identity = self.MakeWorld(
             hero_name="Star-Lord",

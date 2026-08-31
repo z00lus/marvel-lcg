@@ -58,6 +58,10 @@
             outline: none;
         }
 
+        .custom-btn[hidden] {
+            display: none;
+        }
+
         .btn-3 span {
             display: block;
             width: 100%;
@@ -146,7 +150,7 @@
             <button class="custom-btn btn-3" onclick="Open('statistics')">
                 <span>Collection &amp; Stats</span>
             </button>
-            <button class="custom-btn btn-3" onclick="Open('proxy')">
+            <button id="proxy-menu-button" class="custom-btn btn-3" onclick="Open('/proxy')" hidden>
                 <span>Proxy</span>
             </button>
             <button class="custom-btn btn-3" onclick="Open('settings')">
@@ -172,6 +176,21 @@
     <script>
         const continueGameButton = document.querySelector('#continue-game');
         const continueGameLabel = continueGameButton.querySelector('span');
+        const proxyMenuButton = document.querySelector('#proxy-menu-button');
+
+        async function refreshUiConfig() {
+            try {
+                const response = await fetch('/get_ui_config');
+                if (!response.ok) {
+                    throw new Error(`UI configuration check failed: ${response.status}`);
+                }
+                const config = await response.json();
+                proxyMenuButton.hidden = config.show_proxy_menu !== true;
+            } catch (error) {
+                console.error(error);
+                proxyMenuButton.hidden = true;
+            }
+        }
 
         async function refreshActiveSession() {
             try {
@@ -214,6 +233,7 @@
         });
 
         void refreshActiveSession();
+        void refreshUiConfig();
 
         // Function to get a cookie
         function getCookie(name) {
