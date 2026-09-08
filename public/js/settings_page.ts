@@ -7,8 +7,14 @@ const animationTime = document.getElementById('animation-time') as HTMLInputElem
 const animationTimeValue = document.getElementById('animation-time-value') as HTMLOutputElement
 const autoSaveReplays = document.getElementById('autosave-replays') as HTMLInputElement
 const marvelCdbDeckIds = document.getElementById('marvelcdb-deck-ids') as HTMLInputElement
+const marvelCdbDecklistIds = document.getElementById('marvelcdb-decklist-ids') as HTMLInputElement
+const marvelCdbLegacyHint = document.getElementById('marvelcdb-legacy-hint') as HTMLElement
 const marvelCdbSync = document.getElementById('marvelcdb-sync') as HTMLButtonElement
 const marvelCdbStatus = document.getElementById('marvelcdb-status') as HTMLElement
+
+type DeckKind = 'deck'|'decklist'
+let syncing = false
+let deckInputsEdited = false
 
 type MarvelCdbSyncResult = {
     ok: boolean;
@@ -29,33 +35,85 @@ function updateAnimationTime() {
     UserSettings.setAnimationTime(value)
 }
 
-function parseDeckIds(value: string): string[] {
-    const deckIds: string[] = []
+function parseDeckRef(value: string): {kind: DeckKind|null; id: string} {
+    if( /^\d+$/.test(value) ) {
+        return {kind: null, id: value.replace(/^0+(?=\d)/, '')}
+    }
+    try {
+        const url = new URL(/^(?:www\.)?marvelcdb\.com\//i.test(value) ? `https://${value}` : value)
+        const match = url.pathname.match(/^\/(?:api\/public\/)?(deck|decklist)(?:\/(?:view|edit))?\/(\d+)(?:\.json)?(?:\/.*)?$/i)
+        if( ['http:', 'https:'].includes(url.protocol)
+            && ['marvelcdb.com', 'www.marvelcdb.com'].includes(url.hostname)
+            && match ) {
+            return {
+                kind: match[1].toLowerCase() as DeckKind,
+                id: match[2].replace(/^0+(?=\d)/, ''),
+            }
+        }
+    } catch( error ) {
+        // Report malformed URLs with the same message as other invalid input.
+    }
+    throw new Error(`Invalid MarvelCDB deck ID or link: ${value}`)
+}
+
+function parseDeckRefs(value: string, kind: DeckKind): string[] {
+    const deckRefs: string[] = []
     for( const part of value.split(',') ) {
-        const deckId = part.trim()
-        if( !deckId ) {
+        const value = part.trim()
+        if( !value ) {
             continue
         }
-        if( !/^\d+$/.test(deckId) ) {
-            throw new Error(`Invalid deck ID: ${deckId}`)
+        const deck = parseDeckRef(value)
+        if( deck.kind && deck.kind !== kind ) {
+            const field = deck.kind === 'deck' ? 'Personal decks' : 'Published decks'
+            throw new Error(`Move this link to ${field}: ${value}`)
         }
-        const normalized = deckId.replace(/^0+(?=\d)/, '')
-        if( !deckIds.includes(normalized) ) {
-            deckIds.push(normalized)
+        const reference = `https://marvelcdb.com/${kind}/view/${deck.id}`
+        if( !deckRefs.includes(reference) ) {
+            deckRefs.push(reference)
         }
     }
-    return deckIds
+    return deckRefs
+}
+
+function restoreDeckRefs(references: string[]) {
+    const personal: string[] = []
+    const published: string[] = []
+    let hasLegacyIds = false
+    for( const reference of references ) {
+        const value = reference.trim()
+        if( !value ) {
+            continue
+        }
+        try {
+            const deck = parseDeckRef(value)
+            const target = deck.kind === 'decklist' ? published : personal
+            if( !target.includes(deck.id) ) {
+                target.push(deck.id)
+            }
+            hasLegacyIds ||= deck.kind === null
+        } catch( error ) {
+            // Keep an invalid saved draft visible so the player can correct it.
+            personal.push(value)
+        }
+    }
+    marvelCdbDeckIds.value = personal.join(', ')
+    marvelCdbDecklistIds.value = published.join(', ')
+    marvelCdbLegacyHint.hidden = !hasLegacyIds
 }
 
 function updateMarvelCdbControls(showHint=true): string[] {
-    const value = marvelCdbDeckIds.value.trim()
-    UserSettings.setMarvelCdbDeckIds(value)
+    UserSettings.setMarvelCdbDeckIds(marvelCdbDeckIds.value)
+    UserSettings.setMarvelCdbDecklistIds(marvelCdbDecklistIds.value)
     try {
-        const deckIds = parseDeckIds(value)
-        marvelCdbSync.disabled = deckIds.length === 0
-        if( showHint ) {
+        const deckIds = [
+            ...parseDeckRefs(marvelCdbDeckIds.value, 'deck'),
+            ...parseDeckRefs(marvelCdbDecklistIds.value, 'decklist'),
+        ]
+        marvelCdbSync.disabled = syncing || deckIds.length === 0
+        if( showHint && !syncing ) {
             marvelCdbStatus.textContent = deckIds.length === 0
-                ? 'Enter one or more public MarvelCDB deck IDs.'
+                ? 'Enter one or more deck IDs or links in either field.'
                 : `${deckIds.length} deck${deckIds.length === 1 ? '' : 's'} ready to sync.`
         }
         return deckIds
@@ -85,16 +143,24 @@ async function loadMarvelCdbStatus(): Promise<void> {
             throw new Error(`${response.status} ${response.statusText}`)
         }
         const status = await response.json() as MarvelCdbSyncStatus
-        if( status.deck_ids.length ) {
-            marvelCdbDeckIds.value = status.deck_ids.join(',')
-            UserSettings.setMarvelCdbDeckIds(marvelCdbDeckIds.value)
+        if( deckInputsEdited ) {
+            return
         }
-        updateMarvelCdbControls(false)
+        if( status.deck_ids.length ) {
+            restoreDeckRefs(status.deck_ids)
+        }
+        const deckRefs = updateMarvelCdbControls(false)
+        if( !deckRefs.length && (marvelCdbDeckIds.value || marvelCdbDecklistIds.value) ) {
+            return
+        }
         marvelCdbStatus.textContent = status.last_result
             ? formatSyncResult(status.last_result)
             : 'Decks have not been synchronized yet.'
     } catch( error ) {
         console.error(error)
+        if( deckInputsEdited ) {
+            return
+        }
         updateMarvelCdbControls(false)
         marvelCdbStatus.textContent = 'Could not load MarvelCDB synchronization status.'
     }
@@ -106,19 +172,37 @@ updateAnimationTime()
 
 autoSaveReplays.checked = UserSettings.getAutoSaveReplays()
 marvelCdbDeckIds.value = UserSettings.getMarvelCdbDeckIds()
+const savedDecklistIds = UserSettings.getMarvelCdbDecklistIds()
+if( savedDecklistIds === null ) {
+    restoreDeckRefs(marvelCdbDeckIds.value.split(','))
+} else {
+    marvelCdbDecklistIds.value = savedDecklistIds
+}
 updateMarvelCdbControls()
 
 animationTime.addEventListener('input', updateAnimationTime)
 autoSaveReplays.addEventListener('change', () => {
     UserSettings.setAutoSaveReplays(autoSaveReplays.checked)
 })
-marvelCdbDeckIds.addEventListener('input', () => updateMarvelCdbControls())
+for( const input of [marvelCdbDeckIds, marvelCdbDecklistIds] ) {
+    input.addEventListener('input', () => {
+        deckInputsEdited = true
+        updateMarvelCdbControls()
+    })
+}
 marvelCdbSync.addEventListener('click', async () => {
+    if( syncing || marvelCdbSync.disabled ) {
+        return
+    }
     const deckIds = updateMarvelCdbControls(false)
     if( !deckIds.length ) {
         return
     }
 
+    syncing = true
+    deckInputsEdited = true
+    marvelCdbDeckIds.disabled = true
+    marvelCdbDecklistIds.disabled = true
     marvelCdbSync.disabled = true
     marvelCdbSync.setAttribute('aria-busy', 'true')
     marvelCdbStatus.textContent = 'Synchronizing decks from MarvelCDB…'
@@ -132,6 +216,7 @@ marvelCdbSync.addEventListener('click', async () => {
         if( !response.ok ) {
             throw new Error(result.error || `${response.status} ${response.statusText}`)
         }
+        marvelCdbLegacyHint.hidden = true
         marvelCdbStatus.textContent = formatSyncResult(result)
     } catch( error ) {
         console.error(error)
@@ -139,6 +224,9 @@ marvelCdbSync.addEventListener('click', async () => {
             ? error.message
             : 'MarvelCDB synchronization failed.'
     } finally {
+        syncing = false
+        marvelCdbDeckIds.disabled = false
+        marvelCdbDecklistIds.disabled = false
         marvelCdbSync.removeAttribute('aria-busy')
         updateMarvelCdbControls(false)
     }

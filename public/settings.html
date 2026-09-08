@@ -77,8 +77,7 @@
             font-size: 0.92rem;
         }
 
-        .slider-row,
-        .deck-ids-row {
+        .slider-row {
             display: grid;
             grid-template-columns: 4rem minmax(0, 1fr) 4rem;
             gap: 0.75rem;
@@ -106,8 +105,12 @@
             height: 1.25rem;
         }
 
-        .deck-ids-row {
-            grid-template-columns: minmax(0, 1fr) auto;
+        .deck-input {
+            margin: 1rem 0;
+        }
+
+        .deck-input input {
+            width: 100%;
         }
 
         input[type='text'] {
@@ -160,10 +163,6 @@
                 grid-column: 1 / -1;
                 text-align: center;
             }
-
-            .deck-ids-row {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -193,12 +192,20 @@
         </section>
 
         <section class="setting">
-            <label class="setting-title" for="marvelcdb-deck-ids">MarvelCDB deck IDs</label>
-            <p class="setting-description">Comma-separated public deck IDs, or MarvelCDB deck/decklist links. Decks refresh now when you press Sync and automatically once every 24 hours.</p>
-            <div class="deck-ids-row">
-                <input type="text" id="marvelcdb-deck-ids" autocomplete="off" placeholder="1130039,1143133,1127055">
-                <button type="button" id="marvelcdb-sync">Sync</button>
+            <span class="setting-title">MarvelCDB decks</span>
+            <p class="setting-description">Enter IDs or full links, separated by commas. Both lists refresh when you press Sync and automatically once every 24 hours.</p>
+            <div class="deck-input">
+                <label class="setting-title" for="marvelcdb-deck-ids">Personal decks</label>
+                <p class="setting-description" id="marvelcdb-deck-help">Decks shared by their owners, with links containing /deck/view/. The owner must enable sharing on MarvelCDB.</p>
+                <input type="text" id="marvelcdb-deck-ids" aria-describedby="marvelcdb-deck-help" autocomplete="off" spellcheck="false" placeholder="1130039, 1143133">
             </div>
+            <div class="deck-input">
+                <label class="setting-title" for="marvelcdb-decklist-ids">Published decks</label>
+                <p class="setting-description" id="marvelcdb-decklist-help">Published decklists, with links containing /decklist/view/.</p>
+                <input type="text" id="marvelcdb-decklist-ids" aria-describedby="marvelcdb-decklist-help" autocomplete="off" spellcheck="false" placeholder="37124, 65821">
+            </div>
+            <p class="setting-description" id="marvelcdb-legacy-hint" hidden>Previously saved numeric IDs are shown under Personal decks. Move any published decklist IDs to Published decks before syncing.</p>
+            <button type="button" id="marvelcdb-sync" disabled>Sync</button>
             <p id="marvelcdb-status" role="status" aria-live="polite"></p>
         </section>
 

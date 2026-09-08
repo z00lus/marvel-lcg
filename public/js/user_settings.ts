@@ -5,6 +5,7 @@ export const ANIMATION_TIME_DEFAULT = 0.2
 const animationTimeKey = 'marvel_lcg_animation_time'
 const autoSaveReplaysKey = 'marvel_lcg_autosave_replays'
 const marvelCdbDeckIdsKey = 'marvel_lcg_marvelcdb_deck_ids'
+const marvelCdbDecklistIdsKey = 'marvel_lcg_marvelcdb_decklist_ids'
 
 function readStorage(key: string): string|null {
     try {
@@ -54,5 +55,13 @@ export class UserSettings {
 
     static setMarvelCdbDeckIds(deckIds: string) {
         writeStorage(marvelCdbDeckIdsKey, deckIds.trim())
+    }
+
+    static getMarvelCdbDecklistIds(): string|null {
+        return readStorage(marvelCdbDecklistIdsKey)
+    }
+
+    static setMarvelCdbDecklistIds(deckIds: string) {
+        writeStorage(marvelCdbDecklistIdsKey, deckIds.trim())
     }
 }
