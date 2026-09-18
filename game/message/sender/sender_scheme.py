@@ -5,6 +5,13 @@ class SenderScheme:
     ################################################################################
     # Scheme
     ################################################################################
+    class MainSchemeStageRevealed_Text(TriggerSchemeMessage):
+        """Give each side of a newly revealed main-scheme stage a UI beat."""
+        def __init__(self, scheme: 'MainScheme') -> None:
+            super().__init__(trigger=scheme)
+            text = TransText("Review {scheme}", scheme=scheme)
+            self.Present(text, "reveal", scheme)
+
     class WhenMainSchemeStageWouldBeCompleted(TriggerSchemeMessage, InActivationMessage, CanBeInstead, HasEndEventMessage):
         def __init__(self, scheme: 'MainScheme', activate_message: 'Message.WhenUnitWouldScheme|None') -> None:
             from game.message import Message

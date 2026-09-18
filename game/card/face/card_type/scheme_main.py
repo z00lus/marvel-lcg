@@ -60,6 +60,11 @@ class MainScheme(Scheme2, HasStage, EncounterCard, FinalType):
             from game.effect.rule import GameRule
             first_player = self.card.world.GetFirstPlayer()
             self.PutIntoPlay(first_player, GameRule(self))
+            # The normal reveal presentation happens while a new main-scheme
+            # card is still in its deck, so its A side cannot be inspected on
+            # the table. Present it once it is in play and before resolving
+            # its When Revealed text.
+            Message.MainSchemeStageRevealed_Text(self)
         return super().OnWhenCardRevealed(revealed_message)
 
     @override

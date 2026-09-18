@@ -51,6 +51,7 @@ const EVENT_ANIMATION: Record<string, string> = {
     "AfterCardsMovedToRevealingArea_Text"   : "center_flip",
     "AfterCardsMovedToBoostingArea_Text"    : "center_flip",
     "AfterCardsGenerated_Text"              : "center_flip",
+    "MainSchemeStageRevealed_Text"          : "center_flip",
     "AfterCardFlip"                         : "target_activate", // "53001a"
     "AfterCardDiscard"                      : "target_activate",
 };
@@ -440,14 +441,16 @@ export class CardAnimation
         if( CardAnimation.animation_name == "center_flip" ) {
             const object_id = active_card_object_ids[0]
             const card_div = Cards.getDiv(object_id)!
-            if( card_div.parentElement!.id == 'area-removed' ||
+            const is_main_scheme = Cards.getCard(object_id)!.card_type == "MainScheme"
+            if( is_main_scheme ||
+                card_div.parentElement!.id == 'area-removed' ||
                 card_div.parentElement!.id == 'area-play' ||
                 card_div.parentElement!.id.includes('-special-deck-') ||
                 card_div.parentElement!.id.endsWith('player-deck') ||
                 card_div.parentElement!.id.endsWith('discard-pile') ||
                 card_div.parentElement!.id.endsWith('additional-deck') ||
                 card_div.parentElement!.id.endsWith('dealt-encounter-cards')) {
-                if( ButtonSetting.pause_when_reveal_or_boost && !UI.hold_ctrl && !ButtonSetting.is_replay ) {
+                if( (is_main_scheme || ButtonSetting.pause_when_reveal_or_boost) && !UI.hold_ctrl && !ButtonSetting.is_replay ) {
                     HoverCard.center_preview.set(card_div, true)
                     Button.enablePause()
                 } else {

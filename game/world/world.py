@@ -648,6 +648,7 @@ class World(WorldAction, WorldFind):
         if prev_scheme.card.printed_faces[0] == prev_scheme:
             card = prev_scheme.card
             card.Flip(GameRule(card.face))
+            Message.MainSchemeStageRevealed_Text(card.face)
             # Reveal is call when `Filp`
             # card.face.Reveal(None, GameRule(card.face))
         elif self.main_schemes_deck.GetSize() > 0:
