@@ -131,14 +131,17 @@ class EffectInvoker:
             if ability.is_label_defense:
                 defender = effect.GetInitiator().GetIdentity()
                 if message and CanDefense.IsType(defender):
-                    # When a player initiates a triggered ability labeled as
-                    # a defense—such as “Hero Interrupt (defense)”—
-                    # during an enemy attack, that player’s identity
-                    # becomes the defender and is considered to have
-                    # defended the attack if there is not already a defender.
-                    # if isinstance(message, Send.WhenUnitBeingAttack|Send.WhenUnitWouldAttack):
-                    # if message.defender == None:
-                    defender.SpecialDefense(message, effect)
+                    has_defender = False
+                    if isinstance(message, AttackerMessageInternal):
+                        has_defender = any(attack.defender != None for attack in message.would_atk_messages)
+                    elif isinstance(message, Message.WhenBoostCardTurnedFaceUp):
+                        # This boost window does not inherit the attack-message mixin.
+                        if isinstance(message.being_message, Message.WhenUnitBeingAttack):
+                            has_defender = message.being_message.defender != None
+                    # RR 1.8: a defense ability establishes the identity only
+                    # if there is no defender, including when an ally defends.
+                    if not has_defender:
+                        defender.SpecialDefense(message, effect)
 
         if can_action:
             if effect.is_unregister_after_exec:

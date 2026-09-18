@@ -801,8 +801,10 @@ class SenderDamage:
         def IsBePrevent(self) -> bool:
             return self.be_prevent
 
-        def IncreaseDamage(self, value: int, by_effect: 'Effect'):
-            if self.IsOverkill():
+        def IncreaseDamage(self, value: int, by_effect: 'Effect', *, include_overkill: bool=False):
+            # Source modifiers are already included in the transferred excess.
+            # Recipient modifiers may also apply to the Overkill damage itself.
+            if self.IsOverkill() and not include_overkill:
                 return
             assert value >= 0
             from game.message import Message
