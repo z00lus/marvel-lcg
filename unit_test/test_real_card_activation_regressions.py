@@ -1,3 +1,4 @@
+import importlib
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -186,6 +187,125 @@ class RealCardActivationRegressionTests(unittest.TestCase):
             play_effect.checker.cost_for_different_target.GetCost(None).val,
             0,
         )
+
+    def test_sonic_rifle_last_charge_still_resolves_before_discard(self):
+        world, player, identity = self.MakeWorld()
+        sonic_rifle = CardFactory.GenerateCard(
+            "20015",
+            identity.GetInventoryDeck(),
+            world,
+            ui_render=False,
+        ).face
+        sonic_rifle.card.components.counter.PlaceCounters(1, "charge")
+        drang = CardFactory.GenerateCard(
+            "16059",
+            world.GetScenario().area_villain,
+            world,
+            ui_render=False,
+        ).face
+        drang.ResetHealth(GameRule(drang))
+        action = next(
+            candidate for candidate in sonic_rifle.effect.global_effects
+            if candidate.ability.flags.is_action
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+        available = EventManager.FilterAvailableEffects(
+            message,
+            [action],
+            player,
+            world,
+            None,
+        )
+        self.assertEqual(available, [action])
+        action.context.targets_internal = [drang]
+        controller_manager = SimpleNamespace(
+            console=SimpleNamespace(TryBreak=lambda check_world: None),
+        )
+        sonic_rifle_module = importlib.import_module("cards.pack.vnm.20015")
+
+        with patch.object(
+            Engine,
+            "game",
+            SimpleNamespace(controller_manager=controller_manager),
+            create=True,
+        ), patch.object(
+            sonic_rifle_module.Faces,
+            "GiveStatus",
+            return_value=1,
+        ) as give_status:
+            self.assertTrue(action.checker.CheckBeforeActive(player))
+            self.assertTrue(action.ResolveSelf(message, action))
+
+        give_status.assert_called_once_with([drang], "Confused", action)
+        self.assertIs(sonic_rifle.card.area, player.discard_pile)
+
+    def test_sonic_rifle_does_not_offer_unconfused_stalwart_enemy(self):
+        world, player, identity = self.MakeWorld()
+        sonic_rifle = CardFactory.GenerateCard(
+            "20015",
+            identity.GetInventoryDeck(),
+            world,
+            ui_render=False,
+        ).face
+        sonic_rifle.card.components.counter.PlaceCounters(1, "charge")
+        drang = CardFactory.GenerateCard(
+            "16059",
+            world.GetScenario().area_villain,
+            world,
+            ui_render=False,
+        ).face
+        drang.ResetHealth(GameRule(drang))
+        action = next(
+            candidate for candidate in sonic_rifle.effect.global_effects
+            if candidate.ability.flags.is_action
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+
+        with patch.object(drang, "IsConfused", return_value=False), \
+             patch.object(drang, "CanbeConfused", return_value=False):
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [action],
+                player,
+                world,
+                None,
+            )
+
+        self.assertEqual(available, [])
+
+    def test_sonic_rifle_offers_confused_enemy_for_damage_even_if_stalwart(self):
+        world, player, identity = self.MakeWorld()
+        sonic_rifle = CardFactory.GenerateCard(
+            "20015",
+            identity.GetInventoryDeck(),
+            world,
+            ui_render=False,
+        ).face
+        sonic_rifle.card.components.counter.PlaceCounters(1, "charge")
+        drang = CardFactory.GenerateCard(
+            "16059",
+            world.GetScenario().area_villain,
+            world,
+            ui_render=False,
+        ).face
+        drang.ResetHealth(GameRule(drang))
+        action = next(
+            candidate for candidate in sonic_rifle.effect.global_effects
+            if candidate.ability.flags.is_action
+        )
+        message = Message.WhenPlayerInTurn(player, 1)
+
+        with patch.object(drang, "IsConfused", return_value=True), \
+             patch.object(drang, "CanbeConfused", return_value=False):
+            available = EventManager.FilterAvailableEffects(
+                message,
+                [action],
+                player,
+                world,
+                None,
+            )
+
+        self.assertEqual(available, [action])
 
     def test_photographic_reflexes_preserves_tucked_origin_during_initiation(self):
         world, player, echo = self.MakeWorld(
