@@ -62,6 +62,12 @@ existing `./runtime:/app/runtime` volume also stores campaign progress,
 `save_active_session.json`, and the numbered QSave files, keeping all of them
 across container rebuilds.
 
+The Deck Editor saves custom decks in `deck/user-decks/`. Back up this directory
+as well. Docker Compose mounts it from the host so edited decks survive container
+rebuilds. On a systemd installation, the service user needs write access to it.
+Starter decks and MarvelCDB imports are copied on the first editor save; subsequent
+saves update the local copy. MarvelCDB synchronization does not overwrite these copies.
+
 ## Updating
 
 Copy the files again with `rsync`, install any updated dependencies, and restart the service:

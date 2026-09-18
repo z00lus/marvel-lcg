@@ -20,6 +20,7 @@ type CardPaper = {
     desc: Record<string, string>;
     traits: string[];
     pack?: string;
+    text?: string;
 };
 
 type SetInfo = {
@@ -95,7 +96,7 @@ function splitCardIds(value: string): string[] {
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
-    const response = await fetch(url);
+    const response = await fetch(url, {cache: 'no-store'});
     if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -177,9 +178,12 @@ function fillDeckSelect(): void {
     ];
     for (const groupInfo of groups) {
         const groupChoices = choices
-            .filter(choice => choice.isUserDeck === groupInfo.userDecks)
-            .sort((left, right) => (left.data.deck_name ?? left.data.name)
-                .localeCompare(right.data.deck_name ?? right.data.name));
+            .filter(choice => choice.isUserDeck === groupInfo.userDecks);
+        if (!groupInfo.userDecks) {
+            groupChoices.sort((left, right) =>
+                (left.data.deck_name ?? left.data.name)
+                    .localeCompare(right.data.deck_name ?? right.data.name));
+        }
         if (!groupChoices.length) {
             continue;
         }
@@ -412,7 +416,7 @@ function renderEntries(container: HTMLElement, entries: CardEntry[]): void {
     container.replaceChildren(...entries.map(createCardTile));
 }
 
-async function showDeck(choice: DeckChoice): Promise<void> {
+async function showDeck(choice: DeckChoice, resetEditor = true): Promise<void> {
     deckStatus.textContent = 'Loading cards…';
     shareStatus.textContent = '';
     deckSelect.disabled = true;
@@ -422,6 +426,9 @@ async function showDeck(choice: DeckChoice): Promise<void> {
     window.history.replaceState({}, '', url);
 
     try {
+        if (resetEditor) {
+            choice = await loadEditor(choice);
+        }
         const related = [
             ...(choice.data.set_aside ?? []),
             ...(choice.data.obligations ?? []),
@@ -438,7 +445,7 @@ async function showDeck(choice: DeckChoice): Promise<void> {
 
         renderEntries(identityCards, identities);
         renderEntries(signatureCards, signatures);
-        renderEntries(playerCards, playerDeck);
+        renderEditableCards(playerDeck);
         renderEntries(encounterCards, relatedCards);
 
         const identity = identities[0];
@@ -448,7 +455,7 @@ async function showDeck(choice: DeckChoice): Promise<void> {
         identityImage.alt = choice.data.name;
         deckHero.textContent = choice.data.name;
         deckName.textContent = choice.data.deck_name ?? `${choice.data.name} Starter Deck`;
-        const constructedSize = choice.data.hero_deck.length + choice.data.player_deck.length;
+        const constructedSize = validation?.size ?? choice.data.hero_deck.length + choice.data.player_deck.length;
         deckCount.textContent = `${constructedSize} cards · ${choice.data.hero_deck.length} signature · ${choice.data.player_deck.length} aspect/basic`;
         signatureCount.textContent = `${choice.data.hero_deck.length} cards`;
         playerCount.textContent = `${choice.data.player_deck.length} cards`;
@@ -470,9 +477,12 @@ async function showDeck(choice: DeckChoice): Promise<void> {
         deckSummary.hidden = false;
         deckContent.hidden = false;
         deckStatus.textContent = '';
+        renderEditor();
     } catch (error) {
         console.error(error);
-        deckStatus.textContent = 'Could not load all cards in this deck.';
+        deckStatus.textContent = error instanceof Error ? error.message : 'Could not load this deck.';
+        editorControls.hidden = true;
+        catalogSection.hidden = true;
         deckSummary.hidden = true;
         deckContent.hidden = true;
         currentDeck = null;
@@ -483,6 +493,10 @@ async function showDeck(choice: DeckChoice): Promise<void> {
 }
 
 deckSelect.addEventListener('change', () => {
+    if (dirty && !window.confirm('Discard your unsaved deck changes?')) {
+        deckSelect.value = sourceDeck?.id ?? '';
+        return;
+    }
     const choice = choices.find(item => item.id === deckSelect.value);
     if (choice) {
         void showDeck(choice);
@@ -534,5 +548,303 @@ async function initialize(): Promise<void> {
         deckSelect.disabled = true;
     }
 }
+
+
+
+type DeckValidation = {
+    legal: boolean;
+    issues: string[];
+    size: number;
+    aspect_counts: Record<string, number>;
+    blocked: Record<string, string>;
+};
+type EditorLoad = {
+    deck: DeckData;
+    aspects: string[];
+    aspect_count: number;
+    revision: string;
+    copy_on_save: boolean;
+    catalog: CardPaper[];
+    validation: DeckValidation;
+};
+const aspectNames = ['Aggression', 'Justice', 'Leadership', 'Protection', "'Pool"];
+const editorControls = document.querySelector<HTMLElement>('#editor-controls')!;
+const nameInput = document.querySelector<HTMLInputElement>('#edit-deck-name')!;
+const aspectInputs = document.querySelector<HTMLFieldSetElement>('#edit-aspects')!;
+const editorNote = document.querySelector<HTMLElement>('#editor-note')!;
+const editorStatus = document.querySelector<HTMLElement>('#editor-status')!;
+const validationBox = document.querySelector<HTMLElement>('#deck-validation')!;
+const saveButton = document.querySelector<HTMLButtonElement>('#save-deck')!;
+const discardButton = document.querySelector<HTMLButtonElement>('#discard-changes')!;
+const catalogSection = document.querySelector<HTMLElement>('#card-catalog')!;
+const catalogCards = document.querySelector<HTMLElement>('#catalog-cards')!;
+const catalogStatus = document.querySelector<HTMLElement>('#catalog-status')!;
+const searchInput = document.querySelector<HTMLInputElement>('#card-search')!;
+const aspectFilter = document.querySelector<HTMLSelectElement>('#filter-aspect')!;
+const typeFilter = document.querySelector<HTMLSelectElement>('#filter-type')!;
+const costFilter = document.querySelector<HTMLSelectElement>('#filter-cost')!;
+const availableFilter = document.querySelector<HTMLInputElement>('#filter-available')!;
+const moreButton = document.querySelector<HTMLButtonElement>('#catalog-more')!;
+let sourceDeck: DeckChoice | null = null;
+let catalog: CardPaper[] = [];
+let aspects: string[] = [];
+let aspectCount = 1;
+let revision = '';
+let copyOnSave = true;
+let validation: DeckValidation | null = null;
+let dirty = false;
+let busy = false;
+let catalogLimit = 36;
+
+async function editorRequest<T>(action: string, extra: Record<string, unknown> = {}): Promise<T> {
+    if (!sourceDeck) throw new Error('Choose a deck first.');
+    const response = await fetch('/deck_editor', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action, source: sourceDeck.isUserDeck ? 'user' : 'starter', id: sourceDeck.id, ...extra}),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error ?? 'The deck could not be updated.');
+    return data as T;
+}
+
+function fillFilter(select: HTMLSelectElement, values: string[]): void {
+    const first = select.options[0];
+    select.replaceChildren(first);
+    for (const value of values) select.add(new Option(value, value));
+}
+
+async function loadEditor(choice: DeckChoice): Promise<DeckChoice> {
+    sourceDeck = choice;
+    busy = true;
+    editorControls.hidden = true;
+    catalogSection.hidden = true;
+    try {
+        const loaded = await editorRequest<EditorLoad>('load');
+        catalog = loaded.catalog.sort((a, b) => a.name.localeCompare(b.name));
+        for (const paper of catalog) paperCache.set(paper.card_id, Promise.resolve(paper));
+        aspects = loaded.aspects;
+        aspectCount = loaded.aspect_count;
+        revision = loaded.revision;
+        copyOnSave = loaded.copy_on_save;
+        validation = loaded.validation;
+        dirty = false;
+        nameInput.value = loaded.deck.deck_name ?? loaded.deck.name;
+        if (copyOnSave) nameInput.value += ' — Custom';
+        loaded.deck.deck_name = nameInput.value;
+        editorStatus.textContent = '';
+        searchInput.value = '';
+        availableFilter.checked = true;
+        fillFilter(aspectFilter, [...aspectNames, 'Basic']);
+        fillFilter(typeFilter, [...new Set(catalog.map(p => p.type))].sort());
+        fillFilter(costFilter, [...new Set(catalog.map(p => p.desc.Cost).filter(v => v !== undefined))].sort());
+        catalogLimit = 36;
+        return {...choice, data: loaded.deck};
+    } finally {
+        busy = false;
+    }
+}
+
+function setBusy(value: boolean): void {
+    busy = value;
+    deckSelect.disabled = value;
+    nameInput.disabled = value;
+    aspectInputs.disabled = value;
+    discardButton.disabled = value || !dirty;
+    updateSaveButton();
+    for (const button of document.querySelectorAll<HTMLButtonElement>('.card-controls button')) {
+        button.disabled = value || button.dataset.blocked === 'true';
+    }
+}
+
+function updateSaveButton(): void {
+    saveButton.disabled = busy || !validation?.legal || !nameInput.value.trim();
+    saveButton.textContent = copyOnSave ? 'Save as new deck' : 'Save changes';
+}
+
+function renderEditor(): void {
+    editorControls.hidden = false;
+    catalogSection.hidden = false;
+    editorNote.textContent = copyOnSave
+        ? 'Saving creates your own local copy. The original deck stays unchanged.'
+        : 'This is your local deck. Saved changes are available in Quick Game and Campaign.';
+    aspectInputs.replaceChildren();
+    const legend = document.createElement('legend');
+    legend.textContent = `Choose ${aspectCount} aspect${aspectCount === 1 ? '' : 's'}`;
+    aspectInputs.append(legend);
+    for (const aspect of aspectNames) {
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = aspects.includes(aspect);
+        input.disabled = !input.checked && aspects.length >= aspectCount && aspectCount !== 1;
+        input.addEventListener('change', () => {
+            const next = aspectCount === 1 ? [aspect] : input.checked
+                ? [...aspects, aspect] : aspects.filter(a => a !== aspect);
+            void changeDraft(currentDeck!.data.player_deck, next);
+        });
+        label.append(input, document.createTextNode(aspect));
+        aspectInputs.append(label);
+    }
+    validationBox.replaceChildren();
+    validationBox.classList.toggle('valid', validation?.legal ?? false);
+    if (validation?.legal) {
+        validationBox.textContent = `Legal deck · ${validation.size}/50 cards · Rules Reference 1.8`;
+    } else {
+        const heading = document.createElement('p');
+        heading.textContent = 'Finish these changes before saving:';
+        const list = document.createElement('ul');
+        for (const issue of validation?.issues ?? []) {
+            const item = document.createElement('li');
+            item.textContent = issue;
+            list.append(item);
+        }
+        validationBox.append(heading, list);
+    }
+    renderCatalog();
+    setBusy(busy);
+}
+
+function controlButton(text: string, label: string, action: () => void, reason = ''): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = text;
+    button.setAttribute('aria-label', label);
+    button.title = reason || label;
+    button.dataset.blocked = String(Boolean(reason));
+    button.disabled = busy || Boolean(reason);
+    button.addEventListener('click', action);
+    return button;
+}
+
+function editableTile(entry: CardEntry, inDeck: boolean): HTMLElement {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'editable-card';
+    wrapper.dataset.cardId = entry.cardId;
+    wrapper.append(createCardTile(entry));
+    const controls = document.createElement('div');
+    controls.className = 'card-controls';
+    if (inDeck) {
+        const quantity = document.createElement('span');
+        quantity.textContent = String(entry.quantity);
+        quantity.setAttribute('aria-label', `${entry.quantity} copies`);
+        controls.append(controlButton('−', `Remove one ${entry.paper.name}`, () => editCount(entry.key, -1)), quantity);
+    }
+    const reason = validation?.blocked[entry.cardId] ?? 'This card cannot be added.';
+    controls.append(controlButton(inDeck ? '+' : 'Add card', `Add ${entry.paper.name}`, () => editCount(entry.key, 1), reason));
+    if (inDeck) {
+        const remove = controlButton('Remove', `Remove all ${entry.paper.name}`, () => editCount(entry.key, -entry.quantity));
+        remove.className = 'remove-card';
+        controls.append(remove);
+    }
+    wrapper.append(controls);
+    if (reason && !inDeck) {
+        const explanation = document.createElement('p');
+        explanation.className = 'card-blocked';
+        explanation.textContent = reason;
+        wrapper.append(explanation);
+    }
+    return wrapper;
+}
+
+function renderEditableCards(entries: CardEntry[]): void {
+    playerCards.replaceChildren(...entries.map(entry => editableTile(entry, true)));
+}
+
+function editCount(card: string, difference: number): void {
+    if (busy || !currentDeck) return;
+    const next = [...currentDeck.data.player_deck];
+    if (difference > 0) {
+        if (validation?.blocked[card] !== '') return;
+        next.push(card);
+    } else {
+        for (let i = 0; i < -difference; i++) {
+            const index = next.indexOf(card);
+            if (index >= 0) next.splice(index, 1);
+        }
+    }
+    void changeDraft(next, aspects);
+}
+
+async function changeDraft(cards: string[], nextAspects: string[]): Promise<void> {
+    if (busy || !currentDeck) return;
+    setBusy(true);
+    editorStatus.textContent = 'Checking deck…';
+    try {
+        validation = await editorRequest<DeckValidation>('validate', {player_deck: cards, aspects: nextAspects});
+        currentDeck.data.player_deck = [...cards];
+        aspects = [...nextAspects];
+        dirty = true;
+        await showDeck(currentDeck, false);
+        editorStatus.textContent = 'Unsaved changes';
+    } catch (error) {
+        editorStatus.textContent = error instanceof Error ? error.message : 'Could not check deck.';
+        renderEditor();
+    } finally {
+        setBusy(false);
+    }
+}
+
+function normalizeSearch(value: string): string {
+    return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function renderCatalog(): void {
+    const terms = normalizeSearch(searchInput.value).split(/\s+/).filter(Boolean);
+    const results = catalog.filter(paper => {
+        if (aspectFilter.value && !paper.desc.Class.split(';').includes(aspectFilter.value)) return false;
+        if (typeFilter.value && paper.type !== typeFilter.value) return false;
+        if (costFilter.value && paper.desc.Cost !== costFilter.value) return false;
+        if (availableFilter.checked && validation?.blocked[paper.card_id]) return false;
+        const text = normalizeSearch([paper.name, paper.subtitle, paper.card_id, paper.text?.replace(/<[^>]*>/g, ''),
+            ...paper.traits, cardProduct(paper)].join(' '));
+        return terms.every(term => text.includes(term));
+    });
+    catalogStatus.textContent = results.length
+        ? `${results.length} cards found · showing ${Math.min(catalogLimit, results.length)}`
+        : 'No matching cards. Try a shorter search or change the filters.';
+    catalogCards.replaceChildren(...results.slice(0, catalogLimit).map(paper => editableTile({
+        key: paper.card_id, cardIds: [paper.card_id], cardId: paper.card_id, quantity: 1, paper,
+    }, false)));
+    moreButton.hidden = results.length <= catalogLimit;
+}
+
+for (const input of [searchInput, aspectFilter, typeFilter, costFilter, availableFilter]) {
+    input.addEventListener('input', () => { catalogLimit = 36; renderCatalog(); });
+}
+moreButton.addEventListener('click', () => { catalogLimit += 36; renderCatalog(); });
+nameInput.addEventListener('input', () => {
+    if (currentDeck) currentDeck.data.deck_name = nameInput.value;
+    deckName.textContent = nameInput.value;
+    dirty = true;
+    editorStatus.textContent = 'Unsaved changes';
+    discardButton.disabled = false;
+    updateSaveButton();
+});
+discardButton.addEventListener('click', () => {
+    if (!busy && sourceDeck) void showDeck(sourceDeck);
+});
+window.addEventListener('beforeunload', event => {
+    if (dirty) { event.preventDefault(); event.returnValue = ''; }
+});
+saveButton.addEventListener('click', async () => {
+    if (busy || !currentDeck || !validation?.legal) return;
+    setBusy(true);
+    editorStatus.textContent = 'Saving…';
+    try {
+        const saved = await editorRequest<{id: string; deck: DeckData; revision: string}>('save', {
+            player_deck: currentDeck.data.player_deck, aspects, name: nameInput.value, revision,
+        });
+        const choice: DeckChoice = {id: saved.id, data: saved.deck, isUserDeck: true};
+        choices = [choice, ...choices.filter(item => item.id !== saved.id)];
+        fillDeckSelect();
+        deckSelect.value = saved.id;
+        await showDeck(choice);
+        editorStatus.textContent = 'Deck saved. It is ready to select in Quick Game or Campaign.';
+    } catch (error) {
+        editorStatus.textContent = error instanceof Error ? error.message : 'Could not save deck.';
+    } finally {
+        setBusy(false);
+    }
+});
 
 void initialize();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deck Viewer — Marvel Champions Digital: Ronin Edition</title>
+    <title>Deck Editor — Marvel Champions Digital: Ronin Edition</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?ronin=1">
     <link rel="stylesheet" href="/public/css/solo.css">
     <link rel="stylesheet" href="/public/css/deck-viewer.css">
@@ -13,8 +13,8 @@
         <header class="page-header">
             <div>
                 <p class="eyebrow">RONIN ARCHIVES</p>
-                <h1>Deck Viewer</h1>
-                <p>Inspect every card in a starter or locally saved deck.</p>
+                <h1>Deck Editor</h1>
+                <p>Build a deck, explore cards, and save your own versions.</p>
             </div>
             <a class="back-link" href="/main">← Main menu</a>
         </header>
@@ -41,6 +41,18 @@
                 <h2 id="deck-name"></h2>
                 <p id="deck-count" class="deck-count"></p>
                 <div id="deck-aspects" class="deck-aspects" aria-label="Deck aspects"></div>
+                <div id="editor-controls" class="editor-controls" hidden>
+                    <label for="edit-deck-name">Deck name</label>
+                    <input id="edit-deck-name" maxlength="100" autocomplete="off">
+                    <fieldset id="edit-aspects"><legend>Chosen aspects</legend></fieldset>
+                    <p id="editor-note" class="related-note"></p>
+                    <div class="editor-actions">
+                        <button id="save-deck" class="share-deck-button" type="button" disabled>Save deck</button>
+                        <button id="discard-changes" type="button">Discard changes</button>
+                    </div>
+                    <p id="editor-status" role="status"></p>
+                    <div id="deck-validation" aria-live="polite"></div>
+                </div>
                 <div class="deck-share-row">
                     <button id="share-deck" class="share-deck-button" type="button">
                         Share Deck
@@ -51,26 +63,35 @@
         </section>
 
         <div id="deck-content" hidden>
-            <section class="card-section" aria-labelledby="identity-heading">
-                <div class="card-section-heading">
-                    <div>
-                        <p class="section-kicker">IDENTITY</p>
-                        <h2 id="identity-heading">Hero</h2>
+            <nav class="editor-navigation" aria-label="Deck editor sections">
+                <a href="#player-heading">Your deck</a>
+                <a href="#catalog-heading">Add cards</a>
+                <a href="#deck-summary">Save &amp; settings</a>
+            </nav>
+            <details class="card-section fixed-package">
+                <summary>Identity &amp; signature cards · fixed hero package</summary>
+                <section class="card-section" aria-labelledby="identity-heading">
+                    <div class="card-section-heading">
+                        <div>
+                            <p class="section-kicker">IDENTITY</p>
+                            <h2 id="identity-heading">Hero</h2>
+                        </div>
                     </div>
-                </div>
-                <div id="identity-cards" class="card-grid"></div>
-            </section>
+                    <div id="identity-cards" class="card-grid"></div>
+                </section>
 
-            <section class="card-section" aria-labelledby="signature-heading">
-                <div class="card-section-heading">
-                    <div>
-                        <p class="section-kicker">HERO KIT</p>
-                        <h2 id="signature-heading">Signature cards</h2>
+                <section class="card-section" aria-labelledby="signature-heading">
+                    <div class="card-section-heading">
+                        <div>
+                            <p class="section-kicker">HERO KIT</p>
+                            <h2 id="signature-heading">Signature cards</h2>
+                        </div>
+                        <span id="signature-count" class="section-count"></span>
                     </div>
-                    <span id="signature-count" class="section-count"></span>
-                </div>
-                <div id="signature-cards" class="card-grid"></div>
-            </section>
+                    <p class="related-note">The identity package is fixed and cannot be edited.</p>
+                    <div id="signature-cards" class="card-grid"></div>
+                </section>
+            </details>
 
             <section class="card-section" aria-labelledby="player-heading">
                 <div class="card-section-heading">
@@ -81,6 +102,22 @@
                     <span id="player-count" class="section-count"></span>
                 </div>
                 <div id="player-cards" class="card-grid"></div>
+            </section>
+
+            <section id="card-catalog" class="card-section" aria-labelledby="catalog-heading" hidden>
+                <div class="card-section-heading"><h2 id="catalog-heading">Add cards</h2></div>
+                <div class="catalog-filters">
+                    <label class="catalog-search">Search cards
+                        <input id="card-search" type="search" placeholder="Name, trait, rules text, pack or card ID…" autocomplete="off">
+                    </label>
+                    <label>Aspect<select id="filter-aspect"><option value="">All aspects</option></select></label>
+                    <label>Type<select id="filter-type"><option value="">All types</option></select></label>
+                    <label>Cost<select id="filter-cost"><option value="">Any cost</option></select></label>
+                </div>
+                <label class="catalog-available"><input id="filter-available" type="checkbox" checked> Show only cards I can add</label>
+                <p id="catalog-status" role="status"></p>
+                <div id="catalog-cards" class="card-grid"></div>
+                <button id="catalog-more" type="button" hidden>Show more cards</button>
             </section>
 
             <details id="encounter-section" class="card-section related-section">
