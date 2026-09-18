@@ -138,7 +138,7 @@ function formatSyncResult(result: MarvelCdbSyncResult): string {
 
 async function loadMarvelCdbStatus(): Promise<void> {
     try {
-        const response = await fetch('/marvelcdb_sync_status')
+        const response = await fetch('/marvelcdb_sync_status', {cache: 'no-store'})
         if( !response.ok ) {
             throw new Error(`${response.status} ${response.statusText}`)
         }
@@ -206,6 +206,11 @@ marvelCdbSync.addEventListener('click', async () => {
     marvelCdbSync.disabled = true
     marvelCdbSync.setAttribute('aria-busy', 'true')
     marvelCdbStatus.textContent = 'Synchronizing decks from MarvelCDB…'
+    const startedAt = Date.now()
+    const progressTimer = window.setInterval(() => {
+        const elapsedSeconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000))
+        marvelCdbStatus.textContent = `Synchronizing decks from MarvelCDB… ${elapsedSeconds}s`
+    }, 1000)
     try {
         const response = await fetch('/sync_marvelcdb_decks', {
             method: 'POST',
@@ -224,6 +229,7 @@ marvelCdbSync.addEventListener('click', async () => {
             ? error.message
             : 'MarvelCDB synchronization failed.'
     } finally {
+        window.clearInterval(progressTimer)
         syncing = false
         marvelCdbDeckIds.disabled = false
         marvelCdbDecklistIds.disabled = false

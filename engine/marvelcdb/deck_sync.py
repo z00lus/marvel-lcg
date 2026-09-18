@@ -363,6 +363,41 @@ class MarvelCdbDeckSync:
     def _save_state(self, state: Dict[str, Any]) -> None:
         self._save_json(state, self.state_file)
 
+    def _set_local_created_at(
+        self,
+        deck: Dict[str, Any],
+        file_path: str,
+    ) -> None:
+        created_at = ''
+        if FileManager.Exists(file_path):
+            try:
+                existing = self._read_json(file_path)
+                created_at = str(
+                    (existing.get('metadata') or {}).get(
+                        'local_created_at',
+                        '',
+                    )
+                ).strip()
+            except Exception:
+                pass
+
+            if not created_at:
+                try:
+                    created_at = datetime.fromtimestamp(
+                        os.path.getmtime(file_path),
+                        timezone.utc,
+                    ).isoformat()
+                except OSError:
+                    pass
+
+        metadata = deck.setdefault('metadata', {})
+        if not isinstance(metadata, dict):
+            metadata = {}
+            deck['metadata'] = metadata
+        metadata['local_created_at'] = (
+            created_at or datetime.now(timezone.utc).isoformat()
+        )
+
     def _load_templates(self) -> Dict[str, Dict[str, Any]]:
         templates: Dict[str, Dict[str, Any]] = {}
         for file_path in FileManager.ListFiles(self.starter_deck_folder, ext='.json'):
@@ -541,6 +576,7 @@ class MarvelCdbDeckSync:
                         self.user_deck_folder,
                         f'{file_id}.json',
                     )
+                    self._set_local_created_at(converted, output_path)
                     self._save_json(converted, output_path)
                     synced.append({
                         'id': deck_id,

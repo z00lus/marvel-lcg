@@ -136,8 +136,8 @@ function getProductLabel(label: string, info: SetInfo): string {
     return productName;
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-    const response = await fetch(url);
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(url, options);
     if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -399,7 +399,7 @@ async function loadScenarioChoices(): Promise<ScenarioChoice[]> {
 async function loadHeroChoices(): Promise<HeroChoice[]> {
     const [starterPaths, userPaths] = await Promise.all([
         fetchJson<string[]>('/list_starter_deck?'),
-        fetchJson<string[]>('/list_user_deck?'),
+        fetchJson<string[]>('/list_user_deck?', {cache: 'no-store'}),
     ]);
     const deckPaths = [
         ...userPaths.map(path => ({path, isUserDeck: true})),
@@ -409,7 +409,10 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
     const choices = await Promise.all(deckPaths.map(async ({path, isUserDeck}): Promise<HeroChoice | null> => {
         const id = getFileName(path);
         try {
-            const data = await fetchJson<HeroData>(`/get_hero_json?${encodeURIComponent(id)}`);
+            const data = await fetchJson<HeroData>(
+                `/get_hero_json?${encodeURIComponent(id)}`,
+                isUserDeck ? {cache: 'no-store'} : undefined,
+            );
             const imageId = getFirstCardId(data.hero ?? []);
             if (!data.name || !imageId) {
                 return null;
@@ -433,6 +436,11 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
             const groupComparison = Number(left.isUserDeck) - Number(right.isUserDeck);
             if (groupComparison !== 0) {
                 return -groupComparison;
+            }
+            if (left.isUserDeck) {
+                // The server returns local decks newest-first. Keep that
+                // creation order instead of re-sorting them by display name.
+                return 0;
             }
             const leftName = left.data.deck_name ?? left.data.name;
             const rightName = right.data.deck_name ?? right.data.name;

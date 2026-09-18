@@ -10,7 +10,7 @@ class GameServerMarvelCdb(GameServerBase):
         status = await TaskManager.ToThread(
             self.device_manager.marvelcdb_deck_sync.GetStatus,
         )
-        return web.json_response(status)
+        return web.json_response(status, headers=self.HeaderNoStore)
 
     async def sync_marvelcdb_decks(self, request: web.Request) -> web.Response:
         try:

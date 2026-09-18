@@ -152,6 +152,17 @@ class TestMarvelCdbDeckSync(unittest.TestCase):
             )
             self.assertEqual(output['deck_name'], 'Spider-Man unti Ultron')
             self.assertEqual(output['name'], 'Spider-Man')
+            created_at = output['metadata']['local_created_at']
+            self.assertTrue(created_at)
+
+            service.SyncDecks('1130039')
+            refreshed = MarvelCdbDeckSync._read_json(
+                os.path.join(user_folder, '1130039.json'),
+            )
+            self.assertEqual(
+                refreshed['metadata']['local_created_at'],
+                created_at,
+            )
             state = service.GetStatus()
             self.assertEqual(state['deck_ids'], ['1130039'])
             self.assertTrue(state['last_sync'])

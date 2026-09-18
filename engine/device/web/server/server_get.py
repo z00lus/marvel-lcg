@@ -1,4 +1,7 @@
 from core import *
+from datetime import datetime, timezone
+import os
+
 from engine.lib import Json
 from engine.file import FileManager
 from engine.device import *
@@ -24,6 +27,29 @@ SHOW_PROXY_MENU         = ConfigVariables.Bool('show_proxy_menu', False)
 
 class GameServerGet(GameServerBase):
 
+    @staticmethod
+    def _UserDeckCreationTime(file_path: str) -> float:
+        try:
+            with FileManager.OpenFile(file_path, read=True) as file:
+                deck = Json.Loads(file.Read())
+            created_at = str(
+                (deck.get('metadata') or {}).get('local_created_at', '')
+            ).strip()
+            if created_at:
+                created = datetime.fromisoformat(
+                    created_at.replace('Z', '+00:00')
+                )
+                if created.tzinfo is None:
+                    created = created.replace(tzinfo=timezone.utc)
+                return created.timestamp()
+        except (AttributeError, OSError, TypeError, ValueError):
+            pass
+
+        try:
+            return os.path.getmtime(file_path)
+        except OSError:
+            return 0
+
     def ListFile(self, *folders: str, ext: str|None=None) -> web.Response:
         return web.json_response(FileManager.ListFiles(*folders, ext=ext))
 
@@ -48,7 +74,11 @@ class GameServerGet(GameServerBase):
             ext='.json',
             check_file_name=lambda name: not name.startswith('.'),
         )
-        return web.json_response(files)
+        files.sort(key=lambda path: (
+            -self._UserDeckCreationTime(path),
+            FileManager.GetBaseName(path).casefold(),
+        ))
+        return web.json_response(files, headers=self.HeaderNoStore)
 
     async def list_campaign_deck(self, request: web.Request) -> web.Response:
         files = FileManager.ListFiles(
@@ -56,7 +86,7 @@ class GameServerGet(GameServerBase):
             ext='.json',
             check_file_name=lambda name: not name.startswith('.'),
         )
-        return web.json_response(files)
+        return web.json_response(files, headers=self.HeaderNoStore)
 
     async def list_replay_files(self, request: web.Request) -> web.Response:
         if READ_ONLY_FIRST_REPLAY_FOLDER.value:
@@ -127,7 +157,15 @@ class GameServerGet(GameServerBase):
     async def get_hero_json(self, request: web.Request) -> web.Response:
         path = request.rel_url.query_string
         file = FileManager.FindJsonPath("Hero", path)
-        return self.ReadJsonFile(file)
+        mutable_decks = FileManager.ListFiles(
+            USER_DECK_FOLDER.value,
+            CAMPAIGN_DECK_FOLDER.value,
+            ext='.json',
+        )
+        do_cache = not file or not any(
+            FileManager.IsSameFile(file, deck) for deck in mutable_decks
+        )
+        return self.ReadJsonFile(file, do_cache=do_cache)
 
     async def get_sets_json(self, request: web.Request) -> web.Response:
         file = FileManager.FindJsonPath("SetInfo", "sets_info.json")

@@ -112,8 +112,8 @@ function getFirstCardId(cardIds: string[]): string {
     return cardIds[0]?.split(',')[0] ?? '';
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-    const response = await fetch(url);
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(url, options);
     if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -153,7 +153,10 @@ async function loadCampaignChoices(): Promise<CampaignChoice[]> {
 async function loadHeroChoice(path: string, isUserDeck: boolean): Promise<HeroChoice | null> {
     const id = getFileName(path);
     try {
-        const data = await fetchJson<HeroData>(`/get_hero_json?${encodeURIComponent(id)}`);
+        const data = await fetchJson<HeroData>(
+            `/get_hero_json?${encodeURIComponent(id)}`,
+            isUserDeck ? {cache: 'no-store'} : undefined,
+        );
         const imageId = getFirstCardId(data.hero ?? []);
         if (!data.name || !imageId) {
             return null;
@@ -178,7 +181,7 @@ async function loadHeroChoices(): Promise<HeroChoice[]> {
     // refresh another campaign's frozen file.
     const [starterPaths, userPaths] = await Promise.all([
         fetchJson<string[]>('/list_starter_deck?'),
-        fetchJson<string[]>('/list_user_deck?'),
+        fetchJson<string[]>('/list_user_deck?', {cache: 'no-store'}),
     ]);
     const deckPaths = [
         ...userPaths.map(path => ({path, isUserDeck: true})),

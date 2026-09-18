@@ -252,6 +252,17 @@ class TestResponseHeaders(unittest.TestCase):
         # made a max-age assertion here pass no matter what ReadFile returned.
         self.assertEqual(response.headers['Cache-Control'], 'no-store')
 
+    def test_mutable_json_is_not_cached(self):
+        with patch(
+            'engine.network.web_server.Json.Load',
+            return_value={'name': 'Mutable deck'},
+        ):
+            response = self.server.ReadJsonFile('deck.json', do_cache=False)
+
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.headers['Cache-Control'], 'no-store')
+        self.assertNotIn('max-age', response.headers['Cache-Control'])
+
 
 class TestPrimaryPageHandlers(unittest.TestCase):
 

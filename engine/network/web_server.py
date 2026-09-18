@@ -257,6 +257,8 @@ class WebServer:
 
             if do_cache:
                 headers.update(self.HeaderCache)
+            else:
+                headers.update(self.HeaderNoStore)
 
             return web.Response(body=compressed_data, content_type='application/json', headers=headers)
         else:

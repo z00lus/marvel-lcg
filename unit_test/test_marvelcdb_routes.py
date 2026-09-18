@@ -14,8 +14,12 @@ import json
 import os
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
+from engine.device.web.server.server_get import GameServerGet
 from engine.device.web.server.server_marvelcdb import GameServerMarvelCdb
+from engine.file import FileManager
 from engine.lib import Json
 from engine.marvelcdb.deck_sync import MarvelCdbDeckSync
 
@@ -144,6 +148,68 @@ class TestHostileHeroId(unittest.TestCase):
             )
             self.assertEqual(status, 400)
             self.assertIn('No campaign deck was saved', payload['error'])
+
+
+class TestMutableDeckResponses(unittest.TestCase):
+
+    def test_user_deck_list_is_never_cached(self):
+        server = object.__new__(GameServerGet)
+        server.HeaderNoStore = {'Cache-Control': 'no-store'}
+        with patch.object(FileManager, 'ListFiles', return_value=[]):
+            response = asyncio.run(server.list_user_deck(None))
+
+        self.assertEqual(response.headers['Cache-Control'], 'no-store')
+
+    def test_user_decks_are_listed_newest_first(self):
+        server = object.__new__(GameServerGet)
+        server.HeaderNoStore = {'Cache-Control': 'no-store'}
+        with tempfile.TemporaryDirectory() as folder:
+            older = os.path.join(folder, 'older.json')
+            newer = os.path.join(folder, 'newer.json')
+            Json.Save(
+                {'metadata': {'local_created_at': '2026-08-30T12:00:00Z'}},
+                older,
+            )
+            Json.Save(
+                {'metadata': {'local_created_at': '2026-08-31T12:00:00Z'}},
+                newer,
+            )
+            with patch.object(
+                FileManager,
+                'ListFiles',
+                return_value=[older, newer],
+            ):
+                response = asyncio.run(server.list_user_deck(None))
+
+        self.assertEqual(json.loads(response.text), [newer, older])
+
+    def test_synced_user_deck_json_is_never_cached(self):
+        server = object.__new__(GameServerGet)
+        server.ReadJsonFile = Mock(return_value=object())
+        deck_path = './deck/user-decks/1239487.json'
+        request = SimpleNamespace(
+            rel_url=SimpleNamespace(query_string='1239487'),
+        )
+
+        with patch.object(FileManager, 'FindJsonPath', return_value=deck_path), \
+             patch.object(FileManager, 'ListFiles', return_value=[deck_path]):
+            asyncio.run(server.get_hero_json(request))
+
+        server.ReadJsonFile.assert_called_once_with(deck_path, do_cache=False)
+
+    def test_bundled_starter_deck_json_remains_cacheable(self):
+        server = object.__new__(GameServerGet)
+        server.ReadJsonFile = Mock(return_value=object())
+        deck_path = './deck/starter/groot.json'
+        request = SimpleNamespace(
+            rel_url=SimpleNamespace(query_string='groot'),
+        )
+
+        with patch.object(FileManager, 'FindJsonPath', return_value=deck_path), \
+             patch.object(FileManager, 'ListFiles', return_value=[]):
+            asyncio.run(server.get_hero_json(request))
+
+        server.ReadJsonFile.assert_called_once_with(deck_path, do_cache=True)
 
 
 if __name__ == '__main__':
